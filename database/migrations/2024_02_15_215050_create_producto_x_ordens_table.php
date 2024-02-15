@@ -11,21 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('modelo_vehiculos', function (Blueprint $table) {
+        Schema::create('producto_x_ordens', function (Blueprint $table) {
             $table->id();
-            $table->string('descripcion');
 
-            $table->unsignedBigInteger('tipo_vehiculo_id');
-            $table->foreign('tipo_vehiculo_id')
+            $table->unsignedBigInteger('orden_id');
+            $table->foreign('orden_id')
             ->references('id')
-            ->on('tipo_vehiculo')
+            ->on('orden')
             ->onDelete('cascade');
 
-            $table->unsignedBigInteger('marca_id');
-            $table->foreign('marca_id')
+            $table->unsignedBigInteger('producto_id');
+            $table->foreign('producto_id')
             ->references('id')
-            ->on('marca')
+            ->on('producto')
             ->onDelete('cascade');
+
 
             $table->string('estado');
             $table->timestamps();
@@ -37,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('modelo_vehiculos');
+        Schema::dropIfExists('producto_x_ordens');
     }
 };
