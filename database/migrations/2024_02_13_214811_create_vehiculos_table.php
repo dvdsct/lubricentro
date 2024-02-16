@@ -11,27 +11,28 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ordens', function (Blueprint $table) {
+        Schema::create('vehiculos', function (Blueprint $table) {
             $table->id();
-
-            $table->unsignedBigInteger('empleado_id');
-            $table->foreign('empleado_id')
+            $table->unsignedBigInteger('tipo_vehiculo_id');
+            $table->foreign('tipo_vehiculo_id')
             ->references('id')
-            ->on('empleado')
+            ->on('tipo_vehiculos')
             ->onDelete('cascade');
 
-            $table->unsignedBigInteger('servicio_id');
-            $table->foreign('servicio_id')
+            $table->unsignedBigInteger('modelo_vehiculo_id');
+            $table->foreign('modelo_vehiculo_id')
             ->references('id')
-            ->on('servicio')
+            ->on('modelo_vehiculos')
             ->onDelete('cascade');
 
-            $table->unsignedBigInteger('vehiculos_x_clientes_id');
-            $table->foreign('vehiculos_x_clientes_id')
+            $table->unsignedBigInteger('marca_vehiculo_id');
+            $table->foreign('marca_vehiculo_id')
             ->references('id')
-            ->on('vehiculos_x_clientes')
+            ->on('marca_vehiculos')
             ->onDelete('cascade');
 
+            $table->string('dominio');
+            $table->string('color');
             $table->string('estado');
             $table->timestamps();
         });
@@ -42,6 +43,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ordens');
+        Schema::dropIfExists('vehiculos');
     }
 };

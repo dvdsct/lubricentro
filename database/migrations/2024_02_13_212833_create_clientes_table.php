@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('perfil_id');
             $table->foreign('perfil_id')
             ->references('id')
-            ->on('perfil')
+            ->on('perfils')
             ->onDelete('cascade');
 
             $table->string('categoria');

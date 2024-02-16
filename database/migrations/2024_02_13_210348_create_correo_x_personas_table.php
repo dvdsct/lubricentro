@@ -17,13 +17,13 @@ return new class extends Migration
             $table->unsignedBigInteger('correo_id');
             $table->foreign('correo_id')
             ->references('id')
-            ->on('correo')
+            ->on('correos')
             ->onDelete('cascade');
 
             $table->unsignedBigInteger('persona_id');
             $table->foreign('persona_id')
             ->references('id')
-            ->on('persona')
+            ->on('personas')
             ->onDelete('cascade');
 
             $table->timestamps();

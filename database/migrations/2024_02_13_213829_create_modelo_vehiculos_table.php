@@ -18,13 +18,13 @@ return new class extends Migration
             $table->unsignedBigInteger('tipo_vehiculo_id');
             $table->foreign('tipo_vehiculo_id')
             ->references('id')
-            ->on('tipo_vehiculo')
+            ->on('tipo_vehiculos')
             ->onDelete('cascade');
 
-            $table->unsignedBigInteger('marca_id');
-            $table->foreign('marca_id')
+            $table->unsignedBigInteger('marca_vehiculo_id');
+            $table->foreign('marca_vehiculo_id')
             ->references('id')
-            ->on('marca')
+            ->on('marca_vehiculos')
             ->onDelete('cascade');
 
             $table->string('estado');

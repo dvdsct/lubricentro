@@ -11,19 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('vehiculos_x_clientes', function (Blueprint $table) {
+        Schema::create('ingreso_mercaderias', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('cliente_id');
-            $table->foreign('cliente_id')
+            $table->unsignedBigInteger('tipo_ingreso_mercaderias_id');
+            $table->foreign('tipo_ingreso_mercaderias_id')
             ->references('id')
-            ->on('cliente')
+            ->on('tipo_ingreso_mercaderias')
             ->onDelete('cascade');
 
-            $table->unsignedBigInteger('vehiculo_id');
-            $table->foreign('vehiculo_id')
+            $table->unsignedBigInteger('proveedores_id');
+            $table->foreign('proveedores_id')
             ->references('id')
-            ->on('vehiculo')
+            ->on('proveedores')
             ->onDelete('cascade');
 
             $table->timestamps();
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('vehiculos_x_clientes');
+        Schema::dropIfExists('ingreso_mercaderias');
     }
 };
