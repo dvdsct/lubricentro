@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\OrdenController;
+use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\StockController;
+use App\Http\Controllers\VentaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,4 +30,10 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    Route::resource('', DashboardController::class);
+    Route::resource('productos',ProductoController::class);
+    Route::resource('ordenes',OrdenController::class);
+    Route::resource('stock',StockController::class);
+    Route::resource('venta',VentaController::class);
 });
