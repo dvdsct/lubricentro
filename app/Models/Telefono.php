@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Telefono extends Model
 {
     use HasFactory;
+
+    public function personas(){
+
+        return $this->hasOne(Persona::class);
+    }
 }

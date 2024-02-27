@@ -29,4 +29,17 @@ class Orden extends Model
     {
         return $this->belongsTo(Cliente::class,'vehiculos_x_clientes_id');
     }
+
+    public function productos(){
+
+        return $this->belongsToMany(Producto::class);
+    }
+
 }
+
+
+
+
+
+
+

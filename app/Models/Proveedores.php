@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Proveedores extends Model
 {
     use HasFactory;
+
+    public function perfiles(){
+
+        return $this->hasOne(Perfil::class);
+    }
 }

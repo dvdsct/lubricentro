@@ -9,6 +9,6 @@ class TipoVehiculo extends Model
 {
     use HasFactory;
 
-    
+
 
 }

@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Domicilio extends Model
 {
     use HasFactory;
+
+    public function personas(){
+
+        return $this->belongsToMany(Persona::class);
+    }
 }

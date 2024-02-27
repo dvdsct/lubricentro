@@ -10,6 +10,7 @@ class TipoServicio extends Model
     use HasFactory;
 
     public function servicios(){
-        return $this->belongsTo(TipoServicio::class);
+
+        return $this->belongsToMany(Servicio::class);
     }
 }

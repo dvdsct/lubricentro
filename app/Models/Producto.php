@@ -14,4 +14,14 @@ class Producto extends Model
         'costo',
         'codigo'
     ];
+
+    public function ordenes(){
+
+        return $this->belongsToMany(Orden::class);
+    }
+
+    public function stocks(){
+
+        return $this->belongsTo(Stock::class);
+    }
 }
