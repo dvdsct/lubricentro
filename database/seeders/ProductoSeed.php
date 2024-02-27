@@ -14,13 +14,13 @@ class ProductoSeed extends Seeder
     public function run(): void
     {
         $productos=[
-         
-           [ 'Aceite TOTAL7000 x 4lt', 38.000],
-           ['Aceite TOTAL9000 x 4lt', 61.999],
-           ['Aceite HELIX x 4lt 5w 30', 34.249],
-           ['Kit Wega FIAT Cronos argo', 41.797],
-           ['Kit Wega Suran FOX', 41.797],
-           ['Kit AMAROK', 63.193],
+
+           [ 'Aceite TOTAL7000 x 4lt', 38.000,'5','ooo736'],
+           ['Aceite TOTAL9000 x 4lt', 61.999,'5','ooo736'],
+           ['Aceite HELIX x 4lt 5w 30', 34.249,'5','ooo736'],
+           ['Kit Wega FIAT Cronos argo', 41.797,'5','ooo736'],
+           ['Kit Wega Suran FOX', 41.797,'5','ooo736'],
+           ['Kit AMAROK', 63.193,'5','ooo736'],
 
         ];
 
@@ -29,6 +29,8 @@ class ProductoSeed extends Seeder
             Producto::create([
               'costo'=>$prod[1],
               'descripcion'=>$prod[0],
+              'stock'=>$prod[2],
+              'codigo'=>$prod[3],
             ]);
         }
 

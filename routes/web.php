@@ -5,6 +5,7 @@ use App\Http\Controllers\OrdenController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\VentaController;
+use App\Http\Controllers\TurnosController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,4 +37,5 @@ Route::middleware([
     Route::resource('ordenes',OrdenController::class);
     Route::resource('stock',StockController::class);
     Route::resource('venta',VentaController::class);
+    Route::resource('turnos',TurnosController::class);
 });

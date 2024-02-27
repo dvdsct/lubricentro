@@ -11,8 +11,8 @@
 
 
 
-
-
+@livewire('form-add-prod')
+@livewire('lw-productos')
 
 
 

@@ -7,5 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Perfil extends Model
 {
-    use HasFactory;
+    public function clientes()
+    {
+        return $this->hasMany(Cliente::class);
+    }
 }

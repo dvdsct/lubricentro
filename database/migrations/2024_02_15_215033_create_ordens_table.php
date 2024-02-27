@@ -32,6 +32,7 @@ return new class extends Migration
             ->on('vehiculos_x_clientes')
             ->onDelete('cascade');
 
+            $table->string('motivo');
             $table->string('estado');
             $table->timestamps();
         });

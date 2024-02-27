@@ -2,19 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Orden;
 use Illuminate\Http\Request;
 
-class OrdenController extends Controller
+class TurnosController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-
-        return view('Lubricentro.Ordenes.index');
-
+        return view('Lubricentro.Turnos.index');
     }
 
     /**

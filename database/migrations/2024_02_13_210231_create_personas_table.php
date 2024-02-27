@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->string('apellido');
-            $table->integer('DNI');
+            $table->string('DNI');
             $table->date('fecha_nac');
             $table->string('estado');
             $table->timestamps();
