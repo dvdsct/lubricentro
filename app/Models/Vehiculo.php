@@ -22,12 +22,12 @@ class Vehiculo extends Model
 
     public function modelos(){
 
-        return $this->hasMany(ModeloVehiculo::class);
+        return $this->belongsTo(ModeloVehiculo::class, 'modelo_vehiculo_id');
     }
 
     public function tipoVehiculos(){
 
-        return $this->hasMany(TipoVehiculos::class);
+        return $this->hasMany(TipoVehiculo::class);
     }
 }
 

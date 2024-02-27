@@ -11,12 +11,12 @@ class Perfil extends Model
 
     public function personas(){
 
-        return $this->hasOne(Persona::class);
+        return $this->belongsTo(Persona::class,'persona_id');
     }
 
     public function users(){
 
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function proveedores(){
