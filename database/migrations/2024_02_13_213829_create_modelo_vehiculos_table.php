@@ -27,7 +27,6 @@ return new class extends Migration
             ->on('marca_vehiculos')
             ->onDelete('cascade');
 
-            $table->string('version');
             $table->string('estado');
             $table->timestamps();
         });

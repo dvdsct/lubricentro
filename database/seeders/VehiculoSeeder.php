@@ -27,6 +27,7 @@ class VehiculoSeeder extends Seeder
 
         ModeloVehiculo::create([
             'descripcion' => 'Corolla',
+
             'tipo_vehiculo_id' => 1, // ID del tipo de vehículo Automóvil
             'marca_vehiculo_id' => 1, // ID de la marca Toyota
             'estado' => 'Activo'
@@ -40,10 +41,15 @@ class VehiculoSeeder extends Seeder
 
         Vehiculo::create([
             'tipo_vehiculo_id' => 1, // ID del tipo de vehículo Automóvil
+                        'version' => 'v2',
+
             'modelo_vehiculo_id' => 1, // ID del modelo Corolla
             'marca_vehiculo_id' => 1, // ID de la marca Toyota
             'dominio' => 'ABC123',
             'color' => 'Rojo',
+            'version' => 'v2',
+            'año' => '2107',
+
             'estado' => 'Activo'
         ]);
         Vehiculo::create([
@@ -52,6 +58,9 @@ class VehiculoSeeder extends Seeder
             'marca_vehiculo_id' => 2, // ID de la marca Ford
             'dominio' => 'DEF456',
             'color' => 'Azul',
+            'version' => 'v2',
+
+            'año' => '2107',
             'estado' => 'Activo'
         ]);
 
@@ -75,6 +84,7 @@ class VehiculoSeeder extends Seeder
 
         Orden::create([
             'empleado_id' => '1',
+            'cliente_id' => '1',
             'servicio_id' => '1',
             'vehiculos_x_clientes_id' => '1',
             'motivo' => '1',
@@ -84,6 +94,8 @@ class VehiculoSeeder extends Seeder
         ]);
         Orden::create([
             'empleado_id' => '1',
+            'cliente_id' => '1',
+
             'servicio_id' => '2',
             'vehiculos_x_clientes_id' => '2',
             'motivo' => '2',

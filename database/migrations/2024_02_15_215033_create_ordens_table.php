@@ -26,6 +26,12 @@ return new class extends Migration
             ->on('servicios')
             ->onDelete('cascade');
 
+            $table->unsignedBigInteger('cliente_id');
+            $table->foreign('cliente_id')
+            ->references('id')
+            ->on('clientes')
+            ->onDelete('cascade');
+
             $table->unsignedBigInteger('vehiculos_x_clientes_id');
             $table->foreign('vehiculos_x_clientes_id')
             ->references('id')
@@ -33,6 +39,7 @@ return new class extends Migration
             ->onDelete('cascade');
 
             $table->string('motivo');
+            $table->datetime('horario')->nullable();
             $table->string('estado');
             $table->timestamps();
         });

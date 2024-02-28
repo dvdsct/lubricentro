@@ -29,5 +29,10 @@ class Vehiculo extends Model
 
         return $this->hasMany(TipoVehiculo::class);
     }
+
+    public function ordenes()
+    {
+        return $this->hasMany(Orden::class, 'vehiculos_id');
+    }
 }
 

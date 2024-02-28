@@ -27,8 +27,10 @@ class Orden extends Model
 
     public function clientes()
     {
-        return $this->belongsTo(Cliente::class,'vehiculos_x_clientes_id');
+        return $this->belongsTo(Cliente::class,'cliente_id');
     }
+
+
 
     public function productos(){
 

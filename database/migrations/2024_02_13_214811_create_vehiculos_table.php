@@ -33,7 +33,8 @@ return new class extends Migration
 
             $table->string('dominio');
             $table->string('color');
-            $table->date('año');
+            $table->string('version');
+            $table->string('año');
             $table->string('estado');
             $table->timestamps();
         });
