@@ -24,15 +24,10 @@ class ServicioSeed extends Seeder
         ];
 
         foreach ($servicios as $serv){
-            $a = TipoServicio::create([
-            'descripcion'=>$serv,
-            'estado'=>'1'
 
-            ]);
 
             Servicio::create([
-                'tipo_servicio_id' => $a->id,
-                'descripcion' => 'test'
+                'descripcion'=>$serv,
             ]);
 
         }

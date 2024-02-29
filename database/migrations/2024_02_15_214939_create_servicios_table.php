@@ -14,12 +14,8 @@ return new class extends Migration
         Schema::create('servicios', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('tipo_servicio_id');
-            $table->foreign('tipo_servicio_id')
-            ->references('id')
-            ->on('servicios')
-            ->onDelete('cascade');
-            
+
+
             $table->string('descripcion');
             $table->timestamps();
         });

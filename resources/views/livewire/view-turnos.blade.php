@@ -12,10 +12,11 @@
 
         </div>
         <div class="col-3">
-            <h1> <strong>{{ ucfirst(Carbon\Carbon::now()->locale('es')->isoFormat('dddd DD ')) }} </strong></h1>
+            <h1> <strong>{{ ucfirst(Carbon\Carbon::parse($fecha)->locale('es')->isoFormat('dddd DD ')) }} </strong></h1>
         </div>
         <div class="col-2 pt-2 mr-2">
-            <button type="button" class="btn btn-block btn-info" data-target="modal-default" wire:click='openModal'>
+            {{ $fecha }}
+            <button type="button" class="btn btn-block btn-info" data-target="modal-default" wire:click="$dispatchTo('form-create-order', 'modal-order')">
                 Nuevo Turno</button>
         </div>
     </div>

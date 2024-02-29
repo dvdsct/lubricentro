@@ -322,6 +322,11 @@ return [
             'url'  => 'venta',
             'icon' => 'fa fa-list',
         ],
+        [
+            'text' => 'Turnos',
+            'url'  => 'turnos',
+            'icon' => 'fa fa-list',
+        ],
 
 
 

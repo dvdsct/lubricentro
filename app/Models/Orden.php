@@ -9,6 +9,15 @@ class Orden extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'servicio_id' ,
+        'cliente_id' ,
+        'vehiculos_id' ,
+        'motivo' ,
+        'horario' ,
+        'estado' ,
+    ];
+
 
     public function empleados()
     {

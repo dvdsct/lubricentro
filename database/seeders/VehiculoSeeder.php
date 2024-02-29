@@ -86,7 +86,7 @@ class VehiculoSeeder extends Seeder
             'empleado_id' => '1',
             'cliente_id' => '1',
             'servicio_id' => '1',
-            'vehiculos_x_clientes_id' => '1',
+            'vehiculo_id' => '1',
             'motivo' => '1',
             'estado' => '1',
 
@@ -97,7 +97,7 @@ class VehiculoSeeder extends Seeder
             'cliente_id' => '1',
 
             'servicio_id' => '2',
-            'vehiculos_x_clientes_id' => '2',
+            'vehiculo_id' => '2',
             'motivo' => '2',
             'estado' => '1',
 

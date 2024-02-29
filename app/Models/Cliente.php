@@ -14,10 +14,10 @@ class Cliente extends Model
         return $this->hasOne(Perfil::class,'id');
     }
 
-    // public function vehiculos()
-    // {
-    //     return $this->belongsToMany(Vehiculo::class, 'vehiculos_x_clientes', 'cliente_id', 'vehiculo_id');
-    // }
+    public function vehiculos()
+    {
+        return $this->belongsToMany(Vehiculo::class, 'vehiculos_x_clientes', 'cliente_id', 'vehiculo_id');
+    }
 
     public function ordenes()
     {

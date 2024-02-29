@@ -24,7 +24,8 @@ class ViewTurnos extends Component
     }
 
     public function openModal(){
-       $this->dispatch('modal-order');
+
+       $this->dispatch('modal-order')->to(FormCreateOrder::class);
     }
 
     public function change_day($day)

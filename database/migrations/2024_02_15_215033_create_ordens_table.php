@@ -32,10 +32,10 @@ return new class extends Migration
             ->on('clientes')
             ->onDelete('cascade');
 
-            $table->unsignedBigInteger('vehiculos_x_clientes_id');
-            $table->foreign('vehiculos_x_clientes_id')
+            $table->unsignedBigInteger('vehiculo_id');
+            $table->foreign('vehiculo_id')
             ->references('id')
-            ->on('vehiculos_x_clientes')
+            ->on('vehiculos')
             ->onDelete('cascade');
 
             $table->string('motivo');

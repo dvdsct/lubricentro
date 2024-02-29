@@ -11,18 +11,18 @@ class Vehiculo extends Model
 
     public function clientes(){
 
-        return $this->belongsToMany(Cliente::class);
+        return $this->belongsToMany(Cliente::class,'vehiculos_x_clientes', 'vehiculo_id', 'cliente_id');
     }
 
     public function marcas(){
 
-        return $this->hasOne(MarcaVehiculo::class);
+        return $this->belongsTo(MarcaVehiculo::class,'id');
     }
 
 
     public function modelos(){
 
-        return $this->belongsTo(ModeloVehiculo::class, 'modelo_vehiculo_id');
+        return $this->belongsTo(ModeloVehiculo::class, 'id');
     }
 
     public function tipoVehiculos(){
