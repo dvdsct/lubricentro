@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('ordens', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('empleado_id');
+            $table->unsignedBigInteger('empleado_id')->nullable();
             $table->foreign('empleado_id')
             ->references('id')
             ->on('empleados')

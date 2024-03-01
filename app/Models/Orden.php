@@ -12,33 +12,28 @@ class Orden extends Model
     protected $fillable = [
         'servicio_id' ,
         'cliente_id' ,
-        'vehiculos_id' ,
+        'vehiculo_id' ,
         'motivo' ,
         'horario' ,
         'estado' ,
     ];
 
+    protected $table = 'ordens';
+
+    public function clientes()
+    {
+        return $this->belongsTo(Cliente::class, 'cliente_id');
+    }
 
     public function empleados()
     {
-        return $this->belongsTo(Empleado::class);
-    }
-
-    public function servicios()
-    {
-        return $this->belongsTo(Servicio::class,'servicio_id');
+        return $this->belongsTo(Empleado::class, 'empleado_id');
     }
 
     public function vehiculos()
     {
-        return $this->belongsTo(Vehiculo::class,'vehiculos_x_clientes_id');
+        return $this->belongsTo(Vehiculo::class, 'vehiculo_id');
     }
-
-    public function clientes()
-    {
-        return $this->belongsTo(Cliente::class,'cliente_id');
-    }
-
 
 
     public function productos(){

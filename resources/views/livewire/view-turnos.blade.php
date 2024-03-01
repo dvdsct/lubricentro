@@ -33,15 +33,20 @@
                 <tbody>
                     @foreach ($turnlub as $t)
                         <tr>
-                            <td><span class="badge bg-danger">{{ $t->horario }}aaa</span></td>
+
+                            <td><span class="badge bg-danger">{{ $t->horario }}</span></td>
                             <td>{{ $t->clientes->perfiles->personas->nombre . ' ' . $t->clientes->perfiles->personas->apellido }}
                             </td>
-                            <td>{{ $t->vehiculos->modelos->marcas->descripcion .
+                            <td>{{
+                            $t->vehiculos->modelos->descripcion.
                                 ' ' .
-                                $t->vehiculos->modelos->descripcion .
+                                $t->vehiculos->descripcion .
                                 ' ' .
                                 $t->vehiculos->año }}
+                                                                <strong>{{ $t->vehiculos->dominio }}</strong>
+
                             </td>
+                            <td><a class="btn btn-danger" href="{{ route('ordenes.show', $t->id) }}">cargar</a></td>
 
                         </tr>
                         <tr>
@@ -66,16 +71,19 @@
                 <tbody>
                     @foreach ($turnlav as $t)
                         <tr>
-                            <td><span class="badge bg-danger">{{ $t->horario }}1313</span></td>
+                            <td><span class="badge bg-success   ">{{ $t->horario }}1313</span></td>
                             <td>{{ $t->clientes->perfiles->personas->nombre . ' ' . $t->clientes->perfiles->personas->apellido }}
                             </td>
-                            <td>{{ $t->vehiculos->modelos->marcas->descripcion .
+                            <td>{{
+                            $t->vehiculos->modelos->descripcion.
                                 ' ' .
-                                $t->vehiculos->modelos->descripcion .
+                                $t->vehiculos->descripcion .
                                 ' ' .
                                 $t->vehiculos->año }}
+                                <strong>{{ $t->vehiculos->dominio }}</strong>
                             </td>
-                            </td>
+                            <td><a class="btn btn-success" href="{{ route('ordenes.show', $t->id) }}">cargar</a></td>
+
 
                         </tr>
                         <tr>
@@ -90,4 +98,6 @@
 
 
     </div>
+
+
 </div>

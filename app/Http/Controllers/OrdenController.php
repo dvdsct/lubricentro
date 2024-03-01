@@ -38,7 +38,13 @@ class OrdenController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $orden = Orden::find($id);
+        return view('Lubricentro.Ordenes.show',[
+
+            'orden' => $orden
+        ]
+    );
+
     }
 
     /**

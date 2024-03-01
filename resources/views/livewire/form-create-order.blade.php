@@ -19,8 +19,10 @@
                             <div wire:ignore>
 
                                 <div class="mb-3 row">
-                                    {{ $cliente }}
-                                    <select id="mySelect" wire:model='cliente'>
+                                    <select id="mySelect" wire:model='cliente' class="form-select"
+                                        aria-label="Default select example">
+                                        <option selected>Open this select menu</option>
+
                                         @foreach ($clientes as $c)
                                             <option value="{{ $c->id }}">{{ $c->perfiles->personas->nombre }}
                                                 {{ $c->perfiles->personas->apellido }} {{ $c->perfiles->personas->dni }}
@@ -72,7 +74,7 @@
 
                                     <select class="form-select" aria-label="Default select example" wire:model='vehiculo'>
                                         <option selected>Open this select menu</option>
-                                        @foreach ($vehiculos as $v )
+                                        @foreach ($vehiculos as $v)
                                         <option value="{{ $v->id }}">{{ $v->marcas->descripcion }}
                                             {{ $v->medelos }}
                                         </option>
@@ -82,18 +84,18 @@
                                       </select>
 
 
-                                      <select class="form-select" aria-label="Default select example" wire:model='servicio'>
+                                    <select class="form-select" aria-label="Default select example"
+                                        wire:model='servicio'>
                                         <option selected>Open this select menu</option>
-                                        @foreach ($servicios as $s )
-                                        <option value="{{ $s->id }}">{{ $s->descripcion }}
-                                        </option>
-
+                                        @foreach ($servicios as $s)
+                                            <option value="{{ $s->id }}">{{ $s->descripcion }}
+                                            </option>
                                         @endforeach
 
-                                      </select>
+                                    </select>
 
 
-                                      <select class="form-select" aria-label="Default select example" wire:model='motivo'>
+                                    <select class="form-select" aria-label="Default select example" wire:model='motivo'>
                                         <option selected>Open this select menu</option>
                                         <option value="1">Lav</option>
                                         <option value="2">Lubris</option>
@@ -101,7 +103,7 @@
 
 
 
-                                      </select>
+                                    </select>
 
 
 
@@ -111,15 +113,15 @@
                             </div>
 
                     </div>
+
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" wire:click='closeModal'>Close</button>
+                        <button type="button" class="btn btn-primary" wire:click='addTurno'>Save changes</button>
+                    </div>
+                </div>
+
+            </div>
     @endif
-    <div class="modal-footer justify-content-between">
-        <button type="button" class="btn btn-default" wire:click='closeModal'>Close</button>
-        <button type="button" class="btn btn-primary" wire:click='addTurno'>Save changes</button>
-    </div>
-</div>
-
-</div>
-
 </div>
 @script
     <script>

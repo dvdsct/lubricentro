@@ -14,25 +14,24 @@ class Vehiculo extends Model
         return $this->belongsToMany(Cliente::class,'vehiculos_x_clientes', 'vehiculo_id', 'cliente_id');
     }
 
-    public function marcas(){
 
-        return $this->belongsTo(MarcaVehiculo::class,'id');
+    public function tipoVehiculos()
+    {
+        return $this->belongsTo(TipoVehiculo::class, 'tipo_vehiculo_id');
     }
 
-
-    public function modelos(){
-
-        return $this->belongsTo(ModeloVehiculo::class, 'id');
+    public function marcas()
+    {
+        return $this->belongsTo(MarcaVehiculo::class, 'marca_vehiculo_id');
     }
 
-    public function tipoVehiculos(){
-
-        return $this->hasMany(TipoVehiculo::class);
+    public function modelos()
+    {
+        return $this->belongsTo(ModeloVehiculo::class, 'modelo_vehiculo_id');
     }
-
     public function ordenes()
     {
-        return $this->hasMany(Orden::class, 'vehiculos_id');
+        return $this->belongsTo(Orden::class);
     }
 }
 
