@@ -2,6 +2,12 @@
 
 namespace App\Livewire;
 
+
+
+
+use App\Models\Vehiculo;
+use App\Models\Perfil;
+use App\Models\Persona;
 use App\Models\Cliente;
 use App\Models\Orden;
 use App\Models\Servicio;
@@ -66,19 +72,41 @@ class FormCreateOrder extends Component
     public function addTurno()
     {
 
+        $persona = Persona::create([
+            'nombre' => $this->nombre,
+            'apellido' => $this->apellido,
+            'DNI' => $this->dni,
+            'fecha_nac' => $this->fecha_nac,
+            'estado' => '1'
+        ]);
+
+/*         $perfil = Perfil::create([
+        'persona_id'=>$persona->id,
+        ]); */
+
+        $cliente = Cliente::create([
+            'perfil_id' => Perfil::create(['persona_id' => $persona->id])->id
+        ]);
+
+        $vehiculo = Vehiculo::create([
+            'dominio' => $this->dominio,
+            'color' => $this->color,
+            'año' => $this->año,
+            'version' => $this->version,
+            'estado' => '1',
+        ]);
+
         Orden::create([
-
-
-
-
-            'servicio_id' => $this->servicio,
-            'cliente_id' => $this->cliente->id,
-            'vehiculos_id' => $this->vehiculo,
+            'servicio_id' => $this->servicio->id,
+            'cliente_id' => $cliente->id,
+            'vehiculo_id' => $vehiculo->id,
             'motivo' => $this->motivo,
             'horario' => Carbon::now(),
             'estado' => '1',
-
         ]);
+
+        $this->reset;
+
     }
 
 

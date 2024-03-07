@@ -31,6 +31,8 @@
                                 </div>
                             </div>
                         @endif
+
+
                         @if ($formperson == true)
                             <div class="">
                                 <div class="mb-3 row">
@@ -70,30 +72,105 @@
                                         </div>
                                     </div>
 
-                                    <select class="form-select" aria-label="Default select example" wire:model='vehiculo'>
-                                        <option selected>Open this select menu</option>
-                                        @foreach ($vehiculos as $v )
-                                        <option value="{{ $v->id }}">{{ $v->marcas->descripcion }}
-                                            {{ $v->medelos }}
-                                        </option>
 
+
+                                    <div class='col'>
+
+                                        <label for="inputVehiculo" class="col-sm-2 col-form-label">Dominio</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputVehiculo"
+                                                wire:model='dominio'>
+                                        </div>
+                                    </div>
+
+                                    <div class='col'>
+
+                                        <label for="inputVehiculo" class="col-sm-2 col-form-label">Marca</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputVehiculo"
+                                                wire:model='marca'>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class='col'>
+
+                                        <label for="inputVehiculo" class="col-sm-2 col-form-label">Modelo</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputVehiculo"
+                                                wire:model='modelo'>
+                                        </div>
+                                    </div>
+
+
+                                    <div class='col'>
+
+                                        <label for="inputVehiculo" class="col-sm-2 col-form-label">Tipo Vehiculo</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputVehiculo"
+                                                wire:model='tipo_vehiculo'>
+                                        </div>
+                                    </div>
+
+
+                                    <div class='col'>
+
+                                        <label for="inputVehiculo" class="col-sm-2 col-form-label">Color</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputVehiculo"
+                                                wire:model='color'>
+                                        </div>
+                                    </div>
+
+
+                                    <div class='col'>
+
+                                        <label for="inputVehiculo" class="col-sm-2 col-form-label">Año</label>
+                                        <div class="col-sm-10">
+                                            <input type="date" class="form-control" id="inputVehiculo"
+                                                wire:model='año'>
+                                        </div>
+                                    </div>
+
+
+                                    <div class='col'>
+
+                                        <label for="inputVehiculo" class="col-sm-2 col-form-label">Version</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputVehiculo"
+                                                wire:model='version'>
+                                        </div>
+                                    </div>
+
+                                    @if ($formperson == false)
+
+                                        <select class="form-select" aria-label="Default select example"
+                                            wire:model='vehiculo'>
+                                            <option selected>Open this select menu</option>
+                                            @foreach ($vehiculos as $v)
+                                                <option value="{{ $v->id }}">{{ $v->marcas->descripcion }}
+                                                    {{ $v->modelos }}
+                                                </option>
+                                            @endforeach
+
+                                        </select>
+
+                                    @endif
+
+
+                                    <select class="form-select" aria-label="Default select example"
+                                        wire:model='servicio'>
+                                        <option selected>Open this select menu</option>
+                                        @foreach ($servicios as $s)
+                                            <option value="{{ $s->id }}">{{ $s->descripcion }}
+                                            </option>
                                         @endforeach
 
-                                      </select>
+                                    </select>
 
 
-                                      <select class="form-select" aria-label="Default select example" wire:model='servicio'>
-                                        <option selected>Open this select menu</option>
-                                        @foreach ($servicios as $s )
-                                        <option value="{{ $s->id }}">{{ $s->descripcion }}
-                                        </option>
-
-                                        @endforeach
-
-                                      </select>
-
-
-                                      <select class="form-select" aria-label="Default select example" wire:model='motivo'>
+                                    <select class="form-select" aria-label="Default select example" wire:model='motivo'>
                                         <option selected>Open this select menu</option>
                                         <option value="1">Lav</option>
                                         <option value="2">Lubris</option>
@@ -101,7 +178,7 @@
 
 
 
-                                      </select>
+                                    </select>
 
 
 

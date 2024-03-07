@@ -20,8 +20,8 @@ return new class extends Migration
             ->on('perfils')
             ->onDelete('cascade');
 
-            $table->string('categoria');
-            $table->string('lista_precios');
+            $table->string('categoria')->nullable();
+            $table->string('lista_precios')->nullable();
             $table->timestamps();
         });
     }

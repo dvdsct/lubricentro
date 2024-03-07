@@ -1,7 +1,10 @@
 import { defineConfig } from 'vite';
-import laravel from 'laravel-vite-plugin';
+import laravel from 'laravel-vite';
 
 export default defineConfig({
+    build: {
+        manifest: true,
+    },
     plugins: [
         laravel({
             input: [
