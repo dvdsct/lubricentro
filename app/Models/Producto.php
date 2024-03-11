@@ -16,8 +16,14 @@ class Producto extends Model
     ];
 
 
+    
     public function stocks(){
 
         return $this->hasMany(Stock::class);
     }
+    public function items(){
+
+        return $this->hasMany(Item::class);
+    }
+
 }

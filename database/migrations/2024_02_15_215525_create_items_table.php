@@ -20,9 +20,9 @@ return new class extends Migration
             ->on('productos')
             ->onDelete('cascade');
 
-            $table->string('cantidad');
-            $table->string('precio');
-            $table->string('subtotal');
+            $table->string('cantidad')->nullable();
+            $table->string('precio')->nullable();
+            $table->string('subtotal')->nullable();
             $table->string('estado');
             $table->timestamps();
         });

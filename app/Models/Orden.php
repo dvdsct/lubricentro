@@ -41,6 +41,11 @@ class Orden extends Model
         return $this->belongsToMany(Producto::class);
     }
 
+
+    public function items(){
+        return $this->belongsToMany(Item::class,'items_x_ordens');
+    }
+
 }
 
 

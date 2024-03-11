@@ -26,6 +26,7 @@ class AddProducts extends Component
     public $producto;
     public $servicio;
     public $item;
+    public $total;
 
     // Item
     public $cantidad;
@@ -41,15 +42,36 @@ class AddProducts extends Component
     }
 
 
-    public function addProduct($id)
+    public function addCantidad($id)
     {
-        $producto = Producto::find($id);
+        $item = Item::find($id);
+        $p = Producto::find($item->producto_id);
+        $stock = Stock::where('producto_id', $p->id)->first();
 
-        Item::create([
-            'producto_id' => $producto->id,
+        // dd($stock);
+        $precio = $p->costo;
 
-            'estado' => '1',
-        ]);
+
+        if (
+            $stock->cantidad >
+            $this->cantidad and  $this->cantidad != 0
+        ) {
+            $item->update([
+                'cantidad' => $this->cantidad,
+                'subtotal' => $precio *  $this->cantidad,
+                'estado' => '2',
+
+            ]);
+
+            $stock->update([
+                'cantidad' => $stock->cantidad - $this->cantidad
+            ]);
+
+            $this->reset('cantidad');
+        } else {
+
+            dd('no hay stock');
+        }
     }
 
     public function modalProdOn()
@@ -64,6 +86,29 @@ class AddProducts extends Component
         //
     }
 
+    public function addedProduct($p)
+    {
+
+        $this->producto = Producto::find($p);
+
+        $i = Item::create([
+            'producto_id' => $this->producto->id,
+            'precio' => $this->producto->costo,
+            'estado' => '1',
+        ]);
+
+        ItemsXOrden::create([
+            'item_id' => $i->id,
+            'orden_id' => $this->orden->id,
+            'estado' => '1',
+
+        ]);
+
+        $this->modalProdOff();
+
+        // dd($this->producto);
+    }
+
 
 
 
@@ -76,7 +121,7 @@ class AddProducts extends Component
             ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')
             ->where('descripcion', 'like', '%' . $this->query . '%')
             ->get();
-        $this->items = ItemsXOrden::where('orden_id', $this->orden->id)->get();
+        $this->total = $this->orden->items->sum('subtotal');
         return view('livewire.add-products');
     }
 }

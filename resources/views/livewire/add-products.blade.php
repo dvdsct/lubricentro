@@ -24,38 +24,55 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($items as $i)
+                    @foreach ($orden->items as $i)
                         <tr>
-                            <td>{{ $i->items }}</td>
-                            <td>Filtro de Aire - Wega</td>
+                            <td>{{ $i->id }}</td>
+                            <td>{{$i->productos->descripcion}}</td>
                             <td>
                                 WO-059
 
                             </td>
-                            <td>
-                                3
+                            @if ($i->estado == 1)
+                                <td><input type="text" wire:model='cantidad'
+                                        wire:keydown.enter='addCantidad({{ $i->id }})'></td>
+                            @endif
+                                    <td>
+                                       {{ $i->cantidad}}
+                                    </td>
+                                    
+                                    
+                                    <td>
+                                        
+                                        {{ $i->subtotal}}
                             </td>
-                            <td><span class="badge bg-success">$90</span></td>
                         </tr>
                     @endforeach
-
+          
                 </tbody>
+        
             </table>
-        </div>
 
+            
+
+        </div>
+        <div class="card-header justify-content-between">
+            <h3>TOTAL</h3>
+            <h3>{{$total}}</h3>
+
+        </div>
 
     </div>
 
 
 
     @if ($modal == true)
-        <div class="modal fade show" id="modal-lg" style="display: block; padding-right: 17px;" >
+        <div class="modal fade show" id="modal-lg" style="display: block; padding-right: 17px;">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <div class="input-group input-group-sm" style="width: 150px;">
-                            <input type="text"wire:model='query' wire:keydown='search' class="form-control float-right"
-                                placeholder="Search">
+                            <input type="text"wire:model='query' wire:keydown='search'
+                                class="form-control float-right" placeholder="Search">
                             <div class="input-group-append">
                                 <button type="submit" class="btn btn-default">
                                     <i class="fas fa-search"></i>
@@ -68,7 +85,7 @@
                     </div>
                     <div class="modal-body">
 
-                        <table class="table table-bordered">
+                        <table class="table table-bordered  table-hover">
                             <thead>
                                 <tr>
                                     <th style="width: 10px">#</th>
@@ -80,7 +97,7 @@
                             </thead>
                             <tbody>
                                 @foreach ($stock as $i)
-                                    <tr>
+                                    <tr wire:click='addedProduct({{ $i->id }})'>
                                         <td>{{ $i->id }}</td>
                                         <td>{{ $i->descripcion }}</td>
                                         <td>{{ $i->costo }}</td>

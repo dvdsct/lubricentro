@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ItemsXOrden extends Model
 {
     use HasFactory;
+     protected $fillable = [
+        'item_id',	'orden_id',	'estado',	
+     ];
 }
