@@ -3,7 +3,7 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-    <h1>Ordenes Index</h1>
+    <h1>Ordenes Show</h1>
 @stop
 
 @section('content')
@@ -16,6 +16,7 @@
     <div class="col-8">
 
         @livewire('datos-personales',['orden' => $orden])
+        @livewire('add-products',['orden' => $orden])
     </div>
     <div class="col-4">
         @livewire('about-vehicle',['orden' => $orden])

@@ -15,13 +15,9 @@ class Producto extends Model
         'codigo'
     ];
 
-    public function ordenes(){
-
-        return $this->belongsToMany(Orden::class);
-    }
 
     public function stocks(){
 
-        return $this->belongsTo(Stock::class);
+        return $this->hasMany(Stock::class);
     }
 }
