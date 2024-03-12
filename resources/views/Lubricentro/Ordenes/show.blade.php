@@ -20,6 +20,8 @@
     </div>
     <div class="col-4">
         @livewire('about-vehicle',['orden' => $orden])
+        @livewire('final-order',['orden' => $orden])
+        @livewire('form-pago',['orden' => $orden])
 
     </div>
 </div>

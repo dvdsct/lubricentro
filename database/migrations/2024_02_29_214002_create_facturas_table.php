@@ -18,6 +18,12 @@ return new class extends Migration
             ->references('id')
             ->on('ordens')
             ->onDelete('cascade');
+            $table->unsignedBigInteger('tipo_factura_id');
+            $table->foreign('tipo_factura_id')
+            ->references('id')
+            ->on('tipo_facturas')
+            ->onDelete('cascade');
+            $table->string('total');
             $table->string('estado');
             $table->timestamps();
         });

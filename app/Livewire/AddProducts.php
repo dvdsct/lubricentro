@@ -7,6 +7,7 @@ use App\Models\ItemsXOrden;
 use App\Models\Producto;
 use App\Models\Servicio;
 use App\Models\Stock;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -53,7 +54,7 @@ class AddProducts extends Component
 
 
         if (
-            $stock->cantidad >
+            $stock->cantidad >=
             $this->cantidad and  $this->cantidad != 0
         ) {
             $item->update([
@@ -70,9 +71,12 @@ class AddProducts extends Component
             $this->reset('cantidad');
         } else {
 
-            dd('no hay stock');
+            // dd('no hay stock');
+            return  $this->dispatch('nonstock');
         }
     }
+
+    // Manejo del Modal
 
     public function modalProdOn()
     {
@@ -89,26 +93,53 @@ class AddProducts extends Component
     public function addedProduct($p)
     {
 
+
         $this->producto = Producto::find($p);
+        $stock = Stock::where('producto_id', $this->producto->id)->first();
 
-        $i = Item::create([
-            'producto_id' => $this->producto->id,
-            'precio' => $this->producto->costo,
-            'estado' => '1',
-        ]);
+        if ($stock->cantidad == 0) {
 
-        ItemsXOrden::create([
-            'item_id' => $i->id,
-            'orden_id' => $this->orden->id,
-            'estado' => '1',
 
-        ]);
+           return  $this->dispatch('nonstock');
+
+        } else {
+
+
+
+
+            $i = Item::create([
+                'producto_id' => $this->producto->id,
+                'precio' => $this->producto->costo,
+                'estado' => '1',
+            ]);
+
+            ItemsXOrden::create([
+                'item_id' => $i->id,
+                'orden_id' => $this->orden->id,
+                'estado' => '1',
+
+            ]);
+        }
 
         $this->modalProdOff();
 
         // dd($this->producto);
     }
 
+
+
+
+
+
+
+
+    #[On('delete')]
+    public function delProd(string $id)
+    {
+
+        $item = Item::find($id);
+        $item->delete();
+    }
 
 
 

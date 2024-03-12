@@ -32,6 +32,7 @@ return new class extends Migration
             ->onDelete('cascade');
 
             $table->string('efectivo');
+            $table->string('total');
             $table->string('estado');
 
 

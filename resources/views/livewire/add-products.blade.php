@@ -20,14 +20,14 @@
                         <th>Repuesto</th>
                         <th>Codigo</th>
                         <th>Cantidad</th>
-                        <th style="width: 40px">Precio</th>
+                        <th style="width: 40px">Subtotal</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($orden->items as $i)
                         <tr>
                             <td>{{ $i->id }}</td>
-                            <td>{{$i->productos->descripcion}}</td>
+                            <td>{{ $i->productos->descripcion }}</td>
                             <td>
                                 WO-059
 
@@ -35,29 +35,45 @@
                             @if ($i->estado == 1)
                                 <td><input type="text" wire:model='cantidad'
                                         wire:keydown.enter='addCantidad({{ $i->id }})'></td>
+                            @else
+                                <td>
+                                    {{ $i->cantidad }}
+                                </td>
                             @endif
-                                    <td>
-                                       {{ $i->cantidad}}
-                                    </td>
-                                    
-                                    
-                                    <td>
-                                        
-                                        {{ $i->subtotal}}
+
+
+                            <td>
+
+                                {{ $i->subtotal }}
+                            </td>
+                            <td class="project-actions text-right">
+
+                                <a class="btn btn-info btn-sm" wire:click='editProd({{ $i->id }})'>
+                                    <i class="fas fa-pencil-alt">
+                                    </i>
+                                    Edit
+                                </a>
+                                <a class="btn btn-danger btn-sm" wire:click='delProd({{ $i->id }})'
+                                    wire:confirm="Si borras este articulo tendras que volver a agregarlo?">
+                                    <i class="fas fa-trash">
+                                    </i>
+                                    Delete
+                                </a>
+
                             </td>
                         </tr>
                     @endforeach
-          
+
                 </tbody>
-        
+
             </table>
 
-            
+
 
         </div>
         <div class="card-header justify-content-between">
             <h3>TOTAL</h3>
-            <h3>{{$total}}</h3>
+            <h3>{{ $total }}</h3>
 
         </div>
 
@@ -102,8 +118,11 @@
                                         <td>{{ $i->descripcion }}</td>
                                         <td>{{ $i->costo }}</td>
                                         <td>{{ $i->codigo }}</td>
-
-                                        <td><span class="badge bg-success">{{ $i->cantidad }}</span></td>
+                                        @if ($i->cantidad == 0)
+                                            <td><span class="badge bg-danger">{{ $i->cantidad }}</span></td>
+                                        @else
+                                            <td><span class="badge bg-success">{{ $i->cantidad }}</span></td>
+                                        @endif
                                     </tr>
                                 @endforeach
 
@@ -135,4 +154,17 @@
 
 
 
+
+    @script
+        <script>
+                $wire.on('nonstock', (event) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "No puedes agregar este producto por falta de stock",
+                    });
+                });
+
+        </script>
+    @endscript
 </div>
