@@ -11,6 +11,7 @@ class LwProductos extends Component
     public $head = ['descripcion', 'costo'];
     public $list;
     public $producto;
+    public $productos;
 
     // public function mount(){
 
@@ -27,7 +28,7 @@ class LwProductos extends Component
 
     public function render()
     {
-        $this->list = Producto::all();
+        $this->productos = Producto::all();
         return view('livewire.lw-productos');
     }
 }

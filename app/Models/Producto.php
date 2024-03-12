@@ -16,7 +16,7 @@ class Producto extends Model
     ];
 
 
-    
+
     public function stocks(){
 
         return $this->hasMany(Stock::class);
@@ -25,5 +25,10 @@ class Producto extends Model
 
         return $this->hasMany(Item::class);
     }
+
+    public function proveedores(){
+        return $this->belongsTo(Proveedor::class,'proveedor_id');
+    }
+
 
 }
