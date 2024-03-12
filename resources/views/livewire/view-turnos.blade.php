@@ -6,8 +6,7 @@
             <button wire:click='change_day("yes")' class="btn btn-info btn-sm">
                 <i class="fas fa-arrow-left"></i></button>
             <input type="date" wire:model="fecha" class="form-control">
-            <button wire:click='change_day("tmw")' class="btn btn-info btn-sm"><i
-                    class="fas fa-arrow-right"></i></button>
+            <button wire:click='change_day("tmw")' class="btn btn-info btn-sm"><i class="fas fa-arrow-right"></i></button>
 
 
         </div>
@@ -15,16 +14,18 @@
             <h1> <strong>{{ ucfirst(Carbon\Carbon::parse($fecha)->locale('es')->isoFormat('dddd DD ')) }} </strong></h1>
         </div>
         <div class="col-2 pt-2 mr-2">
-            {{ $fecha }}
+            <!--             {{ $fecha }} -->
             <button type="button" class="btn btn-block btn-info" data-target="modal-default" wire:click="$dispatchTo('form-create-order', 'modal-order')">
                 Nuevo Turno</button>
         </div>
     </div>
-    <div class="row">
-
-        <div class="col-6">
+    <div class="row pt-2">
+        <!-- TABLA LUBRICENTRO -->
+        <div class="col-6 card">
             <table class="table">
-                <thead>Lubricentro</thead>
+                <thead><span class="badge bg-orange" style="height: 40px;">
+                        <h3> <strong>Lubricentro </strong> </h3>
+                    </span> </thead>
                 <thead>
                     <th>HORARIO</th>
                     <th>CLIENTE</th>
@@ -32,25 +33,21 @@
                 </thead>
                 <tbody>
                     @foreach ($turnlub as $t)
-                        <tr>
-
-                            <td><span class="badge bg-danger">{{ $t->horario }}</span></td>
-                            <td>{{ $t->clientes->perfiles->personas->nombre . ' ' . $t->clientes->perfiles->personas->apellido }}
-                            </td>
-                            <td>{{
+                    <tr>
+                        <td class="py-0">{{ \Carbon\Carbon::parse($t->horario)->format('H:i') }} hs</td>
+                        <td class="py-0">{{ $t->clientes->perfiles->personas->nombre . ' ' . $t->clientes->perfiles->personas->apellido }} </td>
+                        <td class="py-0">{{
                             $t->vehiculos->modelos->descripcion.
                                 ' ' .
                                 $t->vehiculos->descripcion .
                                 ' ' .
                                 $t->vehiculos->año }}
-                                                                <strong>{{ $t->vehiculos->dominio }}</strong>
-
-                            </td>
-                            <td><a class="btn btn-danger" href="{{ route('ordenes.show', $t->id) }}">cargar</a></td>
-
-                        </tr>
-                        <tr>
-                    @endforeach
+                            <span class="badge bg-orange">{{ $t->vehiculos->dominio }}</span>
+                        </td>
+                        <td class="p-1"><a class="btn btn-info btn-sm" href="{{ route('ordenes.show', $t->id) }}">cargar</a></td>
+                    </tr>
+                    <tr>
+                        @endforeach
 
                 </tbody>
                 </tbody>
@@ -58,10 +55,12 @@
         </div>
 
 
-
-        <div class="col-6">
+        <!-- TABLA LAVADERO -->
+        <div class="col-6 card">
             <table class="table">
-                <thead>Lavadero</thead>
+            <thead><span class="badge bg-primary" style="height: 40px;">
+                        <h3> <strong>Lavadero </strong> </h3>
+                    </span> </thead>
                 <thead>
                     <th>HORARIO</th>
                     <th>CLIENTE</th>
@@ -70,24 +69,24 @@
 
                 <tbody>
                     @foreach ($turnlav as $t)
-                        <tr>
-                            <td><span class="badge bg-success   ">{{ $t->horario }}1313</span></td>
-                            <td>{{ $t->clientes->perfiles->personas->nombre . ' ' . $t->clientes->perfiles->personas->apellido }}
-                            </td>
-                            <td>{{
+                    <tr>
+                        <td class="py-0"><span>{{ $t->horario }}</span></td>
+                        <td class="py-0">{{ $t->clientes->perfiles->personas->nombre . ' ' . $t->clientes->perfiles->personas->apellido }}
+                        </td>
+                        <td class="py-0">{{
                             $t->vehiculos->modelos->descripcion.
                                 ' ' .
                                 $t->vehiculos->descripcion .
                                 ' ' .
                                 $t->vehiculos->año }}
-                                <strong>{{ $t->vehiculos->dominio }}</strong>
-                            </td>
-                            <td><a class="btn btn-success" href="{{ route('ordenes.show', $t->id) }}">cargar</a></td>
+                            <span class="badge bg-primary">{{ $t->vehiculos->dominio }}</span>
+                        </td>
+                        <td><a class="btn btn-primary btn-sm" href="{{ route('ordenes.show', $t->id) }}">cargar</a></td>
 
 
-                        </tr>
-                        <tr>
-                    @endforeach
+                    </tr>
+                    <tr>
+                        @endforeach
 
                 </tbody>
 

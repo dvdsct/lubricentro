@@ -20,13 +20,6 @@
         </div>
     </div>
 
-
-
-
-
-
-
-
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">Striped Full Width Table</h3>
