@@ -21,7 +21,7 @@ class Perfil extends Model
 
     public function proveedores(){
 
-        return $this->hasOne(Proveedores::class);
+        return $this->hasMany(Proveedor::class);
     }
     public function clientes()
     {

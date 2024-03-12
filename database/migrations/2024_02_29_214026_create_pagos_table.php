@@ -25,10 +25,16 @@ return new class extends Migration
             ->on('tipo_pagos')
             ->onDelete('cascade');
 
-            $table->unsignedBigInteger('medio_pago_id');
+            $table->unsignedBigInteger('medio_pago_id')->nullable();
             $table->foreign('medio_pago_id')
             ->references('id')
             ->on('medio_pagos')
+            ->onDelete('cascade');
+
+            $table->unsignedBigInteger('cliente_id')->nullable();
+            $table->foreign('cliente_id')
+            ->references('id')
+            ->on('clientes')
             ->onDelete('cascade');
 
             $table->string('efectivo');

@@ -13,10 +13,26 @@ return new class extends Migration
     {
         Schema::create('productos', function (Blueprint $table) {
             $table->id();
-            $table->string('costo');
-            $table->string('stock');
-            $table->string('codigo');
+            $table->unsignedBigInteger('proveedor_id')->nullable();
+            $table->foreign('proveedor_id')
+            ->references('id')
+            ->on('proveedors')
+            ->onDelete('cascade');
+            $table->unsignedBigInteger('categoria_id')->nullable();
+            $table->foreign('categoria_id')
+            ->references('id')
+            ->on('categorias')
+            ->onDelete('cascade');
+            $table->unsignedBigInteger('subcategoria_id')->nullable();
+            $table->foreign('subcategoria_id')
+            ->references('id')
+            ->on('subcategorias')
+            ->onDelete('cascade');
+
             $table->string('descripcion');
+            $table->string('costo');
+            $table->string('codigo');
+            $table->string('estado');
             $table->timestamps();
         });
     }

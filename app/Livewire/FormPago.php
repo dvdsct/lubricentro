@@ -35,8 +35,7 @@ class FormPago extends Component
 
         $this->tiposPago = TipoPago::all();
         $this->mediosPago = MedioPago::all();
-        $this->clientes = Cliente::where('lista_precios','3')->get();
-
+        $this->clientes = Cliente::where('lista_precios', '3')->get();
     }
 
     public function closeModal()
@@ -57,25 +56,40 @@ class FormPago extends Component
     public function pagar()
     {
 
+        if($this->tipoPago == 1){
 
-       $f =  Factura::create([
+            $f =  Factura::create([
 
-            'orden_id' => $this->orden->id,
+                'orden_id' => $this->orden->id,
 
-            'tipo_factura_id' => $this->tipoFactura,
-            'total' => $this->montoAPagar,
-            'estado' => '2'
-        ]);
+                'tipo_factura_id' => $this->tipoFactura,
+                'total' => $this->montoAPagar,
+                'estado' => '2'
+            ]);
 
-        Pago::create([
-            'factura_id' => $f->id,
-            	'tipo_pago_id' => $this->tipoPago,
-            	'medio_pago_id' => $this->medioPago,
-            	'efectivo' => $this->efectivo,
-            	'total' => $this->montoPagado,
-            	'estado' => '2',
+            Pago::create([
+                'factura_id' => $f->id,
+                'tipo_pago_id' => $this->tipoPago,
+                'efectivo' => 0,
+                'total' => $this->montoAPagar,
+                'estado' => '10',
 
-        ]);
+            ]);
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
 
