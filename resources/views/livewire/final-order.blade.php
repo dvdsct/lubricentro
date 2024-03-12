@@ -2,7 +2,9 @@
 
     <div class="col-md-4">
 
-
+        @if ($orden->estado == 100)
+        .
+        @else
         <div class="info-box mb-3 bg-warning btn" wire:click='$dispatchTo("form-pago","formPago")'>
             <span class="info-box-icon"><i class="fas fa-tag"></i></span>
             <div class="info-box-content">
@@ -11,6 +13,10 @@
             </div>
 
         </div>
+        @endif
+
+
+
         <a href="{{ route('pdf', $orden->id) }}">
 
             <div class="info-box mb-3 bg-success">

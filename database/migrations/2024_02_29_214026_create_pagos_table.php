@@ -19,7 +19,7 @@ return new class extends Migration
             ->on('facturas')
             ->onDelete('cascade');
 
-            $table->unsignedBigInteger('tipo_pago_id');
+            $table->unsignedBigInteger('tipo_pago_id')->nullable();
             $table->foreign('tipo_pago_id')
             ->references('id')
             ->on('tipo_pagos')
@@ -37,7 +37,9 @@ return new class extends Migration
             ->on('clientes')
             ->onDelete('cascade');
 
-            $table->string('efectivo');
+            $table->string('efectivo')->nullable();
+            $table->string('code_op')->nullable();
+            $table->string('parcial')->nullable();
             $table->string('total');
             $table->string('estado');
 
