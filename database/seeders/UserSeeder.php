@@ -7,6 +7,7 @@ use App\Models\Empleado;
 use App\Models\Orden;
 use App\Models\Persona;
 use App\Models\Perfil;
+use App\Models\Proveedor;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -45,6 +46,20 @@ class UserSeeder extends Seeder
             'fecha_nac' => '20/05/05',
             'estado' => '1',
         ]);
+        Persona::create([
+            'nombre' => 'John Wake',
+            'apellido' => 'Togedemaru',
+            'DNI' => '5456465456',
+            'fecha_nac' => '20/05/05',
+            'estado' => '1',
+        ]);
+        Persona::create([
+            'nombre' => 'Wage',
+            'apellido' => '',
+            'DNI' => '5456465456',
+            'fecha_nac' => '20/05/05',
+            'estado' => '1',
+        ]);
 
 
 
@@ -67,6 +82,7 @@ class UserSeeder extends Seeder
             'password' => bcrypt('User@159')
         ])->assignRole('user');
 
+
         Perfil::create([
             'persona_id' => '1',
             'user_id' => '1',
@@ -79,6 +95,14 @@ class UserSeeder extends Seeder
             'persona_id' => '3',
             'user_id' => '3',
         ]);
+        Perfil::create([
+            'persona_id' => '4',
+        ]);
+        Perfil::create([
+            'persona_id' => '5',
+        ]);
+
+
 
         Empleado::create([
             'perfil_id' => '1',
@@ -90,7 +114,7 @@ class UserSeeder extends Seeder
         Cliente::create([
             'perfil_id' => '2',
             'categoria' => '2',
-            'lista_precios' => '2',
+            'lista_precios' => '3',
 
 
         ]);
@@ -98,8 +122,20 @@ class UserSeeder extends Seeder
             'perfil_id' => '3',
             'categoria' => '2',
             'lista_precios' => '2',
+        ]);
 
+        Proveedor::create([
 
+            'perfil_id' => '4',
+            'tipo' => 'Mayorista',
+            'estado' => '',
+        ]);
+
+        Proveedor::create([
+
+            'perfil_id' => '5',
+            'tipo' => 'Mayorista',
+            'estado' => '',
         ]);
 
 

@@ -18,15 +18,15 @@ return new class extends Migration
             ->references('id')
             ->on('proveedors')
             ->onDelete('cascade');
-            $table->unsignedBigInteger('categoria_id')->nullable();
-            $table->foreign('categoria_id')
+            $table->unsignedBigInteger('categoria_productos_id')->nullable();
+            $table->foreign('categoria_productos_id')
             ->references('id')
-            ->on('categorias')
+            ->on('categoria_productos')
             ->onDelete('cascade');
-            $table->unsignedBigInteger('subcategoria_id')->nullable();
-            $table->foreign('subcategoria_id')
+            $table->unsignedBigInteger('subcategoria_productos_id')->nullable();
+            $table->foreign('subcategoria_productos_id')
             ->references('id')
-            ->on('subcategorias')
+            ->on('subcategoria_productos')
             ->onDelete('cascade');
 
             $table->string('descripcion');

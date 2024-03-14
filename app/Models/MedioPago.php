@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class MedioPago extends Model
 {
     use HasFactory;
+
+    
+    public function pagos()
+    {
+
+        return $this->hasMany(Pago::class);
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Factura;
 use Illuminate\Http\Request;
 
 class VentaController extends Controller
@@ -10,7 +11,7 @@ class VentaController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
+    {   
         return view('Lubricentro.Ventas.index');
     }
 

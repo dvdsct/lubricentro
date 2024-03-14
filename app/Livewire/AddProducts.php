@@ -104,6 +104,8 @@ class AddProducts extends Component
 
         } else {
 
+            $this->modalProdOff();
+
 
 
 
@@ -121,7 +123,6 @@ class AddProducts extends Component
             ]);
         }
 
-        $this->modalProdOff();
 
         // dd($this->producto);
     }
