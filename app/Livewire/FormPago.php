@@ -213,7 +213,7 @@ class FormPago extends Component
 
     public function render()
     {
-        $this->vuelto = $this->montoAPagar - $this->efectivo;
+        $this->vuelto = floatval($this->montoAPagar) - floatval($this->efectivo);
         $this->montoAPagar = $this->orden->items->sum('subtotal');
         return view('livewire.form-pago');
     }

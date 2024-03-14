@@ -12,7 +12,7 @@
         </div>
     @endif
 
-            <a href="{{ route('pdf', $orden->id) }}">
+            <a href="{{ route('pdf', $orden->id) }}" target="_blank">
                 <div class="info-box bg-success">
                     <span class="info-box-icon"><i class="fas fa-print"></i></span>
                     <div class="info-box-content">
