@@ -5,19 +5,13 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-info">
-                    <h4 class="modal-title">Nuevo turno {{ $fecha }}</h4>
+                    <h4 class="modal-title"> <strong>  Nuevo turno </strong> </h4>
                     <button type="button" class="close" wire:click='closeModal'>
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     @if ($formperson == false)
-                    <!--                     <div class="btn btn-primary" wire:click='formPerson'>
-                        <div class="icon">
-                            <span>agregar persona </span>
-                            <i class="ion ion-person-add"></i>
-                        </div>
-                    </div> -->
 
                     <button class="btn btn-primary" wire:click='formPerson'>
                         <div class="icon">
@@ -69,7 +63,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-9">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label class="col-sm-2 col-form-label">Vehiculo</label>
                                 <select class="form-control" aria-label="Default select example" wire:model='vehiculo'>
@@ -82,20 +76,25 @@
                                 </select>
                             </div>
                         </div>
-
+<!-- 
                         <div class="col-md-3">
                             <button type="button" class="btn btn-success" wire:click='addTurno'>Agregar</button>
-                        </div>
+                        </div> -->
 
-                        <div class="col-md-3">
+                        <div class="col-md-6">
+                        <div class="form-group">
+                        <label class="col-sm-2 col-form-label">Sector</label>
                             <select class="form-control" aria-label="Default select example" wire:model='motivo'>
-                                <option selected>Sector..</option>
+                                <option selected>Seleccionar</option>
                                 <option value="1">Lavadero</option>
                                 <option value="2">Lubricentro</option>
                             </select>
                         </div>
+                        </div>
 
-                        <div class="col-md-9">
+                        <div class="col-md-12">
+                        <div class="form-group">
+                        <label class="col-sm-2 col-form-label">Servicio</label>
                             <select class="form-control" aria-label="Default select example" wire:model='servicio'>
                                 <option selected>Seleccionar servicio</option>
                                 @foreach ($servicios as $s)

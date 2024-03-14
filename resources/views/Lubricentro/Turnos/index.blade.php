@@ -3,7 +3,7 @@
 @section('title', 'Turnos - Rocket')
 
 @section('content_header')
-    <h1>Turnos</h1>
+    <h1> <strong> TURNOS </strong></h1>
 @stop
 
 @section('content')
