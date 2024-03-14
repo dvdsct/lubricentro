@@ -92,7 +92,7 @@ class FormCreateOrder extends Component
         if ($this->formperson == true) {
 
             $this->formperson = false;
-            
+
         } else {
             $this->vehiculos = Vehiculo::all();
             $this->formperson = true;
@@ -102,7 +102,6 @@ class FormCreateOrder extends Component
     #[On('modal-order')]
     public function openModal()
     {
-
         $this->modal = true;
     }
 
