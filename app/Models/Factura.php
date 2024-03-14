@@ -9,8 +9,22 @@ class Factura extends Model
 {
     use HasFactory;
 
-    protected $fillable  = ['orden_id',
-    'tipo_factura_id',
-    'total',
-    'estado',];
+    protected $fillable  = [
+        'orden_id',
+        'tipo_factura_id',
+        'total',
+        'estado',
+    ];
+
+
+    public function ordenes(){
+        return $this->belongsTo(Orden::class,'orden_id');
+    }
+
+
+    public function pagos()
+    {
+
+        return $this->hasMany(Pago::class);
+    }
 }

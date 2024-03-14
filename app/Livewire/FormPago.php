@@ -87,6 +87,8 @@ class FormPago extends Component
                 Pago::create([
                     'factura_id' => $f->id,
                     'cliente_id' => $this->cliente,
+                    'medio_pago_id' => '4',
+                    'tipo_pago_id' => $this->tipoPago,
                     'efectivo' => 0,
                     'total' => $this->montoAPagar,
                     'estado' => '10',
@@ -174,6 +176,9 @@ class FormPago extends Component
                 'cliente',
             );
         }
+
+
+        return redirect('ordenes/' . $this->orden->id);
     }
 
 

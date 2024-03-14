@@ -72,16 +72,16 @@
                                         </div>
                                     </div>
 
-                                    <select class="form-select" aria-label="Default select example" wire:model='vehiculo'>
+                                    <select class="form-select" aria-label="Default select example"
+                                        wire:model='vehiculo'>
                                         <option selected>Open this select menu</option>
                                         @foreach ($vehiculos as $v)
-                                        <option value="{{ $v->id }}">{{ $v->marcas->descripcion }}
-                                            {{ $v->medelos }}
-                                        </option>
-
+                                            <option value="{{ $v->id }}">{{ $v->marcas->descripcion }}
+                                                {{ $v->medelos }}
+                                            </option>
                                         @endforeach
 
-                                      </select>
+                                    </select>
 
 
                                     <select class="form-select" aria-label="Default select example"

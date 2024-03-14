@@ -119,7 +119,8 @@
                         </thead>
                         <tbody>
                             @foreach ($stock as $i)
-                                <tr wire:click='addedProduct({{ $i->id }})'>
+                                <tr wire:click='addedProduct({{ $i->id }})'      wire:loading.attr="disabled"
+                                    >
                                     <td>{{ $i->id }}</td>
                                     <td>{{ $i->descripcion }}</td>
                                     <td>{{ $i->costo }}</td>
@@ -130,7 +131,8 @@
                                         <td><span class="badge bg-success">{{ $i->cantidad }}</span></td>
                                     @endif
                                 </tr>
-                            @endforeach
+                                @endforeach
+                       
 
                         </tbody>
                     </table>

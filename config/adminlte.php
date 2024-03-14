@@ -303,6 +303,11 @@ return [
 
 
         [
+            'text' => 'Facturacion',
+            'url'  => 'venta',
+            'icon' => 'fa fa-list',
+        ],
+        [
             'text' => 'Stock',
             'url'  => 'stock',
             'icon' => 'fa fa-list',

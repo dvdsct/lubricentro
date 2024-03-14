@@ -20,4 +20,23 @@ class Pago extends Model
         'code_op',
         'estado',
     ];
+
+
+    public function facturas()
+    {
+
+        return $this->belongsTo(Factura::class, 'factura_id');
+    }
+
+
+    public function medios()
+    {
+
+        return $this->belongsTo(MedioPago::class, 'medio_pago_id');
+    }
+    public function tipos()
+    {
+
+        return $this->belongsTo(TipoPago::class, 'tipo_pago_id');
+    }
 }

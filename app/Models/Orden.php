@@ -46,6 +46,11 @@ class Orden extends Model
         return $this->belongsToMany(Item::class,'items_x_ordens');
     }
 
+    public function facturas(){
+
+        return $this->hasMany(Factura::class);
+    }
+
 }
 
 

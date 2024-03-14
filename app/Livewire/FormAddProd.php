@@ -3,35 +3,42 @@
 namespace App\Livewire;
 
 use App\Models\Producto;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class FormAddProd extends Component
 {
     public $producto;
-public $descripcion;
-public $stock;
-public $costo;
-public $codigo;
-public $modal;
+    public $descripcion;
+    public $stock;
+    public $costo;
+    public $codigo;
+    public $modal;
 
 
-public function modalOn(){
-    $this->modal = true;
-}
-public function modalOff(){
-    $this->modal = false;
-}
+    public function modalOn()
+    {
+        $this->modal = true;
+    }
+    public function modalOff()
+    {
+        $this->modal = false;
+    }
 
-    public function saveproduct(){
+    public function saveproduct()
+    {
 
         $p = Producto::create([
-        'descripcion' => $this->descripcion,
-        'stock' => $this->stock,
-        'costo' => $this->costo,
-        'codigo' => $this->codigo,]);
+            'descripcion' => $this->descripcion,
+            'stock' => $this->stock,
+            'costo' => $this->costo,
+            'codigo' => $this->codigo,
+        ]);
         $this->modalOff();
         $this->dispatch('added')->to(LwProductos::class);
     }
+
+    
     public function render()
     {
         return view('livewire.form-add-prod');
