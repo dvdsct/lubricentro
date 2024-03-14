@@ -131,9 +131,6 @@
                 $('#mySelect').select2();
 
             });
-
-
-
         });
     </script>
     @endscript
