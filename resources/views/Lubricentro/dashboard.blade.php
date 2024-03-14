@@ -12,8 +12,12 @@
 
 
         <div class="col-8">
-            @livewire('prev-turnos')
-            @livewire('prev-orders')
+            <div class="col-2 pt-2 mr-2">
+                    <button type="button" class="btn btn-block btn-info" data-target="modal-default" wire:click="$dispatchTo('form-create-order', 'modal-order')">
+                    Nuevo Turno</button>
+            </div>
+            @livewire('form-create-order')
+
         </div>
         <div class="col-4">
             @livewire('preview-stock')

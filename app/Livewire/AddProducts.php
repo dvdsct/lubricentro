@@ -21,7 +21,7 @@ class AddProducts extends Component
     public $items;
     public $orden;
     public $modal;
-    public $stock;
+    // public $stock;
 
     // De la Orden
     public $producto;
@@ -149,11 +149,15 @@ class AddProducts extends Component
     {
         $this->productos = Stock::all();
         $this->servicios = Servicio::all();
-        $this->stock = Stock::select('stocks.*', 'productos.descripcion as descripcion', 'productos.codigo', 'productos.costo')
+
+
+        $this->total = $this->orden->items->sum('subtotal');
+
+        return view('livewire.add-products',[
+            'stock' => Stock::select('stocks.*', 'productos.descripcion as descripcion', 'productos.codigo', 'productos.costo')
             ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')
             ->where('descripcion', 'like', '%' . $this->query . '%')
-            ->get();
-        $this->total = $this->orden->items->sum('subtotal');
-        return view('livewire.add-products');
+            ->paginate(10)
+        ]);
     }
 }

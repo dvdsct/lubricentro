@@ -76,11 +76,12 @@ class UserSeeder extends Seeder
             'email' => 'user@test.com',
             'password' => bcrypt('User@159')
         ])->assignRole('user');
+
         User::create([
-            'name' => 'user1',
-            'email' => 'user1@test.com',
-            'password' => bcrypt('User@159')
-        ])->assignRole('user');
+            'name' => 'cajero',
+            'email' => 'cajero@test.com',
+            'password' => bcrypt('Cajero@159')
+        ])->assignRole('cajero');
 
 
         Perfil::create([

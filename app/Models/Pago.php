@@ -39,4 +39,10 @@ class Pago extends Model
 
         return $this->belongsTo(TipoPago::class, 'tipo_pago_id');
     }
+
+
+    public function cajas(){
+        return $this->belongsToMany(Caja::class,'pagos_x_cajas');
+    }
+
 }

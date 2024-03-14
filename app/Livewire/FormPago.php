@@ -2,13 +2,16 @@
 
 namespace App\Livewire;
 
+use App\Models\Caja;
 use App\Models\Cliente;
 use App\Models\Factura;
 use App\Models\MedioPago;
 use App\Models\Orden;
 use App\Models\Pago;
+use App\Models\PagosXCaja;
 use App\Models\TipoFactura;
 use App\Models\TipoPago;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -30,6 +33,7 @@ class FormPago extends Component
 
     public $clientes;
     public $cliente;
+    public $caja;
 
 
     public function mount()
@@ -39,6 +43,8 @@ class FormPago extends Component
         $this->tiposFactura = TipoFactura::all();
         $this->mediosPago = MedioPago::all();
         $this->clientes = Cliente::where('lista_precios', '3')->get();
+        $this->caja = Caja::where('user_id',Auth::user()->id)->first();
+
     }
 
     public function closeModal()
@@ -84,13 +90,20 @@ class FormPago extends Component
                     'estado' => '10'
                 ]);
 
-                Pago::create([
+                $p = Pago::create([
                     'factura_id' => $f->id,
                     'cliente_id' => $this->cliente,
                     'medio_pago_id' => '4',
                     'tipo_pago_id' => $this->tipoPago,
                     'efectivo' => 0,
                     'total' => $this->montoAPagar,
+                    'estado' => '10',
+
+                ]);
+
+                PagosXCaja::create([
+                    'pago_id' => $p->id,
+                    'caja_id' => $this->caja->id,
                     'estado' => '10',
 
                 ]);
@@ -116,7 +129,7 @@ class FormPago extends Component
                         'estado' => '2'
                     ]);
 
-                    Pago::create([
+                    $p = Pago::create([
                         'factura_id' => $f->id,
                         'cliente_id' => $this->cliente,
                         'medio_pago_id' => $this->medioPago,
@@ -124,6 +137,12 @@ class FormPago extends Component
                         'efectivo' => $this->efectivo,
                         'total' => $this->montoAPagar,
                         'estado' => '20',
+
+                    ]);
+                    PagosXCaja::create([
+                        'pago_id' => $p->id,
+                        'caja_id' => $this->caja->id,
+                        'estado' => '10',
 
                     ]);
                 }
@@ -145,7 +164,7 @@ class FormPago extends Component
                     'estado' => '2'
                 ]);
 
-                Pago::create([
+                $p  = Pago::create([
                     'factura_id' => $f->id,
                     'cliente_id' => $this->cliente,
                     'medio_pago_id' => $this->medioPago,
@@ -155,6 +174,13 @@ class FormPago extends Component
                     'parcial' => $this->montoPagado,
                     'code_op' => $this->codeOp,
                     'estado' => '20',
+
+                ]);
+
+                PagosXCaja::create([
+                    'pago_id' => $p->id,
+                    'caja_id' => $this->caja->id,
+                    'estado' => '10',
 
                 ]);
             }
