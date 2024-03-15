@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Turnos - Rocket')
 
 @section('content_header')
-    <h1>Turnos Index</h1>
+    <h1>Turnos</h1>
 @stop
 
 @section('content')
@@ -13,6 +13,7 @@
 
 @livewire('view-turnos')
 @livewire('form-create-order')
+
 
 
 

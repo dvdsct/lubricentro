@@ -1,14 +1,12 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Productos - Rocket')
 
 @section('content_header')
-    <h1>Producto Index</h1>
+    <h1> <strong> PRODUCTOS </strong> </h1>
 @stop
 
 @section('content')
-
-
 
 
 @livewire('form-add-prod')

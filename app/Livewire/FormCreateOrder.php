@@ -93,19 +93,22 @@ class FormCreateOrder extends Component
             'color' => $this->color,
             'año' => $this->año,
             'version' => $this->version,
-            'estado' => '1',
+            'estado' => '1'
         ]);
 
         Orden::create([
-            'servicio_id' => $this->servicio->id,
-            'cliente_id' => $cliente->id,
-            'vehiculo_id' => $vehiculo->id,
+
+            'servicio_id' => $this->servicio,
+            'cliente_id' => $this->cliente->id,
+            'vehiculo_id' => $this->vehiculo,
             'motivo' => $this->motivo,
             'horario' => Carbon::now(),
-            'estado' => '1',
+            'estado' => '1'
         ]);
 
-        $this->reset;
+
+        $this->reset();
+        $this->dispatch('added-turn');
 
     }
 
@@ -141,8 +144,6 @@ class FormCreateOrder extends Component
 
     public function render()
     {
-
-
         return view('livewire.form-create-order');
     }
 }

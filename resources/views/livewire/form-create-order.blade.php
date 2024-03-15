@@ -19,8 +19,10 @@
                             <div wire:ignore>
 
                                 <div class="mb-3 row">
-                                    {{ $cliente }}
-                                    <select id="mySelect" wire:model='cliente'>
+                                    <select id="mySelect" wire:model='cliente' class="form-select"
+                                        aria-label="Default select example">
+                                        <option selected>Open this select menu</option>
+
                                         @foreach ($clientes as $c)
                                             <option value="{{ $c->id }}">{{ $c->perfiles->personas->nombre }}
                                                 {{ $c->perfiles->personas->apellido }} {{ $c->perfiles->personas->dni }}
@@ -72,6 +74,14 @@
                                         </div>
                                     </div>
 
+<<<<<<< HEAD
+=======
+                                    <select class="form-select" aria-label="Default select example" wire:model='vehiculo'>
+                                        <option selected>Open this select menu</option>
+                                        @foreach ($vehiculos as $v)
+                                        <option value="{{ $v->id }}">{{ $v->marcas->descripcion }}
+                                            {{ $v->medelos }}
+                                bril
 
 
                                     <div class='col'>
@@ -188,15 +198,15 @@
                             </div>
 
                     </div>
+
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" wire:click='closeModal'>Close</button>
+                        <button type="button" class="btn btn-primary" wire:click='addTurno'>Save changes</button>
+                    </div>
+                </div>
+
+            </div>
     @endif
-    <div class="modal-footer justify-content-between">
-        <button type="button" class="btn btn-default" wire:click='closeModal'>Close</button>
-        <button type="button" class="btn btn-primary" wire:click='addTurno'>Save changes</button>
-    </div>
-</div>
-
-</div>
-
 </div>
 @script
     <script>

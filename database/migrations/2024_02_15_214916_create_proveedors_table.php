@@ -11,18 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('items', function (Blueprint $table) {
+        Schema::create('proveedors', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('producto_id');
-            $table->foreign('producto_id')
+            $table->unsignedBigInteger('perfil_id');
+            $table->foreign('perfil_id')
             ->references('id')
-            ->on('productos')
+            ->on('perfils')
             ->onDelete('cascade');
 
-            $table->string('cantidad')->nullable();
-            $table->string('precio')->nullable();
-            $table->string('subtotal')->nullable();
+            $table->string('tipo');
+            $table->integer('cuit')->nullable();
             $table->string('estado');
             $table->timestamps();
         });
@@ -33,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('items');
+        Schema::dropIfExists('proveedors');
     }
 };

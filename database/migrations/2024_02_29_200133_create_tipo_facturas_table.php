@@ -11,17 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('proveedores', function (Blueprint $table) {
+        Schema::create('tipo_facturas', function (Blueprint $table) {
             $table->id();
-
-            $table->unsignedBigInteger('perfil_id');
-            $table->foreign('perfil_id')
-            ->references('id')
-            ->on('perfils')
-            ->onDelete('cascade');
-
-            $table->string('tipo');
-            $table->integer('cuit');
+            $table->string('descripcion');
             $table->string('estado');
             $table->timestamps();
         });
@@ -32,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('proveedores');
+        Schema::dropIfExists('tipo_facturas');
     }
 };

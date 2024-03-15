@@ -6,6 +6,7 @@ use App\Models\Orden;
 use Livewire\Component;
 use App\Models\Producto;
 use Illuminate\Support\Carbon;
+use Livewire\Attributes\On;
 
 class ViewTurnos extends Component
 {
@@ -42,7 +43,7 @@ class ViewTurnos extends Component
 
 
 
-
+    #[On('added-turn')]
     public function render()
     {
         $this->turnlav = Orden::where('motivo','1')

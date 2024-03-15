@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('descripcion');
 
-            $table->unsignedBigInteger('tipo_vehiculo_id');
+            $table->unsignedBigInteger('tipo_vehiculo_id')->nullable();
             $table->foreign('tipo_vehiculo_id')
             ->references('id')
             ->on('tipo_vehiculos')
@@ -27,7 +27,7 @@ return new class extends Migration
             ->on('marca_vehiculos')
             ->onDelete('cascade');
 
-            $table->string('estado');
+            $table->string('estado')->nullable();
             $table->timestamps();
         });
     }

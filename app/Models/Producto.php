@@ -15,13 +15,20 @@ class Producto extends Model
         'codigo'
     ];
 
-    public function ordenes(){
 
-        return $this->belongsToMany(Orden::class);
-    }
 
     public function stocks(){
 
-        return $this->belongsTo(Stock::class);
+        return $this->hasMany(Stock::class);
     }
+    public function items(){
+
+        return $this->hasMany(Item::class);
+    }
+
+    public function proveedores(){
+        return $this->belongsTo(Proveedor::class,'proveedor_id');
+    }
+
+
 }
