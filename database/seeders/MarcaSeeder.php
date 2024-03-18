@@ -33,7 +33,8 @@ class MarcaSeeder extends Seeder
             'KIA',
             'Subaru',
             'Volvo',
-            'Land Rover'
+            'Land Rover',
+            'Mitsubishi'
         ];
 
         foreach ($marcas as $m){

@@ -84,11 +84,11 @@ class FormCreateOrder extends Component
         'persona_id'=>$persona->id,
         ]); */
 
-        $cliente = Cliente::create([
+        $this->cliente = Cliente::create([
             'perfil_id' => Perfil::create(['persona_id' => $persona->id])->id
         ]);
 
-        $vehiculo = Vehiculo::create([
+        $this->vehiculo = Vehiculo::create([
             'dominio' => $this->dominio,
             'color' => $this->color,
             'año' => $this->año,

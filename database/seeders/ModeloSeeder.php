@@ -94,14 +94,14 @@ class ModeloSeeder extends Seeder
             '308 GTi',1
             'Expert',8
             'Traveller',9
-            'Partner',1
-            'RCZ',
-            '108 TOP!',
-            'e-208',
-            'e-2008',
-            '508 SW',
-            '308 SW',
-            '3008 GT',
+            'Partner',8
+            'RCZ',1
+            '108 TOP!',1
+            'e-208',1
+            'e-2008',6
+            '508 SW',1
+            '308 SW',1
+            '3008 GT',1
 
             //Hyundai
             'Accent',

@@ -14,14 +14,15 @@ class TipoVehiculoSeeder extends Seeder
     public function run(): void
     {
         $tipos=[
-            'Automovil',
-            'Camioneta',
-            'Camion',
-            'Autobus',
-            'Motocicleta o Ciclomotor',
+            'Sedán',
+            'Hatchback',
+            'Coupé',
             'SUV (Vehículo utilitario deportivo)',
-            'Vehículo de lujo',
+            'Convertible',
+            'Pick-up',
             'Furgoneta',
+            'Motocicleta o Ciclomotor',
+            'Vehículo de lujo',
             'VAN',
             'Otro'
         ];

@@ -30,8 +30,9 @@ return new class extends Migration
             ->onDelete('cascade');
 
             $table->string('descripcion');
-            $table->string('costo');
-            $table->string('codigo');
+            $table->integer('costo');
+            $table->bigIntegerinteger('codigo_de_barras');
+            $table->integer('precio_venta');
             $table->string('estado');
             $table->timestamps();
         });
