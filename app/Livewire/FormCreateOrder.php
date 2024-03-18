@@ -2,9 +2,10 @@
 
 namespace App\Livewire;
 
-
-
-
+use App\Models\Colores;
+use App\Models\ModeloVehiculo;
+use App\Models\MarcaVehiculo;
+use App\Models\TipoVehiculo;
 use App\Models\Vehiculo;
 use App\Models\Perfil;
 use App\Models\Persona;
@@ -37,10 +38,20 @@ class FormCreateOrder extends Component
     public $fecha_nac;
     public $dni;
 
+    //Select formperson==TRUE
+    public $tipo_vehiculo;
+    public $marcas;
+    public $modelos;
+    public $colores;
+
     public function mount()
     {
         $this->clientes = Cliente::all();
         $this->servicios = Servicio::all();
+        $this->tipo_vehiculo = TipoVehiculo::all();
+        $this->marcas = MarcaVehiculo::all();
+        $this->modelos = ModeloVehiculo::all();
+        $this->colores = Colores::all();
         // $this->cliente = 'ok';
     }
 

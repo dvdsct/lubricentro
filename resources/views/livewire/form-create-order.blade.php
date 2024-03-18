@@ -74,14 +74,6 @@
                                         </div>
                                     </div>
 
-<<<<<<< HEAD
-=======
-                                    <select class="form-select" aria-label="Default select example" wire:model='vehiculo'>
-                                        <option selected>Open this select menu</option>
-                                        @foreach ($vehiculos as $v)
-                                        <option value="{{ $v->id }}">{{ $v->marcas->descripcion }}
-                                            {{ $v->medelos }}
-                                bril
 
 
                                     <div class='col'>
@@ -93,44 +85,49 @@
                                         </div>
                                     </div>
 
-                                    <div class='col'>
 
-                                        <label for="inputVehiculo" class="col-sm-2 col-form-label">Marca</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="inputVehiculo"
-                                                wire:model='marca'>
-                                        </div>
+                                    <div class='col'>
+                                        <select class="form-select" aria-label="Default select example"
+                                        wire:model='tipo_vehiculo'>
+                                        <option selected>Open this select menu</option>
+                                        @foreach ($tipo_vehiculo as $tipo)
+                                            <option value="{{ $tipo->id }}">{{ $tipo->descripcion }}
+                                            </option>
+                                        @endforeach
+                                    </div>
+
+
+                                    <div class='col'>
+                                        <select class="form-select" aria-label="Default select example"
+                                        wire:model='marca'>
+                                        <option selected>Open this select menu</option>
+                                        @foreach ($marcas as $marca)
+                                            <option value="{{ $marca->id }}">{{ $marca->descripcion }}
+                                            </option>
+                                        @endforeach
                                     </div>
 
 
 
                                     <div class='col'>
-
-                                        <label for="inputVehiculo" class="col-sm-2 col-form-label">Modelo</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="inputVehiculo"
-                                                wire:model='modelo'>
-                                        </div>
+                                        <select class="form-select" aria-label="Default select example"
+                                        wire:model='modelo'>
+                                        <option selected>Open this select menu</option>
+                                        @foreach ($modelos as $modelo)
+                                            <option value="{{ $modelo->id }}">{{ $modelo->descripcion }}
+                                            </option>
+                                        @endforeach
                                     </div>
 
 
                                     <div class='col'>
-
-                                        <label for="inputVehiculo" class="col-sm-2 col-form-label">Tipo Vehiculo</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="inputVehiculo"
-                                                wire:model='tipo_vehiculo'>
-                                        </div>
-                                    </div>
-
-
-                                    <div class='col'>
-
-                                        <label for="inputVehiculo" class="col-sm-2 col-form-label">Color</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="inputVehiculo"
-                                                wire:model='color'>
-                                        </div>
+                                        <select class="form-select" aria-label="Default select example"
+                                        wire:model='color'>
+                                        <option selected>Open this select menu</option>
+                                        @foreach ($colores as $color)
+                                            <option value="{{ $color->id }}">{{ $color->descripcion }}
+                                            </option>
+                                        @endforeach
                                     </div>
 
 
@@ -138,7 +135,7 @@
 
                                         <label for="inputVehiculo" class="col-sm-2 col-form-label">Año</label>
                                         <div class="col-sm-10">
-                                            <input type="date" class="form-control" id="inputVehiculo"
+                                            <input type="integer" class="form-control" id="inputVehiculo"
                                                 wire:model='año'>
                                         </div>
                                     </div>

@@ -31,8 +31,8 @@ return new class extends Migration
 
             $table->string('descripcion');
             $table->integer('costo');
-            $table->bigIntegerinteger('codigo_de_barras');
-            $table->integer('precio_venta');
+            $table->bigInteger('codigo_de_barras');
+            $table->integer('precio_venta')->nullable();
             $table->string('estado');
             $table->timestamps();
         });

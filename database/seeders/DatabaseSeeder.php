@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call(SubcategoriaSeed::class);
         $this->call(TipoFacturaSeed::class);
         $this->call(MarcaSeeder::class);
-        // $this->call(ModeloSeeder::class);
+        $this->call(ModeloSeeder::class);
         $this->call(TipoVehiculoSeeder::class);
         $this->call(VehiculoSeeder::class);
     }

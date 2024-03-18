@@ -41,7 +41,7 @@ class ProductoSeed extends Seeder
                 'proveedor_id' => '1',
                 'costo' => $prod[1],
                 'descripcion' => $prod[0],
-                'codigo' => $prod[3],
+                'codigo_de_barras' => $prod[3],
                 'estado' => '1',
             ]);
 
