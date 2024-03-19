@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\TurnosController;
+use App\Http\Controllers\PedidoProveedorController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PDFController;
 /*
@@ -38,5 +39,6 @@ Route::middleware([
     Route::resource('stock',StockController::class);
     Route::resource('venta',VentaController::class);
     Route::resource('turnos',TurnosController::class);
+    Route::resource('pedidosproveedor',PedidoProveedorController::class);
     Route::get('/pdf/{orden}', 'App\Http\Controllers\PDFController@generatePDF')->name('pdf');
 });

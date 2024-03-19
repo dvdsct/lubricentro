@@ -327,9 +327,11 @@ return [
             'url'  => 'turnos',
             'icon' => 'fa fa-list',
         ],
-
-
-
+        [
+            'text' => 'Pedidos Proveedores',
+            'url'  => 'pedidosproveedor',
+            'icon' => 'fa fa-list',
+        ],
 
     ],
 

@@ -106,9 +106,8 @@
                                             <option value="{{ $m->id }}">{{ $m->descripcion }}
                                             </option>
                                         @endforeach
+                                        </select>
                                     </div>
-
-
 
 
                                     <div class='col'>
@@ -120,7 +119,6 @@
                                             </option>
                                         @endforeach
                                     </div>
-
 
 
                                     <div class='col'>
@@ -135,7 +133,6 @@
 
 
                                     <div class='col'>
-
                                         <label for="inputVehiculo" class="col-sm-2 col-form-label">Año</label>
                                         <div class="col-sm-10">
                                             <input type="integer" class="form-control" id="inputVehiculo"

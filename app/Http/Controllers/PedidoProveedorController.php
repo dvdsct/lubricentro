@@ -12,7 +12,9 @@ class PedidoProveedorController extends Controller
      */
     public function index()
     {
-        //
+        {
+            return view('Lubricentro.PedidosProveedores.index');
+        }
     }
 
     /**
