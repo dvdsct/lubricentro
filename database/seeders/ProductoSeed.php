@@ -18,12 +18,12 @@ class ProductoSeed extends Seeder
     {
         $productos = [
 
-            ['Aceite TOTAL7000 x 4lt', 38.000, '5', 'ooo736'],
-            ['Aceite TOTAL9000 x 4lt', 61.999, '5', 'ooo736'],
-            ['Aceite HELIX x 4lt 5w 30', 34.249, '5', 'ooo736'],
-            ['Kit Wega FIAT Cronos argo', 41.797, '5', 'ooo736'],
-            ['Kit Wega Suran FOX', 41.797, '5', 'ooo736'],
-            ['Kit AMAROK', 63.193, '5', 'ooo736'],
+            ['Aceite TOTAL7000 x 4lt', 38.000, '5', '87685736'],
+            ['Aceite TOTAL9000 x 4lt', 61.999, '5', '768587736'],
+            ['Aceite HELIX x 4lt 5w 30', 34.249, '5', '7368768'],
+            ['Kit Wega FIAT Cronos argo', 41.797, '5', '86768736'],
+            ['Kit Wega Suran FOX', 41.797, '5', '345678736'],
+            ['Kit AMAROK', 63.193, '5', '5678736'],
 
         ];
 

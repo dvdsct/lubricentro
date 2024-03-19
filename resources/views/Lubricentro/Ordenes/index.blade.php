@@ -9,6 +9,8 @@
 @section('content')
 
 
+@livewire('form-create-order');
+
 
 
 

@@ -75,7 +75,7 @@
                                     </div>
 
 
-
+                                    <h1>DATOS DEL VEHICULO</h1>
                                     <div class='col'>
 
                                         <label for="inputVehiculo" class="col-sm-2 col-form-label">Dominio</label>
@@ -97,27 +97,30 @@
                                     </div>
 
 
+
                                     <div class='col'>
                                         <select class="form-select" aria-label="Default select example"
-                                        wire:model='marca'>
+                                        wire:model='marcas'>
                                         <option selected>Open this select menu</option>
-                                        @foreach ($marcas as $marca)
-                                            <option value="{{ $marca->id }}">{{ $marca->descripcion }}
+                                        @foreach ($marcas as $m)
+                                            <option value="{{ $m->id }}">{{ $m->descripcion }}
                                             </option>
                                         @endforeach
                                     </div>
 
 
 
+
                                     <div class='col'>
                                         <select class="form-select" aria-label="Default select example"
-                                        wire:model='modelo'>
+                                        wire:model='modelos'>
                                         <option selected>Open this select menu</option>
                                         @foreach ($modelos as $modelo)
                                             <option value="{{ $modelo->id }}">{{ $modelo->descripcion }}
                                             </option>
                                         @endforeach
                                     </div>
+
 
 
                                     <div class='col'>
@@ -150,7 +153,7 @@
                                         </div>
                                     </div>
 
-                                    @if ($formperson == false)
+                                  {{--  @if ($formperson == false)
 
                                         <select class="form-select" aria-label="Default select example"
                                             wire:model='vehiculo'>
@@ -176,6 +179,7 @@
 
                                     </select>
 
+                                    --}}
 
                                     <select class="form-select" aria-label="Default select example" wire:model='motivo'>
                                         <option selected>Open this select menu</option>
