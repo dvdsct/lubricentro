@@ -1,26 +1,24 @@
 <div>
 
-    <div class="col-md-4">
-
-
-        <div class="info-box mb-3 bg-warning btn" wire:click='$dispatchTo("form-pago","formPago")'>
-            <span class="info-box-icon"><i class="fas fa-tag"></i></span>
+        @if ($orden->estado == 100)
+        .
+        @else
+        <div class="info-box bg-warning d-flex align-items-center justify-content-center" wire:click='$dispatchTo("form-pago","formPago")'>
+            <span class="info-box-icon"><i class="fas fa-cash-register"></i></span>
             <div class="info-box-content">
-                <span class="info-box-text">Cobrar</span>
+                <h4 class="info-box-text"> <strong> Cobrar </strong> </h4>
                 <span class="info-box-number"></span>
             </div>
-
         </div>
-        <a href="{{ route('pdf', $orden->id) }}">
+    @endif
 
-            <div class="info-box mb-3 bg-success">
-                <span class="info-box-icon"><i class="fas fa-cloud-download-alt"></i></span>
-                <div class="info-box-content">
-                    <span class="info-box-text">Imprimir Orden</span>
-                    <span class="info-box-number"></span>
+            <a href="{{ route('pdf', $orden->id) }}" target="_blank">
+                <div class="info-box bg-success">
+                    <span class="info-box-icon"><i class="fas fa-print"></i></span>
+                    <div class="info-box-content">
+                        <h4 class="info-box-text"> <strong> Imprimir Orden </strong> </h4>
+                        <span class="info-box-number"></span>
+                    </div>
                 </div>
-
-            </div>
-        </a>
-    </div>
+            </a>
 </div>

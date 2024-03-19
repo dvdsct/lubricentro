@@ -13,7 +13,7 @@
 
         <div class="col-8">
             @livewire('prev-turnos')
-            @livewire('prev-orders')
+            @livewire('form-create-order')
         </div>
         <div class="col-4">
             @livewire('preview-stock')

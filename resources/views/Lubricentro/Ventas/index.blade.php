@@ -9,7 +9,7 @@
 @section('content')
 
 
-
+@livewire('view-caja')
 
 
 

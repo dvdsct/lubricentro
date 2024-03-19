@@ -17,17 +17,21 @@ class RolesSeeder extends Seeder
      */
     public function run()
     {
-        
+
 
         $admin = Role::create(['name'=>'admin']);
         $user = Role::create(['name'=>'user']);
+        $cajero = Role::create(['name'=>'cajero']);
+        $operador = Role::create(['name'=>'operador']);
 
 
         $read = Permission::create(['name'=>'read']);
         $create = Permission::create(['name'=>'create']);
         $update = Permission::create(['name'=>'update']);
         $delete = Permission::create(['name'=>'delete']);
+        $caja = Permission::create(['name'=>'caja']);
 
+        $caja->assignRole($cajero);
         $read->assignRole($admin);
         $read->assignRole($user);
         $create->assignRole($user);
@@ -36,6 +40,6 @@ class RolesSeeder extends Seeder
         $delete->assignRole($admin);
         $update->assignRole($admin);
 
-        
+
     }
 }

@@ -12,6 +12,7 @@ use App\Models\Persona;
 use App\Models\Cliente;
 use App\Models\Orden;
 use App\Models\Servicio;
+use App\Models\Vehiculo;
 use Carbon\Carbon;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -130,7 +131,9 @@ class FormCreateOrder extends Component
         if ($this->formperson == true) {
 
             $this->formperson = false;
+
         } else {
+            $this->vehiculos = Vehiculo::all();
             $this->formperson = true;
         }
     }
@@ -138,7 +141,6 @@ class FormCreateOrder extends Component
     #[On('modal-order')]
     public function openModal()
     {
-
         $this->modal = true;
     }
 

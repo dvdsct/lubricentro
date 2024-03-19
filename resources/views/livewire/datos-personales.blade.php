@@ -15,16 +15,13 @@
             </div>
 
             <div class="card-body p-0" style="display: block;">
-
                 <div class="row">
-                    <div class="col-2 d-flex flex-column pl-4 py-2">
+                    <div class="col-4 d-flex flex-column pl-4 py-2">
                         <h6><strong>DNI: </strong>{{ $cliente->perfiles->personas->dni }}</h6>
                         <h6><strong>Edad: </strong> {{ $cliente->perfiles->personas->edad }}</h6>
                     </div>
 
-
-                    <div class="col-3 d-flex flex-column px-1 py-2">
-
+                    <div class="col-4 d-flex flex-column px-1 py-2">
                         <h6>
                             <strong>Email: </strong>
                             {{-- {{ $cliente->perfiles->personas->correos->first()->direccion ?? '-' }} --}}
@@ -34,16 +31,14 @@
                             <strong>Telefono: </strong>
                             {{-- {{ optional($cliente->perfiles->personas->telefonos)->first()->numero ?? '-' }} --}}
                         </h6>
-
-
                     </div>
 
 
-                    <div class="col-3 d-flex flex-column"
+                    <div class="col-4 d-flex flex-column"
                         style="display: flex; justify-content: flex-end; align-items: flex-end;">
                         <a href="" class="nav-link" style="display: flex; justify-content: flex-end;"
                             data-toggle="modal" data-target="#modal-datos-pac">
-                            <i class="fas fa-edit"></i> Completar datos de paciente
+                            <i class="fas fa-edit"></i> Completar datos de cliente
                         </a>
                     </div>
 
@@ -57,7 +52,7 @@
             <div class="modal-dialog modal-l">
                 <div class="modal-content">
                     <div class="modal-header bg-info">
-                        <h4 class="modal-title">Completar datos de paciente</h4>
+                        <h4 class="modal-title"> <strong> COMPLETAR DATOS DE CLIENTE </strong> </h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
@@ -109,20 +104,6 @@
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="exampleInputEmail1">Obra Social</label>
-                                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="exampleInputEmail1">N° de Afiliado</label>
-                                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="">
-                                </div>
-                            </div>
-                        </div>
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
