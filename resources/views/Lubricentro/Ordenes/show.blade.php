@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Nueva Orden - Rocket')
 
 @section('content_header')
-    <h1>Ordenes Show</h1>
+    <h1> <strong> NUEVA ORDEN </strong> </h1>
 @stop
 
 @section('content')

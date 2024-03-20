@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Factura;
+use App\Models\Caja;
 use Illuminate\Http\Request;
 
-class VentaController extends Controller
+class CajaController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
-    {   
-        return view('Lubricentro.Ventas.index');
+    {
+        //
     }
 
     /**
@@ -34,7 +34,7 @@ class VentaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Caja $caja)
     {
         //
     }
@@ -42,7 +42,7 @@ class VentaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Caja $caja)
     {
         //
     }
@@ -50,7 +50,7 @@ class VentaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Caja $caja)
     {
         //
     }
@@ -58,7 +58,7 @@ class VentaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Caja $caja)
     {
         //
     }

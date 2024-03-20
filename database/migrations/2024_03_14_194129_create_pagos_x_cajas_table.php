@@ -11,21 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('perfils', function (Blueprint $table) {
+        Schema::create('pagos_x_cajas', function (Blueprint $table) {
             $table->id();
-
-            $table->unsignedBigInteger('persona_id');
-            $table->foreign('persona_id')
+            $table->unsignedBigInteger('pago_id')->nullable();
+            $table->foreign('pago_id')
             ->references('id')
-            ->on('personas')
+            ->on('pagos')
             ->onDelete('cascade');
-
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')
+            $table->unsignedBigInteger('caja_id')->nullable();
+            $table->foreign('caja_id')
             ->references('id')
-            ->on('users')
+            ->on('cajas')
             ->onDelete('cascade');
-
+            $table->string('estado');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -35,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('perfils');
+        Schema::dropIfExists('pagos_x_cajas');
     }
 };

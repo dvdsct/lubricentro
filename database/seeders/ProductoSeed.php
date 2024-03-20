@@ -28,12 +28,7 @@ class ProductoSeed extends Seeder
         ];
 
 
-        Proveedor::create([
 
-            'perfil_id' => '1',
-            'tipo' => 'Mayorista',
-            'estado' => '',
-        ]);
 
         foreach ($productos as $prod) {
 

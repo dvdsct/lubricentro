@@ -5,13 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TipoPago extends Model
+class PagosXCaja extends Model
 {
     use HasFactory;
 
-    public function pagos()
-    {
-
-        return $this->hasMany(Pago::class);
-    }
+    protected $fillable = ['pago_id',
+    'caja_id',
+    'estado',];
 }

@@ -303,6 +303,12 @@ return [
 
 
         [
+            'text' => 'Facturacion',
+            'url'  => 'venta',
+            'icon' => 'fa fa-list',
+            'can' => 'caja',
+        ],
+        [
             'text' => 'Stock',
             'url'  => 'stock',
             'icon' => 'fa fa-list',
@@ -312,16 +318,12 @@ return [
             'url'  => 'productos',
             'icon' => 'fa fa-list',
         ],
-        [
-            'text' => 'Ordenes',
-            'url'  => 'ordenes',
-            'icon' => 'fa fa-list',
-        ],
-        [
-            'text' => 'Ventas',
-            'url'  => 'venta',
-            'icon' => 'fa fa-list',
-        ],
+        // [
+        //     'text' => 'Ordenes',
+        //     'url'  => 'ordenes',
+        //     'icon' => 'fa fa-list',
+        // ],
+
         [
             'text' => 'Turnos',
             'url'  => 'turnos',

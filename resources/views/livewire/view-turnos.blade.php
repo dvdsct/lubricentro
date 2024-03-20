@@ -19,13 +19,18 @@
                 Nuevo Turno</button>
         </div>
     </div>
+
+
+    
     <div class="row pt-2">
         <!-- TABLA LUBRICENTRO -->
         <div class="col-6 card">
             <table class="table">
-                <thead><span class="badge bg-orange" style="height: 40px;">
-                        <h3> <strong>Lubricentro </strong> </h3>
-                    </span> </thead>
+                <thead>
+                    <span class="badge bg-orange" style="height: 40px;">
+                        <h3><strong>Lubricentro </strong></h3>
+                    </span>
+                </thead>
                 <thead>
                     <th>HORARIO</th>
                     <th>CLIENTE</th>
@@ -37,65 +42,52 @@
                         <td class="py-0">{{ \Carbon\Carbon::parse($t->horario)->format('H:i') }} hs</td>
                         <td class="py-0">{{ $t->clientes->perfiles->personas->nombre . ' ' . $t->clientes->perfiles->personas->apellido }} </td>
                         <td class="py-0">{{
-                            $t->vehiculos->modelos->descripcion.
-                                ' ' .
-                                $t->vehiculos->descripcion .
-                                ' ' .
-                                $t->vehiculos->año }}
+                        $t->vehiculos->modelos->descripcion.
+                        ' ' .
+                        $t->vehiculos->descripcion .
+                        ' ' .
+                        $t->vehiculos->año }}
                             <span class="badge bg-orange">{{ $t->vehiculos->dominio }}</span>
                         </td>
-                        <td class="p-1"><a class="btn btn-info btn-sm" href="{{ route('ordenes.show', $t->id) }}">cargar</a></td>
+                        <td class="p-1"><a class="btn btn-secondary btn-sm" href="{{ route('ordenes.show', $t->id) }}">cargar</a></td>
                     </tr>
-                    <tr>
-                        @endforeach
-
-                </tbody>
+                    @endforeach
                 </tbody>
             </table>
         </div>
-
 
         <!-- TABLA LAVADERO -->
-        <div class="col-6 card">
-            <table class="table">
-            <thead><span class="badge bg-primary" style="height: 40px;">
-                        <h3> <strong>Lavadero </strong> </h3>
-                    </span> </thead>
-                <thead>
-                    <th>HORARIO</th>
-                    <th>CLIENTE</th>
-                    <th>VEHICULO</th>
-                </thead>
-
-                <tbody>
-                    @foreach ($turnlav as $t)
-                    <tr>
-                        <td class="py-0"><span>{{ $t->horario }}</span></td>
-                        <td class="py-0">{{ $t->clientes->perfiles->personas->nombre . ' ' . $t->clientes->perfiles->personas->apellido }}
-                        </td>
-                        <td class="py-0">{{
-                            $t->vehiculos->modelos->descripcion.
-                                ' ' .
-                                $t->vehiculos->descripcion .
-                                ' ' .
-                                $t->vehiculos->año }}
-                            <span class="badge bg-primary">{{ $t->vehiculos->dominio }}</span>
-                        </td>
-                        <td><a class="btn btn-primary btn-sm" href="{{ route('ordenes.show', $t->id) }}">cargar</a></td>
-
-
-                    </tr>
-                    <tr>
+            <div class="col-6 card">
+                <table class="table">
+                    <thead>
+                        <span class="badge bg-primary" style="height: 40px;">
+                            <h3><strong>Lavadero </strong></h3>
+                        </span>
+                    </thead>
+                    <thead>
+                        <th>HORARIO</th>
+                        <th>CLIENTE</th>
+                        <th>VEHICULO</th>
+                    </thead>
+                    <tbody>
+                        @foreach ($turnlav as $t)
+                        <tr>
+                            <td class="py-0">{{ \Carbon\Carbon::parse($t->horario)->format('H:i') }} hs</td>
+                            <td class="py-0">{{ $t->clientes->perfiles->personas->nombre . ' ' . $t->clientes->perfiles->personas->apellido }}</td>
+                            <td class="py-0">{{
+                        $t->vehiculos->modelos->descripcion.
+                        ' ' .
+                        $t->vehiculos->descripcion .
+                        ' ' .
+                        $t->vehiculos->año }}
+                                <span class="badge bg-primary">{{ $t->vehiculos->dominio }}</span>
+                            </td>
+                            <td class="py-1"><a class="btn btn-secondary btn-sm" href="{{ route('ordenes.show', $t->id) }}">cargar</a></td>
+                        </tr>
                         @endforeach
-
-                </tbody>
-
-
-
-            </table>
+                    </tbody>
+                </table>
         </div>
-
-
     </div>
 
 

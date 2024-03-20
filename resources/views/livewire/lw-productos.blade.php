@@ -1,6 +1,6 @@
 <div>
 
-    <table>
+    <table class="table table-striped">
         <thead>
             <th>codigo</th>
                 <th>Descripcion</th>

@@ -1,13 +1,13 @@
 <div>
-    <button type="button" class="btn btn-default" wire:click='modalOn'>
+    <button type="button" class="btn btn-success" wire:click='modalOn'>
         Agregar Producto </button>
     @if ($modal == true)
 
     <div class="modal fade show" id="modal-default" style="display: block; padding-right: 17px;" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Nuevo producto</h4>
+                <div class="modal-header bg-info">
+                    <h4 class="modal-title"> <strong> NUEVO PRODUCTO </strong> </h4>
                     <button type="button" class="close" wire:click='modalOff'>
                         <span aria-hidden="true">×</span>
                     </button>
@@ -30,14 +30,9 @@
                             <input type="text" class="form-control col-8" wire:model='stock' />
                         </div>
 
-                        <div class="form-group input-group d-flex justify-content-between">
-                            <div class="input-group-prepend">
+                        <div class="form-group d-flex justify-content-between">
                                 <label>Precio:</label>
-                                <span class="input-group-text">
-                                    <i class="fas fa-dollar-sign"></i>
-                                </span>
                                 <input type="text" class="form-control col-8" wire:model='costo' />
-                            </div>
                         </div>
                         <div class="form-group d-flex justify-content-between">
                             <label>Codigo:</label>
