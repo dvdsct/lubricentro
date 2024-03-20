@@ -6,7 +6,6 @@ use App\Models\Colores;
 use App\Models\ModeloVehiculo;
 use App\Models\MarcaVehiculo;
 use App\Models\TipoVehiculo;
-use App\Models\Vehiculo;
 use App\Models\Perfil;
 use App\Models\Persona;
 use App\Models\Cliente;
