@@ -9,6 +9,20 @@ class Vehiculo extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+
+        'tipo_vehiculo_id',
+        'modelo_vehiculo_id',
+        'marca_vehiculo_id',
+        'dominio',
+        'color',
+        'version',
+        'año',
+        'estado'
+
+    ];
+
+
     public function clientes(){
 
         return $this->belongsToMany(Cliente::class,'vehiculos_x_clientes', 'vehiculo_id', 'cliente_id');

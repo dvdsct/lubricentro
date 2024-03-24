@@ -9,6 +9,16 @@ class Persona extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+
+        'nombre',
+        'apellido',
+        'DNI',
+        'fecha_nac',
+        'estado'
+    ];
+
+
     public function perfiles(){
 
         return $this->hasOne(Perfil::class);

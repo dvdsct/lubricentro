@@ -32,6 +32,7 @@ class FormCreateOrder extends Component
     public $motivo;
 
     // del cliente
+    public $persona;
     public $vehiculo;
     public $nombre;
     public $apellido;
@@ -39,16 +40,24 @@ class FormCreateOrder extends Component
     public $dni;
 
     //Select formperson==TRUE
-    public $tipo_vehiculo;
+    public $tipos_vehiculo;
+    public $tipos;
     public $marcas;
+    public $marca;
     public $modelos;
+    public $modelo;
     public $colores;
+    public $color;
+    public $dominio;
+    public $version;
+    public $año;
+
 
     public function mount()
     {
         $this->clientes = Cliente::all();
         $this->servicios = Servicio::all();
-        $this->tipo_vehiculo = TipoVehiculo::all();
+        $this->tipos_vehiculo = TipoVehiculo::all();
         $this->marcas = MarcaVehiculo::all();
         $this->modelos = ModeloVehiculo::all();
         $this->colores = Colores::all();
@@ -88,30 +97,36 @@ class FormCreateOrder extends Component
             'apellido' => $this->apellido,
             'DNI' => $this->dni,
             'fecha_nac' => $this->fecha_nac,
-            'estado' => '1'
+            'estado' => 1
         ]);
 
 /*         $perfil = Perfil::create([
         'persona_id'=>$persona->id,
         ]); */
-
-        $this->cliente = Cliente::create([
-            'perfil_id' => Perfil::create(['persona_id' => $persona->id])->id
+        $perfil = Perfil::create([
+              'persona_id'=> $persona->id
         ]);
 
-        $this->vehiculo = Vehiculo::create([
+        $nuevo_cliente = Cliente::create([
+            'perfil_id' => $perfil->id
+        ]);
+
+        $vehiculo = Vehiculo::create([
+            'tipo_vehiculo_id'=>$this->tipos,
+            'modelo_vehiculo_id'=>$this->modelo,
+            'marca_vehiculo_id'=>$this->marca,
             'dominio' => $this->dominio,
             'color' => $this->color,
-            'año' => $this->año,
             'version' => $this->version,
-            'estado' => '1'
+            'año' => $this->año,
+            'estado' => 1
         ]);
 
         Orden::create([
 
             'servicio_id' => $this->servicio,
-            'cliente_id' => $this->cliente->id,
-            'vehiculo_id' => $this->vehiculo,
+            'cliente_id' => $nuevo_cliente->id,
+            'vehiculo_id' => $vehiculo->id,
             'motivo' => $this->motivo,
             'horario' => Carbon::now(),
             'estado' => '1'
@@ -120,8 +135,12 @@ class FormCreateOrder extends Component
 
         $this->reset();
         $this->dispatch('added-turn');
+        $this->formperson == false;
+
 
     }
+
+    public function ();
 
 
 
@@ -132,10 +151,11 @@ class FormCreateOrder extends Component
             $this->formperson = false;
 
         } else {
-            $this->vehiculos = Vehiculo::all();
+         //   $this->vehiculos = false;
             $this->formperson = true;
         }
     }
+
 
     #[On('modal-order')]
     public function openModal()

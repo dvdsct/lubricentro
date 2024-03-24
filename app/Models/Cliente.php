@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Cliente extends Model
 {
     use HasFactory;
+    protected $fillable = [
+
+        'perfil_id'
+
+    ];
+
 
     public function perfiles()
     {

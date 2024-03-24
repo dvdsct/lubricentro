@@ -45,7 +45,7 @@ class ColoresSeeder extends Seeder
 
             Colores::create([
                 'descripcion'=>$color,
-                'estado'=>1
+                'estado'=>'1'
             ]);
         }
     }

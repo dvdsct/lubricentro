@@ -9,6 +9,12 @@ class Perfil extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+
+        'persona_id'
+
+    ];
+
     public function personas(){
 
         return $this->hasOne(Persona::class,'id');
