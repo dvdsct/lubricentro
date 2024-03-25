@@ -22,7 +22,7 @@ class Orden extends Model
 
     public function clientes()
     {
-        return $this->belongsTo(Cliente::class, 'cliente_id');
+        return $this->belongsTo(Cliente::class,'cliente_id');
     }
 
     public function empleados()

@@ -10,11 +10,11 @@ class MarcaVehiculo extends Model
     use HasFactory;
 
 
-    public function vehiculos()
-    {
-        return $this->hasMany(Vehiculo::class,'marca_id');
-    }
 
+
+    public function modelos(){
+        return $this->hasMany(ModeloVehiculo::class);
+    }
 
 
 

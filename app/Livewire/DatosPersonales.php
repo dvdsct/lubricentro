@@ -9,10 +9,15 @@ class DatosPersonales extends Component
     public $cliente;
     public $orden;
 
+    public function mount($orden){
+        $this->orden = $orden;
+        $this->cliente = $this->orden->clientes;
+    }
+
     public function render()
     {
 
-        $this->cliente = $this->orden->clientes;
+        // dd($this->orden);
 
         return view('livewire.datos-personales');
     }

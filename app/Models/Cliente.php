@@ -17,8 +17,21 @@ class Cliente extends Model
 
     public function perfiles()
     {
-        return $this->hasOne(Perfil::class,'id');
+        return $this->belongsTo(Perfil::class,'perfil_id');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public function vehiculos()
     {

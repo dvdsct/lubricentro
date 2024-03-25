@@ -39,11 +39,9 @@ class VehiculoSeeder extends Seeder
         ]);
 
         Vehiculo::create([
-            'tipo_vehiculo_id' => 1, // ID del tipo de vehículo Automóvil
             'version' => 'v2',
 
             'modelo_vehiculo_id' => 1, // ID del modelo Corolla
-            'marca_vehiculo_id' => 1, // ID de la marca Toyota
             'dominio' => 'ABC123',
             'color' => 'Rojo',
             'version' => 'v2',
@@ -53,9 +51,7 @@ class VehiculoSeeder extends Seeder
         ]);
 
         Vehiculo::create([
-            'tipo_vehiculo_id' => 2, // ID del tipo de vehículo Camioneta
             'modelo_vehiculo_id' => 2, // ID del modelo Ranger
-            'marca_vehiculo_id' => 2, // ID de la marca Ford
             'dominio' => 'DEF456',
             'color' => 'Azul',
             'version' => 'v2',

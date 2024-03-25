@@ -12,7 +12,9 @@ use App\Models\Cliente;
 use App\Models\Orden;
 use App\Models\Servicio;
 use App\Models\Vehiculo;
+use App\Models\VehiculosXCliente;
 use Carbon\Carbon;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -22,8 +24,18 @@ class FormCreateOrder extends Component
     public $modal;
     public $clientes;
     public $servicios;
+    public $butt;
+    public $act;
+    public $btnLub = true;
+    public $s_btnLub = 'btn-secondary';
+    public $btnLav = false;
+    public $s_btnLav = 'btn-secondary';
+
+    #[Locked]
     public $formperson = false;
 
+    #[Locked]
+    public $formVehiculo = false;
     // de la Orden
     public $cliente;
     public $servicio;
@@ -53,9 +65,14 @@ class FormCreateOrder extends Component
     public $año;
 
 
+    public $query = '';
+
+
+
     public function mount()
     {
         $this->clientes = Cliente::all();
+
         $this->servicios = Servicio::all();
         $this->tipos_vehiculo = TipoVehiculo::all();
         $this->marcas = MarcaVehiculo::all();
@@ -64,6 +81,19 @@ class FormCreateOrder extends Component
         // $this->cliente = 'ok';
     }
 
+
+
+
+
+
+    public function search()
+    {
+        $this->resetPage();
+    }
+
+
+
+
     public function up()
     {
     }
@@ -71,27 +101,26 @@ class FormCreateOrder extends Component
     public function upPerson()
     {
         $this->cliente = Cliente::find($this->cliente);
+        // dd($this->cliente);
 
-        $this->formperson = true;
-        $this->nombre = $this->cliente->perfiles->personas->nombre;
-        $this->apellido = $this->cliente->perfiles->personas->apellido;
-        $this->dni = $this->cliente->perfiles->personas->DNI;
-        $this->fecha_nac = $this->cliente->perfiles->personas->fecha_nac;
-
-
-
-        $this->vehiculos = $this->cliente->vehiculos;
+        $this->nombre = $this->cliente->perfiles->personas->nombre ?? '';
+        $this->apellido = $this->cliente->perfiles->personas->apellido ?? '';
+        $this->dni = $this->cliente->perfiles->personas->DNI ?? '';
+        $this->fecha_nac = $this->cliente->perfiles->personas->fecha_nac ?? '';
 
 
-        // dd($this->nombre);
 
+        // $this->vehiculos = $this->cliente->vehiculos;
+        // $this->formperson = true;
+        // $this->butt = 'd-none';
+        // $this->act = 'disabled';
+
+
+        // $this->formperson = false;
     }
 
-
-
-    public function addTurno()
+    public function addClient()
     {
-
         $persona = Persona::create([
             'nombre' => $this->nombre,
             'apellido' => $this->apellido,
@@ -100,21 +129,44 @@ class FormCreateOrder extends Component
             'estado' => 1
         ]);
 
-/*         $perfil = Perfil::create([
+        /*         $perfil = Perfil::create([
         'persona_id'=>$persona->id,
         ]); */
         $perfil = Perfil::create([
-              'persona_id'=> $persona->id
+            'persona_id' => $persona->id
         ]);
 
-        $nuevo_cliente = Cliente::create([
-            'perfil_id' => $perfil->id
+        $this->cliente = Cliente::create([
+            'perfil_id' => $perfil->id,
         ]);
+        $this->formperson = false;
+        $this->formVehiculo = true;
+    }
 
-        $vehiculo = Vehiculo::create([
-            'tipo_vehiculo_id'=>$this->tipos,
-            'modelo_vehiculo_id'=>$this->modelo,
-            'marca_vehiculo_id'=>$this->marca,
+    public function setForm()
+    {
+        $this->formVehiculo = true;
+    }
+    public function setMot($mot)
+    {
+        if ($mot == 'lub') {
+            $this->s_btnLub = 'btn-primary';
+            $this->s_btnLav = 'btn-secondary';
+            $this->btnLub = true;
+            $this->btnLav = false;
+        } else {
+            // dd('lav');
+            $this->s_btnLub = 'btn btn-secondary';
+            $this->s_btnLav = 'btn btn-primary';
+            $this->btnLub = false;
+            $this->btnLav = true;
+        }
+    }
+
+    public function addVehicle()
+    {
+        $this->vehiculo = Vehiculo::create([
+            'modelo_vehiculo_id' => $this->modelo,
             'dominio' => $this->dominio,
             'color' => $this->color,
             'version' => $this->version,
@@ -122,25 +174,46 @@ class FormCreateOrder extends Component
             'estado' => 1
         ]);
 
-        Orden::create([
-
-            'servicio_id' => $this->servicio,
-            'cliente_id' => $nuevo_cliente->id,
-            'vehiculo_id' => $vehiculo->id,
-            'motivo' => $this->motivo,
-            'horario' => Carbon::now(),
-            'estado' => '1'
+        VehiculosXCliente::create([
+            'cliente_id' => $this->cliente->id,
+            'vehiculo_id' => $this->vehiculo->id
         ]);
 
-
-        $this->reset();
-        $this->dispatch('added-turn');
-        $this->formperson == false;
-
-
+        $this->vehiculo = $this->vehiculo->id;
+        $this->formVehiculo = false;
     }
 
-    public function ();
+    public function addTurno()
+    {
+        // dd($this->vehiculo);
+        if ($this->btnLav == true) {
+
+
+
+            Orden::create([
+
+                'cliente_id' => $this->cliente->id,
+                'vehiculo_id' => $this->vehiculo,
+                'motivo' => '1',
+                'horario' => Carbon::now(),
+                'estado' => '1'
+            ]);
+        } else {
+            Orden::create([
+
+                'cliente_id' => $this->cliente->id,
+                'vehiculo_id' => $this->vehiculo,
+                'motivo' => '2',
+                'horario' => Carbon::now(),
+                'estado' => '1'
+            ]);
+        }
+
+
+        $this->closeModal();
+        $this->dispatch('added-turn');
+        $this->formperson == false;
+    }
 
 
 
@@ -149,9 +222,8 @@ class FormCreateOrder extends Component
         if ($this->formperson == true) {
 
             $this->formperson = false;
-
         } else {
-         //   $this->vehiculos = false;
+            //   $this->vehiculos = false;
             $this->formperson = true;
         }
     }
@@ -165,12 +237,28 @@ class FormCreateOrder extends Component
 
     public function closeModal()
     {
+        $this->reset(
+            'nombre',
+            'apellido',
+            'dni',
+            'fecha_nac',
+            'cliente',
+            'vehiculo',
+            'servicio',
+            'motivo',
+            'tipos',
+            'modelo',
+            'marca',
+            'dominio',
+            'color',
+            'version',
+            'año'
+        );
         $this->modal = false;
         $this->formperson = false;
 
         // $this->reset('nombre');
     }
-
 
 
 

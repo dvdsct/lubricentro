@@ -18,7 +18,7 @@ use Livewire\Component;
 class FormPago extends Component
 {
     public $modal = false;
-    public $tipoPago;
+    public $tipoPago = '1';
     public $tiposPago;
     public $medioPago;
     public $mediosPago;
@@ -27,7 +27,7 @@ class FormPago extends Component
     public $vuelto;
     public $montoAPagar;
     public $montoPagado;
-    public $tipoFactura;
+    public $tipoFactura = '4';
     public $tiposFactura;
     public $codeOp;
 
@@ -213,7 +213,7 @@ class FormPago extends Component
 
     public function render()
     {
-        $this->vuelto = floatval($this->montoAPagar) - floatval($this->efectivo);
+        $this->vuelto = floatval($this->efectivo) - floatval($this->montoAPagar);
         $this->montoAPagar = $this->orden->items->sum('subtotal');
         return view('livewire.form-pago');
     }

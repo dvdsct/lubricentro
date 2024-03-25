@@ -13,11 +13,7 @@ return new class extends Migration
     {
         Schema::create('vehiculos', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('tipo_vehiculo_id');
-            $table->foreign('tipo_vehiculo_id')
-            ->references('id')
-            ->on('tipo_vehiculos')
-            ->onDelete('cascade');
+
 
             $table->unsignedBigInteger('modelo_vehiculo_id');
             $table->foreign('modelo_vehiculo_id')
@@ -25,17 +21,12 @@ return new class extends Migration
             ->on('modelo_vehiculos')
             ->onDelete('cascade');
 
-            $table->unsignedBigInteger('marca_vehiculo_id');
-            $table->foreign('marca_vehiculo_id')
-            ->references('id')
-            ->on('marca_vehiculos')
-            ->onDelete('cascade');
 
-            $table->string('dominio');
-            $table->string('color');
-            $table->string('version');
-            $table->string('año');
-            $table->string('estado');
+            $table->string('dominio')->nullable();
+            $table->string('color')->nullable();
+            $table->string('version')->nullable();
+            $table->string('año')->nullable();
+            $table->string('estado')->nullable();
             $table->timestamps();
         });
     }

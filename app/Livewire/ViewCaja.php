@@ -7,6 +7,7 @@ use App\Models\Factura;
 use App\Models\Pago;
 use Illuminate\Support\Facades\Auth;
 
+
 use Livewire\Component;
 
 class ViewCaja extends Component
@@ -18,6 +19,7 @@ class ViewCaja extends Component
 
     public $pagosEfectivo;
     public $pagosTrans;
+    public $pagosTarjeta;
 
 
 
@@ -47,6 +49,9 @@ class ViewCaja extends Component
             return $pago->medio_pago_id == 2;
         });
         $this->pagosTrans =$this->caja->pagos->filter(function ($pago) {
+            return $pago->medio_pago_id == 5;
+        });
+        $this->pagosTarjeta =$this->caja->pagos->filter(function ($pago) {
             return $pago->medio_pago_id == 1;
         });
 

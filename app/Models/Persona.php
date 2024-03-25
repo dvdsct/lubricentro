@@ -21,8 +21,21 @@ class Persona extends Model
 
     public function perfiles(){
 
-        return $this->hasOne(Perfil::class);
+        return $this->hasMany(Perfil::class);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function domicilios(){
 
         return $this->hasMany(Domicilio::class);

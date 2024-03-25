@@ -9,7 +9,7 @@
 
 
                     <button type="button" class="btn btn-success" wire:click='modalProdOn'>
-                    <i class="fas fa-plus"></i>  Agregar Item 
+                    <i class="fas fa-plus"></i>  Agregar Item
                     </button>
         @endif
     </div>
@@ -50,11 +50,11 @@
                             <td class="project-actions text-right">
                             @else
                             <td class="project-actions text-right pl-0">
-                                <a class="btn btn-info btn-sm" wire:click='editProd({{ $i->id }})'>
+                                {{-- <a class="btn btn-info btn-sm" wire:click='editProd({{ $i->id }})'>
                                     <i class="fas fa-pencil-alt">
                                     </i>
                                     Editar
-                                </a>
+                                </a> --}}
                                 <a class="btn btn-danger btn-sm" wire:click='delProd({{ $i->id }})'
                                     wire:confirm="Si borras este articulo tendras que volver a agregarlo?">
                                     <i class="fas fa-trash">
@@ -127,7 +127,7 @@
                                     @endif
                                     <td>$ {{ $i->costo }}</td>
                                 </tr>
-                                @endforeach                  
+                                @endforeach
                         </tbody>
                     </table>
 

@@ -17,8 +17,18 @@ class Perfil extends Model
 
     public function personas(){
 
-        return $this->hasOne(Persona::class,'id');
+        return $this->belongsTo(Persona::class,'persona_id');
     }
+
+    public function clientes()
+    {
+        return $this->hasMany(Cliente::class );
+    }
+
+
+
+
+
 
     public function users(){
 
@@ -29,10 +39,7 @@ class Perfil extends Model
 
         return $this->hasMany(Proveedor::class);
     }
-    public function clientes()
-    {
-        return $this->hasMany(Cliente::class);
-    }
+
 
     public function clientesV()
     {

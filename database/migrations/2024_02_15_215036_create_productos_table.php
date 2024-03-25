@@ -29,10 +29,11 @@ return new class extends Migration
             ->on('subcategoria_productos')
             ->onDelete('cascade');
 
-            $table->string('descripcion');
-            $table->integer('costo');
-            $table->bigInteger('codigo_de_barras');
-            $table->integer('precio_venta')->nullable();
+            $table->string('descripcion')->nullable();
+            $table->string('costo')->nullable();
+            $table->string('codigo_de_barras')->nullable();
+            $table->string('codigo')->nullable();
+            $table->string('precio_venta')->nullable();
             $table->string('estado');
             $table->timestamps();
         });

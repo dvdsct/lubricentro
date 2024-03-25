@@ -11,7 +11,7 @@ use Livewire\Attributes\On;
 class ViewTurnos extends Component
 {
     public $turnlav;
-    public $headslav = ['vehiculo','motivo','encargado'];
+    public $headslav = ['vehiculo', 'motivo', 'encargado'];
     public $turnlub;
     public $headslub = [];
 
@@ -19,14 +19,15 @@ class ViewTurnos extends Component
     public $fecha;
 
 
-    public function mount(){
+    public function mount()
+    {
         $this->fecha = Carbon::now()->format('Y-m-d');
-
     }
 
-    public function openModal(){
+    public function openModal()
+    {
 
-       $this->dispatch('modal-order')->to(FormCreateOrder::class);
+        $this->dispatch('modal-order')->to(FormCreateOrder::class);
     }
 
     public function change_day($day)
@@ -46,12 +47,39 @@ class ViewTurnos extends Component
     #[On('added-turn')]
     public function render()
     {
-        $this->turnlav = Orden::where('motivo','1')
-        ->whereDate('created_at', $this->fecha)
-        ->get();
-        $this->turnlub = Orden::where('motivo','2')
-        ->whereDate('created_at', $this->fecha)
-        ->get();
+        $this->turnlav = Orden::select(
+            'ordens.*',
+            'clientes.id as cliente_id',
+            'perfils.id as perfil_id',
+            'personas.id as persona_id',
+            'personas.apellido',
+            'personas.DNI'
+        )
+        ->leftJoin('clientes', 'ordens.cliente_id', '=', 'clientes.id')
+        ->leftJoin('perfils', 'clientes.perfil_id', '=', 'perfils.id')
+        ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
+        ->whereColumn('perfils.id', 'clientes.perfil_id')
+        ->whereColumn('personas.id', 'perfils.persona_id')
+            ->whereDate('ordens.created_at', $this->fecha)
+            ->where('motivo', '1')
+            ->get();
+
+        $this->turnlub = Orden::select(
+            'ordens.*',
+            'clientes.id as cliente_id',
+            'perfils.id as perfil_id',
+            'personas.id as persona_id',
+            'personas.apellido',
+            'personas.DNI'
+        )
+        ->leftJoin('clientes', 'ordens.cliente_id', '=', 'clientes.id')
+        ->leftJoin('perfils', 'clientes.perfil_id', '=', 'perfils.id')
+        ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
+        ->whereColumn('perfils.id', 'clientes.perfil_id')
+        ->whereColumn('personas.id', 'perfils.persona_id')
+            ->whereDate('ordens.created_at', $this->fecha)
+            ->where('motivo', '2')
+            ->get();
 
         return view('livewire.view-turnos');
     }

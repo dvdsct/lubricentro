@@ -21,8 +21,8 @@
     </div>
 
 
-    
-    <div class="row pt-2">
+
+<div class="row pt-2">
         <!-- TABLA LUBRICENTRO -->
         <div class="col-6 card">
             <table class="table">
@@ -32,6 +32,7 @@
                     </span>
                 </thead>
                 <thead>
+                    <th>ORDEN</th>
                     <th>HORARIO</th>
                     <th>CLIENTE</th>
                     <th>VEHICULO</th>
@@ -39,8 +40,9 @@
                 <tbody>
                     @foreach ($turnlub as $t)
                     <tr>
+                        <td class="py-0">{{ $t->id }} </td>
                         <td class="py-0">{{ \Carbon\Carbon::parse($t->horario)->format('H:i') }} hs</td>
-                        <td class="py-0">{{ $t->clientes->perfiles->personas->nombre . ' ' . $t->clientes->perfiles->personas->apellido }} </td>
+                        <td class="py-0">{{ $t->nombre . ' ' . $t->apellido }} </td>
                         <td class="py-0">{{
                         $t->vehiculos->modelos->descripcion.
                         ' ' .
@@ -65,6 +67,7 @@
                         </span>
                     </thead>
                     <thead>
+                        <th>ORDEN</th>
                         <th>HORARIO</th>
                         <th>CLIENTE</th>
                         <th>VEHICULO</th>
@@ -72,8 +75,9 @@
                     <tbody>
                         @foreach ($turnlav as $t)
                         <tr>
+                            <td class="py-0">{{ $t->id }}</td>
                             <td class="py-0">{{ \Carbon\Carbon::parse($t->horario)->format('H:i') }} hs</td>
-                            <td class="py-0">{{ $t->clientes->perfiles->personas->nombre . ' ' . $t->clientes->perfiles->personas->apellido }}</td>
+                            <td class="py-0">{{ $t->nombre .' '. $t->apellido }}</td>
                             <td class="py-0">{{
                         $t->vehiculos->modelos->descripcion.
                         ' ' .

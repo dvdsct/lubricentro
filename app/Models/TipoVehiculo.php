@@ -10,5 +10,8 @@ class TipoVehiculo extends Model
     use HasFactory;
 
 
+    public function modelos(){
+        return $this->hasMany(ModeloVehiculo::class);
+    }
 
 }

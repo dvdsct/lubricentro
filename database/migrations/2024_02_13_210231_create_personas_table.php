@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->string('apellido');
-            $table->string('DNI');
-            $table->date('fecha_nac');
+            $table->string('DNI')->nullable();
+            $table->date('fecha_nac')->nullable();
             $table->string('estado');
             $table->timestamps();
         });
