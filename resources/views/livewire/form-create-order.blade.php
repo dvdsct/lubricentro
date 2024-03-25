@@ -6,10 +6,13 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header bg-info">
+
+
                         <h4 class="modal-title"> <strong> Nuevo turno </strong> </h4>
                         <button type="button" class="close" wire:click='closeModal'>
                             <span aria-hidden="true">×</span>
                         </button>
+                        
                     </div>
                     <div class="modal-body">
 
@@ -64,15 +67,18 @@
                                     <label for="inputCliente" class="col-sm-2 col-form-label">Nombre</label>
                                     <input type="text" {{ $act }} class="form-control" id="inputCliente"
                                         wire:model='nombre'>
+                                        <div>@error('nombre') {{ $message }} @enderror</div>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="inputCliente" class="col-sm-2 col-form-label">Apellido</label>
-                                    <input type="text" {{ $act }} class="form-control" id="inputCliente"
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="inputCliente" class="col-sm-2 col-form-label">Apellido</label>
+                                        <input type="text" {{ $act }} class="form-control" id="inputCliente"
                                         wire:model='apellido'>
-                                </div>
+                                        <div>@error('apellido') {{ $message }} @enderror</div>0
+
+                                    </div>
                             </div>
 
                             <div class="col-md-6">
@@ -92,7 +98,9 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <button class="btn btn-primary {{ $butt }}"
+                                    <button class="btn btn-primary"
+                                        wire:click='formPerson'>Cancelar</button>
+                                    <button class="btn btn-primary "
                                         wire:click='addClient'>Guardar</button>
                                 </div>
                             </div>
@@ -196,7 +204,8 @@
                                             wire:model='año'>
                                     </div>
                                 </div>
-                                <button class="btn btn-primary" wire:click='addVehicle'>Guadar</button>
+                                <button class="btn btn-primary" wire:click='setForm'>Cancelar</button>
+                                <button class="btn btn-primary" wire:click='addVehicle'>Guardar</button>
 
 
                             </div>
@@ -231,12 +240,6 @@
                                         </div>
                                     </div>
                         @endif
-                    @else
-                        <div class="row bg-info d-flex justify-content-between">
-
-                            <h3>Datos Vehiculo</h3>
-                            <button class="btn btn-primary" disabled wire:click='setForm'>Agregar</button>
-                        </div>
                     @endif
 
 
@@ -252,7 +255,7 @@
 
                                 <div>
                                     <button wire:click="setMot('lav')"
-                                        class="btn {{ $s_btnLav  }} px-4 py-2 mr-2">Lavadero</button>
+                                        class="btn {{ $s_btnLav }} px-4 py-2 mr-2">Lavadero</button>
                                     <button wire:click="setMot('lub')"
                                         class="btn {{ $s_btnLub }} px-4 py-2">Lubricentro</button>
                                 </div>

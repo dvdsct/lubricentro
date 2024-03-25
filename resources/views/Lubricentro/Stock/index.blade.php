@@ -10,7 +10,7 @@
 
 
 
-
+    @livewire('preview-stock')
 
 
 

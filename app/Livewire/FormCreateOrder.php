@@ -14,8 +14,10 @@ use App\Models\Servicio;
 use App\Models\Vehiculo;
 use App\Models\VehiculosXCliente;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 class FormCreateOrder extends Component
@@ -46,8 +48,12 @@ class FormCreateOrder extends Component
     // del cliente
     public $persona;
     public $vehiculo;
+
+    #[Validate('required', message: 'El campo es obligatorio', translate: false)]
     public $nombre;
+    #[Validate('required', message: 'Please provide a post title', translate: false)]
     public $apellido;
+    #[Validate('required', message: 'Please provide a post title', translate: false)]
     public $fecha_nac;
     public $dni;
 
@@ -110,17 +116,17 @@ class FormCreateOrder extends Component
 
 
 
-        // $this->vehiculos = $this->cliente->vehiculos;
-        // $this->formperson = true;
-        // $this->butt = 'd-none';
-        // $this->act = 'disabled';
 
-
-        // $this->formperson = false;
     }
 
     public function addClient()
     {
+        if(Auth::user()->hasRole(['cajero','admin'])){
+
+
+        $this->validate();
+
+
         $persona = Persona::create([
             'nombre' => $this->nombre,
             'apellido' => $this->apellido,
@@ -141,11 +147,22 @@ class FormCreateOrder extends Component
         ]);
         $this->formperson = false;
         $this->formVehiculo = true;
+
+    }else{
+        return    abort();
+
+    }
     }
 
     public function setForm()
     {
-        $this->formVehiculo = true;
+        if( $this->formVehiculo == true){
+
+            $this->formVehiculo = false;
+        }else{
+            $this->formVehiculo = true;
+
+        }
     }
     public function setMot($mot)
     {
@@ -165,7 +182,7 @@ class FormCreateOrder extends Component
 
     public function addVehicle()
     {
-        $this->vehiculo = Vehiculo::create([
+        $this->vehiculo = Vehiculo::firstOrCreate([
             'modelo_vehiculo_id' => $this->modelo,
             'dominio' => $this->dominio,
             'color' => $this->color,
@@ -174,7 +191,7 @@ class FormCreateOrder extends Component
             'estado' => 1
         ]);
 
-        VehiculosXCliente::create([
+        VehiculosXCliente::firstOrCreate([
             'cliente_id' => $this->cliente->id,
             'vehiculo_id' => $this->vehiculo->id
         ]);
