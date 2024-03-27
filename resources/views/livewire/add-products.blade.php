@@ -83,13 +83,20 @@
 </div>
 
 
-
+<!-- MODAL PARA AGREGAR NUEVO ITEM  -->
 @if ($modal == true)
     <div class="modal fade show" id="modal-lg" style="display: block; padding-right: 17px;">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <div class="input-group input-group-sm" style="width: 150px;">
+                <div class="modal-header bg-info">
+                <h4 class="m-0"> <strong> AGREGAR ITEM </strong> </h4>
+                    <button type="button" class="close" wire:click='modalProdOff'>
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+        <!-- BUSCADOR DE PRODUCTOS  -->
+                <div class="input-group input-group-sm pb-2" style="width: 300px;">
                         <input type="text"wire:model='query' wire:keydown='search' class="form-control float-right"
                             placeholder="Buscar">
                         <div class="input-group-append">
@@ -98,12 +105,6 @@
                             </button>
                         </div>
                     </div>
-                    <button type="button" class="close" wire:click='modalProdOff'>
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-
                     <table class="table table-bordered  table-hover">
                         <thead>
                             <tr>

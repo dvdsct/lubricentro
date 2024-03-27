@@ -1,7 +1,7 @@
 <div>
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Stock</h3>
+            <h3 class="card-title"> <strong> STOCK </strong> </h3>
             <div class="card-tools">
                 <div class="input-group input-group-sm" style="width: 150px;">
                     <input type="text" wire:model='query' wire:keydown='search' class="form-control float-right" placeholder="Search">
@@ -20,7 +20,7 @@
                         <th>Producto</th>
                         <th>Unidad</th>
                         <th>Cantidad</th>
-                        <th></th>
+                        <th>Estado</th>
                     </tr>
                 </thead>
                 <tbody>

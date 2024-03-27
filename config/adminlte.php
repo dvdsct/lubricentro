@@ -305,7 +305,7 @@ return [
         [
             'text' => 'Facturacion',
             'url'  => 'venta',
-            'icon' => 'fa fa-list',
+            'icon' => 'fa fa-file-invoice-dollar',
             'can' => 'caja',
         ],
         [
@@ -316,7 +316,7 @@ return [
         [
             'text' => 'Productos',
             'url'  => 'productos',
-            'icon' => 'fa fa-list',
+            'icon' => 'fa fa-shopping-basket',
         ],
         // [
         //     'text' => 'Ordenes',
@@ -327,12 +327,12 @@ return [
         [
             'text' => 'Turnos',
             'url'  => 'turnos',
-            'icon' => 'fa fa-list',
+            'icon' => 'fa fa-calendar-alt',
         ],
         [
             'text' => 'Pedidos Proveedores',
             'url'  => 'pedidosproveedor',
-            'icon' => 'fa fa-list',
+            'icon' => 'fa fa-truck',
         ],
 
     ],
