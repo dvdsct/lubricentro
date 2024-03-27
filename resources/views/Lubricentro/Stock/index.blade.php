@@ -1,10 +1,8 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Stock')
 
-@section('content_header')
-    <h1>Stock Index</h1>
-@stop
+
 
 @section('content')
 
