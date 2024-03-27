@@ -49,9 +49,9 @@ class FormCreateOrder extends Component
     public $persona;
     public $vehiculo;
 
-    #[Validate('required', message: 'El campo es obligatorio', translate: false)]
+    #[Validate('required', message: 'Debe ingresar un Nombre!', translate: false)]
     public $nombre;
-    #[Validate('required', message: 'Please provide a post title', translate: false)]
+    #[Validate('required', message: 'Debe ingresar un Apellido!', translate: false)]
     public $apellido;
     #[Validate('required', message: 'Please provide a post title', translate: false)]
     public $fecha_nac;
@@ -86,10 +86,6 @@ class FormCreateOrder extends Component
         $this->colores = Colores::all();
         // $this->cliente = 'ok';
     }
-
-
-
-
 
 
     public function search()

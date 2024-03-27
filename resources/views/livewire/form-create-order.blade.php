@@ -1,282 +1,232 @@
 <div>
-
     @if ($modal == true)
-        <div class="modal fade show" id="modal-lg" style="display: block; padding-right: 17px;" aria-modal="true"
-            role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header bg-info">
+    <div class="modal fade show" id="modal-default" style="display: block;" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h4 class="modal-title"> <strong> NUEVO TURNO </strong> </h4>
+                    <button type="button" class="close" wire:click='closeModal'>
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
 
-
-                        <h4 class="modal-title"> <strong> Nuevo turno </strong> </h4>
-                        <button type="button" class="close" wire:click='closeModal'>
-                            <span aria-hidden="true">×</span>
-                        </button>
-                        
+                <!-- SI EL CLIENTE NO EXISTE - CREAR NUEVO CLIENTE -->
+                <div class="modal-body">
+                    @if ($formperson == false)
+                    <div class="row  d-flex justify-content-between">
+                        <h4 class="pl-2"> <strong> CLIENTE </strong> </h4>
                     </div>
-                    <div class="modal-body">
-
-
-                        @if ($formperson == false)
-
-                            <div class="row bg-info d-flex justify-content-between">
-
-                                <h3>Datos Cliente</h3>
-
-                                <button class="btn btn-primary" wire:click='formPerson'>
-                                    <div class="icon">
-                                        <i class="ion ion-person-add"></i>
-                                    </div>
-                                    Nuevo Cliente
-                                </button>
-                            </div>
-                            @if ($cliente == null)
-                                <div class="row">
-                                    <select id="" wire:model.live='cliente' class="form-control"
-                                        wire:change="upPerson" aria-label="Default select example">
-                                        <option selected></option>
-
-
-                                        @foreach ($clientes as $c)
-                                            <option value="{{ $c->id }}">
-
-                                                {{ $c->id }}
-                                                {{ $c->perfiles->personas->nombre }}
-                                                {{ $c->perfiles->personas->apellido }} - DNI:
-                                                {{ $c->perfiles->personas->DNI }}
-                                            </option>
-                                        @endforeach ...
-                                    </select>
+                    @if ($cliente == null)
+                    <div class="row pt-2">
+                        <div class="col-md-10">
+                            <select id="" wire:model.live='cliente' class="form-control" wire:change="upPerson" aria-label="Default select example">
+                                <option selected> Seleccionar cliente</option>
+                                @foreach ($clientes as $c)
+                                <option value="{{ $c->id }}">
+                                    {{ $c->id }}
+                                    {{ $c->perfiles->personas->nombre }}
+                                    {{ $c->perfiles->personas->apellido }} - DNI:
+                                    {{ $c->perfiles->personas->DNI }}
+                                </option>
+                                @endforeach ...
+                            </select>
+                        </div>
+                        <!-- BOTON CREAR NUEVO CLIENTE  -->
+                        <div class="col-md-2">
+                            <button class="btn btn-success" wire:click='formPerson'>
+                                <div class="icon">
+                                    <i class="fas fa-user-plus"></i>
                                 </div>
-                            @else
-                                {{ $nombre }} {{ $apellido }}
-
-                            @endif
-                        @endif
+                            </button>
+                        </div>
                     </div>
-                    @if ($formperson == true)
-                        <div class="row bg-info">
-
-                            <h3>Datos Cliente</h3>
-
-
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="inputCliente" class="col-sm-2 col-form-label">Nombre</label>
-                                    <input type="text" {{ $act }} class="form-control" id="inputCliente"
-                                        wire:model='nombre'>
-                                        <div>@error('nombre') {{ $message }} @enderror</div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="inputCliente" class="col-sm-2 col-form-label">Apellido</label>
-                                        <input type="text" {{ $act }} class="form-control" id="inputCliente"
-                                        wire:model='apellido'>
-                                        <div>@error('apellido') {{ $message }} @enderror</div>0
-
-                                    </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="inputCliente" class="col-sm-2 col-form-label">DNI</label>
-                                    <input type="text" {{ $act }} class="form-control" id="inputCliente"
-                                        wire:model='dni'>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="inputCliente" class="col-form-label">Fecha de Nac.</label>
-                                    <input type="date" {{ $act }} class="form-control" id="inputCliente"
-                                        wire:model='fecha_nac'>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <button class="btn btn-primary"
-                                        wire:click='formPerson'>Cancelar</button>
-                                    <button class="btn btn-primary "
-                                        wire:click='addClient'>Guardar</button>
-                                </div>
-                            </div>
-
-                        </div>
+                    @else
+                    <!-- MUESTRA NOMBRE APELLIDO Y DNI DEL CLIENTE SELECCIONADO -->
+                    <div class="row d-flex justify-content-center">
+                        <h1> <span class="font-italic float-right badge bg-secondary"> {{ $nombre }} {{ $apellido }} - {{$dni}} </span> </h1>
+                    </div>
                     @endif
-                    <hr>
-
-
-                    {{-- Vehiculo --}}
-                    @if ($cliente != null)
-                        @if ($formVehiculo == true)
-                            <div class="row  bg-info">
-
-                                <h3>Datos Vehiculo</h3>
-                            </div>
-
-
-                            <div class="row">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label class="col col-form-label">Tipo Vehiculo</label>
-                                        <select class="form-control" aria-label="Default select example"
-                                            wire:model='tipos'>
-                                            <option selected>Seleccionar..</option>
-                                            @foreach ($tipos_vehiculo as $tipos)
-                                                <option value="{{ $tipos->id }}">{{ $tipos->descripcion }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="col-sm-2 col-form-label">Marca</label>
-                                        <select class="form-control" aria-label="Default select example"
-                                            wire:model='marca'>
-                                            <option selected>Seleccionar..</option>
-                                            @foreach ($marcas as $marca)
-                                                <option value="{{ $marca->id }}">{{ $marca->descripcion }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="col-sm-2 col-form-label">Modelos</label>
-                                        <select class="form-control" aria-label="Default select example"
-                                            wire:model='modelo'>
-                                            <option selected>Seleccionar..</option>
-                                            @foreach ($modelos as $modelo)
-                                                <option value="{{ $modelo->id }}">{{ $modelo->descripcion }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="col-sm-2 col-form-label">Color</label>
-                                        <select class="form-control" aria-label="Default select example"
-                                            wire:model='color'>
-                                            <option selected>Seleccionar..</option>
-                                            @foreach ($colores as $color)
-                                                <option value="{{ $color->id }}">{{ $color->descripcion }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="inputCliente" class="col-form-label">Dominio</label>
-                                        <input type="text" class="form-control" id="inputCliente"
-                                            wire:model='dominio'>
-                                    </div>
-                                </div>
-
-
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="inputCliente" class="col-form-label">Version</label>
-                                        <input type="text" class="form-control" id="inputCliente"
-                                            wire:model='version'>
-                                    </div>
-                                </div>
-
-
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="inputCliente" class="col-form-label">Año</label>
-                                        <input type="text" class="form-control" id="inputCliente"
-                                            wire:model='año'>
-                                    </div>
-                                </div>
-                                <button class="btn btn-primary" wire:click='setForm'>Cancelar</button>
-                                <button class="btn btn-primary" wire:click='addVehicle'>Guardar</button>
-
-
-                            </div>
-                        @else
-                            <div class="row bg-info d-flex justify-content-between">
-
-                                <h3>Datos Vehiculo</h3>
-                                <button class="btn btn-primary" wire:click='setForm'>Agregar</button>
-                            </div>
-
-
-
-                            <div class="row">
-
-                                <div class="col">
-                                    <div class="form-group">
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <label class="col col-form-label">Vehiculos</label>
-                                                <select class="form-control" aria-label="Default select example"
-                                                    wire:model='vehiculo'>
-                                                    <option selected>Seleccionar..</option>
-                                                    @foreach ($cliente->vehiculos as $vc)
-                                                        <option value="{{ $vc->id }}">
-                                                            {{ $vc->modelos->descripcion . ' ' . $vc->dominio }}
-
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                        @endif
                     @endif
+                </div>
 
-
-
-                    <hr><br>
-                    {{-- Sector --}}
-
-                    <h3>Servicio</h3>
-                    <div class="row d-flex justify-content-between">
-
-                        <div class="col">
-                            <div class="form-group">
-
-                                <div>
-                                    <button wire:click="setMot('lav')"
-                                        class="btn {{ $s_btnLav }} px-4 py-2 mr-2">Lavadero</button>
-                                    <button wire:click="setMot('lub')"
-                                        class="btn {{ $s_btnLub }} px-4 py-2">Lubricentro</button>
-                                </div>
-                            </div>
+                @if ($formperson == true)
+                <!-- SECCION DONDE SE CREA EL NUEVO CLIENTE -->
+                <div class="row pl-4">
+                    <h4><strong> Agregar nuevo cliente </strong> </h4>
+                </div>
+                <div class="row px-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="inputCliente" class="col-sm-2 col-form-label">Nombre</label>
+                            <input type="text" {{ $act }} class="form-control" id="inputCliente" wire:model='nombre'>
+                            <div>@error('nombre') {{ $message }} @enderror</div>
                         </div>
                     </div>
-                    <br>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="inputCliente" class="col-sm-2 col-form-label">Apellido</label>
+                            <input type="text" {{ $act }} class="form-control" id="inputCliente" wire:model='apellido'>
+                            <div>@error('apellido') {{ $message }} @enderror</div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="inputCliente" class="col-sm-2 col-form-label">DNI</label>
+                            <input type="text" {{ $act }} class="form-control" id="inputCliente" wire:model='dni'>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="inputCliente" class="col-form-label">Fecha de Nac.</label>
+                            <input type="date" {{ $act }} class="form-control" id="inputCliente" wire:model='fecha_nac'>
+                        </div>
+                    </div>
+                    <div class="col-md-12 pt-2">
+                        <div class="form-group d-flex justify-content-end">
+                            <button class="btn btn-danger mr-2" wire:click='formPerson'>Cancelar</button>
+                            <button class="btn btn-success" wire:click='addClient'>Guardar</button>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                
+                @if ($cliente != null)
+                @if ($formVehiculo == true)
+                <div class="pl-3">
+                    <h4> <strong>VEHÍCULO </strong> </h4>
+                </div>
+                <!-- SI EL VEHICULO NO EXISTE, CREAR NUEVO VEHICULO -->
+                <div class="px-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <select class="form-control" aria-label="Default select example" wire:model='marca'>
+                                <option selected>Marca</option>
+                                @foreach ($marcas as $marca)
+                                <option value="{{ $marca->id }}">{{ $marca->descripcion }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <select class="form-control" aria-label="Default select example" wire:model='modelo'>
+                                <option selected>Modelo</option>
+                                @foreach ($modelos as $modelo)
+                                <option value="{{ $modelo->id }}">{{ $modelo->descripcion }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row pt-4">
+                        <div class="col-md-6">
+                            <select class="form-control" aria-label="Default select example" wire:model='tipos'>
+                                <option selected>Tipo de vehiculo</option>
+                                @foreach ($tipos_vehiculo as $tipos)
+                                <option value="{{ $tipos->id }}">{{ $tipos->descripcion }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <select class="form-control" aria-label="Default select example" wire:model='color'>
+                                <option selected>Color</option>
+                                @foreach ($colores as $color)
+                                <option value="{{ $color->id }}">{{ $color->descripcion }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row pt-4">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" id="inputCliente" placeholder="Dominio" wire:model='dominio'>
+                        </div>
 
 
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" wire:click='closeModal'>Cancelar</button>
-                        <button type="button" class="btn btn-primary" wire:click='addTurno'>Guardar</button>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" id="inputCliente" placeholder="Año" wire:model='año'>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 pt-3">
+                        <div class="form-group d-flex justify-content-end">
+                            <button class="btn btn-danger mr-2" wire:click='setForm'>Cancelar</button>
+                            <button class="btn btn-success" wire:click='addVehicle'>Guardar</button>
+                        </div>
                     </div>
 
                 </div>
+                @else
+
+                <!-- SECCION DONDE SE ELIJE O CREA UN NUEVO VEHICULO -->
+                <div class="row pl-4">
+                    <h4><strong> VEHÍCULO </strong></h4>
+                </div>
+
+                <!-- SELECCIONAR VEHICULO EXISTENTE -->
+                <div class="row px-3">
+                    <div class="col-md-10">
+                        <select class="form-control" aria-label="Default select example" wire:model='vehiculo'>
+                            <option selected>Seleccionar vehiculo</option>
+                            @foreach ($cliente->vehiculos as $vc)
+                            <option value="{{ $vc->id }}">
+                                {{ $vc->modelos->descripcion . ' ' . $vc->dominio }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
+                <!-- BOTON PARA CREAR NUEVO VEHICULO -->
+                    <div class="col-md-2">
+                        <button class="btn btn-success" wire:click='setForm'>
+                            <div class="icon">
+                                <i class="fas fa-car"></i>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                    <!-- AQUI MUESTRA EL VEHICULO DEL CLIENTE JUNTO CON SU DOMINIO -->
+                    <div class="row d-flex justify-content-center">
+                        <h1> <span class="font-italic float-right badge bg-danger"> <!-- VARIABLES PARA MOSTRAR VECHICULO Y DOMINIO --></span> </h1>
+                    </div>
+    
+                @endif
+                @endif
 
 
+                <!-- SECTOR AL QUE SE LE ASIGNARA EL TURNO -->
+                <div class="row pl-4">
+                    <h4><strong> SERVICIO </strong></h4>
+                </div>
+
+                <div class="row px-3 d-flex justify-content-center pb-1">
+                    <div class="d-flex justify-content-between">
+                        <button wire:click="setMot('lub')" class="btn btn-app bg-danger {{ $s_btnLub }} px-4 py-2" style="width: 180px; height:90px">
+                            <i class="fas fa-tools"></i> <h5> <strong> Lubricentro </strong> </h5>
+                        </button>
+
+                        <button wire:click="setMot('lav')" class="btn btn-app bg-warning {{ $s_btnLav }} px-4 py-2 mr-2" style="width: 180px; height:90px">
+                            <i class="fas fa-hand-sparkles"></i> <h5> <strong> Lavadero </strong> </h5>
+                        </button>
+                    </div>
+                </div>
+                <!-- FOOTER DEL MODAL -->
+                <div class="modal-footer justify-content-between pb-4">
+                    <button type="button" class="btn btn-default" wire:click='closeModal'>Cancelar</button>
+                    <button type="button" class="btn btn-primary" wire:click='addTurno'>Guardar</button>
+                </div>
             </div>
-        </div>
 
-        @script
+            @script
             <script>
                 $(document).ready(function() {
                     $('#mySelect').select2();
@@ -291,16 +241,9 @@
                     });
                 });
             </script>
-        @endscript
+            @endscript
 
-
-
-
+        </div>
+    </div>
     @endif
-
-
-
-
-
-
 </div>
