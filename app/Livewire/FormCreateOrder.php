@@ -28,6 +28,7 @@ class FormCreateOrder extends Component
     public $servicios;
     public $butt;
     public $act;
+    public $selecedtVehiculo;
     public $btnLub = true;
     public $s_btnLub = 'btn-secondary';
     public $btnLav = false;
@@ -109,55 +110,48 @@ class FormCreateOrder extends Component
         $this->apellido = $this->cliente->perfiles->personas->apellido ?? '';
         $this->dni = $this->cliente->perfiles->personas->DNI ?? '';
         $this->fecha_nac = $this->cliente->perfiles->personas->fecha_nac ?? '';
-
-
-
-
     }
 
     public function addClient()
     {
-        if(Auth::user()->hasRole(['cajero','admin'])){
+        if (Auth::user()->hasRole(['cajero', 'admin'])) {
 
 
-        $this->validate();
+            $this->validate();
 
 
-        $persona = Persona::create([
-            'nombre' => $this->nombre,
-            'apellido' => $this->apellido,
-            'DNI' => $this->dni,
-            'fecha_nac' => $this->fecha_nac,
-            'estado' => 1
-        ]);
+            $persona = Persona::create([
+                'nombre' => $this->nombre,
+                'apellido' => $this->apellido,
+                'DNI' => $this->dni,
+                'fecha_nac' => $this->fecha_nac,
+                'estado' => 1
+            ]);
 
-        /*         $perfil = Perfil::create([
+            /*         $perfil = Perfil::create([
         'persona_id'=>$persona->id,
         ]); */
-        $perfil = Perfil::create([
-            'persona_id' => $persona->id
-        ]);
+            $perfil = Perfil::create([
+                'persona_id' => $persona->id
+            ]);
 
-        $this->cliente = Cliente::create([
-            'perfil_id' => $perfil->id,
-        ]);
-        $this->formperson = false;
-        $this->formVehiculo = true;
-
-    }else{
-        return    abort();
-
-    }
+            $this->cliente = Cliente::create([
+                'perfil_id' => $perfil->id,
+            ]);
+            $this->formperson = false;
+            $this->formVehiculo = true;
+        } else {
+            return    abort(404);
+        }
     }
 
     public function setForm()
     {
-        if( $this->formVehiculo == true){
+        if ($this->formVehiculo == true) {
 
             $this->formVehiculo = false;
-        }else{
+        } else {
             $this->formVehiculo = true;
-
         }
     }
     public function setMot($mot)
@@ -194,11 +188,22 @@ class FormCreateOrder extends Component
 
         $this->vehiculo = $this->vehiculo->id;
         $this->formVehiculo = false;
+
+        $this->selectVehiculo();
+    }
+
+    public function selectVehiculo()
+    {
+        $this->vehiculo = Vehiculo::find($this->vehiculo);
+        $this->selecedtVehiculo = true;
     }
 
     public function addTurno()
     {
-        // dd($this->vehiculo);
+        if (is_object($this->vehiculo)) {
+
+            $this->vehiculo = $this->vehiculo->id;
+        }
         if ($this->btnLav == true) {
 
 
@@ -236,8 +241,13 @@ class FormCreateOrder extends Component
 
             $this->formperson = false;
         } else {
-            //   $this->vehiculos = false;
-            $this->formperson = true;
+            if ($this->cliente != null) {
+
+                $this->reset('cliente', 'nombre', 'apellido', 'dni', 'fecha_nac');
+                $this->formperson = false;
+            } else {
+                $this->formperson = true;
+            }
         }
     }
 
@@ -265,6 +275,7 @@ class FormCreateOrder extends Component
             'dominio',
             'color',
             'version',
+            'selecedtVehiculo',
             'año'
         );
         $this->modal = false;

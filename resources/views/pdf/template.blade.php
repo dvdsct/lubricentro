@@ -16,6 +16,7 @@
    <div >
     <h1>Orden de Trabajo</h1>
 
+
     <p><strong>Fecha y Hora:</strong> {{ $fecha }}</p>
     <p><strong>Encargado:</strong> {{ $encargado->nombre }} {{ $encargado->apellido }}</p>
     <p><strong>Vendedor:</strong> {{ $vendedor->name }}</p>

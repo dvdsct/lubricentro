@@ -11,7 +11,7 @@
             </p>
             <hr>
             <strong><i class="fas fa-industry mr-1"></i> Marca</strong>
-            <p class="text-muted"></p>                {{ $vehiculo->modelos->marca->descripcion }}
+            <p class="text-muted"></p>                {{ $vehiculo->modelos->marcas->descripcion }}
 
             <hr>
             <strong><i class="fas fa-cogs mr-1"></i> Modelo</strong>

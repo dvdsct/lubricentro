@@ -18,7 +18,7 @@ class ModeloVehiculo extends Model
     public function tipos(){
         return $this->belongsTo(TipoVehiculo::class,'tipo_vehiculo_id');
         }
-    public function marca(){
+    public function marcas(){
         return $this->belongsTo(MarcaVehiculo::class,'marca_vehiculo_id');
         }
 
