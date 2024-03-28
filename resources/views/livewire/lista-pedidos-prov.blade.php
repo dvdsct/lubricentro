@@ -1,7 +1,8 @@
 <div>
 
     <div class="row pb-3" style="display:flex; align-items:flex-end">
-        <div class='col-md-2'><button type="button" class="btn btn-block btn-success">Nuevo Pedido</button>
+        <div class='col-md-2'><button type="button" class="btn btn-block btn-success"> 
+        <i class="fas fa-plus-circle"></i> Nuevo Pedido</button>
         </div>
     </div>
 
@@ -11,11 +12,11 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Fixed Header Table</h3>
+                    <h3 class="card-title">Lista de pedidos</h3>
                     <div class="card-tools">
-                        <div class="input-group input-group-sm" style="width: 150px;">
+                        <div class="input-group input-group-sm" style="width: 300px;">
                             <input type="text" name="table_search" class="form-control float-right"
-                                placeholder="Search">
+                                placeholder="Buscar pedido">
                             <div class="input-group-append">
                                 <button type="submit" class="btn btn-default">
                                     <i class="fas fa-search"></i>

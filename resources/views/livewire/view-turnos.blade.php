@@ -21,8 +21,6 @@
         </div>
     </div>
 
-
-
     <div class="row pt-2">
         <!-- TABLA LUBRICENTRO -->
         <div class="col-6 card">

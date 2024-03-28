@@ -1,10 +1,10 @@
-<div>
+<div class="pt-3">
     <div class="card">
         <div class="card-header">
             <h3 class="card-title"> <strong> STOCK </strong> </h3>
             <div class="card-tools">
-                <div class="input-group input-group-sm" style="width: 150px;">
-                    <input type="text" wire:model='query' wire:keydown='search' class="form-control float-right" placeholder="Search">
+                <div class="input-group input-group-sm" style="width: 300px;">
+                    <input type="text" wire:model='query' wire:keydown='search' class="form-control float-right" placeholder="Buscar producto">
                     <div class="input-group-append">
                         <button  class="btn btn-default">
                             <i class="fas fa-search"></i>

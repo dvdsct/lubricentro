@@ -9,11 +9,11 @@
 
 
                     <button type="button" class="btn btn-success" wire:click='modalProdOn'>
-                    <i class="fas fa-plus"></i>  Agregar Item
+                    <i class="fas fa-plus-circle"></i>  Agregar Item
                     </button>
         @endif
     </div>
-
+<!-- TABLA ITEMS CARGADOS  -->
     <div class="card-body">
         <table class="table table-bordered">
             <thead>

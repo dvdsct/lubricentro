@@ -10,7 +10,7 @@ class FormAddProd extends Component
 {
     public $producto;
     public $descripcion;
-    public $stock;
+    public $cod_barra;
     public $costo;
     public $codigo;
     public $modal;
@@ -30,7 +30,7 @@ class FormAddProd extends Component
 
         $p = Producto::create([
             'descripcion' => $this->descripcion,
-            'stock' => $this->stock,
+            'codigo_de_barras' => $this->cod_barra,
             'costo' => $this->costo,
             'codigo' => $this->codigo,
         ]);

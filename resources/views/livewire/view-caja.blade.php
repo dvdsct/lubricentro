@@ -1,7 +1,7 @@
 <div>
 
     <div class="row">
-        <div class="col-6">
+        <div class="card col-6">
             <table class="table table-striped">
                 <thead>
                     <th>Orden</th>
@@ -23,11 +23,12 @@
                 </tbody>
             </table>
             <div class="d-flex justify-content-end">
-                <h2>TOTAL {{ $totalv }}</h2>
+                <h3> <strong> TOTAL {{ $totalv }} </strong> </h3>
             </div>
         </div>
-        <div class="col-6">
 
+
+        <div class=" card col-6">
             <table class="table table-striped">
                 <thead>
                     <th>Tipo</th>
@@ -51,7 +52,7 @@
             </table>
 
             <div class="d-flex justify-content-end">
-                <h2>TOTAL {{ $pagosEfectivo->sum('total') }}</h2>
+                <h3><strong> TOTAL {{ $pagosEfectivo->sum('total') }} </strong> </h3>
             </div>
         </div>
     </div>
