@@ -20,11 +20,11 @@ return new class extends Migration
             ->on('proveedors')
             ->onDelete('cascade');
 
-            $table->string('descripcion');
-            $table->date('fecha_ingreso');
-            $table->integer('monto_total');
-            $table->string('observaciones');
-            $table->string('estado');
+            $table->string('descripcion')->nullable();
+            $table->date('fecha_ingreso')->nullable();
+            $table->integer('monto_total')->nullable();
+            $table->string('observaciones')->nullable();
+            $table->string('estado')->default('2');
             $table->timestamps();
         });
     }

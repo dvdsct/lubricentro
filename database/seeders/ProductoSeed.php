@@ -2,12 +2,15 @@
 
 namespace Database\Seeders;
 
+use App\Models\PedidoProveedor;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Producto;
 use App\Models\Proveedor;
 use App\Models\Proveedores;
 use App\Models\Stock;
+use Faker\Factory as Faker;
+use Illuminate\Support\Facades\DB;
 
 class ProductoSeed extends Seeder
 {
@@ -48,6 +51,28 @@ class ProductoSeed extends Seeder
                 'estado' => '1',
                 'ideal' => '8',
                 'escaso' => '3',
+            ]);
+        }
+
+        $faker1 = Faker::create();
+
+        foreach (range(1, 10) as $index) {
+            DB::table('proveedors')->insert([
+                'perfil_id' => $faker1->numberBetween(1, 5),
+                'tipo' => $faker1->randomElement(['A', 'B', 'C']),
+                'cuit' => $faker1->unique()->numerify('##-########-#'),
+            ]);
+        }
+
+        $faker = Faker::create();
+
+        foreach (range(1, 10) as $index) {
+            DB::table('pedido_proveedors')->insert([
+                'proveedor_id' => $faker->numberBetween(1, 5),
+                'descripcion' => $faker->sentence,
+                'fecha_ingreso' => $faker->dateTimeThisMonth,
+                'monto_total' => $faker->randomFloat(2, 100, 1000),
+                'observaciones' => $faker->paragraph,
             ]);
         }
     }

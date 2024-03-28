@@ -21,8 +21,8 @@ return new class extends Migration
             ->onDelete('cascade');
 
             $table->string('tipo');
-            $table->integer('cuit')->nullable();
-            $table->string('estado');
+            $table->string('cuit')->nullable();
+            $table->string('estado')->default('1');
             $table->timestamps();
         });
     }
