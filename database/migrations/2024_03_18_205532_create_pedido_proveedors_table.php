@@ -20,6 +20,12 @@ return new class extends Migration
             ->on('proveedors')
             ->onDelete('cascade');
 
+            $table->unsignedBigInteger('tipo_pedido_id');
+            $table->foreign('tipo_pedido_id')
+            ->references('id')
+            ->on('tipo_pedidos')
+            ->onDelete('cascade');
+
             $table->string('descripcion')->nullable();
             $table->date('fecha_ingreso')->nullable();
             $table->integer('monto_total')->nullable();

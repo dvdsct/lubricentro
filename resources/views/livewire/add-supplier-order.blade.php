@@ -16,33 +16,33 @@
                     <form wire:submit.prevent="continueForm">
                         <div class="mb-3">
                             <label for="provider" class="form-label">Select Provider</label>
-                            <select id="provider" class="form-select" wire:model="selectedProvider">
+                            <select id="provider" class="form-select" wire:model="proveedor">
                                 <option value="">Select a provider</option>
-                                @for ($i = 1; $i <= 10; $i++)
-                                    <option value="{{ $i }}">Provider {{ $i }}</option>
-                                @endfor
+                                @foreach($proveedores as $p)
+                                 <option value="{{ $p->id }}"> {{ $p->perfiles->personas->nombre }}</option>
+                                @endforeach
                             </select>
-                            @error('selectedProvider')
-                                <span class="text-danger">{{ $message }}</span>
+                            @error('proveedor')
+                            <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="mb-3">
                             <label for="date_ingreso" class="form-label">Date of Ingress</label>
-                            <input type="date" class="form-control" id="date_ingreso" wire:model="date_ingreso">
-                            @error('date_ingreso')
-                                <span class="text-danger">{{ $message }}</span>
+                            <input type="date" class="form-control" id="date_ingreso" wire:model="fecha_in">
+                            @error('fecha_in')
+                            <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="mb-3">
                             <label for="type" class="form-label">Select Type</label>
                             <select id="type" class="form-select" wire:model="selectedType">
                                 <option value="">Select a type</option>
-                                @for ($i = 1; $i <= 5; $i++)
-                                    <option value="{{ $i }}">Type {{ $i }}</option>
-                                @endfor
+                           @foreach($tiposPedidos as $tp)
+                           <option value="{{$tp->id}}">{{$tp->descripcion}}</option>
+                           @endforeach
                             </select>
-                            @error('selectedType')
-                                <span class="text-danger">{{ $message }}</span>
+                            @error('tipoPedido')
+                            <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                     </form>

@@ -69,6 +69,7 @@ class ProductoSeed extends Seeder
         foreach (range(1, 10) as $index) {
             DB::table('pedido_proveedors')->insert([
                 'proveedor_id' => $faker->numberBetween(1, 5),
+                'tipo_pedido_id' => $faker->numberBetween(1, 5),
                 'descripcion' => $faker->sentence,
                 'fecha_ingreso' => $faker->dateTimeThisMonth,
                 'monto_total' => $faker->randomFloat(2, 100, 1000),

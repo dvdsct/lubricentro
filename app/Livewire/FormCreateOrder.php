@@ -54,7 +54,6 @@ class FormCreateOrder extends Component
     public $nombre;
     #[Validate('required', message: 'Debe ingresar un Apellido!', translate: false)]
     public $apellido;
-    #[Validate('required', message: 'Please provide a post title', translate: false)]
     public $fecha_nac;
     public $dni;
 
