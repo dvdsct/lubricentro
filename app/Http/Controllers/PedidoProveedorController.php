@@ -36,17 +36,30 @@ class PedidoProveedorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(PedidoProveedor $pedidoProveedor)
+    public function show($id)
     {
-        //
+        // dd($id);
+        $pedido = PedidoProveedor::find($id);
+        $proveedor = $pedido->proveedores;
+        return view('Lubricentro.PedidosProveedores.show',[
+            'pedido' => $pedido,
+            'proveedor' => $proveedor
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(PedidoProveedor $pedidoProveedor)
-    {
-        //
+    public function edit( $id)
+    {   
+        $pedido = PedidoProveedor::find($id);
+        $proveedor = $pedido->proveedores;
+
+        return view('Lubricentro.PedidosProveedores.edit',[
+            'pedido' => $pedido,
+            'proveedor' => $proveedor
+
+        ]);
     }
 
     /**

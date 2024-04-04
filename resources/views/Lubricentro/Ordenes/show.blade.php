@@ -15,7 +15,7 @@
 <div class="row">
     <div class="col-8">
 
-        @livewire('datos-personales',['orden' => $orden])
+        @livewire('datos-personales',['orden' => $orden, 'persona' => $cliente])
         @livewire('add-products',['orden' => $orden])
     </div>
     <div class="col-4">

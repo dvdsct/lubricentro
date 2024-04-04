@@ -4,8 +4,8 @@
         <div class="card card-info">
             <div class="card-header">
                 <h3 class="card-title"><strong>
-                        {{ mb_strtoupper($cliente->perfiles->personas->nombre) }}
-                        {{ mb_strtoupper($cliente->perfiles->personas->apellido) }}
+                        {{ mb_strtoupper($persona->perfiles->personas->nombre) }}
+                        {{ mb_strtoupper($persona->perfiles->personas->apellido) }}
                     </strong></h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -18,19 +18,19 @@
             <div class="card-body p-0" style="display: block;">
                 <div class="row">
                     <div class="col-4 d-flex flex-column pl-4 py-2">
-                        <h6><strong>DNI: </strong>{{ $cliente->perfiles->personas->dni }}</h6>
-                        <h6><strong>Edad: </strong> {{ $cliente->perfiles->personas->edad }}</h6>
+                        <h6><strong>DNI: </strong>{{ $persona->perfiles->personas->dni }}</h6>
+                        <h6><strong>Edad: </strong> {{ $persona->perfiles->personas->edad }}</h6>
                     </div>
 
                     <div class="col-4 d-flex flex-column px-1 py-2">
                         <h6>
                             <strong>Email: </strong>
-                            {{-- {{ $cliente->perfiles->personas->correos->first()->direccion ?? '-' }} --}}
+                            {{-- {{ $persona->perfiles->personas->correos->first()->direccion ?? '-' }} --}}
                         </h6>
 
                         <h6>
                             <strong>Telefono: </strong>
-                            {{-- {{ optional($cliente->perfiles->personas->telefonos)->first()->numero ?? '-' }} --}}
+                            {{-- {{ optional($persona->perfiles->personas->telefonos)->first()->numero ?? '-' }} --}}
                         </h6>
                     </div>
 

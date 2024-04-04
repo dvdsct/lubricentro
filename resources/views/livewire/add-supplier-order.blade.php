@@ -28,14 +28,14 @@
                         </div>
                         <div class="mb-3">
                             <label for="date_ingreso" class="form-label">Date of Ingress</label>
-                            <input type="date" class="form-control" id="date_ingreso" wire:model="fecha_in">
-                            @error('fecha_in')
+                            <input type="date" class="form-control" id="date_ingreso" wire:model="fechaIn">
+                            @error('fechaIn')
                             <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="mb-3">
                             <label for="type" class="form-label">Select Type</label>
-                            <select id="type" class="form-select" wire:model="selectedType">
+                            <select id="type" class="form-select" wire:model="tipoPedido">
                                 <option value="">Select a type</option>
                            @foreach($tiposPedidos as $tp)
                            <option value="{{$tp->id}}">{{$tp->descripcion}}</option>

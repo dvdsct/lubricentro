@@ -39,9 +39,11 @@ class OrdenController extends Controller
     public function show(string $id)
     {
         $orden = Orden::find($id);
+        $cliente = $orden->clientes;
         return view('Lubricentro.Ordenes.show',[
 
-            'orden' => $orden
+            'orden' => $orden,
+            'cliente' => $cliente
         ]
     );
 

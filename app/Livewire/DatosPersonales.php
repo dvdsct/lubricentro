@@ -6,12 +6,13 @@ use Livewire\Component;
 
 class DatosPersonales extends Component
 {
-    public $cliente;
+    public $persona;
     public $orden;
 
-    public function mount($orden){
+    public function mount($orden,$persona){
         $this->orden = $orden;
-        $this->cliente = $this->orden->clientes;
+        $this->persona = $persona;
+        
     }
 
     public function render()

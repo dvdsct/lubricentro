@@ -2,19 +2,32 @@
 
 namespace App\Livewire;
 
+use App\Models\PedidoProveedor;
 use App\Models\Proveedor;
 use App\Models\TipoPedido;
 use Livewire\Component;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Validate;
 
 class AddSupplierOrder extends Component
 {
 
     public $modal = false;
     public $proveedores;
+
+    #[Validate('required', message: 'Seleccione el proveedor')]
     public $proveedor;
     public $tiposPedidos;
+
+    #[Validate('required', message: 'Defina una categoria para este pedido')]
     public $tipoPedido;
+
+    public $observaciones = '';
+
+    #[Validate('required', message: '*')]
+    public $fechaIn;
+
+
     public function mount()
     {
         $this->proveedores = Proveedor::all();
@@ -28,21 +41,19 @@ class AddSupplierOrder extends Component
     }
 
 
-    public function continueForm(){
+    public function continueForm()
+    {
 
-        $p = Pedido::create([
-            
-            
+        $this->validate();
+        $p = PedidoProveedor::create([
 
-'proveedor_id'=> '',	
-'tipo_pedido_id'=> '',	
-'descripcion'=> '',	
-'fecha_ingreso'=> '',	
-'monto_total'=> '',	
-'observaciones'=> '',
+            'proveedor_id' => $this->proveedor,
+            'tipo_pedido_id' => $this->tipoPedido,
+            'fecha_ingreso' => $this->fechaIn,
+            'observaciones' => $this->observaciones,
         ]);
 
-        dd($this->proveedor);
+        redirect(route('pedidos.edit',$p->id));
     }
     public function render()
     {

@@ -331,7 +331,7 @@ return [
         ],
         [
             'text' => 'Pedidos Proveedores',
-            'url'  => 'pedidosproveedor',
+            'url'  => 'pedidos',
             'icon' => 'fa fa-truck',
         ],
 

@@ -32,7 +32,7 @@
                         <td>{{ $p->productos->descripcion }}</td>
                         <td>{{ $p->unidad }}</td>
                         <td>{{ $p->cantidad }}</td>
-                        <td><a class="btn" href="{{ route('pedidosproveedor.index') }}">
+                        <td><a class="btn" href="{{ route('pedidos.index') }}">
                                 PEDIR</a></td>
 
 
