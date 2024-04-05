@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('tipo');
             $table->string('cuit')->nullable();
             $table->string('estado')->default('1');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

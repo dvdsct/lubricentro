@@ -19,13 +19,14 @@ return new class extends Migration
             ->references('id')
             ->on('telefonos')
             ->onDelete('cascade');
-            
+
             $table->unsignedBigInteger('persona_id');
             $table->foreign('persona_id')
             ->references('id')
             ->on('personas')
             ->onDelete('cascade');
-            
+            $table->softDeletes();
+
             $table->timestamps();
         });
     }

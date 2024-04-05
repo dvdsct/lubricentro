@@ -1,19 +1,17 @@
 <div>
-
-
     <div class="card">
-        @if ($orden->estado == 100)
+        @if ($pedido->estado == 100)
             <div class="card-header bg-danger">PAGADO
             @else
                 <div class="card-header">
 
 
                     <button type="button" class="btn btn-success" wire:click='modalProdOn'>
-                    <i class="fas fa-plus-circle"></i>  Agregar Item
+                        <i class="fas fa-plus-circle"></i> Agregar Item
                     </button>
         @endif
     </div>
-<!-- TABLA ITEMS CARGADOS  -->
+    <!-- TABLA ITEMS CARGADOS  -->
     <div class="card-body">
         <table class="table table-bordered">
             <thead>
@@ -22,11 +20,12 @@
                     <th>Producto</th>
                     <th>Codigo</th>
                     <th>Cantidad</th>
+                    <th>Precio Costo</th>
                     <th style="width: 40px">Subtotal</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($orden->items as $i)
+                @foreach ($pedido->items as $i)
                     <tr>
                         <td>{{ $i->id }}</td>
                         <td>{{ $i->productos->descripcion }}</td>
@@ -35,34 +34,60 @@
 
                         </td>
                         @if ($i->estado == 1)
-                            <td><input type="text" class="form-control" style="width: 145px;" placeholder="Ingresar cantidad" wire:model='cantidad'
-                                    wire:keydown.enter='addCantidad({{ $i->id }})'></td>
+                            <td><input type="text" class="form-control" style="width: 145px;"
+                                    placeholder="Ingresar cantidad" wire:model='cantidad'
+                                    wire:keydown.enter='addCantidad({{ $i->id }})'>
+                                @error('cantidad')
+                                    {{ $message }}
+                                @enderror
+                            </td>
+
+                            <td><input type="text" class="form-control" style="width: 145px;"
+                                    placeholder="Ingresar costo" wire:model='precio'
+                                    wire:keydown.enter='addCantidad({{ $i->id }})'>
+                                @error('precio')
+                                    {{ $message }}
+                                @enderror
+                            </td>
+                            <td></td>
                         @else
                             <td>
                                 {{ $i->cantidad }}
                             </td>
+                            <td>
+                                {{ $i->precio }}
+                            </td>
+                            <td>
+                                {{ $i->subtotal }}
+                            </td>
                         @endif
-                        <td>
 
-                            {{ $i->subtotal }}
-                        </td>
-                        @if ($orden->estado == 100)
+
+
+                        @if ($i->estado == 2)
                             <td class="project-actions text-right">
-                            @else
-                            <td class="project-actions text-right pl-0">
-                                {{-- <a class="btn btn-info btn-sm" wire:click='editProd({{ $i->id }})'>
+                                <a class="btn btn-info btn-sm" wire:click='editProd({{ $i->id }})'>
                                     <i class="fas fa-pencil-alt">
                                     </i>
                                     Editar
-                                </a> --}}
+                                </a>
                                 <a class="btn btn-danger btn-sm" wire:click='delProd({{ $i->id }})'
                                     wire:confirm="Si borras este articulo tendras que volver a agregarlo?">
                                     <i class="fas fa-trash">
                                     </i>
                                     Eliminar
                                 </a>
-                            </td>
+                            @else
+                            <td class="project-actions text-right">
+
+                                <a class="btn btn-danger btn-sm" wire:click='delProd({{ $i->id }})'
+                                    wire:confirm="Si borras este articulo tendras que volver a agregarlo?">
+                                    <i class="fas fa-trash">
+                                    </i>
+                                    Eliminar
+                                </a>
                         @endif
+                        </td>
                     </tr>
                 @endforeach
 
@@ -75,9 +100,15 @@
     </div>
     <div class="card-header justify-content-end">
         <div class="text-right">
-        <h3> <strong> TOTAL </strong> </h3>
-        <h3> <strong> {{ $total }} </strong> </h3>
+            <h3> <strong> TOTAL </strong> </h3>
+            <h3> <strong> {{ $total }} </strong> </h3>
         </div>
+    </div>
+
+    <div>
+        <button class="btn btn-primary" wire:click='recibirPedido'>
+            Recibir
+        </button>
     </div>
 
 </div>
@@ -89,14 +120,14 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-info">
-                <h4 class="m-0"> <strong> AGREGAR ITEM </strong> </h4>
+                    <h4 class="m-0"> <strong> AGREGAR ITEM </strong> </h4>
                     <button type="button" class="close" wire:click='modalProdOff'>
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
                 <div class="modal-body">
-        <!-- BUSCADOR DE PRODUCTOS  -->
-                <div class="input-group input-group-sm pb-2" style="width: 300px;">
+                    <!-- BUSCADOR DE PRODUCTOS  -->
+                    <div class="input-group input-group-sm pb-2" style="width: 300px;">
                         <input type="text"wire:model='query' wire:keydown='search' class="form-control float-right"
                             placeholder="Buscar">
                         <div class="input-group-append">
@@ -117,7 +148,7 @@
                         </thead>
                         <tbody>
                             @foreach ($stock as $i)
-                                <tr wire:click='addedProduct({{ $i->id }})'      wire:loading.attr="disabled">
+                                <tr wire:click='addedProduct({{ $i->id }})' wire:loading.attr="disabled">
                                     <td>{{ $i->id }}</td>
                                     <td>{{ $i->descripcion }}</td>
                                     <td>{{ $i->codigo }}</td>
@@ -128,7 +159,7 @@
                                     @endif
                                     <td>$ {{ $i->costo }}</td>
                                 </tr>
-                                @endforeach
+                            @endforeach
                         </tbody>
                     </table>
 
@@ -148,15 +179,5 @@
 
 
 
-@script
-    <script>
-        $wire.on('nonstock', (event) => {
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "La cantidad ingresada supera a el Stock actual!",
-            });
-        });
-    </script>
-@endscript
+
 </div>

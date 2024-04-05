@@ -16,6 +16,7 @@ return new class extends Migration
             $table->bigInteger('numero');
             $table->string('empresa');
             $table->string('estado');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

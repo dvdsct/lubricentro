@@ -43,7 +43,7 @@ return new class extends Migration
             $table->string('total');
             $table->string('estado');
 
-
+            $table->softDeletes();
 
             $table->timestamps();
         });

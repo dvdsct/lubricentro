@@ -41,6 +41,7 @@ return new class extends Migration
             $table->string('motivo');
             $table->datetime('horario')->nullable();
             $table->string('estado');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -21,4 +21,8 @@ class PedidoProveedor extends Model
 
         return $this->belongsTo(Proveedor::class, 'proveedor_id');
     }
+
+    public function items(){
+        return $this->belongsToMany(PedItem::class, 'item_x_pedidos');
+    }
 }

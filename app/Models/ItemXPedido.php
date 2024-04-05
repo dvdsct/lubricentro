@@ -6,14 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Correo extends Model
+class ItemXPedido extends Model
 {
+    // use SoftDeletes;
     use HasFactory;
-    use SoftDeletes;
-
-    public function personas(){
-
-        return $this->hasOne(Persona::class);
-    }
-
+    protected $fillable = [
+        'pedido_proveedor_id',
+        'ped_item_id',
+        'estado',
+    ];
 }

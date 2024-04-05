@@ -10,7 +10,7 @@
 
 
 @livewire('datos-personales',['orden' => $pedido, 'persona'=> $proveedor])
-@livewire('add-products-p-p')
+@livewire('add-products-p-p',['pedido' => $pedido, 'proveedor'=> $proveedor])
 
 
 

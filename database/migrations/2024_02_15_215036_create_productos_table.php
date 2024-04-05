@@ -34,7 +34,8 @@ return new class extends Migration
             $table->string('codigo_de_barras')->nullable();
             $table->string('codigo')->nullable();
             $table->string('precio_venta')->nullable();
-            $table->string('estado');
+            $table->string('estado')->default('1');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

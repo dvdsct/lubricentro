@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('ciudad');
             $table->string('provincia');
             $table->string('pais');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
