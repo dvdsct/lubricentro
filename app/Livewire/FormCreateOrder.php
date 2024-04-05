@@ -50,11 +50,12 @@ class FormCreateOrder extends Component
     public $persona;
     public $vehiculo;
 
-    #[Validate('required', message: 'Debe ingresar un Nombre!', translate: false)]
+    #[Validate('required', message: 'Debe ingresar el Nombre!', translate: false)]
     public $nombre;
-    #[Validate('required', message: 'Debe ingresar un Apellido!', translate: false)]
+    #[Validate('required', message: 'Debe ingresar el Apellido!', translate: false)]
     public $apellido;
     public $fecha_nac;
+    #[Validate('required', message: 'Debe ingresar el DNI!', translate: false)]
     public $dni;
 
     //Select formperson==TRUE
@@ -156,7 +157,7 @@ class FormCreateOrder extends Component
     public function setMot($mot)
     {
         if ($mot == 'lub') {
-            $this->s_btnLub = 'btn-primary';
+            $this->s_btnLub = 'bg-orange';
             $this->s_btnLav = 'btn-secondary';
             $this->btnLub = true;
             $this->btnLav = false;

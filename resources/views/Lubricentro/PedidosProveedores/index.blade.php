@@ -7,15 +7,8 @@
 @stop
 
 @section('content')
-
-
-
-
     @livewire('lista-pedidos-prov');
     @livewire('add-supplier-order');
-
-
-
 @stop
 
 @section('css')

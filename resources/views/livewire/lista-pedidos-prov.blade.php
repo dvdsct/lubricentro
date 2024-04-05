@@ -10,8 +10,6 @@
 
     <div class="row">
         <div class="col-12">
-
-
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Lista de pedidos</h3>
@@ -34,10 +32,10 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>User</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                                <th>Reason</th>
+                                <th>PROVEEDOR</th>
+                                <th>FECHA PEDIDO</th>
+                                <th>ESTADO</th>
+                                <th>DESCRIPCION</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -47,24 +45,21 @@
                                     <td>{{ $p->id }}</td>
                                     <td>{{ $p->proveedores->perfiles->personas->nombre . ' ' . $p->proveedores->perfiles->personas->apellido }}
                                     </td>
-                                    <td>{{ $p->fecha_ingreso }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($p->fecha_ingreso)->format('d/m/Y') }}</td>
+
                                     <td><span class="tag tag-success">{{ $p->estado }}</span></td>
                                     <td>{{ $p->descripcion }}</td>
                                     <td class="project-actions text-right">
                                         <a class="btn btn-primary btn-sm" href="{{route('pedidos.show',$p->id)}}">
-                                            <i class="fas fa-folder">
+                                            <i class="fas fa-list">
                                             </i>
-                                            View
                                         </a>
                                         <a class="btn btn-info btn-sm" href="{{route('pedidos.edit',$p->id)}}">
-                                            <i class="fas fa-pencil-alt">
-                                            </i>
-                                            Edit
+                                        <i class="fas fa-truck"></i>
                                         </a>
                                         <a class="btn btn-danger btn-sm" href="{{route('pedidos.destroy',$p->id   )}}">
                                             <i class="fas fa-trash">
                                             </i>
-                                            Delete
                                         </a>
                                     </td>
                                 </tr>
