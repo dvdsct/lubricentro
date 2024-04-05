@@ -3,12 +3,13 @@
 namespace App\Livewire;
 
 use App\Models\Item;
-use App\Models\ItemsXOrden;
 use App\Models\PedItem;
+use App\Models\ItemXPedido;
 use App\Models\Producto;
 use App\Models\Servicio;
 use App\Models\Stock;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -20,23 +21,33 @@ class AddProductsPP extends Component
     public $productos;
     public $servicios;
     public $items;
-    public $orden;
+    public $pedido;
     public $modal;
+    public $proveedor;
     // public $stock;
 
-    // De la Orden
+    // De la pedido
     public $producto;
     public $servicio;
     public $item;
     public $total;
 
     // Item
+    #[Validate('required', message: 'ingrese una cantidad')]
     public $cantidad;
+    #[Validate('required', message: 'ingrese el precio de costo')]
     public $precio;
     public $subtotal;
 
 
     public $query = '';
+
+
+    public function mount($pedido, $proveedor)
+    {
+        $this->pedido = $pedido;
+        $this->proveedor = $proveedor;
+    }
 
     public function search()
     {
@@ -44,32 +55,55 @@ class AddProductsPP extends Component
     }
 
 
+
+    // Recibir pedido
+    public function recibirPedido()
+    {
+        foreach ($this->pedido->items as $i) {
+
+            $p = Producto::find($i->producto_id);
+            $stock = Stock::where('producto_id', $p->id)->first();
+            $stock->update([
+                'cantidad' => $stock->cantidad + $i->cantidad
+            ]);
+        }
+
+        redirect('stock');
+    }
+
+
+
+    // Cargar item de pedido
     public function addCantidad($id)
     {
+
+
+        $this->validate();
         $item = PedItem::find($id);
         $p = Producto::find($item->producto_id);
         $stock = Stock::where('producto_id', $p->id)->first();
 
         // dd($stock);
-        $precio = $p->costo;
+        $p->update([
+            'costo' => $this->precio
+        ]);
+        // $precio = $this->precio;
 
+        if ($this->pedido->estado == '2') {
 
-        if (
-            $stock->cantidad >=
-            $this->cantidad and  $this->cantidad != 0
-        ) {
             $item->update([
                 'cantidad' => $this->cantidad,
-                'subtotal' => $precio *  $this->cantidad,
+                'precio' => $this->precio,
+                'subtotal' => $this->precio *  $this->cantidad,
                 'estado' => '2',
 
             ]);
 
-            $stock->update([
-                'cantidad' => $stock->cantidad - $this->cantidad
-            ]);
 
-            $this->reset('cantidad');
+
+
+
+            $this->reset('cantidad','precio');
         }
     }
 
@@ -87,54 +121,47 @@ class AddProductsPP extends Component
         //
     }
 
+
+
+
     public function addedProduct($p)
     {
 
 
         $this->producto = Producto::find($p);
-        $stock = Stock::where('producto_id', $this->producto->id)->first();
-
-        if ($stock->cantidad == 0) {
 
 
-            return  $this->dispatch('nonstock');
-        } else {
-
-            $this->modalProdOff();
+        $this->modalProdOff();
 
 
 
 
-            $i = Item::create([
-                'producto_id' => $this->producto->id,
-                'precio' => $this->producto->costo,
-                'estado' => '1',
-            ]);
+        $i = PedItem::create([
+            'producto_id' => $this->producto->id,
+            'precio' => $this->producto->costo,
+            'estado' => '1',
+        ]);
 
-            ItemsXOrden::create([
-                'item_id' => $i->id,
-                'orden_id' => $this->orden->id,
-                'estado' => '1',
+        ItemXPedido::create([
+            'pedido_proveedor_id' => $this->pedido->id,
+            'ped_item_id' => $i->id,
+            'estado' => '1',
 
-            ]);
-        }
-
-
-        // dd($this->producto);
+        ]);
     }
 
-
-
-
-
-
-
+    public function editProd($id){
+        $item = PedItem::find($id);
+        $item->update([
+            'estado' =>'1'
+        ]);
+    }
 
     #[On('delete')]
     public function delProd(string $id)
     {
 
-        $item = Item::find($id);
+        $item = PedItem::find($id);
         $item->delete();
     }
 
@@ -147,7 +174,7 @@ class AddProductsPP extends Component
         $this->servicios = Servicio::all();
 
 
-        $this->total = $this->orden->items->sum('subtotal');
+        // $this->total = $this->pedido->items->sum('subtotal');
 
         return view('livewire.add-products-p-p', [
             'stock' => Stock::select('stocks.*', 'productos.descripcion as descripcion', 'productos.codigo', 'productos.costo')

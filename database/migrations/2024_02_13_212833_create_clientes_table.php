@@ -22,6 +22,7 @@ return new class extends Migration
 
             $table->string('categoria')->nullable();
             $table->string('lista_precios')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

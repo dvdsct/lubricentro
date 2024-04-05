@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('DNI')->nullable();
             $table->date('fecha_nac')->nullable();
             $table->string('estado');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

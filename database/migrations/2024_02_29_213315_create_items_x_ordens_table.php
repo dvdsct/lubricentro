@@ -24,6 +24,7 @@ return new class extends Migration
             ->on('ordens')
             ->onDelete('cascade');
             $table->string('estado');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

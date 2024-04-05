@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('descripcion');
             $table->string('hexadecimal');
             $table->string('estado');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

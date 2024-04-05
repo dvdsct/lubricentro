@@ -18,7 +18,7 @@ use Livewire\Component;
 class FormPago extends Component
 {
     public $modal = false;
-    public $tipoPago = '1';
+    public $tipoPago = '2';
     public $tiposPago;
     public $medioPago;
     public $mediosPago;

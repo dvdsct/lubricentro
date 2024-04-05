@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('estado');
             $table->integer('ideal');
             $table->integer('escaso');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

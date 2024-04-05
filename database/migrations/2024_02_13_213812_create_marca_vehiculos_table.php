@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('marca_vehiculos', function (Blueprint $table) {
             $table->id();
             $table->string('descripcion');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

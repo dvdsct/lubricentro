@@ -31,6 +31,7 @@ return new class extends Migration
             $table->integer('monto_total')->nullable();
             $table->string('observaciones')->nullable();
             $table->string('estado')->default('2');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -26,9 +26,16 @@ class Producto extends Model
         return $this->hasMany(Item::class);
     }
 
+    public function peditems(){
+
+        return $this->hasMany(PedItem::class);
+    }
+
     public function proveedores(){
         return $this->belongsTo(Proveedor::class,'proveedor_id');
     }
+
+
 
 
 }

@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('version')->nullable();
             $table->string('año')->nullable();
             $table->string('estado')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('precio')->nullable();
             $table->string('subtotal')->nullable();
             $table->string('estado');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

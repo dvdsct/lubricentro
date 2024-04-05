@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('facturas_x_cajas', function (Blueprint $table) {
             $table->id();
-            
+            $table->softDeletes();
             $table->timestamps();
         });
     }
