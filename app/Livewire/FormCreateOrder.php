@@ -44,6 +44,7 @@ class FormCreateOrder extends Component
     public $servicio;
     public $vehiculos;
     public $fecha;
+    public $horario;
     public $motivo;
 
     // del cliente
@@ -85,6 +86,7 @@ class FormCreateOrder extends Component
         $this->marcas = MarcaVehiculo::all();
         $this->modelos = ModeloVehiculo::all();
         $this->colores = Colores::all();
+        $this->horario = Carbon::now()->format('H:i');
         // $this->cliente = 'ok';
     }
 
@@ -200,6 +202,7 @@ class FormCreateOrder extends Component
 
     public function addTurno()
     {
+
         if (is_object($this->vehiculo)) {
 
             $this->vehiculo = $this->vehiculo->id;
@@ -213,7 +216,7 @@ class FormCreateOrder extends Component
                 'cliente_id' => $this->cliente->id,
                 'vehiculo_id' => $this->vehiculo,
                 'motivo' => '1',
-                'horario' => Carbon::now(),
+                'horario' => $this->horario,
                 'estado' => '1'
             ]);
         } else {
@@ -276,10 +279,16 @@ class FormCreateOrder extends Component
             'color',
             'version',
             'selecedtVehiculo',
-            'año'
+            'año',
+            'btnLub',
+            's_btnLub',
+            'btnLav',
+            's_btnLav',
+
         );
         $this->modal = false;
         $this->formperson = false;
+        $this->horario = Carbon::now()->format('H:i');
 
         // $this->reset('nombre');
     }

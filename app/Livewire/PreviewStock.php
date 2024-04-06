@@ -14,7 +14,7 @@ class PreviewStock extends Component
 
 
     public $query = '';
-
+    public $cantidad;
 
     public function search()
     {
@@ -22,11 +22,37 @@ class PreviewStock extends Component
     }
 
 
+    public function addCantidad($id)
+    {
+        $p = Stock::find($id);
+        $p->update(
+            [
+                'estado' => '1',
+                'cantidad' => $this->cantidad
+            ]
+        );
+
+        // $this->render();
+
+    }
+    public function editPStock($id)
+    {
+        // dd('s');
+        $p = Stock::find($id);
+        $this->cantidad = $p->cantidad;
+
+        $p->update(
+            [
+                'estado' => '2',
+            ]
+        );
+    }
+
     // public $stock;
     public function render()
     {
         // $this->stock = Stock::all();
-        return view('livewire.preview-stock',[
+        return view('livewire.preview-stock', [
             'stock' => Stock::select(
                 'stocks.*',
                 'productos.categoria_productos_id',
@@ -39,13 +65,13 @@ class PreviewStock extends Component
                 'personas.DNI',
                 'productos.descripcion as descripcion'
             )
-            ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')
-            ->leftJoin('proveedors', 'productos.proveedor_id', '=', 'proveedors.id')
-            ->leftJoin('perfils', 'proveedors.perfil_id', '=', 'perfils.id')
-            ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
+                ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')
+                ->leftJoin('proveedors', 'productos.proveedor_id', '=', 'proveedors.id')
+                ->leftJoin('perfils', 'proveedors.perfil_id', '=', 'perfils.id')
+                ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
 
 
-            ->where('descripcion', 'like', '%'.$this->query.'%')->paginate(10),
+                ->where('descripcion', 'like', '%' . $this->query . '%')->paginate(10),
         ]);
     }
 }

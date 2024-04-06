@@ -20,10 +20,7 @@
                         <div class="row">
                             <div class="d-flex justify-content-between">
                                 <div class="col-md-4">
-                                    <!--                                 <button wire:click="setMot('lub')" class="btn btn-app bg-orange {{ $s_btnLub }} px-4 py-2" style="width: 150px; height:70px">
-                                    <i class="fas fa-tools"></i>
-                                    <h5> <strong> Lubricentro </strong> </h5>
-                                </button> -->
+
 
                                     <button wire:click="setMot('lub')" type="button" class="btn btn-lg {{ $s_btnLub }}" style="width: 150px; ">
                                         <i class="fas fa-tools"></i>
@@ -40,8 +37,7 @@
 
                                 <div class="col-md-4">
                                     <div class="input-group input-group-lg">
-                                        <!--  <span class="input-group-text" id="inputGroup-sizing-lg">Horario</span> -->
-                                        <input type="time" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
+                                        <input type="time" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg" wire:model='horario'>
                                     </div>
                                 </div>
                             </div>
