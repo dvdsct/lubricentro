@@ -58,18 +58,5 @@
         </div>
 
     </div>
-    @script
-    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
 
-    <script>
-    var pusher = new Pusher('34bb2b93c35d582e91b2', {
-      cluster: 'us2'
-    });
-
-    var channel = pusher.subscribe('my-channel');
-    channel.bind('my-event', function(data) {
-      alert(JSON.stringify(data));
-    });
-</script>
-    @endscript
 </div>
