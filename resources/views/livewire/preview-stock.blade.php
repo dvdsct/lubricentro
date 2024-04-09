@@ -21,7 +21,11 @@
                         <th>Producto</th>
                         <th>Unidad</th>
                         <th>Cantidad</th>
-                        <th>Estado</th>
+                        @can('stock')
+
+                        <th></th>
+                        @endcan
+
                     </tr>
                 </thead>
                 <tbody>
@@ -45,9 +49,11 @@
                                 @enderror
                             @endif
                         </td>
+                        @can('stock')
+                            <td><a class="btn btn-info" wire:click='editPStock({{ $p->id }})'>
+                                    Editar</a></td>
+                        @endcan
 
-                        <td><a class="btn btn-info" wire:click='editPStock({{ $p->id }})'>
-                                Editar</a></td>
 
 
                         </tr>
