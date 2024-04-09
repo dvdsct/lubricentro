@@ -312,11 +312,15 @@ return [
             'text' => 'Stock',
             'url'  => 'stock',
             'icon' => 'fa fa-list',
+            'can' => 'admin',
+
         ],
         [
             'text' => 'Productos',
             'url'  => 'productos',
             'icon' => 'fa fa-shopping-basket',
+            'can' => 'admin',
+
         ],
         // [
         //     'text' => 'Ordenes',
@@ -328,11 +332,15 @@ return [
             'text' => 'Turnos',
             'url'  => 'turnos',
             'icon' => 'fa fa-calendar-alt',
+            'can' => 'caja',
+
         ],
         [
             'text' => 'Pedidos Proveedores',
             'url'  => 'pedidos',
             'icon' => 'fa fa-truck',
+            'can' => 'admin',
+
         ],
 
     ],
