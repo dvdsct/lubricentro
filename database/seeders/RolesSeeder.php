@@ -30,8 +30,10 @@ class RolesSeeder extends Seeder
         $update = Permission::create(['name'=>'update']);
         $delete = Permission::create(['name'=>'delete']);
         $caja = Permission::create(['name'=>'caja']);
+        $stock = Permission::create(['name'=>'stock']);
 
         $caja->assignRole($cajero);
+        $stock->assignRole($admin);
         $read->assignRole($admin);
         $read->assignRole($user);
         $create->assignRole($user);
