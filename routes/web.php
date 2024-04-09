@@ -21,8 +21,9 @@ use App\Http\Controllers\PDFController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('turnos');
 });
+
 
 Route::middleware([
     'auth:sanctum',
@@ -41,4 +42,7 @@ Route::middleware([
     Route::resource('turnos',TurnosController::class);
     Route::resource('pedidos',PedidoProveedorController::class);
     Route::get('/pdf/{orden}', 'App\Http\Controllers\PDFController@generatePDF')->name('pdf');
+    Route::get('register', function () {
+        return view('turnos');
+    });
 });
