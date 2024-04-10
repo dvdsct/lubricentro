@@ -322,6 +322,13 @@ return [
             'can' => 'stock',
 
         ],
+        [
+            'text' => 'Presupuestos',
+            'url'  => 'presupuesto',
+            'icon' => 'fa fa-shopping-basket',
+            'can' => 'caja',
+
+        ],
         // [
         //     'text' => 'Ordenes',
         //     'url'  => 'ordenes',

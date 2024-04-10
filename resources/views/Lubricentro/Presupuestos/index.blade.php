@@ -7,11 +7,12 @@
 @stop
 
 @section('content')
-  
+
+    @livewire('list-presupuesto')
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="/css/admin_custom.css">
+
 @stop
 
 @section('js')

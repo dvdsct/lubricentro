@@ -25,6 +25,10 @@ class Producto extends Model
 
         return $this->hasMany(Item::class);
     }
+    public function presItems(){
+
+        return $this->hasMany(PresupuestoItem::class);
+    }
 
     public function peditems(){
 

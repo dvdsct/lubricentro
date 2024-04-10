@@ -41,5 +41,12 @@ class Vehiculo extends Model
     {
         return $this->belongsTo(Orden::class);
     }
+
+    public function presupuestos()
+    {
+        return $this->belongsTo(Presupuesto::class);
+    }
+
+
 }
 
