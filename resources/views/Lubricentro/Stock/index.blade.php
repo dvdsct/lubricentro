@@ -1,19 +1,11 @@
 @extends('adminlte::page')
 
-@section('title', 'Stock')
-
+@section('title', 'Stock - Rocket')
 
 
 @section('content')
 
-
-
     @livewire('preview-stock')
-
-
-
-
-
 
 @stop
 

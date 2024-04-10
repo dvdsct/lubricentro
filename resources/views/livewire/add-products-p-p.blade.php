@@ -166,8 +166,8 @@
 
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" wire:click='modalProdOff'>Cancelar</button>
-                    <button type="button" class="btn btn-primary">Aceptar</button>
+                    <button type="button" class="btn btn-danger" wire:click='modalProdOff'>Cancelar</button>
+                    <button type="button" class="btn btn-success">Aceptar</button>
                 </div>
             </div>
 

@@ -12,7 +12,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Lista de pedidos</h3>
+
                     <div class="card-tools">
                         <div class="input-group input-group-sm" style="width: 300px;">
                             <input type="text" wire:model='query' class="form-control float-right"

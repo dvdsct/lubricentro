@@ -1,5 +1,5 @@
+<!-- MODULO DE TURNOS DEL SECTOR INICIO -->
 <div>
-
     <div class="row d-flex justify-content-between" style="padding-top: 20px;">
 
         <div class="col-3">
@@ -7,14 +7,10 @@
         </div>
         <div class="col-2 pt-2 mr-2">
                 <button type="button" class="btn btn-block btn-success" data-target="modal-default" wire:click='openModal'>
-                    Nuevo Turno</button>
+                    Nuevo Turno
+                </button>
         </div>
     </div>
-
-
-
-
-
 
 
 

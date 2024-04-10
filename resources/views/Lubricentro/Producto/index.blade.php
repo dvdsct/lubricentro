@@ -13,8 +13,6 @@
 @livewire('lw-productos')
 
 
-
-
 @stop
 
 @section('css')

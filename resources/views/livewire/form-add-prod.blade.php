@@ -1,6 +1,5 @@
 <div>
-    <button type="button" class="btn btn-success mb-2" wire:click='modalOn'>
-        <i class="fas fa-plus-circle"></i> Agregar Producto </button>
+    
     @if ($modal == true)
 
     <!-- MODAL PARA CARGAR UN NUEVO PRODUCTO -->

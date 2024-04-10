@@ -54,7 +54,7 @@
                 <div class="modal-content">
                     <div class="modal-header bg-info">
                         <h4 class="modal-title"> <strong> COMPLETAR DATOS DE CLIENTE </strong> </h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
