@@ -20,7 +20,11 @@
                         <th>Producto</th>
                         <th>Unidad</th>
                         <th>Cantidad</th>
-                        <th>Estado</th>
+                        @can('stock')
+
+                        <th></th>
+                        @endcan
+
                     </tr>
                 </thead>
                 <tbody>
@@ -40,11 +44,13 @@
                                 @error('cantidad')
                                 {{ $message }}
                                 @enderror
-                                @endif
-                            </td>
-
+                            @endif
+                        </td>
+                        @can('stock')
                             <td><a class="btn btn-info" wire:click='editPStock({{ $p->id }})'>
                                     Editar</a></td>
+                        @endcan
+
 
 
                         </tr>

@@ -44,4 +44,8 @@ class Cliente extends Model
     {
         return $this->hasMany(Orden::class);
     }
+    public function presupuestos()
+    {
+        return $this->hasMany(Presupuesto::class);
+    }
 }

@@ -19,5 +19,10 @@ class Empleado extends Model
         return $this->belongsToMany(Orden::class);
     }
 
+    public function presupuestos()
+    {
+        return $this->belongsToMany(Presupuesto::class);
+    }
+
     
 }

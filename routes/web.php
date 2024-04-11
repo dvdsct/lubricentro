@@ -9,6 +9,8 @@ use App\Http\Controllers\TurnosController;
 use App\Http\Controllers\PedidoProveedorController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\PresupuestoController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,8 +23,9 @@ use App\Http\Controllers\PDFController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('turnos');
 });
+
 
 Route::middleware([
     'auth:sanctum',
@@ -40,5 +43,9 @@ Route::middleware([
     Route::resource('venta',VentaController::class);
     Route::resource('turnos',TurnosController::class);
     Route::resource('pedidos',PedidoProveedorController::class);
+    Route::resource('presupuesto',PresupuestoController::class);
     Route::get('/pdf/{orden}', 'App\Http\Controllers\PDFController@generatePDF')->name('pdf');
+    Route::get('register', function () {
+        return view('turnos');
+    });
 });

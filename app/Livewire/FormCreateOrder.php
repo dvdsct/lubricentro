@@ -150,7 +150,10 @@ class FormCreateOrder extends Component
     public function setForm()
     {
         if ($this->formVehiculo == true) {
-
+            if($this->selecedtVehiculo ==true){
+                $this->selecedtVehiculo = false;
+                $this->reset('vehiculo');
+            }
             $this->formVehiculo = false;
         } else {
             $this->formVehiculo = true;

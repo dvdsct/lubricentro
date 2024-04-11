@@ -312,11 +312,22 @@ return [
             'text' => 'Stock',
             'url'  => 'stock',
             'icon' => 'fa fa-list',
+            'can' => 'stock',
+
         ],
         [
             'text' => 'Productos',
             'url'  => 'productos',
             'icon' => 'fa fa-shopping-basket',
+            'can' => 'stock',
+
+        ],
+        [
+            'text' => 'Presupuestos',
+            'url'  => 'presupuesto',
+            'icon' => 'fa fa-shopping-basket',
+            'can' => 'caja',
+
         ],
         // [
         //     'text' => 'Ordenes',
@@ -328,11 +339,15 @@ return [
             'text' => 'Turnos',
             'url'  => 'turnos',
             'icon' => 'fa fa-calendar-alt',
+            'can' => 'caja',
+
         ],
         [
             'text' => 'Pedidos Proveedores',
             'url'  => 'pedidos',
             'icon' => 'fa fa-truck',
+            'can' => 'stock',
+
         ],
 
     ],
