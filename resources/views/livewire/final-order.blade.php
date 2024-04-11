@@ -3,7 +3,7 @@
         @if ($orden->estado == 100)
         .
         @else
-        <div class="info-box bg-warning d-flex align-items-center justify-content-center" wire:click='$dispatchTo("form-pago","formPago")'>
+        <div class="info-box bg-warning d-flex align-items-center justify-content-center" wire:click='$dispatchTo("form-pago","formPago")' style="cursor: pointer;">
             <span class="info-box-icon"><i class="fas fa-cash-register"></i></span>
             <div class="info-box-content">
                 <h4 class="info-box-text m-0"> <strong> Cobrar </strong> </h4>

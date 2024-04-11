@@ -53,7 +53,7 @@
                                 <div class="mb-3">
                                     <label for="tipo_pago" class="form-label">Cliente</label>
                                     <select wire:model.live="cliente" id="tipo_pago" class="form-control">
-                                        <option selected>Open this select menu</option>
+                                        <option selected>Seleccionar cliente</option>
                                         @foreach ($clientes as $c)
                                             <option value="{{ $c->id }}">
                                                 {{ $c->perfiles->personas->nombre . ' ' . $c->perfiles->personas->apellido . ' ' . $c->perfiles->personas->dni }}
@@ -96,14 +96,14 @@
                                     </div>
                                 </div>
                                 @if ($vuelto < 0)
-                                    <div class="mb-3 bg-danger">
-                                        <label for="vuelto" class="form-label">Vuelto</label>
-                                        <label for="vuelto" class="form-label">{{ $vuelto }}</label>
+                                    <div class="mb-3 bg-danger p-2" style="text-align: right;">
+                                        <h5 for="vuelto" class="form-label"><strong> Monto a pagar</strong></h5>
+                                        <h5 for="vuelto" class="form-label"><strong> ${{ $vuelto }} </strong></h5>
                                     </div>
                                 @else
-                                    <div class="mb-3 bg-success">
-                                        <label for="vuelto" class="form-label">Vuelto</label>
-                                        <label for="vuelto" class="form-label">{{ $vuelto }}</label>
+                                    <div class="mb-3 bg-success p-2" style="text-align: right;">
+                                        <h5 for="vuelto" class="form-label"><strong> Vuelto </strong></h5>
+                                        <h5 for="vuelto" class="form-label"><strong> ${{ $vuelto }} </strong> </h5>
                                     </div>
                                 @endif
 
@@ -121,7 +121,7 @@
 
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default" wire:click='closeModal'>Cerrar</button>
-                        <button type="button" class="btn btn-primary" wire:click='pagar'>Guardar</button>
+                        <button type="button" class="btn btn-primary" wire:click='pagar'>Aceptar</button>
                     </div>
                 </div>
             </div>
