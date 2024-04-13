@@ -13,12 +13,11 @@
 
 
 <div class="row">
-    <div class="col-8">
-
+    <div class="col-md-8">
         @livewire('datos-personales',['orden' => $orden, 'persona' => $cliente])
         @livewire('add-products',['orden' => $orden])
     </div>
-    <div class="col-4">
+    <div class="col-md-4">
         @livewire('about-vehicle',['orden' => $orden])
         @livewire('final-order',['orden' => $orden])
         @livewire('form-pago',['orden' => $orden])

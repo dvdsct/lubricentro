@@ -15,14 +15,14 @@
                 </div>
             </div>
 
-            <div class="card-body p-0" style="display: block;">
+            <div class="card-body p-3" style="display: block;">
                 <div class="row">
-                    <div class="col-4 d-flex flex-column pl-4 py-2">
+                    <div class="col-md-4 d-flex flex-column">
                         <h6><strong>DNI: </strong>{{ $persona->perfiles->personas->dni }}</h6>
                         <h6><strong>Edad: </strong> {{ $persona->perfiles->personas->edad }}</h6>
                     </div>
 
-                    <div class="col-4 d-flex flex-column px-1 py-2">
+                    <div class="col-md-4 d-flex flex-column">
                         <h6>
                             <strong>Email: </strong>
                             {{-- {{ $persona->perfiles->personas->correos->first()->direccion ?? '-' }} --}}
@@ -34,8 +34,7 @@
                         </h6>
                     </div>
 
-
-                    <div class="col-4 d-flex flex-column"
+                    <div class="col-md-4 d-flex flex-column"
                         style="display: flex; justify-content: flex-end; align-items: flex-end;">
                         <a href="" class="nav-link" style="display: flex; justify-content: flex-end;"
                             data-toggle="modal" data-target="#modal-datos-pac">

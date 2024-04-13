@@ -1,19 +1,20 @@
 <div>
 
     <div class="row d-flex justify-content-between" style="padding-top: 20px;">
-        <div class="col-3 d-flex align-items-center">
-
+        <div class="col-md-3 d-flex align-items-center">
             <button wire:click='change_day("yes")' class="btn btn-info btn-sm">
                 <i class="fas fa-arrow-left"></i></button>
             <input type="date" wire:model="fecha" class="form-control">
             <button wire:click='change_day("tmw")' class="btn btn-info btn-sm"><i class="fas fa-arrow-right"></i></button>
-
-
         </div>
-        <div class="col-3">
-            <h1> <strong>{{ ucfirst(Carbon\Carbon::parse($fecha)->locale('es')->isoFormat('dddd DD ')) }} </strong></h1>
+
+        <!-- FECHA DEL MEDIO -->
+        <div class="col-md-3">
+            <h1 style="text-align: center;"> <strong>{{ ucfirst(Carbon\Carbon::parse($fecha)->locale('es')->isoFormat('dddd DD ')) }} </strong></h1>
         </div>
-        <div class="col-2 pt-2 mr-2">
+
+        <!-- BOTON PARA GENERAR NUEVO TURNO -->
+        <div class="col-md-2 pt-2">
             @can('caja')
             <button type="button" class="btn btn-block btn-info" data-target="modal-default" wire:click="$dispatchTo('form-create-order', 'modal-order')">
                 <i class="fas fa-plus-circle"></i> Nuevo Turno</button>

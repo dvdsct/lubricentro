@@ -19,9 +19,7 @@
                         <div class="px-3 d-flex justify-content-center pb-1">
                             <div class="row">
                                 <div class="d-flex justify-content-between">
-                                    <div class="col-md-4">
-
-
+                                    <div class="col-md-4 col-xs-12">
                                         <button wire:click="setMot('lub')" type="button"
                                             class="btn btn-lg {{ $s_btnLub }}" style="width: 150px; ">
                                             <i class="fas fa-tools"></i>
@@ -48,12 +46,12 @@
                         </div>
 
                         @if ($formperson == false)
-                            <div class="row  d-flex justify-content-between">
+                            <div class="row pt-2 d-flex justify-content-between">
                                 <h4 class="pl-2"> <strong> CLIENTE </strong> </h4>
                             </div>
                             @if ($cliente == null)
-                                <div class="row pt-2">
-                                    <div class="col-md-10">
+                                <div class="row">
+                                    <div class="col-10 col-xs-10">
                                         <select id="" wire:model.live='cliente' class="form-control"
                                             wire:change="upPerson" aria-label="Default select example">
                                             <option selected> Seleccionar cliente</option>
@@ -68,7 +66,7 @@
                                         </select>
                                     </div>
                                     <!-- BOTON CREAR NUEVO CLIENTE  -->
-                                    <div class="col-md-2">
+                                    <div class="col-2 col-xs-2">
                                         <button class="btn btn-success" wire:click='formPerson'>
                                             <div class="icon">
                                                 <i class="fas fa-user-plus"></i>
@@ -78,12 +76,12 @@
                                 </div>
                             @else
                                 <!-- MUESTRA NOMBRE APELLIDO Y DNI DEL CLIENTE SELECCIONADO -->
-                                <div class="row d-flex justify-content-center">
+                                <div class="row px-3">
                                     <h2> <span class="font-italic float-right badge bg-secondary"> {{ $nombre }}
                                             {{ $apellido }} - {{ $dni }} </span> </h2>
 
                                     <!-- BOTON ELIMINAR CLIENTE SELECCIONADO -->
-                                    <div class="col-md-1 pl-2">
+                                    <div class="col-1 pl-2">
                                         <button class="btn btn-danger" wire:click='formPerson'>
                                             <div class="icon">
                                                 <i class="fas fa-user-minus"></i>
@@ -160,7 +158,7 @@
 
                         @if ($cliente != null)
                             @if ($formVehiculo == true)
-                                <div class="pl-3">
+                                <div class="row pl-2 pt-2">
                                     <h4> <strong>VEHÍCULO </strong> </h4>
                                 </div>
                                 <!-- SI EL VEHICULO NO EXISTE, CREAR NUEVO VEHICULO -->
@@ -236,23 +234,22 @@
                                 </div>
                             @else
                                 <!-- SECCION DONDE SE ELIJE O CREA UN NUEVO VEHICULO -->
-                                <div class="row pl-4">
+                                <div class="row pl-2 pt-2">
                                     <h4><strong> VEHÍCULO </strong></h4>
                                 </div>
 
                                 @if ($selecedtVehiculo == true)
 
                                     <!-- AQUI MUESTRA EL VEHICULO DEL CLIENTE JUNTO CON SU DOMINIO -->
-                                    <div class="col-md-12">
 
-                                        <div class="row d-flex justify-content-center">
+                                        <div class="row px-3">
                                             <h2> <span class="font-italic float-right badge bg-secondary">
                                                     {{ $vehiculo->modelos->marcas->descripcion }}
                                                     {{ $vehiculo->modelos->descripcion . ' - ' . $vehiculo->dominio }}
                                                     <!-- VARIABLES PARA MOSTRAR VECHICULO Y DOMINIO --></span> </h2>
 
                                             <!-- BOTON PARA ELIMINAR VEHICULO SELECCIONADO -->
-                                            <div class="col-md-1">
+                                            <div class="col-1">
                                                 <button class="btn btn-danger" wire:click='setForm'>
                                                     <div class="icon">
                                                         <i class="fas fa-car"></i>
@@ -260,8 +257,6 @@
                                                 </button>
                                             </div>
                                         </div>
-
-                                    </div>
                                 @else
                                     <!-- SELECCIONAR VEHICULO EXISTENTE -->
                                     <div class="row px-3">
