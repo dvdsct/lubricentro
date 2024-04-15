@@ -1,7 +1,7 @@
 <div>
     <div class="card">
         @if ($pedido->estado == 100)
-            <div class="card-header bg-danger">PAGADO
+            <div class="card-header bg-danger">Recibido
             @else
                 <div class="card-header">
 
@@ -65,6 +65,7 @@
 
 
                         @if ($i->estado == 2)
+                        {{-- Si el producto es estado 2 aun no se a recibido --}}
                             <td class="project-actions text-right">
                                 <a class="btn btn-info btn-sm" wire:click='editProd({{ $i->id }})'>
                                     <i class="fas fa-pencil-alt">

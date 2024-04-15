@@ -228,15 +228,15 @@ class FormCreateOrder extends Component
                 'cliente_id' => $this->cliente->id,
                 'vehiculo_id' => $this->vehiculo,
                 'motivo' => '2',
-                'horario' => Carbon::now(),
+                'horario' => $this->horario,
                 'estado' => '1'
             ]);
         }
 
 
-        $this->closeModal();
         $this->dispatch('added-turn');
         $this->formperson == false;
+        $this->closeModal();
     }
 
 

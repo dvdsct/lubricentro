@@ -1,5 +1,7 @@
 <div>
-    
+    <button class="btn btn-success" wire:click='$dispatch("add-presupuesto", "addPresupuesto")'>
+        Nuevo Presupuesto
+    </button>
     <div class="row">
         @if ($presupuestos != null)
 
@@ -43,7 +45,7 @@
                                             <div class="btn btn-outline-primary">
                                                 {{$pre->vehiculos->dominio}}
                                                 </div>
-                                        
+
                                      </td>
                                         <td>{{ $pre->total }}</td>
                                         <td><a href="{{ route('presupuesto.show', $pre->id) }}"
