@@ -128,6 +128,7 @@ class AddProductsPP extends Component
     {
 
 
+        
         $this->producto = Producto::find($p);
 
 
