@@ -119,6 +119,7 @@ class AddProductsPP extends Component
         $this->modal = false;
 
         //
+        // 
     }
 
 
@@ -128,7 +129,7 @@ class AddProductsPP extends Component
     {
 
 
-        
+
         $this->producto = Producto::find($p);
 
 
