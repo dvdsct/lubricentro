@@ -22,19 +22,6 @@ class Cliente extends Model
         return $this->belongsTo(Perfil::class,'perfil_id');
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     public function vehiculos()
     {
         return $this->belongsToMany(Vehiculo::class, 'vehiculos_x_clientes', 'cliente_id', 'vehiculo_id');

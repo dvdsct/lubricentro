@@ -1,7 +1,11 @@
 <div>
-    <button class="btn btn-success" wire:click='$dispatch("add-presupuesto", "addPresupuesto")'>
+    <button class="btn btn-success" wire:click='$dispatchTo("add-presupuesto", "addPresupuesto")'>
         Nuevo Presupuesto
     </button>
+    @php
+        Carbon\Carbon::setLocale('es');
+
+    @endphp
     <div class="row">
         @if ($presupuestos != null)
 
@@ -27,30 +31,26 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
+                                    <th>Fecha</th>
                                     <th>Cliente</th>
-                                    <th>Vehiculo</th>
                                     <th>Precio</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($presupuestos as $pre)
-                                    <tr>
-                                        <td>{{ $pre->id }}</td>
-                                        <td>{{ $pre->clientes->perfiles->personas->nombre . ' ' . $pre->clientes->perfiles->personas->apellido }}
-                                        </td>
-                                        <td>{{ $pre->vehiculos->modelos->marcas->descripcion
-                                            .' '. $pre->vehiculos->modelos->descripcion
-                                        }}
-                                            <div class="btn btn-outline-primary">
-                                                {{$pre->vehiculos->dominio}}
-                                                </div>
+                                    @if ($pre->estado == '1')
+                                        <tr>
+                                            <td>{{ $pre->id }}</td>
+                                            <td>{{ Carbon\Carbon::parse($pre->created_at)->diffForHumans() }}</td>
+                                            <td>{{ $pre->clientes->perfiles->personas->nombre . ' ' . $pre->clientes->perfiles->personas->apellido }}
+                                            </td>
 
-                                     </td>
-                                        <td>{{ $pre->total }}</td>
-                                        <td><a href="{{ route('presupuesto.show', $pre->id) }}"
-                                                class="btn btn-info">Ver</a></td>
-                                    </tr>
+                                            <td>{{ $pre->total }}</td>
+                                            <td><a href="{{ route('presupuesto.show', $pre->id) }}"
+                                                    class="btn btn-info">Ver</a></td>
+                                        </tr>
+                                    @endif
                                 @endforeach
 
                             </tbody>
@@ -60,7 +60,7 @@
                 </div>
 
             </div>
-            @else
+        @else
             <h3>NO HAY PRESUPUESTOS</h3>
 
         @endif

@@ -81,7 +81,6 @@ class AddProductsPP extends Component
         $this->validate();
         $item = PedItem::find($id);
         $p = Producto::find($item->producto_id);
-        $stock = Stock::where('producto_id', $p->id)->first();
 
         // dd($stock);
         $p->update([

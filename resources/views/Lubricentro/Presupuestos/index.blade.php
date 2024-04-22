@@ -9,6 +9,7 @@
 @section('content')
 
     @livewire('list-presupuesto')
+    @livewire('add-presupuesto')
 @stop
 
 @section('css')

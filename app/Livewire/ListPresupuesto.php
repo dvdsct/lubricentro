@@ -9,7 +9,9 @@ class ListPresupuesto extends Component
 {
     public $presupuestos;
 
-
+    public function mount(){
+        $this->presupuestos = Presupuesto::all()->sortByDesc('estado');
+    }
     
     public function render()
     {

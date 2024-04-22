@@ -43,8 +43,7 @@ class FormPago extends Component
         $this->tiposFactura = TipoFactura::all();
         $this->mediosPago = MedioPago::all();
         $this->clientes = Cliente::where('lista_precios', '3')->get();
-        $this->caja = Caja::where('user_id',Auth::user()->id)->first();
-
+        $this->caja = Caja::where('user_id', Auth::user()->id)->first();
     }
 
     public function closeModal()
@@ -54,13 +53,14 @@ class FormPago extends Component
 
 
     #[On('formPago')]
-    public function genPago()
+    public function genPago($tipo)
     {
-
-        // $o = Orden::find($this->orden->id);
-        if ($this->orden->estado != 100) {
-            $this->modal = true;
+        if ($tipo == 'orden') {
+            if ($this->orden->estado != 100) {
+                $this->modal = true;
+            }
         }
+
     }
 
     public function pagar()
