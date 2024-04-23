@@ -9,6 +9,7 @@ use App\Models\MedioPago;
 use App\Models\Orden;
 use App\Models\Pago;
 use App\Models\PagosXCaja;
+use App\Models\Tarjeta;
 use App\Models\TipoFactura;
 use App\Models\TipoPago;
 use Illuminate\Support\Facades\Auth;
@@ -30,6 +31,10 @@ class FormPago extends Component
     public $tipoFactura = '4';
     public $tiposFactura;
     public $codeOp;
+    public $tarjetas;
+    public $tarjeta;
+    public $montoConInt;
+
 
     public $clientes;
     public $cliente;
@@ -40,6 +45,7 @@ class FormPago extends Component
     {
 
         $this->tiposPago = TipoPago::all();
+        $this->tarjetas = Tarjeta::all();
         $this->tiposFactura = TipoFactura::all();
         $this->mediosPago = MedioPago::all();
         $this->clientes = Cliente::where('lista_precios', '3')->get();
@@ -60,7 +66,22 @@ class FormPago extends Component
                 $this->modal = true;
             }
         }
+    }
+    // Cargar intereses de tarjeta de Credito
+    public function cargaInteres()
+    {
 
+        // dd();   
+        $tarjeta = Tarjeta::find($this->tarjeta);
+        $montoInt = floatval($this->montoAPagar / 100) * floatval($tarjeta->interes);
+       return  $this->montoAPagar + $montoInt;
+    }
+    
+    public function updatedTarjeta (){
+        $this->montoAPagar = $this->cargaInteres();
+        // dd($this->montoAPagar);
+        $this->montoConInt = false;
+        // $this->montoConInt = true;
     }
 
     public function pagar()
@@ -128,6 +149,44 @@ class FormPago extends Component
                         'total' => $this->montoAPagar,
                         'estado' => '2'
                     ]);
+
+                    $p = Pago::create([
+                        'factura_id' => $f->id,
+                        'cliente_id' => $this->cliente,
+                        'medio_pago_id' => $this->medioPago,
+                        'tipo_pago_id' => $this->tipoPago,
+                        'efectivo' => $this->efectivo,
+                        'total' => $this->montoAPagar,
+                        'estado' => '20',
+
+                    ]);
+                    PagosXCaja::create([
+                        'pago_id' => $p->id,
+                        'caja_id' => $this->caja->id,
+                        'estado' => '10',
+
+                    ]);
+                }
+                // _____________________________________________________________________
+                // _____________________________________________________________________
+                // _____________________________________________________________________
+
+                // Tarjeta
+
+                if ($this->medioPago == 2) {
+
+                    // dd();   
+
+
+                    $f =  Factura::create([
+
+                        'orden_id' => $this->orden->id,
+
+                        'tipo_factura_id' => $this->tipoFactura,
+                        'total' => $this->montoAPagar,
+                        'estado' => '2'
+                    ]);
+
 
                     $p = Pago::create([
                         'factura_id' => $f->id,

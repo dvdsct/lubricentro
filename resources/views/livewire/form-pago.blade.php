@@ -82,6 +82,7 @@
 
 
                             @if ($medioPago == 2)
+                            {{-- Efectivo --}}
                                 <div class="mb-3">
                                     <label for="efectivo" class="form-label">Efectivo</label>
                                     <div class="input-group">
@@ -98,25 +99,48 @@
                                 @if ($vuelto < 0)
                                     <div class="mb-3 bg-danger p-2" style="text-align: right;">
                                         <h5 for="vuelto" class="form-label"><strong> Monto a pagar</strong></h5>
-                                        <h5 for="vuelto" class="form-label"><strong> ${{ $vuelto }} </strong></h5>
+                                        <h5 for="vuelto" class="form-label"><strong> ${{ $vuelto }} </strong>
+                                        </h5>
                                     </div>
                                 @else
                                     <div class="mb-3 bg-success p-2" style="text-align: right;">
                                         <h5 for="vuelto" class="form-label"><strong> Vuelto </strong></h5>
-                                        <h5 for="vuelto" class="form-label"><strong> ${{ $vuelto }} </strong> </h5>
+                                        <h5 for="vuelto" class="form-label"><strong> ${{ $vuelto }} </strong>
+                                        </h5>
                                     </div>
                                 @endif
 
                             @endif
 
-
                             @if ($medioPago == 1)
+                            {{-- Tarjeta --}}
+                                <div class="mb-3">
+                                    <label for="tipo_pago" class="form-label">Tarjeta</label>
+                                    <select wire:model="tarjeta" wire:change='cargaInteres' id="tipo_pago" class="form-control">
+                                        <option selected>Seleccionar tarjeta</option>
+                                        @foreach ($tarjetas as $tar)
+                                            <option value="{{ $tar->id }}">
+                                                {{ $tar->descripcion}}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 <div class="mb-3">
                                     <label for="codeOp" class="form-label">Codigo de Operacion</label>
                                     <input wire:model="codeOp" type="number" id="codeOp" class="form-control">
                                 </div>
+                                @if ($montoConInt)
+                                <div class="mb-3 bg-danger p-2" style="text-align: right;">
+                                    <h5 for="monto" class="form-label"><strong> Monto a pagar</strong></h5>
+                                    <h5 for="monto" class="form-label"><strong> ${{ $montoAPagar }} </strong>
+                                    </h5>
+                                </div>
+                                @endif
+
                             @endif
                         </div>
+
+             
                     </div>
 
                     <div class="modal-footer justify-content-between">

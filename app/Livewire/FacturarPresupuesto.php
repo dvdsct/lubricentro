@@ -2,26 +2,28 @@
 
 namespace App\Livewire;
 
+use App\Models\Orden;
 use Livewire\Component;
 
 class FacturarPresupuesto extends Component
 {
     public $presupuesto;
-    public $cliente;
     public $items;
+    public $orden;
+    public $cliente;
+    public $vehiculo;
+    public $horario;
+    public $modalOrdenPres;
 
-    public function mount($presupuesto){
+    public function mount($presupuesto)
+    {
         $this->presupuesto = $presupuesto;
         $this->items =  $this->presupuesto->itemspres;
+        $this->cliente = $this->presupuesto->clientes;
     }
 
 
-    public function facturarPres(){
-        
-        foreach($this->items as $i){
 
-        }
-    }
     public function render()
     {
         return view('livewire.facturar-presupuesto');
