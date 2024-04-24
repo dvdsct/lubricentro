@@ -356,6 +356,13 @@ return [
             'can' => 'stock',
 
         ],
+        [
+            'text' => 'Tarjetas',
+            'url'  => 'tarjetas',
+            'icon' => 'fa fa-truck',
+            'can' => 'stock',
+
+        ],
 
     ],
 
