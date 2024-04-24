@@ -120,7 +120,7 @@
                                         <option selected>Seleccionar tarjeta</option>
                                         @foreach ($tarjetas as $tar)
                                             <option value="{{ $tar->id }}">
-                                                {{ $tar->descripcion}}
+                                                {{ $tar->nombre_tarjeta}}
                                             </option>
                                         @endforeach
                                     </select>
@@ -129,13 +129,11 @@
                                     <label for="codeOp" class="form-label">Codigo de Operacion</label>
                                     <input wire:model="codeOp" type="number" id="codeOp" class="form-control">
                                 </div>
-                                @if ($montoConInt)
-                                <div class="mb-3 bg-danger p-2" style="text-align: right;">
+                                <div class="mb-3 bg-success p-2" style="text-align: right;">
                                     <h5 for="monto" class="form-label"><strong> Monto a pagar</strong></h5>
                                     <h5 for="monto" class="form-label"><strong> ${{ $montoAPagar }} </strong>
                                     </h5>
                                 </div>
-                                @endif
 
                             @endif
                         </div>

@@ -12,7 +12,7 @@ class TarjetaController extends Controller
      */
     public function index()
     {
-        //
+        return view('Lubricentro.Tarjetas.index');
     }
 
     /**

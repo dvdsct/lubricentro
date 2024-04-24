@@ -50,6 +50,9 @@ class FormPago extends Component
         $this->mediosPago = MedioPago::all();
         $this->clientes = Cliente::where('lista_precios', '3')->get();
         $this->caja = Caja::where('user_id', Auth::user()->id)->first();
+        $this->montoAPagar = $this->orden->items->sum('subtotal');
+
+
     }
 
     public function closeModal()
@@ -70,24 +73,23 @@ class FormPago extends Component
     // Cargar intereses de tarjeta de Credito
     public function cargaInteres()
     {
+        $this->montoAPagar = $this->orden->items->sum('subtotal');
+        // dd($this->montoAPagar);
 
-        // dd();   
         $tarjeta = Tarjeta::find($this->tarjeta);
         $montoInt = floatval($this->montoAPagar / 100) * floatval($tarjeta->interes);
-       return  $this->montoAPagar + $montoInt;
+        $this->montoAPagar = $this->montoAPagar + $montoInt;
+    //    return  $this->montoAPagar;
     }
     
-    public function updatedTarjeta (){
-        $this->montoAPagar = $this->cargaInteres();
-        // dd($this->montoAPagar);
-        $this->montoConInt = false;
-        // $this->montoConInt = true;
-    }
+
 
     public function pagar()
     {
 
+
         if ($this->orden->estado != 100) {
+
 
 
             // Estados
@@ -136,6 +138,8 @@ class FormPago extends Component
             // ------------------------------------------------------------------------------
             // ------------------------------------------------------------------------------
             if ($this->tipoPago == 2) {
+                $this->montoAPagar = $this->orden->items->sum('subtotal');
+
 
                 // Medio Efectivo
                 if ($this->medioPago == 2) {
@@ -273,7 +277,6 @@ class FormPago extends Component
     public function render()
     {
         $this->vuelto = floatval($this->efectivo) - floatval($this->montoAPagar);
-        $this->montoAPagar = $this->orden->items->sum('subtotal');
         return view('livewire.form-pago');
     }
 }
