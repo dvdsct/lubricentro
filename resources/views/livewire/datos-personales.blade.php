@@ -15,14 +15,14 @@
                 </div>
             </div>
 
-            <div class="card-body p-3" style="display: block;">
+            <div class="card-body py-1 px-3" style="display: block;">
                 <div class="row">
-                    <div class="col-md-4 d-flex flex-column">
+                    <div class="col-md-2 d-flex flex-column">
                         <h6><strong>DNI: </strong>{{ $persona->perfiles->personas->dni }}</h6>
                         <h6><strong>Edad: </strong> {{ $persona->perfiles->personas->edad }}</h6>
                     </div>
 
-                    <div class="col-md-4 d-flex flex-column">
+                    <div class="col-md-3 d-flex flex-column">
                         <h6>
                             <strong>Email: </strong>
                             {{-- {{ $persona->perfiles->personas->correos->first()->direccion ?? '-' }} --}}
@@ -34,10 +34,15 @@
                         </h6>
                     </div>
 
-                    <div class="col-md-4 d-flex flex-column"
-                        style="display: flex; justify-content: flex-end; align-items: flex-end;">
-                        <a href="" class="nav-link" style="display: flex; justify-content: flex-end;"
-                            data-toggle="modal" data-target="#modal-datos-pac">
+                    <div class="col-md-4 d-flex flex-column">
+                        <h6>
+                            <strong>Domicilio: </strong>
+                            {{-- {{ $persona->perfiles->personas->direcciones->first()->barrio ?? '-' }} --}}
+                        </h6>
+                    </div>
+
+                    <div class="col-md-3 d-flex flex-column" style="display: flex; justify-content: flex-end; align-items: flex-end;">
+                        <a href="" class="nav-link" style="display: flex; justify-content: flex-end;" data-toggle="modal" data-target="#modal-datos-pac">
                             <i class="fas fa-edit"></i> Completar datos de cliente
                         </a>
                     </div>
@@ -53,7 +58,7 @@
                 <div class="modal-content">
                     <div class="modal-header bg-info">
                         <h4 class="modal-title"> <strong> COMPLETAR DATOS DE CLIENTE </strong> </h4>
-                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
@@ -105,7 +110,7 @@
                         </div>
 
                         <div class="row">
-                        <div class="col-md-12">
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="direccion">Direccion</label>
                                     <input type="text" class="form-control" id="direccion" placeholder="">
