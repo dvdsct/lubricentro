@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Pedidos Proveeddores - Rocket')
+@section('title', 'Ver presupuesto - Rocket')
 
 @section('content_header')
-    <h1> <strong> PEDIDOS PROVEEDORES </strong> </h1>
+    <h1> <strong> VER PRESUPUESTO </strong> </h1>
 @stop
 
 @section('content')
@@ -13,10 +13,13 @@
         <div class="col">
             @livewire('add-product-presupuesto', ['presupuesto' => $presupuesto])
         </div>
-        <div class="col">
+<!--         <div class="col">
             @livewire('facturar-presupuesto', ['presupuesto' => $presupuesto])
-        </div>
+        </div> -->
+        <button type="button" class="btn btn-default" wire:click='modalOff'>Volver</button>
     </div>
+
+
 @stop
 
 @section('css')

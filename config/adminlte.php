@@ -318,14 +318,14 @@ return [
         [
             'text' => 'Productos',
             'url'  => 'productos',
-            'icon' => 'fa fa-shopping-basket',
+            'icon' => 'fas fa-shopping-cart',
             'can' => 'stock',
 
         ],
         [
             'text' => 'Presupuestos',
             'url'  => 'presupuesto',
-            'icon' => 'fa fa-shopping-basket',
+            'icon' => 'fas fa-money-check-alt',
             'can' => 'caja',
 
         ],

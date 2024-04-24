@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Pedidos Proveeddores - Rocket')
+@section('title', 'Presupuestos - Rocket')
 
 @section('content_header')
-    <h1> <strong> PEDIDOS PROVEEDORES </strong> </h1>
+    <h1> <strong> PRESUPUESTOS </strong> </h1>
 @stop
 
 @section('content')

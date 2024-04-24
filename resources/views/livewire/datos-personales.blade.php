@@ -61,15 +61,15 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="exampleInputEmail1">Apellido</label>
-                                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="">
+                                    <label for="apellido">Apellido</label>
+                                    <input type="text" class="form-control" id="apellido" placeholder="">
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="exampleInputEmail1">Nombre</label>
-                                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="">
+                                    <label for="nombre">Nombre</label>
+                                    <input type="text" class="form-control" id="nombre" placeholder="">
                                 </div>
                             </div>
                         </div>
@@ -77,14 +77,14 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="exampleInputEmail1">Fecha de nacimiento</label>
-                                    <input type="date" class="form-control" id="exampleInputEmail1" placeholder="">
+                                    <label for="fec_nac">Fecha de nacimiento</label>
+                                    <input type="date" class="form-control" id="fec_nac" placeholder="">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="exampleInputEmail1">DNI</label>
-                                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="">
+                                    <label for="dni">DNI</label>
+                                    <input type="number" class="form-control" id="dni" placeholder="">
                                 </div>
                             </div>
                         </div>
@@ -98,8 +98,17 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="exampleInputEmail1">Telefono</label>
-                                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="">
+                                    <label for="telefono">Telefono</label>
+                                    <input type="number" class="form-control" id="telefono" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                        <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="direccion">Direccion</label>
+                                    <input type="text" class="form-control" id="direccion" placeholder="">
                                 </div>
                             </div>
                         </div>
