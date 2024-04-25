@@ -21,7 +21,7 @@
                 <tr>
                     <th style="width: 10px">#</th>
                     <th>Producto</th>
-                    <th>Codigo</th>
+                    {{-- <th>Codigo</th> --}}
                     <th>Cantidad</th>
                     <th>Precio Costo</th>
                     <th style="width: 40px">Subtotal</th>
@@ -31,11 +31,8 @@
                 @foreach ($presupuesto->itemspres as $i)
                     <tr>
                         <td>{{ $i->id }}</td>
-                        <td>{{ $i->productos->descripcion }}</td>
-                        <td>
-                            WO-059
+                        <td>{{ $i->productos->descripcion . ' - ' . $i->productos->codigo }}</td>
 
-                        </td>
                         @if ($i->estado == 1)
                             <td><input type="text" class="form-control" style="width: 145px;"
                                     placeholder="Ingresar cantidad" wire:model='cantidad'
@@ -77,7 +74,8 @@
                                     </i>
                                     Eliminar
                                 </a>
-                            @else
+                            </td>
+                        @else
                             <td class="project-actions text-right">
 
                                 <a class="btn btn-danger btn-sm" wire:click='delProd({{ $i->id }})'
@@ -87,7 +85,6 @@
                                     Eliminar
                                 </a>
                         @endif
-                        </td>
                     </tr>
                 @endforeach
 
@@ -103,7 +100,7 @@
 
 
 
-    
+
     <!-- MODAL PARA AGREGAR NUEVO ITEM  -->
     @if ($modalProductos == true)
         <div class="modal fade show" id="modal-lg" style="display: block; padding-right: 17px;">
@@ -118,7 +115,7 @@
                     <div class="modal-body">
                         <!-- BUSCADOR DE PRODUCTOS  -->
                         <div class="input-group input-group-sm pb-2" style="width: 300px;">
-                            <input type="text"wire:model='query' wire:keydown='search'
+                            <input type="text" wire:model='query' wire:keydown='search'
                                 class="form-control float-right" placeholder="Buscar">
                             <div class="input-group-append">
                                 <button type="submit" class="btn btn-default">
@@ -128,26 +125,22 @@
                         </div>
                         <table class="table table-bordered  table-hover">
                             <thead>
-                                <tr>
-                                    <th style="width: 10px">#</th>
-                                    <th>Producto</th>
-                                    <th>Codigo</th>
-                                    <th style="width: 40px">Stock</th>
-                                    <th>Precio</th>
-                                </tr>
+                                <th style="width: 10px">#</th>
+                                <th>Producto</th>
+                                <th style="width: 40px">Stock</th>
+                                <th>Precio</th>
                             </thead>
                             <tbody>
-                                @foreach ($stock as $i)
-                                    <tr wire:click='addedProduct({{ $i->id }})' wire:loading.attr="disabled">
-                                        <td>{{ $i->id }}</td>
-                                        <td>{{ $i->descripcion }}</td>
-                                        <td>{{ $i->codigo }}</td>
-                                        @if ($i->cantidad == 0)
-                                            <td><span class="badge bg-danger">{{ $i->cantidad }}</span></td>
+                                @foreach ($stock as $s)
+                                    <tr wire:click='addedProduct({{ $s->id }})' wire:loading.attr="disabled">
+                                        <td>{{ $s->id }}</td>
+                                        <td>{{ $s->productos->descripcion }} - {{ $s->productos->codigo }}</td>
+                                        @if ($s->cantidad == 0)
+                                            <td><span class="badge bg-danger">{{ $s->cantidad }}</span></td>
                                         @else
-                                            <td><span class="badge bg-success">{{ $i->cantidad }}</span></td>
+                                            <td><span class="badge bg-success">{{ $s->cantidad }}</span></td>
                                         @endif
-                                        <td>$ {{ $i->costo }}</td>
+                                        <td>$ {{ $s->costo }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -165,4 +158,6 @@
 
         </div>
     @endif
+
+
 </div>

@@ -9,9 +9,12 @@ use App\Models\Stock;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class AddProductPresupuesto extends Component
 {
+    use WithPagination;
+
 
     public $presupuesto;
     public $cliente;
@@ -135,7 +138,8 @@ class AddProductPresupuesto extends Component
             'stock' => Stock::select('stocks.*', 'productos.descripcion as descripcion', 'productos.codigo', 'productos.costo')
                 ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')
                 ->where('descripcion', 'like', '%' . $this->query . '%')
-                ->paginate(10)
+                ->orWhere('productos.codigo', 'like', '%' . $this->query . '%')
+                ->paginate(12)
         ]);
     }
 }
