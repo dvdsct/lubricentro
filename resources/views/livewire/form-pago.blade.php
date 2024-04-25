@@ -82,7 +82,7 @@
 
 
                             @if ($medioPago == 2)
-                            {{-- Efectivo --}}
+                                {{-- Efectivo --}}
                                 <div class="mb-3">
                                     <label for="efectivo" class="form-label">Efectivo</label>
                                     <div class="input-group">
@@ -113,14 +113,15 @@
                             @endif
 
                             @if ($medioPago == 1)
-                            {{-- Tarjeta --}}
+                                {{-- Tarjeta --}}
                                 <div class="mb-3">
                                     <label for="tipo_pago" class="form-label">Tarjeta</label>
-                                    <select wire:model="tarjeta" wire:change='cargaInteres' id="tipo_pago" class="form-control">
+                                    <select wire:model="tarjeta" wire:change='cargaInteres' id="tipo_pago"
+                                        class="form-control">
                                         <option selected>Seleccionar tarjeta</option>
                                         @foreach ($tarjetas as $tar)
                                             <option value="{{ $tar->id }}">
-                                                {{ $tar->nombre_tarjeta}}
+                                                {{ $tar->nombre_tarjeta }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -130,15 +131,22 @@
                                     <input wire:model="codeOp" type="number" id="codeOp" class="form-control">
                                 </div>
                                 <div class="mb-3 bg-success p-2" style="text-align: right;">
-                                    <h5 for="monto" class="form-label"><strong> Monto a pagar</strong></h5>
-                                    <h5 for="monto" class="form-label"><strong> ${{ $montoAPagar }} </strong>
-                                    </h5>
+                                    <div class="row">
+                                        <div class="col">
+                                            <h5 for="monto" class="form-label"><strong> Monto a pagar</strong></h5>
+                                        </div>
+                                        <div class="col">
+                                            <h5 for="monto" class="form-label"><strong> ${{ $montoAPagar }}
+                                                </strong>
+                                            </h5>
+                                        </div>
+                                    </div>
                                 </div>
 
                             @endif
                         </div>
 
-             
+
                     </div>
 
                     <div class="modal-footer justify-content-between">

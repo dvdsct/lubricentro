@@ -24,13 +24,13 @@ class TarjetaSeeder extends Seeder
             [
                 'nombre_tarjeta' => 'Mastercard',
                 'descuento' => '5',
-                'interes' => '20',
+                'interes' => '15',
                 'estado' => '1'
             ],
             [
                 'nombre_tarjeta' => 'American Express',
                 'descuento' => '5',
-                'interes' => '20',
+                'interes' => '35',
                 'estado' => '1'
             ],
         ];

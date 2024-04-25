@@ -18,7 +18,10 @@
         @livewire('add-products',['orden' => $orden])
     </div>
     <div class="col-md-4">
+        @if ($orden->vehiculos)
+            
         @livewire('about-vehicle',['orden' => $orden])
+        @endif
         @livewire('final-order',['orden' => $orden])
         @livewire('form-pago',['orden' => $orden])
 

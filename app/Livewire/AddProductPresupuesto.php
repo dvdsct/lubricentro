@@ -20,7 +20,7 @@ class AddProductPresupuesto extends Component
     public $cliente;
     public $modalProductos;
 
-    #[Validate('required', message: 'Infrese una cantidad')]
+    #[Validate('required', message: 'Debe ingresar una cantidad')]
     public $cantidad;
     public $precio;
     public $producto;
@@ -41,6 +41,7 @@ class AddProductPresupuesto extends Component
         $this->resetPage();
     }
     // Control del modal
+
     public function modalProdOn()
     {
         if ($this->modalProductos == true) {

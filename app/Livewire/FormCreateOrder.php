@@ -276,14 +276,14 @@ class FormCreateOrder extends Component
                 }
     
             }
-            redirect('turnos');
-
+            
         }
-
-
+        
+        
         $this->dispatch('added-turn');
         $this->formperson == false;
         $this->closeModal();
+        redirect('ordenes/'.$this->orden->id);
     }
 
 
@@ -308,8 +308,12 @@ class FormCreateOrder extends Component
     #[On('modal-order')]
     public function openModal()
     {
+        if($this->modal){
+
+            $this->modal = false;
+        }else{
         $this->modal = true;
-    }
+    }}
 
     #[On('presupuesto')]
     public function dePresupuesto($id)

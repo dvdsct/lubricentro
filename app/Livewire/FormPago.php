@@ -41,9 +41,10 @@ class FormPago extends Component
     public $caja;
 
 
-    public function mount()
+    public function mount($orden)
     {
 
+        $this->orden = $orden;
         $this->tiposPago = TipoPago::all();
         $this->tarjetas = Tarjeta::all();
         $this->tiposFactura = TipoFactura::all();
@@ -70,16 +71,20 @@ class FormPago extends Component
             }
         }
     }
+
     // Cargar intereses de tarjeta de Credito
     public function cargaInteres()
     {
         $this->montoAPagar = $this->orden->items->sum('subtotal');
-        // dd($this->montoAPagar);
 
         $tarjeta = Tarjeta::find($this->tarjeta);
         $montoInt = floatval($this->montoAPagar / 100) * floatval($tarjeta->interes);
         $this->montoAPagar = $this->montoAPagar + $montoInt;
-    //    return  $this->montoAPagar;
+    }
+
+    public function updatedMedioPago(){
+        $this->montoAPagar = $this->orden->items->sum('subtotal');
+
     }
     
 
@@ -143,6 +148,7 @@ class FormPago extends Component
 
                 // Medio Efectivo
                 if ($this->medioPago == 2) {
+
 
                     // dd();
                     $f =  Factura::create([
