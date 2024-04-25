@@ -23,7 +23,7 @@
                     <th>Producto</th>
                     <th>Codigo</th>
                     <th>Cantidad</th>
-                    <th>Precio Costo</th>
+                    <th>Precio unitario</th>
                     <th style="width: 40px">Subtotal</th>
                 </tr>
             </thead>
@@ -54,10 +54,10 @@
                                 {{ $i->cantidad }}
                             </td>
                             <td>
-                                {{ $i->precio }}
+                               $ {{ $i->precio }}
                             </td>
                             <td>
-                                {{ $i->subtotal }}
+                               $ {{ $i->subtotal }}
                             </td>
                         @endif
 

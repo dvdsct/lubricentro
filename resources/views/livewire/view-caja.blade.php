@@ -1,4 +1,39 @@
 <div>
+    <div class="row">
+        <div class="col-md-3">
+            <a class="btn btn-app bg-warning btn-lg" style="width: 100%; height: 80px">
+                <span class="badge bg-purple" style="font-size: 15px;">10</span>
+                <i class="fas fa-edit"></i>
+                <h4><strong> Presupuesto </strong></h4>
+            </a>
+        </div>
+
+        <div class="col-md-3">
+            <a class="btn btn-app bg-danger" style="width: 100%; height: 80px">
+                <span class="badge bg-success" style="font-size: 15px;">4</span>
+                <i class="fas fa-arrow-circle-down"></i>
+                <h4><strong> Compra </strong></h4>
+            </a>
+        </div>
+
+        <div class="col-md-3">
+            <a class="btn btn-app bg-success" style="width: 100%; height: 80px">
+                <span class="badge bg-purple" style="font-size: 15px;">15</span>
+                <i class="fas fa-arrow-circle-up"></i>
+                <h4><strong> Venta </strong></h4>
+            </a>
+        </div>
+
+        <div class="col-md-3">
+            <a class="btn btn-app bg-info" style="width: 100%; height: 80px">
+                <span class="badge bg-danger" style="font-size: 15px;">20</span>
+                <i class="fa fa-calendar"></i>
+                <h4><strong> Turno </strong></h4>
+            </a>
+        </div>
+    </div>
+
+
 
     <div class="row">
         <div class="col-md-6">
@@ -37,20 +72,20 @@
                 <table class="table table-striped">
                     <thead>
                         <th>Tipo</th>
-<!--                         <th></th> -->
+                        <!--                         <th></th> -->
                         <th>Monto</th>
                     </thead>
                     <tbody>
                         <tr>
                             <td>Transferencias</td>
                             <td> ${{ $pagosTrans->sum('total') }}</td>
-                        <!--     <td></td> -->
+                            <!--     <td></td> -->
                         </tr>
 
                         <tr>
                             <td>Efectivo</td>
                             <td> ${{ $pagosEfectivo->sum('total') }}</td>
-                        <!--     <td></td> -->
+                            <!--     <td></td> -->
                         </tr>
 
                     </tbody>

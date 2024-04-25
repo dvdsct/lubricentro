@@ -323,13 +323,6 @@ return [
 
         ],
         [
-            'text' => 'Productos',
-            'url'  => 'productos',
-            'icon' => 'fa fa-shopping-basket',
-            'can' => 'stock',
-
-        ],
-        [
             'text' => 'Presupuestos',
             'url'  => 'presupuesto',
             'icon' => 'fas fa-money-check-alt',
@@ -359,7 +352,7 @@ return [
         [
             'text' => 'Tarjetas',
             'url'  => 'tarjetas',
-            'icon' => 'fa fa-truck',
+            'icon' => 'far fa-credit-card',
             'can' => 'stock',
 
         ],

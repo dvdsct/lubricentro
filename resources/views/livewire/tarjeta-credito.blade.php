@@ -1,4 +1,6 @@
 <div>
+<!-- TABLA CON DESCRIPCION DE TARJETAS DE CREDITO -->
+
     <tr>
         <td>1.</td>
         <td>{{ $tarjeta->nombre_tarjeta }}</td>

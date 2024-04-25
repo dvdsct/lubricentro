@@ -13,10 +13,10 @@
         <div class="col">
             @livewire('add-product-presupuesto', ['presupuesto' => $presupuesto])
         </div>
-<!--         <div class="col">
+        <div class="col">
             @livewire('facturar-presupuesto', ['presupuesto' => $presupuesto])
-        </div> -->
-        <button type="button" class="btn btn-default" wire:click='modalOff'>Volver</button>
+        </div>
+       <!--  <button type="button" class="btn btn-default" wire:click='modalOff'>Volver</button> -->
     </div>
 
 
