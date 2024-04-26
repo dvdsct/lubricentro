@@ -57,16 +57,27 @@ class AddProductsPP extends Component
 
 
     // Recibir pedido
+
+    #[On('pedido-recibido')]
     public function recibirPedido()
     {
+
         foreach ($this->pedido->items as $i) {
 
-            $p = Producto::find($i->producto_id);
-            $stock = Stock::where('producto_id', $p->id)->first();
+            $p = Producto::find($i->producto_id)->pluck('id');
+       
+            $stock = Stock::firstOrCreate(
+                [
+                    'producto_id'=> '170',
+                    'estado'=> '1'
+                ]
+            );
+
             $stock->update([
                 'cantidad' => $stock->cantidad + $i->cantidad
             ]);
         }
+
 
         redirect('stock');
     }
@@ -102,7 +113,7 @@ class AddProductsPP extends Component
 
 
 
-            $this->reset('cantidad','precio');
+            $this->reset('cantidad', 'precio');
         }
     }
 
@@ -149,10 +160,11 @@ class AddProductsPP extends Component
         ]);
     }
 
-    public function editProd($id){
+    public function editProd($id)
+    {
         $item = PedItem::find($id);
         $item->update([
-            'estado' =>'1'
+            'estado' => '1'
         ]);
     }
 
@@ -177,10 +189,10 @@ class AddProductsPP extends Component
 
         return view('livewire.add-products-p-p', [
             'stock' => Stock::select('stocks.*', 'productos.descripcion as descripcion', 'productos.codigo', 'productos.costo')
-            ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')
-            ->where('descripcion', 'like', '%' . $this->query . '%')
-            ->orWhere('productos.codigo', 'like', '%' . $this->query . '%')
-            ->paginate(10)
+                ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')
+                ->where('descripcion', 'like', '%' . $this->query . '%')
+                ->orWhere('productos.codigo', 'like', '%' . $this->query . '%')
+                ->paginate(10)
         ]);
     }
 }

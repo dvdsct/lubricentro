@@ -18,6 +18,7 @@ return new class extends Migration
             ->references('id')
             ->on('facturas')
             ->onDelete('cascade');
+            $table->string('monto');
 
             $table->timestamps();
         });

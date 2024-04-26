@@ -13,14 +13,13 @@ class PreviewStock extends Component
 
 
 
-    public $query = '';
     public $cantidad;
-
+    public $query = '';
+ 
     public function search()
     {
         $this->resetPage();
     }
-
 
     public function addCantidad($id)
     {
@@ -51,27 +50,32 @@ class PreviewStock extends Component
     // public $stock;
     public function render()
     {
-        // $this->stock = Stock::all();
-        return view('livewire.preview-stock', [
-            'stock' => Stock::select(
-                'stocks.*',
-                'productos.categoria_productos_id',
-                'productos.proveedor_id',
-                'proveedors.id as proveedor_id',
-                'proveedors.perfil_id',
-                'perfils.id as perfil_id',
-                'personas.id as persona_id',
-                'personas.nombre',
-                'personas.DNI',
-                'productos.descripcion as descripcion'
-            )
-                ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')
-                ->leftJoin('proveedors', 'productos.proveedor_id', '=', 'proveedors.id')
-                ->leftJoin('perfils', 'proveedors.perfil_id', '=', 'perfils.id')
-                ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
+        return view(
+            'livewire.preview-stock',
+            [
+                'stock' => Stock::select(
+                    'stocks.*',
+                    'productos.categoria_productos_id',
+                    'productos.proveedor_id',
+                    'productos.codigo',
+                    'proveedors.id as proveedor_id',
+                    'proveedors.perfil_id',
+                    'perfils.id as perfil_id',
+                    'personas.id as persona_id',
+                    'personas.nombre',
+                    'personas.DNI',
+                    'productos.descripcion as descripcion'
+                )
+                    ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')
+                    ->leftJoin('proveedors', 'productos.proveedor_id', '=', 'proveedors.id')
+                    ->leftJoin('perfils', 'proveedors.perfil_id', '=', 'perfils.id')
+                    ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
 
 
-                ->where('descripcion', 'like', '%' . $this->query . '%')->paginate(10),
-        ]);
+                    ->where('descripcion', 'like', '%' . $this->query . '%')
+                    ->orWhere('codigo', 'like', '%' . $this->query . '%')
+                    ->paginate(10),
+            ]
+        );
     }
 }
