@@ -9,6 +9,7 @@ class Presupuesto extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['estado','cliente_id'];
 
 
     public function itemspres(){
@@ -21,6 +22,7 @@ class Presupuesto extends Model
     {
         return $this->belongsTo(Cliente::class,'cliente_id');
     }
+    
 
     public function empleados()
     {

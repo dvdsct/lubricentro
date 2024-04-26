@@ -9,8 +9,13 @@ use App\Models\TipoVehiculo;
 use App\Models\Perfil;
 use App\Models\Persona;
 use App\Models\Cliente;
+use App\Models\Item;
+use App\Models\ItemsXOrden;
 use App\Models\Orden;
+use App\Models\Presupuesto;
+use App\Models\Producto;
 use App\Models\Servicio;
+use App\Models\Stock;
 use App\Models\Vehiculo;
 use App\Models\VehiculosXCliente;
 use Carbon\Carbon;
@@ -41,11 +46,14 @@ class FormCreateOrder extends Component
     public $formVehiculo = false;
     // de la Orden
     public $cliente;
+    public $orden;
     public $servicio;
     public $vehiculos;
     public $fecha;
     public $horario;
     public $motivo;
+    public $producto;
+    public $presupuesto;
 
     // del cliente
     public $persona;
@@ -150,7 +158,7 @@ class FormCreateOrder extends Component
     public function setForm()
     {
         if ($this->formVehiculo == true) {
-            if($this->selecedtVehiculo ==true){
+            if ($this->selecedtVehiculo == true) {
                 $this->selecedtVehiculo = false;
                 $this->reset('vehiculo');
             }
@@ -206,6 +214,7 @@ class FormCreateOrder extends Component
     public function addTurno()
     {
 
+
         if (is_object($this->vehiculo)) {
 
             $this->vehiculo = $this->vehiculo->id;
@@ -214,7 +223,7 @@ class FormCreateOrder extends Component
 
 
 
-            Orden::create([
+            $this->orden = Orden::create([
 
                 'cliente_id' => $this->cliente->id,
                 'vehiculo_id' => $this->vehiculo,
@@ -223,7 +232,7 @@ class FormCreateOrder extends Component
                 'estado' => '1'
             ]);
         } else {
-            Orden::create([
+            $this->orden = Orden::create([
 
                 'cliente_id' => $this->cliente->id,
                 'vehiculo_id' => $this->vehiculo,
@@ -233,10 +242,48 @@ class FormCreateOrder extends Component
             ]);
         }
 
+        if($this->presupuesto != null){
+            foreach ($this->presupuesto->itemspres as $i) {
 
+                // dd($this->presupuesto->clientes);
+    
+                $p = $i->producto_id;
+                $this->producto = Producto::find($p);
+                $stock = Stock::where('producto_id', $this->producto->id)->first();
+    
+                if ($stock->cantidad == 0) {
+                    return  $this->dispatch('nonstock');
+                } else {
+    
+                    $iO = Item::create([
+                        'producto_id' => $this->producto->id,
+                        'precio' => $i->costo,
+                        'cantidad' => $i->cantidad,
+                        'subtotal' => $i->subtotal,
+                        'estado' => '2',
+                    ]);
+    
+                    ItemsXOrden::create([
+                        'item_id' => $iO->id,
+                        'orden_id' => $this->orden->id,
+                        'estado' => '1',
+    
+                    ]);
+
+                    $stock->update([
+                        'cantidad' => $stock->cantidad - $i->cantidad
+                    ]);
+                }
+    
+            }
+            
+        }
+        
+        
         $this->dispatch('added-turn');
         $this->formperson == false;
         $this->closeModal();
+        redirect('ordenes/'.$this->orden->id);
     }
 
 
@@ -261,8 +308,30 @@ class FormCreateOrder extends Component
     #[On('modal-order')]
     public function openModal()
     {
+        if($this->modal){
+
+            $this->modal = false;
+        }else{
         $this->modal = true;
+    }}
+
+    #[On('presupuesto')]
+    public function dePresupuesto($id)
+    {
+
+        $this->presupuesto = Presupuesto::find($id);
+        $this->formperson == false;
+
+        $this->cliente = $this->presupuesto->clientes;
+
+        $this->nombre = $this->cliente->perfiles->personas->nombre ?? '';
+        $this->apellido = $this->cliente->perfiles->personas->apellido ?? '';
+        $this->dni = $this->cliente->perfiles->personas->DNI ?? '';
+        $this->fecha_nac = $this->cliente->perfiles->personas->fecha_nac ?? '';
+        $this->openModal();
+
     }
+
 
     public function closeModal()
     {

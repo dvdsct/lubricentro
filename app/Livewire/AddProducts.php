@@ -157,6 +157,7 @@ class AddProducts extends Component
             'stock' => Stock::select('stocks.*', 'productos.descripcion as descripcion', 'productos.codigo', 'productos.costo')
             ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')
             ->where('descripcion', 'like', '%' . $this->query . '%')
+            ->orWhere('productos.codigo', 'like', '%' . $this->query . '%')
             ->paginate(10)
         ]);
     }

@@ -32,7 +32,7 @@ return new class extends Migration
             ->on('clientes')
             ->onDelete('cascade');
 
-            $table->unsignedBigInteger('vehiculo_id');
+            $table->unsignedBigInteger('vehiculo_id')->nullable();
             $table->foreign('vehiculo_id')
             ->references('id')
             ->on('vehiculos')

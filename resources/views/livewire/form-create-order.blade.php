@@ -4,7 +4,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header bg-info">
-                        <h4 class="modal-title"> <strong> NUEVO TURNO </strong> </h4>
+                        <h4 class="modal-title"> <strong> ORDEN </strong> </h4>
                         <button type="button" class="close" wire:click='closeModal'>
                             <span aria-hidden="true">×</span>
                         </button>

@@ -13,12 +13,19 @@ return new class extends Migration
     {
         Schema::create('facturas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('orden_id');
+
+            $table->unsignedBigInteger('orden_id')->nullable();
             $table->foreign('orden_id')
             ->references('id')
             ->on('ordens')
             ->onDelete('cascade');
-            $table->unsignedBigInteger('tipo_factura_id');
+
+            $table->unsignedBigInteger('pedido_proveedor_id')->nullable();
+            $table->foreign('pedido_proveedor_id')
+            ->references('id')
+            ->on('pedido_proveedors')
+            ->onDelete('cascade');
+            $table->unsignedBigInteger('tipo_factura_id')->default('1');
             $table->foreign('tipo_factura_id')
             ->references('id')
             ->on('tipo_facturas')

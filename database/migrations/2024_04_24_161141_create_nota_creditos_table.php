@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tipo_pagos', function (Blueprint $table) {
+        Schema::create('nota_creditos', function (Blueprint $table) {
             $table->id();
-            $table->string('descripcion');
-            $table->string('categoria')->nullable();
-            $table->string('estado');
-            $table->softDeletes();
+            $table->unsignedBigInteger('factura_id');
+            $table->foreign('factura_id')
+            ->references('id')
+            ->on('facturas')
+            ->onDelete('cascade');
+            $table->string('monto');
+
             $table->timestamps();
         });
     }
@@ -26,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tipo_pagos');
+        Schema::dropIfExists('nota_creditos');
     }
 };
