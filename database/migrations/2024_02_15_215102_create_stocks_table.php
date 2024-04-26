@@ -16,15 +16,15 @@ return new class extends Migration
 
             $table->unsignedBigInteger('producto_id');
             $table->foreign('producto_id')
-            ->references('id')
-            ->on('productos')
-            ->onDelete('cascade');
+                ->references('id')
+                ->on('productos')
+                ->onDelete('cascade');
 
-            $table->integer('cantidad');
-            $table->string('unidad');
-            $table->string('estado');
-            $table->integer('ideal');
-            $table->integer('escaso');
+            $table->integer('cantidad')->nullable();
+            $table->string('unidad')->nullable();
+            $table->integer('ideal')->nullable();
+            $table->integer('escaso')->nullable();
+            $table->string('estado')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

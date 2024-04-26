@@ -12,6 +12,7 @@
 
         <div class="col-md-3">
             <a class="btn btn-app bg-danger" style="width: 100%; height: 80px;cursor: pointer;"
+            wire:click="$dispatchTo('compra-caja', 'modal-compra')"
             >
                 <span class="badge bg-success" style="font-size: 15px;">4</span>
                 <i class="fas fa-arrow-circle-down"></i>
@@ -56,8 +57,8 @@
                         @foreach ($caja->pagos as $p)
                             <tr>
                                 <td>{{ $p->facturas->orden_id }}</td>
-                                <td>{{ $p->facturas->ordenes->clientes->perfiles->personas->nombre }}
-                                    {{ $p->facturas->ordenes->clientes->perfiles->personas->apellido }}
+                                <td>{{ $p->facturas->ordenes->clientes->perfiles->personas->nombre  ?? $p->facturas->ordenes->proveedores->perfiles->personas->nombre ?? ''}}
+                                {{ $p->facturas->ordenes->clientes->perfiles->personas->apellido  ?? $p->facturas->ordenes->proveedores->perfiles->personas->apellido ?? ''}}
                                 </td>
                                 <td>{{ $p->facturas->pagos->first()->medios->descripcion ?? $p->facturas->pagos->first()->tipos->descripcion }}
                                 </td>
@@ -107,6 +108,8 @@
 
     @livewire('add-presupuesto')
     @livewire('form-create-order')
+    @livewire('compra-caja')
+    
 
 
 </div>

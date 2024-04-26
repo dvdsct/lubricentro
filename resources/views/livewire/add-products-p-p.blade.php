@@ -96,11 +96,12 @@
             </div>
 
             <div>
-                <button class="btn btn-app bg-primary" wire:click='recibirPedido'>
+                <button class="btn btn-app bg-primary" wire:click='$dispatchTo("form-pago","formPago",{ tipo: "proveedor" })' >
                 <i class="fas fa-check-circle"></i>  Recibir
                 </button>
             </div>
         </div>
+        @livewire('form-pago',['orden' => $pedido])
 
 
         <!-- MODAL PARA AGREGAR NUEVO ITEM  -->

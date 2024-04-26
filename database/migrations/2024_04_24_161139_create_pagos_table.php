@@ -36,10 +36,18 @@ return new class extends Migration
             ->references('id')
             ->on('clientes')
             ->onDelete('cascade');
+            $table->unsignedBigInteger('proveedor_id')->nullable();
+            $table->foreign('proveedor_id')
+            ->references('id')
+            ->on('proveedors')
+            ->onDelete('cascade');
 
             $table->string('efectivo')->nullable();
+            $table->string('interes')->nullable();
+            $table->string('descuento')->nullable();
             $table->string('code_op')->nullable();
             $table->string('parcial')->nullable();
+            $table->string('concepto')->nullable();
             $table->string('total');
             $table->string('estado');
 
