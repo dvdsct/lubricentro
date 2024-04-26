@@ -1,6 +1,6 @@
 <div>
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-3 pl-0">
             <a class="btn btn-app bg-warning btn-lg" style="width: 100%; height: 80px;cursor: pointer;"
                 wire:click="$dispatchTo('add-presupuesto', 'addPresupuesto')"
                 >
@@ -10,7 +10,7 @@
             </a>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-3 pr-3">
             <a class="btn btn-app bg-danger" style="width: 100%; height: 80px;cursor: pointer;"
             wire:click="$dispatchTo('compra-caja', 'modal-compra')"
             >
@@ -20,7 +20,7 @@
             </a>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-3 pl-0">
             <a class="btn btn-app bg-success" style="width: 100%; height: 80px;cursor: pointer;"
             wire:click="$dispatchTo('form-create-order', 'modal-order')"
             >
@@ -30,11 +30,10 @@
             </a>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-3 pr-3">
             <a class="btn btn-app bg-info" style="width: 100%; height: 80px;cursor: pointer;"
             wire:click="$dispatchTo('form-create-order', 'modal-order')"
             >
-                <span class="badge bg-danger" style="font-size: 15px;">20</span>
                 <i class="fa fa-calendar"></i>
                 <h4><strong> Turno </strong></h4>
             </a>
