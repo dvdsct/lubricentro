@@ -246,15 +246,15 @@ class FormCreateOrder extends Component
             foreach ($this->presupuesto->itemspres as $i) {
 
                 // dd($this->presupuesto->clientes);
-    
+
                 $p = $i->producto_id;
                 $this->producto = Producto::find($p);
                 $stock = Stock::where('producto_id', $this->producto->id)->first();
-    
+
                 if ($stock->cantidad == 0) {
                     return  $this->dispatch('nonstock');
                 } else {
-    
+
                     $iO = Item::create([
                         'producto_id' => $this->producto->id,
                         'precio' => $i->costo,
@@ -262,24 +262,24 @@ class FormCreateOrder extends Component
                         'subtotal' => $i->subtotal,
                         'estado' => '2',
                     ]);
-    
+
                     ItemsXOrden::create([
                         'item_id' => $iO->id,
                         'orden_id' => $this->orden->id,
                         'estado' => '1',
-    
+
                     ]);
 
                     $stock->update([
                         'cantidad' => $stock->cantidad - $i->cantidad
                     ]);
                 }
-    
+
             }
-            
+
         }
-        
-        
+
+
         $this->dispatch('added-turn');
         $this->formperson == false;
         $this->closeModal();

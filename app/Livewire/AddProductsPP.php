@@ -64,11 +64,11 @@ class AddProductsPP extends Component
 
         foreach ($this->pedido->items as $i) {
 
-            $p = Producto::find($i->producto_id)->pluck('id');
-       
+            $p = Producto::find($i->producto_id);
+
             $stock = Stock::firstOrCreate(
                 [
-                    'producto_id'=> '170',
+                    'producto_id'=> $p->id,
                     'estado'=> '1'
                 ]
             );
@@ -129,6 +129,7 @@ class AddProductsPP extends Component
         $this->modal = false;
 
         //
+        //
     }
 
 
@@ -136,6 +137,7 @@ class AddProductsPP extends Component
 
     public function addedProduct($p)
     {
+
 
 
         $this->producto = Producto::find($p);

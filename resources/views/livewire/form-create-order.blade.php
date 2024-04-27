@@ -45,6 +45,8 @@
                             </div>
                         </div>
 
+   <!-- LISTADO DESPLEGABLE DE CLIENTES  -->
+   
                         @if ($formperson == false)
                             <div class="row pt-2 d-flex justify-content-between">
                                 <h4 class="pl-2"> <strong> CLIENTE </strong> </h4>
