@@ -8,7 +8,7 @@
 
 @section('content')
 
-    @livewire('ListTarjetas')
+    @livewire('list-tarjetas')
 
 @stop
 

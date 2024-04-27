@@ -1,5 +1,5 @@
 <div>
-<!-- TABLA CON DESCRIPCION DE TARJETAS DE CREDITO -->
+    <!-- TABLA CON DESCRIPCION DE TARJETAS DE CREDITO -->
 
     <tr>
         <td>1.</td>
@@ -34,11 +34,11 @@
         </td>
         <td class="project-actions text-right">
 
-            <a class="btn btn-info btn-sm" wire:click='editTarjeta'>
+            <button class="btn btn-info btn-sm" wire:click='editTarjeta({{$tarjeta->id}})'>
                 <i class="fas fa-pencil-alt">
                 </i>
 
-            </a>
+            </button>
             <a class="btn btn-danger btn-sm" wire:click='delTarjeta'>
                 <i class="fas fa-trash">
                 </i>

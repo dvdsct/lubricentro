@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use App\Models\Tarjeta;
 
 class TarjetaCredito extends Component
 {
@@ -20,6 +21,8 @@ class TarjetaCredito extends Component
             'estado' => '2'
         ]);
     }
+
+
     public function stTarjeta($id){
         if(Auth::user()->hasRole('admin')){
             
@@ -31,6 +34,8 @@ class TarjetaCredito extends Component
         }
 
     }
+
+    
     public function render()
     {
         return view('livewire.tarjeta-credito');

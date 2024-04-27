@@ -17,8 +17,58 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($tarjetas as $t)
-                    @livewire('tarjeta-credito', ['tarjeta' => $t , 'key'=> $t->id])
+                    @foreach ($tarjetas as $tarjeta)
+                        <tr>
+                            <td>1.</td>
+                            <td>{{ $tarjeta->nombre_tarjeta }}</td>
+                            @if ($tarjeta->estado == 1)
+                                <td>
+                                    <span class="badge bg-primary ">{{ $tarjeta->descuento }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-danger">{{ $tarjeta->interes }}</span>
+                                </td>
+                            @elseif ($tarjeta->estado == 2)
+                                <td>
+                                    <div class="col">
+                                        <input type="text" class="form-control" placeholder="descuento"
+                                            wire:model='descuento' wire:keydown.enter='stTarjeta({{ $tarjeta->id }})'>
+                                    </div>
+                                    @error('descuento')
+                                    <span class="text-danger">*{{ $message }}</span>
+                                @enderror
+                                </td>
+                                <td>
+                                    <div class="col">
+                                        <input type="text" class="form-control" placeholder="interes"
+                                            wire:model='interes' wire:keydown.enter='stTarjeta({{ $tarjeta->id }})'>
+                                    </div>
+                                    @error('interes')
+                                        <span class="text-danger">*{{ $message }}</span>
+                                    @enderror
+                                </td>
+                            @endif
+
+                            <td>
+                                @foreach ($tarjeta->planes as $plan)
+                                    {{ $plan->nombre_plan }} -
+                                    <strong class="badge bg-secondary"> {{ $plan->descripcion_plan }} </strong>
+                                @endforeach
+                            </td>
+                            <td class="project-actions text-right">
+
+                                <button class="btn btn-info btn-sm" wire:click='editTarjeta({{ $tarjeta->id }})'>
+                                    <i class="fas fa-pencil-alt">
+                                    </i>
+
+                                </button>
+                                <a class="btn btn-danger btn-sm" wire:click='delTarjeta'>
+                                    <i class="fas fa-trash">
+                                    </i>
+
+                                </a>
+                            </td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>
