@@ -6,7 +6,7 @@
                     <div class="modal-header bg-info">
                         <h5 class="modal-title" id="supplierOrderModalLabel"> <strong> NUEVO PEDIDO A PROVEEDOR </strong>
                         </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" wire:click='$dispatch("modal-compra")'>
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
@@ -62,7 +62,7 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" wire:click='$dispatch("modal-compra")'>Cancelar</button>
                         <button type="submit" class="btn btn-success" form="supplierOrderForm"
                             wire:click="pagar">Continuar</button>
                     </div>

@@ -175,6 +175,7 @@ class FormPago extends Component
                 ]);
 
                 $p = Pago::create([
+                    'in_out' => $this->pagoDe,
                     'factura_id' => $f->id,
                     'proveedor_id' => $this->proveedor,
                     'medio_pago_id' => '4',
@@ -209,6 +210,7 @@ class FormPago extends Component
                 ]);
 
                 $p = Pago::create([
+                    'in_out' => $this->pagoDe,
                     'factura_id' => $f->id,
                     'proveedor_id' => $this->proveedor,
                     'medio_pago_id' => $this->medioPago,
@@ -273,6 +275,7 @@ class FormPago extends Component
                 ]);
 
                 $p = Pago::create([
+                    'in_out' => $this->pagoDe,
                     'factura_id' => $f->id,
                     'cliente_id' => $this->cliente,
                     'medio_pago_id' => '4',
@@ -315,6 +318,7 @@ class FormPago extends Component
                     ]);
 
                     $p = Pago::create([
+                        'in_out' => $this->pagoDe,
                         'factura_id' => $f->id,
                         'cliente_id' => $this->cliente,
                         'medio_pago_id' => $this->medioPago,
@@ -353,6 +357,7 @@ class FormPago extends Component
 
 
                     $p = Pago::create([
+                        'in_out' => $this->pagoDe,
                         'factura_id' => $f->id,
                         'cliente_id' => $this->cliente,
                         'medio_pago_id' => $this->medioPago,
@@ -388,6 +393,7 @@ class FormPago extends Component
                 ]);
 
                 $p  = Pago::create([
+                    'in_out' => $this->pagoDe,
                     'factura_id' => $f->id,
                     'cliente_id' => $this->cliente,
                     'medio_pago_id' => $this->medioPago,

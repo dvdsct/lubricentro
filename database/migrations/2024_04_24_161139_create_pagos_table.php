@@ -42,6 +42,7 @@ return new class extends Migration
             ->on('proveedors')
             ->onDelete('cascade');
 
+            $table->string('in_out')->nullable();
             $table->string('efectivo')->nullable();
             $table->string('interes')->nullable();
             $table->string('descuento')->nullable();

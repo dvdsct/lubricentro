@@ -20,6 +20,8 @@ class ViewCaja extends Component
     public $pagosEfectivo;
     public $pagosTrans;
     public $pagosTarjeta;
+    public $pagos;
+
 
 
 
@@ -60,7 +62,8 @@ class ViewCaja extends Component
 
 
     public function render()
-    {
+    {   
+        $this->pagos = $this->caja->pagos;
         $this->pagosEfectivo = $this->caja->pagos->filter(function ($pago) {
             return $pago->medio_pago_id == 2;
         });

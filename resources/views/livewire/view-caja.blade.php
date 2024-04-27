@@ -48,13 +48,15 @@
                 <table class="table table-striped">
                     <thead>
                         <th>Orden</th>
+                        <th>Orden</th>
                         <th>Cliente</th>
                         <th>Medio de Pago</th>
                         <th></th>
                     </thead>
                     <tbody>
-                        @foreach ($caja->pagos as $p)
+                        @foreach ($pagos as $p)
                             <tr>
+                                <td>{{ $p->facturas->estado }}</td>
                                 <td>{{ $p->facturas->orden_id }}</td>
                                 <td>{{ $p->facturas->ordenes->clientes->perfiles->personas->nombre  ?? $p->facturas->ordenes->proveedores->perfiles->personas->nombre ?? ''}}
                                 {{ $p->facturas->ordenes->clientes->perfiles->personas->apellido  ?? $p->facturas->ordenes->proveedores->perfiles->personas->apellido ?? ''}}
