@@ -14,7 +14,16 @@
 <body>
 
    <div >
-    <h1>Orden de Trabajo</h1>
+<div class="cabecera">
+    <div class="tipo">
+    <h1>Orden de Trabajo N° </h1>
+    </div>
+
+    <div class="logo">
+        <h1>ROCKET </h1>
+    </div>
+</div>
+    
 
 
     <p><strong>Fecha y Hora:</strong> {{ $fecha }}</p>

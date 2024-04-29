@@ -37,7 +37,7 @@ Route::middleware([
     //     return view('dashboard');
     // })->name('dashboard');
 
-    Route::resource('', DashboardController::class);
+    Route::resource('dash', DashboardController::class);
     Route::resource('productos',ProductoController::class);
     Route::resource('ordenes',OrdenController::class);
     Route::resource('stock',StockController::class);

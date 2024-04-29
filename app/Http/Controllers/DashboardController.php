@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Orden;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -11,7 +13,22 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return view('Lubricentro.dashboard');
+        $orden = Orden::find($id);
+
+        if (!$orden) {
+            abort(404); // Orden no encontrada
+        }
+
+        $items = $orden->items;
+        $fecha = $orden->horario;
+        $encargado = $orden->clientes->perfiles->personas;
+        $vendedor = Auth::user();
+        return view('Lubricentro.dashboard', [
+            'items' => $items,
+            'fecha' => $fecha,
+            'encargado' => $encargado,
+            'vendedor' => $vendedor
+        ]);
     }
 
     /**
@@ -35,7 +52,22 @@ class DashboardController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $orden = Orden::find($id);
+
+        if (!$orden) {
+            abort(404); // Orden no encontrada
+        }
+
+        $items = $orden->items;
+        $fecha = $orden->horario;
+        $encargado = $orden->clientes->perfiles->personas;
+        $vendedor = Auth::user();
+        return view('Lubricentro.dashboard', [
+            'items' => $items,
+            'fecha' => $fecha,
+            'encargado' => $encargado,
+            'vendedor' => $vendedor
+        ]);
     }
 
     /**
