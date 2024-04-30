@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Caja;
 use App\Models\Factura;
 use Illuminate\Http\Request;
 
@@ -11,7 +12,7 @@ class VentaController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {   
+    {
         return view('Lubricentro.Ventas.index');
     }
 
@@ -36,6 +37,10 @@ class VentaController extends Controller
      */
     public function show(string $id)
     {
+        $caja = Caja::find($id);
+        return view('Lubricentro.Ventas.show', [
+            'caja' => $caja
+        ]);
         //
     }
 

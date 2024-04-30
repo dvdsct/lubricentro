@@ -11,10 +11,13 @@ class Caja extends Model
     use SoftDeletes;
 
     use HasFactory;
-    protected $fillable = ['estado', 'user_id'];
+    protected $fillable = ['estado', 'cajero_id'];
 
     public function pagos(){
 
         return $this->belongsToMany(Pago::class,'pagos_x_cajas');
     }
+
+
+
 }

@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('cajas', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')
+            $table->unsignedBigInteger('cajero_id');
+            $table->foreign('cajero_id')
             ->references('id')
-            ->on('users')
+            ->on('cajeros')
             ->onDelete('cascade');
             $table->float('turno')->nullable();
             $table->float('salidas')->nullable();

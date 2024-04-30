@@ -20,9 +20,14 @@ class Perfil extends Model
         return $this->belongsTo(Persona::class,'persona_id');
     }
 
+
     public function clientes()
     {
         return $this->hasMany(Cliente::class );
+    }
+    public function cajeros()
+    {
+        return $this->hasMany(Cajero::class );
     }
 
 
