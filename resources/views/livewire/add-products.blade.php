@@ -78,7 +78,6 @@
                     @else
                     <h3> <strong> TOTAL $0 </strong> </h3>
                     @endif
-                    <!-- <h3> <strong>  </strong> </h3> -->
                 </div>
             </div>
 
@@ -135,10 +134,10 @@
 
 
                     </div>
-                    <div class="modal-footer justify-content-between">
+<!--                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default" wire:click='modalProdOff'>Cancelar</button>
                         <button type="button" class="btn btn-primary">Aceptar</button>
-                    </div>
+                    </div> -->
                 </div>
 
             </div>

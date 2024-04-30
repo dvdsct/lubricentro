@@ -5,7 +5,6 @@
             @else
             <div class="card-header">
 
-
                 <button type="button" class="btn btn-success" wire:click='modalProdOn'>
                     <i class="fas fa-plus-circle"></i> Agregar Item
                 </button>
@@ -51,7 +50,7 @@
                                 {{ $i->cantidad }}
                             </td>
                             <td>
-                               $ {{ $i->precio }}
+                                $ {{ $i->precio }}
                             </td>
                             <td>
                                 $ {{ $i->subtotal }}
@@ -95,12 +94,35 @@
                 </div>
             </div>
 
-            <div>
-                <button class="btn btn-app bg-primary" wire:click='$dispatchTo("form-pago","formPago",{ tipo: "proveedor" })' >
-                <i class="fas fa-check-circle"></i>  Recibir
-                </button>
+        </div>
+        <div style="display: flex; justify-content: end;">
+            <button class="info-box bg-primary d-flex align-items-center justify-content-center" wire:click='$dispatchTo("form-pago","formPago",{ tipo: "proveedor" })' style="width: 25%;">
+                <span class="info-box-icon"> <i class="fas fa-check-circle"></i> </span>
+                <div class="info-box-content">
+                    <h4 class="info-box-text m-0" style="display: inline;"><strong>Recibir pedido</strong></h4>
+                    <span class="info-box-number"></span>
+                </div>
+            </button>
+
+
+            <!-- AGREGAR EL WIRECKICK APUNTANDO AL PDF CORRESPONDIENTE -->
+            <div class="info-box bg-warning d-flex align-items-center justify-content-end ml-3" style="width: 25%; cursor: pointer;">
+                <span class="info-box-icon"><i class="fas fa-print"></i></span>
+                <div class="info-box-content">
+                    <h4 class="info-box-text m-0"> <strong> Imprimir </strong> </h4>
+                    <span class="info-box-number"></span>
+                </div>
             </div>
         </div>
+
+
+
+
+
+
+
+
+
         @livewire('form-pago',['orden' => $pedido])
 
 
@@ -138,35 +160,26 @@
                             <tbody>
                                 @foreach ($stock as $i)
                                 <tr wire:click='addedProduct({{ $i->id }})' wire:loading.attr="disabled">
-                                    <td>{{ $i->id }}</td>
-                                    <td>{{ $i->descripcion }}</td>
-                                    <td>{{ $i->codigo }}</td>
+                                    <td style="cursor: pointer;">{{ $i->id }}</td>
+                                    <td style="cursor: pointer;">{{ $i->descripcion }}</td>
+                                    <td style="cursor: pointer;">{{ $i->codigo }}</td>
                                     @if ($i->cantidad == 0)
                                     <td><span class="badge bg-danger">{{ $i->cantidad }}</span></td>
                                     @else
                                     <td><span class="badge bg-success">{{ $i->cantidad }}</span></td>
                                     @endif
-                                    <td>$ {{ $i->costo }}</td>
+                                    <td style="cursor: pointer;">$ {{ $i->costo }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
                         </table>
-
-
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-danger" wire:click='modalProdOff'>Cancelar</button>
-                        <button type="button" class="btn btn-success">Aceptar</button>
                     </div>
                 </div>
-
             </div>
 
         </div>
         @endif
 
-
-
-
-
     </div>
+
+</div>

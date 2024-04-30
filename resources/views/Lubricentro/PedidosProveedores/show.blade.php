@@ -13,8 +13,6 @@
 @livewire('add-products-p-p')
 
 
-
-
 @stop
 
 @section('css')

@@ -140,7 +140,7 @@ class AddProductPresupuesto extends Component
                 ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')
                 ->where('descripcion', 'like', '%' . $this->query . '%')
                 ->orWhere('productos.codigo', 'like', '%' . $this->query . '%')
-                ->paginate(12)
+                ->paginate(10)
         ]);
     }
 }

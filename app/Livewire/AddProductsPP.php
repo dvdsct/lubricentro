@@ -187,7 +187,7 @@ class AddProductsPP extends Component
         $this->servicios = Servicio::all();
 
 
-        // $this->total = $this->pedido->items->sum('subtotal');
+        /*  $this->total = $this->pedido->items->sum('subtotal'); */
 
         return view('livewire.add-products-p-p', [
             'stock' => Stock::select('stocks.*', 'productos.descripcion as descripcion', 'productos.codigo', 'productos.costo')

@@ -22,8 +22,8 @@
                     <th style="width: 10px">#</th>
                     <th>Producto</th>
                     {{-- <th>Codigo</th> --}}
-                    <th>Cantidad</th>
-                    <th>Precio unitario</th>
+                    <th style="width: 12px">Cantidad</th>
+                    <th style="width: 150px">Precio unitario</th>
                     <th style="width: 40px">Subtotal</th>
                 </tr>
             </thead>
@@ -62,7 +62,7 @@
 
                         @if ($i->estado == 2)
                             {{-- Si el producto es estado 2 aun no se a recibido --}}
-                            <td class="project-actions text-right">
+                            <td class="project-actions text-right" style="width: 200px;">
                                 <a class="btn btn-info btn-sm" wire:click='editProd({{ $i->id }})'>
                                     <i class="fas fa-pencil-alt">
                                     </i>
@@ -77,7 +77,6 @@
                             </td>
                         @else
                             <td class="project-actions text-right">
-
                                 <a class="btn btn-danger btn-sm" wire:click='delProd({{ $i->id }})'
                                     wire:confirm="Si borras este articulo tendras que volver a agregarlo?">
                                     <i class="fas fa-trash">
@@ -87,15 +86,17 @@
                         @endif
                     </tr>
                 @endforeach
-
             </tbody>
-
         </table>
-
-
-
     </div>
 
+
+    <!-- AGREGAR VARIABLE DE TOTAL  -->
+    <div class="card-header justify-content-end">
+                <div class="text-right">
+                    <h3> <strong> TOTAL $0 </strong> </h3>
+                </div>
+            </div>
 
 
 
@@ -133,25 +134,23 @@
                             <tbody>
                                 @foreach ($stock as $s)
                                     <tr wire:click='addedProduct({{ $s->id }})' wire:loading.attr="disabled">
-                                        <td>{{ $s->id }}</td>
-                                        <td>{{ $s->productos->descripcion }} - {{ $s->productos->codigo }}</td>
+                                        <td style="cursor: pointer;">{{ $s->id }}</td>
+                                        <td style="cursor: pointer;">{{ $s->productos->descripcion }} - {{ $s->productos->codigo }}</td>
                                         @if ($s->cantidad == 0)
-                                            <td><span class="badge bg-danger">{{ $s->cantidad }}</span></td>
+                                            <td style="cursor: pointer;"><span class="badge bg-danger">{{ $s->cantidad }}</span></td>
                                         @else
-                                            <td><span class="badge bg-success">{{ $s->cantidad }}</span></td>
+                                            <td style="cursor: pointer;"><span class="badge bg-success">{{ $s->cantidad }}</span></td>
                                         @endif
-                                        <td>$ {{ $s->costo }}</td>
+                                        <td style="cursor: pointer;">$ {{ $s->costo }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
-
-
                     </div>
-                    <div class="modal-footer justify-content-between">
+<!--                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-danger" wire:click='modalProdOff'>Cancelar</button>
                         <button type="button" class="btn btn-success">Aceptar</button>
-                    </div>
+                    </div> -->
                 </div>
 
             </div>
