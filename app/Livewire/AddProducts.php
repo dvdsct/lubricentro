@@ -106,9 +106,6 @@ class AddProducts extends Component
 
             $this->modalProdOff();
 
-
-
-
             $i = Item::create([
                 'producto_id' => $this->producto->id,
                 'precio' => $this->producto->costo,
@@ -128,12 +125,6 @@ class AddProducts extends Component
     }
 
 
-
-
-
-
-
-
     #[On('delete')]
     public function delProd(string $id)
     {
@@ -141,9 +132,6 @@ class AddProducts extends Component
         $item = Item::find($id);
         $item->delete();
     }
-
-
-
 
     public function render()
     {

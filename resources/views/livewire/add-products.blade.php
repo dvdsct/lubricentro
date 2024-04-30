@@ -86,7 +86,7 @@
 
         <!-- MODAL PARA AGREGAR NUEVO ITEM  -->
         @if ($modal == true)
-        <div class="modal fade show" id="modal-lg" style="display: block; padding-right: 17px;">
+        <div class="modal fade show" id="modal-lg" style="display: block; padding-right: 17px; overflow-y: auto;">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header bg-info">
@@ -95,7 +95,7 @@
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
                         <!-- BUSCADOR DE PRODUCTOS  -->
                         <div class="input-group input-group-sm pb-2" style="width: 300px;">
                             <input type="text" wire:model='query' wire:keydown='search' class="form-control float-right" placeholder="Buscar">
@@ -131,17 +131,9 @@
                                 @endforeach
                             </tbody>
                         </table>
-
-
                     </div>
-<!--                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" wire:click='modalProdOff'>Cancelar</button>
-                        <button type="button" class="btn btn-primary">Aceptar</button>
-                    </div> -->
                 </div>
-
             </div>
-
         </div>
         @endif
 

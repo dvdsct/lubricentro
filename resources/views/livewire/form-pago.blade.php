@@ -140,7 +140,7 @@
                         <div class="row">
                             <div class="col-md-8">
                                 <h6> Total Producto o Servicio </h6>
-                                <h6> Comision de 10% tarjeta Mastercard </h6>
+                                <h6> Comision de {{$tarjeta->interes}} % tarjeta Mastercard </h6>
                                 <span class="badge badge-danger"> <a href="" style="color: black;"> Omitir </a>
                                     <h6 style="display: inline;"> Bonificacion -10% cliente especial </h6>
                                 </span>

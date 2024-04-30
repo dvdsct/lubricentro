@@ -109,8 +109,8 @@ class FormPago extends Component
     {
         $this->montoAPagar = $this->orden->items->sum('subtotal');
 
-        $tarjeta = Tarjeta::find($this->tarjeta);
-        $montoInt = floatval($this->montoAPagar / 100) * floatval($tarjeta->interes);
+        $this->tarjeta = Tarjeta::find($this->tarjeta);
+        $montoInt = floatval($this->montoAPagar / 100) * floatval($this->tarjeta->interes);
         $this->montoAPagar = $this->montoAPagar + $montoInt;
     }
 

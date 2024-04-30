@@ -31,11 +31,6 @@ class AddPresupuesto extends Component
 
     public $presupuesto;
 
-
-
-
-
-
     #[Locked]
     public $formperson = false;
 
@@ -92,7 +87,6 @@ class AddPresupuesto extends Component
 
 
             $this->validate();
-
 
             $persona = Persona::create([
                 'nombre' => $this->nombre,
