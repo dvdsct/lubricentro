@@ -11,13 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('plans', function (Blueprint $table) {
+        Schema::create('cajeros', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre_plan');
-            $table->string('descripcion_plan');
-            $table->string('descuento');
-            $table->string('interes');
-            $table->string('estado');
+            $table->unsignedBigInteger('perfil_id');
+            $table->foreign('perfil_id')
+            ->references('id')
+            ->on('perfils')
+            ->onDelete('cascade');
+
+            $table->string('categoria')->nullable();
+            $table->string('lista_precios')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
@@ -28,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('plans');
+        Schema::dropIfExists('cajeros');
     }
 };

@@ -9,12 +9,14 @@ use App\Models\MedioPago;
 use App\Models\Orden;
 use App\Models\Pago;
 use App\Models\PagosXCaja;
+use App\Models\PlanXTarjeta;
 use App\Models\Proveedor;
 use App\Models\Tarjeta;
 use App\Models\TipoFactura;
 use App\Models\TipoPago;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 class FormPago extends Component
@@ -31,8 +33,17 @@ class FormPago extends Component
     public $tipoFactura = '4';
     public $tiposFactura;
     public $codeOp;
-    public $tarjetas;
+    // Tarjetas
+    public $montoAPagarInteres;
+    public $montoInt;
+    public $tarjetasT;
+    #[Validate('required')]
     public $tarjeta;
+    public $interes;
+    public $descuentoTarjeta;
+    public $plan;
+    public $planesT;
+
     public $montoConInt;
     public $medioPago;
     public $caja;
@@ -57,7 +68,10 @@ class FormPago extends Component
             $this->pagoDe = 'pedido';
 
             $this->tiposPago = TipoPago::all();
-            $this->tarjetas = Tarjeta::all();
+            $this->tarjetasT = PlanXTarjeta::leftJoin('plans', 'plan_x_tarjetas.plan_id', '=', 'plans.id')
+                ->leftJoin('tarjetas', 'plan_x_tarjetas.tarjeta_id', '=', 'tarjetas.id')
+                ->orderBy('tarjetas.nombre_tarjeta')
+                ->get(['plan_x_tarjetas.*', 'plans.*', 'tarjetas.*']);
             $this->tiposFactura = TipoFactura::all();
             $this->mediosPago = MedioPago::all();
             $this->clientes = Cliente::where('lista_precios', '3')->get();
@@ -71,16 +85,18 @@ class FormPago extends Component
             $this->pagoDe = 'orden';
 
             $this->tiposPago = TipoPago::all();
-            $this->tarjetas = Tarjeta::all();
+            $this->tarjetasT = PlanXTarjeta::leftJoin('plans', 'plan_x_tarjetas.plan_id', '=', 'plans.id')
+                ->leftJoin('tarjetas', 'plan_x_tarjetas.tarjeta_id', '=', 'tarjetas.id')
+                ->orderBy('tarjetas.nombre_tarjeta')
+                ->get(['plan_x_tarjetas.*', 'plans.*', 'tarjetas.*']);
             $this->tiposFactura = TipoFactura::all();
             $this->mediosPago = MedioPago::all();
             $this->proveedores = Proveedor::all();
             $this->caja = Caja::where('user_id', Auth::user()->id)
                 ->where('estado', '200')
                 ->first();
-                $this->montoAPagar = $this->orden->items->sum('subtotal');
-            }
-            
+            $this->montoAPagar = $this->orden->items->sum('subtotal');
+        }
     }
 
     public function closeModal()
@@ -107,11 +123,20 @@ class FormPago extends Component
     // Cargar intereses de tarjeta de Credito
     public function cargaInteres()
     {
-        $this->montoAPagar = $this->orden->items->sum('subtotal');
+        $this->validate();
+        if ($this->tarjeta) {
 
-        $this->tarjeta = Tarjeta::find($this->tarjeta);
-        $montoInt = floatval($this->montoAPagar / 100) * floatval($this->tarjeta->interes);
-        $this->montoAPagar = $this->montoAPagar + $montoInt;
+
+            $tarjeta = PlanXTarjeta::find($this->tarjeta);
+            // dd($this->tarjeta);
+            $this->montoAPagar = $this->orden->items->sum('subtotal');
+
+            $this->interes = $tarjeta->planes->first()->interes;
+            $this->descuentoTarjeta = $tarjeta->planes->first()->descuento;
+
+            $this->montoInt = floatval($this->montoAPagar / 100) * floatval($this->interes);
+            $this->montoAPagarInteres = $this->montoAPagar + $this->montoInt;
+        }
     }
 
     public function updatedMedioPago()
@@ -133,6 +158,8 @@ class FormPago extends Component
         if ($this->pagoDe == 'pedido') {
             $this->pagarProvedor();
         }
+
+        $this->dispatch('pago-added')->To(ViewCaja::class);
     }
 
 
@@ -236,7 +263,6 @@ class FormPago extends Component
         // Tarjeta
         // Cheque
         $this->dispatch('pedido-recibido')->to(AddProductsPP::class);
-
     }
 
 
@@ -343,7 +369,7 @@ class FormPago extends Component
 
                 if ($this->medioPago == 2) {
 
-                    // dd();   
+                    // dd();
 
 
                     $f =  Factura::create([

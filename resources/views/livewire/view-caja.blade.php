@@ -109,8 +109,8 @@
 
     @livewire('add-presupuesto')
     @livewire('form-create-order')
-    @livewire('compra-caja')
-    
+    {{-- @livewire('compra-caja') --}}
+
 
 
 </div>

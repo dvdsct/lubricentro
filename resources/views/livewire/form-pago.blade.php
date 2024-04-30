@@ -124,14 +124,16 @@
                     <div class="mb-3">
                         <label for="tipo_pago" class="form-label">Tarjeta</label>
                         <select wire:model="tarjeta" wire:change='cargaInteres' id="tipo_pago" class="form-control">
-                            <option selected>Seleccionar tarjeta</option>
-                            @foreach ($tarjetas as $tar)
+                            <option value="">Seleccionar tarjeta</option>
+                            @foreach ($tarjetasT as $tar)
                             <option value="{{ $tar->id }}">
-                                {{ $tar->nombre_tarjeta }}
+                                {{ $tar->tarjetas->first()->nombre_tarjeta }} -
+                                {{ $tar->planes->first()->descripcion_plan }}
                             </option>
                             @endforeach
                         </select>
                     </div>
+
                     <div class="mb-3">
                         <label for="codeOp" class="form-label">Codigo de Operacion</label>
                         <input wire:model="codeOp" type="number" id="codeOp" class="form-control">
@@ -140,19 +142,19 @@
                         <div class="row">
                             <div class="col-md-8">
                                 <h6> Total Producto o Servicio </h6>
-                                <h6> Comision de {{$tarjeta->interes}} % tarjeta Mastercard </h6>
+                                <h6> Comision de {{ $interes }}% tarjeta Mastercard </h6>
                                 <span class="badge badge-danger"> <a href="" style="color: black;"> Omitir </a>
-                                    <h6 style="display: inline;"> Bonificacion -10% cliente especial </h6>
+                                    <h6 style="display: inline;"> Bonificacion -{{ $descuentoTarjeta }}% cliente especial </h6>
                                 </span>
                                 <h4 for="monto" class="form-label"><strong> Total a pagar</strong></h4>
                             </div>
                             <div class="col-md-4">
-                                <h6> $4000 </h6>
-                                <h6> $400</h6>
+                                <h6>{{$montoAPagar}}</h6>
+                                <h6>$ {{$montoInt  }}</h6>
                                 <span class="badge badge-danger">
                                     <h6 class="my-0"> -$400</h6>
                                 </span>
-                                <h4 for="monto" class="form-label"><strong> ${{ $montoAPagar }}
+                                <h4 for="monto" class="form-label"><strong> ${{ $montoAPagarInteres }}
                                     </strong>
                                 </h4>
                             </div>

@@ -9,7 +9,7 @@
 @section('content')
 
 
-@livewire('lista-cajas')
+@livewire('view-caja',['caja' => $caja])
 
 
 

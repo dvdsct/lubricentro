@@ -23,8 +23,8 @@ use App\Http\Controllers\TarjetaController;
 |
 */
 
-Route::get('/', function () {
-    return view('turnos');
+Route::get('', function () {
+    return redirect('turnos');
 });
 
 
@@ -47,8 +47,8 @@ Route::middleware([
     Route::resource('presupuesto',PresupuestoController::class);
     Route::resource('tarjetas',TarjetaController::class);
     Route::get('/pdf/{orden}', 'App\Http\Controllers\PDFController@generatePDF')->name('pdf');
-    Route::get('register', function () {
-        return view('turnos');
-         });
+    // Route::get('register', function () {
+    //     return view('turnos');
+    //      });
 
 });
