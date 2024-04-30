@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('nombre_plan');
             $table->string('descripcion_plan');
+            $table->string('descuento');
+            $table->string('interes');
             $table->string('estado');
             $table->softDeletes();
             $table->timestamps();

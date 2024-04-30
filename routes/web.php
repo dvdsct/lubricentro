@@ -23,9 +23,9 @@ use App\Http\Controllers\TarjetaController;
 |
 */
 
-Route::get('/', function () {
-    return view('turnos');
-});
+// Route::get('', function () {
+//     return redirect('turnos');
+// });
 
 
 Route::middleware([

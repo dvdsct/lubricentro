@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('tarjetas', function (Blueprint $table) {
             $table->id();
             $table->string('nombre_tarjeta');
-            $table->string('descuento');
-            $table->string('interes');
+
             $table->string('estado');
             $table->softDeletes();
             $table->timestamps();

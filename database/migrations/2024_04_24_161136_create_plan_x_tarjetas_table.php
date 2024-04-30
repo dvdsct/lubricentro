@@ -23,6 +23,7 @@ return new class extends Migration
             ->references('id')
             ->on('plans')
             ->onDelete('cascade');
+
             $table->string('estado');
             $table->timestamps();
         });
