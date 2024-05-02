@@ -25,7 +25,7 @@ class AddProductPresupuesto extends Component
     public $precio;
     public $producto;
     public $item;
-    public $stock;
+    // public $stock;
     public $total;
 
 
@@ -33,7 +33,7 @@ class AddProductPresupuesto extends Component
     {
         $this->presupuesto = $presupuesto;
 
-        $this->stock = Stock::all();
+        // $this->stock = Stock::all();
     }
     public $query = '';
 
@@ -147,6 +147,6 @@ class AddProductPresupuesto extends Component
                 ->paginate(10)
         ]);
     }
-    
-    
+
+
 }

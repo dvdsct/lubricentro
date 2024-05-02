@@ -19,6 +19,7 @@ return new class extends Migration
             ->on('cajeros')
             ->onDelete('cascade');
             $table->float('turno')->nullable();
+            $table->float('monto_inicial')->nullable();
             $table->float('salidas')->nullable();
             $table->float('ingresos')->nullable();
             $table->float('transferencias')->nullable();
