@@ -23,8 +23,8 @@ use App\Http\Controllers\TarjetaController;
 |
 */
 
-Route::get('', function () {
-    return redirect('turnos');
+Route::get('/', function () {
+    return view('Lubricentro.Turnos.index');
 });
 
 
@@ -33,9 +33,9 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    // Route::get('/dashboard', function () {
-    //     return view('dashboard');
-    // })->name('dashboard');
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
 
     Route::resource('dash', DashboardController::class);
     Route::resource('productos',ProductoController::class);
@@ -47,8 +47,9 @@ Route::middleware([
     Route::resource('presupuesto',PresupuestoController::class);
     Route::resource('tarjetas',TarjetaController::class);
     Route::get('/pdf/{orden}', 'App\Http\Controllers\PDFController@generatePDF')->name('pdf');
-    // Route::get('register', function () {
-    //     return view('turnos');
-    //      });
+
+    Route::get('register', function () {
+        return view('Lubricentro.Turnos.index');
+         });
 
 });

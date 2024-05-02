@@ -308,12 +308,7 @@ return [
             'icon' => 'fa fa-file-invoice-dollar',
             'can' => 'caja',
         ],
-        [
-            'text' => 'Caja',
-            'url'  => 'venta',
-            'icon' => 'fa fa-file-invoice-dollar',
-            'can' => 'caja',
-        ],
+
         [
             'text' => 'Stock',
             'url'  => 'stock',

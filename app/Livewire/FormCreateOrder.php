@@ -155,6 +155,8 @@ class FormCreateOrder extends Component
         }
     }
 
+
+
     public function setForm()
     {
         if ($this->formVehiculo == true) {
@@ -167,6 +169,13 @@ class FormCreateOrder extends Component
             $this->formVehiculo = true;
         }
     }
+
+
+
+
+
+
+
     public function setMot($mot)
     {
         if ($mot == 'lub') {
@@ -182,6 +191,8 @@ class FormCreateOrder extends Component
             $this->btnLav = true;
         }
     }
+
+
 
     public function addVehicle()
     {
@@ -205,11 +216,21 @@ class FormCreateOrder extends Component
         $this->selectVehiculo();
     }
 
+
+
+
+
+
+
     public function selectVehiculo()
     {
         $this->vehiculo = Vehiculo::find($this->vehiculo);
         $this->selecedtVehiculo = true;
     }
+
+
+
+
 
     public function addTurno()
     {
@@ -288,6 +309,7 @@ class FormCreateOrder extends Component
 
 
 
+
     public function formPerson()
     {
         if ($this->formperson == true) {
@@ -315,6 +337,9 @@ class FormCreateOrder extends Component
         $this->modal = true;
     }}
 
+
+
+
     #[On('presupuesto')]
     public function dePresupuesto($id)
     {
@@ -331,6 +356,8 @@ class FormCreateOrder extends Component
         $this->openModal();
 
     }
+
+
 
 
     public function closeModal()
@@ -364,6 +391,8 @@ class FormCreateOrder extends Component
 
         // $this->reset('nombre');
     }
+
+
 
 
 
