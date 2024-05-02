@@ -8,7 +8,7 @@
             <div class="modal-content">
                 <div class="modal-header bg-info">
                     <h5 class="modal-title" id="supplierOrderModalLabel"> <strong> NUEVO PEDIDO A PROVEEDOR </strong></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close"  wire:click='modalOff'>
                             <span aria-hidden="true">×</span>
                         </button>
                 </div>
@@ -17,7 +17,6 @@
 
                     <form wire:submit.prevent="continueForm">
                         <div class="mb-3">
-                          <!--   <label for="provider" class="form-label">Select Provider</label> -->
                             <select id="provider" class="form-control" wire:model="proveedor">
                                 <option value="">Seleccionar proveedor</option>
                                 @foreach($proveedores as $p)
@@ -29,14 +28,12 @@
                             @enderror
                         </div>
                         <div class="mb-3">
-                            <!-- <label for="date_ingreso" class="form-label">Date of Ingress</label> -->
                             <input type="date" class="form-control" id="date_ingreso" wire:model="fechaIn">
                             @error('fechaIn')
                             <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="mb-3">
-                            <!-- <label for="type" class="form-label">Select Type</label> -->
                             <select id="type" class="form-control" wire:model="tipoPedido">
                                 <option value="">Seleccionar categoria</option>
                            @foreach($tiposPedidos as $tp)
@@ -50,7 +47,7 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" wire:click="modalOff">Cancelar</button>
                     <button type="submit" class="btn btn-success" form="supplierOrderForm" wire:click="continueForm">Continuar</button>
                 </div>
             </div>

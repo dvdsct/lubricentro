@@ -137,7 +137,8 @@
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body" style="max-height: 80vh; overflow-y: auto;"
+                    >
                         <!-- BUSCADOR DE PRODUCTOS  -->
                         <div class="input-group input-group-sm pb-2" style="width: 300px;">
                             <input type="text" wire:model='query' wire:keydown='search' class="form-control float-right" placeholder="Buscar">

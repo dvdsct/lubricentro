@@ -40,6 +40,12 @@ class AddSupplierOrder extends Component
         $this->modal = true;
     }
 
+    public function modalOff()
+    {
+        $this->modal = false;
+
+        //
+    }
 
     public function continueForm()
     {
