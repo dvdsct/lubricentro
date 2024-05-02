@@ -22,16 +22,13 @@ class ListaCajas extends Component
 
         if($this->caja){
             $this->modalAbrirCaja = true;
-
         }
     }
 
 
 
+
     public function abrirCaja(){
-
-
-
         // Caja Estado 200 es una caja abierta
         $this->cajero = $this->perfil->first()->cajeros->first();
         // dd($this->cajero);
@@ -43,13 +40,21 @@ class ListaCajas extends Component
 
             ]);;
         }
-
         redirect('venta/'.$this->caja->id);
-
-
-
-
     }
+
+ // Método para abrir el modal
+ public function abrirModal()
+ {
+     $this->modalAbrirCaja = true;
+ }
+
+ // Método para cerrar el modal
+ public function cerrarModal()
+ {
+     $this->modalAbrirCaja = false;
+ }
+
     public function render()
     {
         $this->cajas = Caja::all();
