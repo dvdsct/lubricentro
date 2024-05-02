@@ -1,8 +1,5 @@
 <div>
     @if ($modal == true)
-
-
-
     <div class="modal fade show" id="modal-default" style="display: block; padding-right: 17px;" role="dialog">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">

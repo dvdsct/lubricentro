@@ -16,7 +16,7 @@
             </div>
 
             <div class="card-body py-1 px-3" style="display: block;">
-                <div class="row">
+                <div class="row p-2">
                     <div class="col-md-2 d-flex flex-column">
                         <h6><strong>DNI: </strong>{{ $persona->perfiles->personas->dni }}</h6>
                         <h6><strong>Edad: </strong> {{ $persona->perfiles->personas->edad }}</h6>
