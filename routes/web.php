@@ -24,7 +24,7 @@ use App\Http\Controllers\TarjetaController;
 */
 
 Route::get('/', function () {
-    return view('Lubricentro.Turnos.index');
+    return redirect('turnos');
 });
 
 
