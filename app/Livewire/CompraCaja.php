@@ -3,10 +3,12 @@
 namespace App\Livewire;
 
 use App\Models\Caja;
+use App\Models\Cajero;
 use App\Models\Factura;
 use App\Models\MedioPago;
 use App\Models\Pago;
 use App\Models\PagosXCaja;
+use App\Models\Perfil;
 use App\Models\Tarjeta;
 use App\Models\TipoFactura;
 use App\Models\TipoPago;
@@ -45,18 +47,23 @@ class CompraCaja extends Component
     public $pedido;
     public $proveedores;
     public $proveedor;
+    public $cajero;
+    public $perfil;
 
     public $step = 1;
     public $modalCompra = false;
 
-    public function mount(){
+    public function mount($caja){
         $this->tiposPago = TipoPago::all();
         $this->tarjetas = Tarjeta::all();
         $this->tiposFactura = TipoFactura::all();
         $this->mediosPago = MedioPago::all();
-        $this->caja = Caja::where('user_id', Auth::user()->id)
-            ->where('estado', '200')
-            ->first();
+        $this->caja = $caja;
+        // $this->perfil = Perfil::where('user_id', Auth::user()->id)->get();
+        // $this->cajero = Cajero::where('perfil_id', $this->perfil->first()->id)->get();
+        // $this->caja = Caja::where('user_id', $this->cajero->first()->id)
+        //     ->where('estado', '200')
+        //     ->first();
     }
 
 

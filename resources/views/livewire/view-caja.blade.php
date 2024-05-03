@@ -120,10 +120,9 @@
         </div>
 
     </div>
-
     <!-- BOTON PARA CERRAR CAJA  -->
     <div class="row mr-1" style="display: flex; justify-content: end;">
-        <div class="info-box bg-danger d-flex align-items-center justify-content-center" wire:click='$dispatchTo("form-pago","formPago",{ tipo: "orden" })' style="cursor: pointer; width: 25%;">
+        <div class="info-box bg-danger d-flex align-items-center justify-content-center" wire:click='$dispatchTo("cerrar-caja","cerrar-caja-modal")' style="cursor: pointer; width: 25%;">
             <span class="info-box-icon"> <i class="fas fa-cash-register"></i> </span>
             <div class="info-box-content">
                 <h4 class="info-box-text m-0"> <strong> Cerrar Caja </strong> </h4>
@@ -133,7 +132,8 @@
 
     @livewire('add-presupuesto')
     @livewire('form-create-order')
-    {{-- @livewire('compra-caja') --}}
+    @livewire('compra-caja',['caja' => $caja])
+    @livewire('cerrar-caja',['caja' => $caja])
 
 
 
