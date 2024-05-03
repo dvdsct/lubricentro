@@ -13,47 +13,52 @@
                 </div>
                 <div class="modal-body">
                     <div>
-                        <h3 class="mb-3"><strong>Cajero: </strong> {{ $perfil->first()->personas->nombre }}</h3>
+                        <h5 class="mb-3"><strong>Cajero: </strong> {{ $perfil->first()->personas->nombre }}</h5>
 
 
-                        {{ $step }}
+                        <!--                         {{ $step }} -->
 
-                                @if ($step == 1)
-                                    <button type="button" class="btn btn-block bg-gradient-success btn-lg mb-3"
-                                        wire:click='abrirCaja'>Abrir caja</button>
-                                @endif
+                        @if ($step == 1)
+                        <!--     <button type="button" class="btn btn-block bg-gradient-success btn-lg mb-3" wire:click='abrirCaja'>Abrir caja</button> -->
+                        <div class="row" style="display: flex; justify-content: center;">
+                            <div class="col-lg-6" style="cursor: pointer;" wire:click='abrirCaja'>
+                                <div class="small-box bg-info">
+                                    <div class="inner">
+                                        <p>Saldo inicial</p>
+                                        <h3>$0.00</h3>
+                                    </div>
+                                    <div class="icon">
+                                        <!-- Cambiamos la clase del icono por el de rocket -->
+                                        <i class="fas fa-rocket"></i>
+                                    </div>
+                                    <a href="#" class="small-box-footer">Abrir caja <i class="fas fa-arrow-circle-right"></i></a>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        @endif
 
                         @if ($step == 2)
                         <!-- INPUT PARA INDICAR MONTO INICIAL DE DINERO -->
-                        <div class="form-group mt-3">
+                        <div class="form-group">
                             <label for="exampleInputEmail1">Indique monto inicial</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">$</span>
                                 </div>
-                                <input type="text" class="form-control" wire:keydown.enter='abrirCaja'>
+                                <input type="text" class="form-control" wire:model='montoInicial' wire:keydown.enter='abrirCaja'>
                             </div>
                         </div>
                         @endif
-                                @if ($step == 2)
-                                    <!-- INPUT PARA INDICAR MONTO INICIAL DE DINERO -->
-                                    <div class="form-group mt-3">
-                                        <label for="exampleInputEmail1">Indique monto inicial</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">$</span>
-                                            </div>
-                                            <input type="text" class="form-control" wire:model='montoInicial' wire:keydown.enter='abrirCaja'>
-                                        </div>
-                                    </div>
-                                @endif
 
 
                     </div>
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" wire:click="cerrarModal">Cancelar</button>
-                    <button type="button" class="btn btn-primary">Aceptar</button>
+                    <button type="button" class="btn btn-danger" wire:click="cerrarModal">Cancelar</button>
+                    <button type="button" class="btn btn-success">Aceptar</button>
                 </div>
             </div>
 
