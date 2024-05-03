@@ -47,13 +47,19 @@
             <div class="card">
                 <table class="table table-striped">
                     <thead>
+                        <th>Hora</th>
                         <th>Orden</th>
-                        <th>Orden</th>
-                        <th>Cliente</th>
-                        <th>Medio de Pago</th>
+                        <th>Concepto</th>
+                        <th></th>
                         <th></th>
                     </thead>
                     <tbody>
+                        <tr>
+                            <td>{{ $caja->created_at}}</td>
+                            <td>{{ $montoInicial }}</td>
+                            <td>Monto Inicial</td>
+                            <td></td>
+                        </tr>
                         @foreach ($pagos as $p)
                             <tr>
                                 <td>{{ $p->facturas->estado }}</td>
@@ -94,6 +100,17 @@
                         <tr>
                             <td>Efectivo</td>
                             <td> ${{ $pagosEfectivo->sum('total') }}</td>
+                            <!--     <td></td> -->
+                        </tr>
+
+                        <tr>
+                            <td>Cheques</td>
+                            <td> ${{ $pagosCheques->sum('total') }}</td>
+                            <!--     <td></td> -->
+                        </tr>
+                        <tr>
+                            <td>Monto Inicila</td>
+                            <td> ${{ $montoInicial }}</td>
                             <!--     <td></td> -->
                         </tr>
 

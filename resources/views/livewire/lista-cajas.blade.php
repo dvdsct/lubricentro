@@ -32,7 +32,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text">$</span>
                                             </div>
-                                            <input type="text" class="form-control" wire:keypress.enter='abrirCaja'>
+                                            <input type="text" class="form-control" wire:model='montoInicial' wire:keydown.enter='abrirCaja'>
                                         </div>
                                     </div>
                                 @endif
