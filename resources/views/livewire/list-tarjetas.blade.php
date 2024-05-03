@@ -1,7 +1,21 @@
 <div>
     <div class="card">
         <div class="card-header">
-            <!--  <h3 class="card-title">Tarjetas</h3> -->
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <button type="button" class="btn btn-success" wire:click='modalOn'>
+                        <i class="fas fa-plus-circle"></i> Agregar Tarjeta
+                    </button>
+                </div>
+                <div class="input-group" style="width: 300px;">
+                    <input type="text" wire:model='query' wire:keydown='search' class="form-control" placeholder="Buscar tarjeta">
+                    <div class="input-group-append">
+                        <button class="btn btn-default">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="card-body">
@@ -10,65 +24,75 @@
                     <tr>
                         <th style="width: 10px">#</th>
                         <th>Tarjeta</th>
-                        <th style="width: 200px">Descuento</th>
-                        <th style="width: 200px">Interes</th>
+                        <th style="width: 150px">Descuento</th>
+                        <th style="width: 150px">Interes</th>
                         <th>Plan Cuotas</th>
                         <th style="width: 100px"></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($tarjetas as $tarjeta)
-                        <tr>
-                            <td>1.</td>
-                            <td>{{ $tarjeta->nombre_tarjeta }}</td>
-                            @if ($tarjeta->estado == 1)
-                                <td>
-                                    <span class="badge bg-primary ">{{ $tarjeta->descuento }}</span>
-                                </td>
-                                <td>
-                                    <span class="badge bg-danger">{{ $tarjeta->interes }}</span>
-                                </td>
-                            @elseif ($tarjeta->estado == 2)
-                                <td>
-                                    <div class="col">
-                                        <input type="text" class="form-control" placeholder="descuento"
-                                            wire:model='descuento' wire:keydown.enter='stTarjeta({{ $tarjeta->id }})'>
+                    <tr>
+                        <td>1.</td>
+                        <td>{{ $tarjeta->nombre_tarjeta }}</td>
+                        @if ($tarjeta->estado == 1)
+                        <td>
+                            <span class="badge bg-primary ">{{ $tarjeta->descuento }}</span>
+                        </td>
+                        <td>
+                            <span class="badge bg-danger">{{ $tarjeta->interes }}</span>
+                        </td>
+                        @elseif ($tarjeta->estado == 2)
+                        <td>
+                            <div class="col">
+                                <!--  <input type="text" class="form-control" placeholder="Descuento" wire:model='descuento' wire:keydown.enter='stTarjeta({{ $tarjeta->id }})'> -->
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fas fa-percent"></i></span>
                                     </div>
-                                    @error('descuento')
-                                    <span class="text-danger">*{{ $message }}</span>
-                                @enderror
-                                </td>
-                                <td>
-                                    <div class="col">
-                                        <input type="text" class="form-control" placeholder="interes"
-                                            wire:model='interes' wire:keydown.enter='stTarjeta({{ $tarjeta->id }})'>
+                                </div>
+                            </div>
+                            @error('descuento')
+                            <span class="text-danger">*{{ $message }}</span>
+                            @enderror
+                        </td>
+                        <td>
+                            <div class="col">
+                                <!-- <input type="text" class="form-control" placeholder="Interes" wire:model='interes' wire:keydown.enter='stTarjeta({{ $tarjeta->id }})'> -->
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fas fa-percent"></i></span>
                                     </div>
-                                    @error('interes')
-                                        <span class="text-danger">*{{ $message }}</span>
-                                    @enderror
-                                </td>
-                            @endif
+                                </div>
+                            </div>
+                            @error('interes')
+                            <span class="text-danger">*{{ $message }}</span>
+                            @enderror
+                        </td>
+                        @endif
 
-                            <td>
-                                @foreach ($tarjeta->planes as $plan)
-                                    {{ $plan->nombre_plan }} -
-                                    <strong class="badge bg-secondary"> {{ $plan->descripcion_plan }} </strong>
-                                @endforeach
-                            </td>
-                            <td class="project-actions text-right">
+                        <td>
+                            @foreach ($tarjeta->planes as $plan)
+                            {{ $plan->nombre_plan }} -
+                            <strong class="badge bg-secondary"> {{ $plan->descripcion_plan }} </strong>
+                            @endforeach
+                        </td>
+                        <td class="project-actions text-right">
 
-                                <button class="btn btn-info btn-sm" wire:click='editTarjeta({{ $tarjeta->id }})'>
-                                    <i class="fas fa-pencil-alt">
-                                    </i>
+                            <button class="btn btn-info btn-sm" wire:click='editTarjeta({{ $tarjeta->id }})'>
+                                <i class="fas fa-pencil-alt">
+                                </i>
 
-                                </button>
-                                <a class="btn btn-danger btn-sm" wire:click='delTarjeta'>
-                                    <i class="fas fa-trash">
-                                    </i>
+                            </button>
+                            <a class="btn btn-danger btn-sm" wire:click='delTarjeta'>
+                                <i class="fas fa-trash">
+                                </i>
 
-                                </a>
-                            </td>
-                        </tr>
+                            </a>
+                        </td>
+                    </tr>
                     @endforeach
                 </tbody>
             </table>
