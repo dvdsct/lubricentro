@@ -69,6 +69,24 @@ class FormPago extends Component
         if (get_class($orden->getModel()) == "App\Models\PedidoProveedor") {
             $this->pedido = $orden;
             $this->pagoDe = 'pedido';
+            $this->perfil = Perfil::where('user_id', Auth::user()->id)->get();
+            $this->cajero = $this->perfil->first()->cajeros->first();
+
+            // Verificar si existe caja
+            if (Caja::where('cajero_id', $this->cajero->id)
+                ->where('estado', '200')
+                ->get()->isEmpty()
+            ) {
+
+                $this->dispatch('setModalCaja')->To(ListaCajas::class);
+            } else {
+
+                $this->caja = Caja::where('cajero_id', $this->cajero->id)
+                    ->where('estado', '200')
+                    ->first();
+            }
+
+
 
             $this->tiposPago = TipoPago::all();
             $this->tarjetasT = PlanXTarjeta::leftJoin('plans', 'plan_x_tarjetas.plan_id', '=', 'plans.id')
@@ -78,18 +96,32 @@ class FormPago extends Component
             $this->tiposFactura = TipoFactura::all();
             $this->mediosPago = MedioPago::all();
             $this->clientes = Cliente::where('lista_precios', '3')->get();
-            $this->perfil = Perfil::where('user_id', Auth::user()->id)->get();
-            $this->cajero = $this->perfil->first()->cajeros->first();
 
 
-            $this->caja = Caja::where('cajero_id', $this->cajero->id)
-                ->where('estado', '200')
-                ->first();
+
+
             $this->montoAPagar = $this->orden->items->sum('subtotal');
         }
         if (get_class($orden->getModel()) == "App\Models\Orden") {
             $this->orden = $orden;
             $this->pagoDe = 'orden';
+            $this->perfil = Perfil::where('user_id', Auth::user()->id)->get();
+            $this->cajero = $this->perfil->first()->cajeros->first();
+
+            // Verificar si existe caja
+            if (Caja::where('cajero_id', $this->cajero->id)
+                ->where('estado', '200')
+                ->get()->isEmpty()
+            ) {
+
+                $this->dispatch('setModalCaja')->To(ListaCajas::class);
+            } else {
+
+                $this->caja = Caja::where('cajero_id', $this->cajero->id)
+                    ->where('estado', '200')
+                    ->first();
+            }
+
 
             $this->tiposPago = TipoPago::all();
             $this->tarjetasT = PlanXTarjeta::leftJoin('plans', 'plan_x_tarjetas.plan_id', '=', 'plans.id')
@@ -99,13 +131,9 @@ class FormPago extends Component
             $this->tiposFactura = TipoFactura::all();
             $this->mediosPago = MedioPago::all();
             $this->proveedores = Proveedor::all();
-            $this->perfil = Perfil::where('user_id', Auth::user()->id)->get();
-            $this->cajero = $this->perfil->first()->cajeros->first();
 
 
-            $this->caja = Caja::where('cajero_id', $this->cajero->id)
-                ->where('estado', '200')
-                ->first();
+
             $this->montoAPagar = $this->orden->items->sum('subtotal');
         }
     }
