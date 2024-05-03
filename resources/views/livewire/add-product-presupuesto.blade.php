@@ -4,12 +4,19 @@
         @if ($presupuesto->estado == '100')
         <div class="card-header bg-danger">Facturado o Caducado
             @else
-            <div class="card-header">
-
-
+            <div class="card-header" style="display: flex; justify-content: space-between;">
                 <button type="button" class="btn btn-success" wire:click='modalProdOn'>
                     <i class="fas fa-plus-circle"></i> Agregar Item
                 </button>
+
+                <div class="input-group"  style="width: 300px; margin-left: auto;">
+                    <input type="text" wire:model='query' wire:keydown='search' class="form-control" placeholder="Buscar producto por codigo">
+                    <div class="input-group-append">
+                        <button class="btn btn-default">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
                 @endif
             </div>
 

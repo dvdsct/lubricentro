@@ -7,7 +7,7 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header bg-info">
-                        <h5 class="modal-title" id="supplierOrderModalLabel"> <strong> LISTADO DE CLIENTES </strong>
+                        <h5 class="modal-title" id="supplierOrderModalLabel"> <strong> GENERAR NUEVO PRESUPUESTO  </strong>
                         </h5>
                         <button type="button" class="close" wire:click='modalOnOff'>
     <span aria-hidden="true">×</span>
