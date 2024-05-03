@@ -50,6 +50,12 @@
                         <th>N° Transaccion</th>
                     </thead>
                     <tbody>
+                        <tr>
+                            <td>{{ $caja->created_at}}</td>
+                            <td>{{ $montoInicial }}</td>
+                            <td>Monto Inicial</td>
+                            <td></td>
+                        </tr>
                         @foreach ($pagos as $p)
                         <tr>
                             <td>{{ $p->facturas->estado }}</td>
@@ -91,6 +97,17 @@
                         <tr>
                             <td>Efectivo</td>
                             <td> ${{ $pagosEfectivo->sum('total') }}</td>
+                            <!--     <td></td> -->
+                        </tr>
+
+                        <tr>
+                            <td>Cheques</td>
+                            <td> ${{ $pagosCheques->sum('total') }}</td>
+                            <!--     <td></td> -->
+                        </tr>
+                        <tr>
+                            <td>Monto Inicila</td>
+                            <td> ${{ $montoInicial }}</td>
                             <!--     <td></td> -->
                         </tr>
 

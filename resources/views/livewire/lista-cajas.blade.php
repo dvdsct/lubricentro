@@ -18,13 +18,10 @@
 
                         {{ $step }}
 
-                        @if ($step == 1)
-                        <button type="button" class="btn btn-block bg-gradient-success btn-lg mb-3" wire:click='abrirCaja'>Abrir caja</button>
-
-                        <a class="btn btn-app bg-warning">
-                        <i class="fa fa-rocket" aria-hidden="true"></i> <h6> <strong> Abrir caja </strong> </h6> 
-                        </a>
-                        @endif
+                                @if ($step == 1)
+                                    <button type="button" class="btn btn-block bg-gradient-success btn-lg mb-3"
+                                        wire:click='abrirCaja'>Abrir caja</button>
+                                @endif
 
                         @if ($step == 2)
                         <!-- INPUT PARA INDICAR MONTO INICIAL DE DINERO -->
@@ -38,6 +35,18 @@
                             </div>
                         </div>
                         @endif
+                                @if ($step == 2)
+                                    <!-- INPUT PARA INDICAR MONTO INICIAL DE DINERO -->
+                                    <div class="form-group mt-3">
+                                        <label for="exampleInputEmail1">Indique monto inicial</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">$</span>
+                                            </div>
+                                            <input type="text" class="form-control" wire:model='montoInicial' wire:keydown.enter='abrirCaja'>
+                                        </div>
+                                    </div>
+                                @endif
 
 
                     </div>

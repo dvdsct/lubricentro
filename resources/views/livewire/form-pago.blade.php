@@ -175,4 +175,16 @@
     </div>
 </div>
 @endif
+
+@script
+<script>
+    $wire.on('no-hay-caja', (event) => {
+        Swal.fire({
+            icon: "error",
+            title: "Atención...",
+            text: "Debe Abrir caja antes de crear una orden",
+        });
+    });
+</script>
+@endscript
 </div>

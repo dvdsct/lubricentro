@@ -15,6 +15,7 @@ class ViewCaja extends Component
     public $facturas;
     public $totalv;
     public $caja;
+    public $montoInicial;
 
     public $pagosEfectivo;
     public $pagosTrans;
@@ -37,6 +38,7 @@ class ViewCaja extends Component
 
         // Caja Estado 200 es una caja abierta
         $this->caja = $caja;
+        $this->montoInicial = $this->caja->monto_inicial;
 
         // Tarjeta de Credito
         $this->pagosTarjeta = $this->caja->pagos->filter(function ($pago) {
@@ -60,6 +62,7 @@ class ViewCaja extends Component
         });
 
         $this->totalv = $this->caja->pagos->sum('total');
+
     }
 
 
