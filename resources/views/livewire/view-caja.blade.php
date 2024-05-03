@@ -51,8 +51,8 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ $caja->created_at}}</td>
-                            <td>{{ $montoInicial }}</td>
+                        <td>{{ $caja->created_at->format('H:i:s') }}</td>
+                            <td>Apertura</td>
                             <td>Monto Inicial</td>
                             <td></td>
                         </tr>
