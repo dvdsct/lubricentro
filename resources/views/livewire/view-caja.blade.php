@@ -4,7 +4,7 @@
             <a class="btn btn-app bg-warning btn-lg" style="width: 100%; height: 80px;cursor: pointer;" wire:click="$dispatchTo('add-presupuesto', 'addPresupuesto')">
                 <span class="badge bg-purple" style="font-size: 15px;">10</span>
                 <i class="fas fa-edit"></i>
-                <h4><strong> Presupuesto </strong></h4>
+                <h4><strong> Presupuestos </strong></h4>
             </a>
         </div>
 
@@ -12,7 +12,7 @@
             <a class="btn btn-app bg-purple" style="width: 100%; height: 80px;cursor: pointer;" wire:click="$dispatchTo('compra-caja', 'modal-compra')">
                 <span class="badge bg-success" style="font-size: 15px;">4</span>
                 <i class="fas fa-arrow-circle-down"></i>
-                <h4><strong> Compra </strong></h4>
+                <h4><strong> Compras </strong></h4>
             </a>
         </div>
 
@@ -20,14 +20,14 @@
             <a class="btn btn-app bg-success" style="width: 100%; height: 80px;cursor: pointer;" wire:click="$dispatchTo('form-create-order', 'modal-order')">
                 <span class="badge bg-danger" style="font-size: 15px;">15</span>
                 <i class="fas fa-arrow-circle-up"></i>
-                <h4><strong> Venta </strong></h4>
+                <h4><strong> Ventas </strong></h4>
             </a>
         </div>
 
         <div class="col-md-3 pr-3">
             <a class="btn btn-app bg-info" style="width: 100%; height: 80px;cursor: pointer;" wire:click="$dispatchTo('form-create-order', 'modal-order')">
                 <i class="fa fa-calendar"></i>
-                <h4><strong> Turno </strong></h4>
+                <h4><strong> Turnos </strong></h4>
             </a>
         </div>
     </div>
@@ -45,10 +45,9 @@
                     </thead>
                     <thead>
                         <th>Hora</th>
-                        <th>Orden</th>
-                        <th>Cliente</th>
+                        <th>Tipo</th>
                         <th>Medio de Pago</th>
-                        <th></th>
+                        <th>N° Transaccion</th>
                     </thead>
                     <tbody>
                         @foreach ($pagos as $p)

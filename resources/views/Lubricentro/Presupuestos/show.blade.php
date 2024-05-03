@@ -3,7 +3,7 @@
 @section('title', 'Ver presupuesto - Rocket')
 
 @section('content_header')
-    <h1> <strong> VER PRESUPUESTO </strong> </h1>
+    <h1> <strong> GENERAR PRESUPUESTO </strong> </h1>
 @stop
 
 @section('content')

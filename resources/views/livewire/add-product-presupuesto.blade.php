@@ -9,7 +9,12 @@
                     <i class="fas fa-plus-circle"></i> Agregar Item
                 </button>
 
-                <div class="input-group"  style="width: 300px; margin-left: auto;">
+                <div class="input-group" style="width: 300px; margin-left: auto;">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fas fa-barcode"></i>
+                        </span>
+                    </div>
                     <input type="text" wire:model='query' wire:keydown='search' class="form-control" placeholder="Buscar producto por codigo">
                     <div class="input-group-append">
                         <button class="btn btn-default">
@@ -97,7 +102,7 @@
             <!-- AGREGAR VARIABLE DE TOTAL  -->
             <div class="card-header justify-content-end">
                 <div class="text-right">
-                    <h3> <strong> TOTAL ${{$total}} </strong> </h3>
+                <h3><strong> TOTAL ${{ isset($total) && $total != '' ? $total : '0.00' }}</strong></h3>
                 </div>
             </div>
 
