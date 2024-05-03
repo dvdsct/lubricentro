@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Caja;
 use App\Models\Perfil;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class ListaCajas extends Component
@@ -69,16 +70,21 @@ class ListaCajas extends Component
     }
 
     // Método para abrir el modal
-    public function abrirModal()
+
+    #[On('setModalCaja')]
+    public function modalCaja()
     {
-        $this->modalAbrirCaja = true;
+
+        if ($this->modalAbrirCaja) {
+
+            $this->modalAbrirCaja = false;
+        } else {
+
+            $this->modalAbrirCaja = true;
+        }
     }
 
-    // Método para cerrar el modal
-    public function cerrarModal()
-    {
-        $this->modalAbrirCaja = false;
-    }
+
 
     public function render()
     {
