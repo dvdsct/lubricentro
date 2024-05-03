@@ -9,6 +9,7 @@ use App\Models\MedioPago;
 use App\Models\Orden;
 use App\Models\Pago;
 use App\Models\PagosXCaja;
+use App\Models\Perfil;
 use App\Models\PlanXTarjeta;
 use App\Models\Proveedor;
 use App\Models\Tarjeta;
@@ -58,6 +59,8 @@ class FormPago extends Component
     public $clientes;
     public $cliente;
     public $pagoDe;
+    public $perfil;
+    public $cajero;
 
 
     public function mount($orden)
@@ -75,7 +78,11 @@ class FormPago extends Component
             $this->tiposFactura = TipoFactura::all();
             $this->mediosPago = MedioPago::all();
             $this->clientes = Cliente::where('lista_precios', '3')->get();
-            $this->caja = Caja::where('user_id', Auth::user()->id)
+            $this->perfil = Perfil::where('user_id', Auth::user()->id)->get();
+            $this->cajero = $this->perfil->first()->cajeros->first();
+
+
+            $this->caja = Caja::where('cajero_id', $this->cajero->id)
                 ->where('estado', '200')
                 ->first();
             $this->montoAPagar = $this->orden->items->sum('subtotal');
@@ -92,7 +99,11 @@ class FormPago extends Component
             $this->tiposFactura = TipoFactura::all();
             $this->mediosPago = MedioPago::all();
             $this->proveedores = Proveedor::all();
-            $this->caja = Caja::where('user_id', Auth::user()->id)
+            $this->perfil = Perfil::where('user_id', Auth::user()->id)->get();
+            $this->cajero = $this->perfil->first()->cajeros->first();
+
+
+            $this->caja = Caja::where('cajero_id', $this->cajero->id)
                 ->where('estado', '200')
                 ->first();
             $this->montoAPagar = $this->orden->items->sum('subtotal');
