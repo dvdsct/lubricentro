@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Cajero;
 use App\Models\Cliente;
 use App\Models\Empleado;
 use App\Models\Orden;
@@ -119,10 +120,14 @@ class UserSeeder extends Seeder
 
 
         ]);
+
         Cliente::create([
             'perfil_id' => '3',
             'categoria' => '2',
             'lista_precios' => '2',
+        ]);
+        Cajero::create([
+            'perfil_id' => '3'
         ]);
 
         Proveedor::create([
