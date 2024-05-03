@@ -11,12 +11,6 @@
 
 @livewire('lista-cajas')
 
-
-
-
-
-
-
 @stop
 
 @section('css')

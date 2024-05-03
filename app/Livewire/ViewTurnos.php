@@ -32,8 +32,6 @@ class ViewTurnos extends Component
 
     public function change_day($day)
     {
-
-
         if ($day == 'yes') {
             $this->fecha = Carbon::parse($this->fecha)->subDay()->format('Y-m-d');
         }

@@ -3,18 +3,13 @@
 @section('title', 'Facturacion - Rocket')
 
 @section('content_header')
-    <h1> <strong> FACTURACION </strong> </h1>
+    <h1> <strong> FACTURACION </strong> - DIA 03 DE MAYO DE 2024 </h1>
 @stop
 
 @section('content')
 
 
 @livewire('view-caja',['caja' => $caja])
-
-
-
-
-
 
 
 @stop
