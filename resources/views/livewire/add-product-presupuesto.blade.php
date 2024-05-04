@@ -39,7 +39,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($presupuesto->itemspres as $i)
+                @foreach ($items as $i)
                     <tr>
                         <td>{{ $i->id }}</td>
                         <td>{{ $i->productos->descripcion . ' - ' . $i->productos->codigo }}</td>
@@ -119,14 +119,14 @@
                 <div class="modal-content">
                     <div class="modal-header bg-info">
                         <h4 class="m-0"> <strong> AGREGAR ITEM </strong> </h4>
-                        <button  class="close" wire:click='modalProdOff'>
+                        <button  class="close" wire:click='$dispatch("modal-presupuestos")'>
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
                     <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
                         <!-- BUSCADOR DE PRODUCTOS  -->
                         <div class="input-group input-group-sm pb-2" style="width: 300px;">
-                            <input type="text" class="form-control float-right" placeholder="Buscar">
+                            <input type="text" class="form-control float-right" placeholder="Buscar" wire:model='query' wire:keypress='search'>
                             <div class="input-group-append">
                                 <button class="btn btn-default">
                                     <i class="fas fa-search"></i>
@@ -141,26 +141,23 @@
                                 <th>Precio</th>
                             </thead>
                             <tbody>
-                                @if ($stock->isEmpty())
-                                    <h3>NO HAY</h3>
-                                @else
+
                                     @foreach ($stock as $s)
-                                        <tr wire:click='addedProduct({{ $s->id }})'>
-                                            <td style="cursor: pointer;">{{ $s->id }}</td>
-                                            <td style="cursor: pointer;">{{ $s->productos->descripcion }} -
+                                        <tr wire:click='addedProduct({{ $s->id }})' style="cursor: pointer;"    >
+                                            <td >{{ $s->id }}</td>
+                                            <td >{{ $s->productos->descripcion }} -
                                                 {{ $s->productos->codigo }}</td>
                                             @if ($s->cantidad == 0)
-                                                <td style="cursor: pointer;"><span
+                                                <td ><span
                                                         class="badge bg-danger">{{ $s->cantidad }}</span></td>
                                             @else
-                                                <td style="cursor: pointer;"><span
+                                                <td ><span
                                                         class="badge bg-success">{{ $s->cantidad }}</span></td>
                                             @endif
-                                            <td style="cursor: pointer;">$ {{ $s->costo }}</td>
+                                            <td >$ {{ $s->costo }}</td>
 
                                         </tr>
                                     @endforeach
-                                @endif
 
                             </tbody>
                         </table>

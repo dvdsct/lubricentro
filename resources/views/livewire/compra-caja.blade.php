@@ -34,13 +34,9 @@
                         <div class="mb-3">
                             <label for="concepto" class="form-label">Concepto</label>
                             <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">$</span>
-                                </div>
+
                                 <input wire:model="concepto" type="text" id="concepto" class="form-control">
-                                <div class="input-group-append">
-                                    <span class="input-group-text">.00</span>
-                                </div>
+
                             </div>
                         </div>
 
@@ -52,9 +48,7 @@
                                     <span class="input-group-text">$</span>
                                 </div>
                                 <input wire:model="montoAPagar" type="text" id="montoAPagar" class="form-control">
-                                <div class="input-group-append">
-                                    <span class="input-group-text">.00</span>
-                                </div>
+                             
                             </div>
                         </div>
 
