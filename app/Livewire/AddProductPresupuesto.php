@@ -76,7 +76,7 @@ class AddProductPresupuesto extends Component
                 'cantidad' => $this->cantidad,
                 'precio' => $p->costo,
                 'subtotal' => $p->costo *  $this->cantidad,
-                // 'estado' => '2',
+                'estado' => '2',
 
             ]);
 
