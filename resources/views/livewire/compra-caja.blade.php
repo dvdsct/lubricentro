@@ -4,7 +4,7 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header bg-info">
-                        <h5 class="modal-title" id="supplierOrderModalLabel"> <strong> NUEVO PEDIDO A PROVEEDOR </strong>
+                        <h5 class="modal-title" id="supplierOrderModalLabel"> <strong> GENERAR COMPRA - Extraccion de caja </strong>
                         </h5>
                         <button type="button" class="close" wire:click='$dispatch("modal-compra")'>
                             <span aria-hidden="true">×</span>
@@ -33,7 +33,6 @@
                         {{-- Concepto --}}
                         <div class="mb-3">
                             <label for="concepto" class="form-label">Concepto</label>
-                            <div class="input-group">
 
                                 <input wire:model="concepto" type="text" id="concepto" class="form-control">
 
@@ -48,7 +47,9 @@
                                     <span class="input-group-text">$</span>
                                 </div>
                                 <input wire:model="montoAPagar" type="text" id="montoAPagar" class="form-control">
-                             
+                                <div class="input-group-append">
+                                    <span class="input-group-text">.00</span>
+                                </div>
                             </div>
                         </div>
 

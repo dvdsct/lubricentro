@@ -51,9 +51,9 @@
                     </thead>
                     <tbody>
                         <tr>
-                        <td>{{ $caja->created_at->format('H:i:s') }}</td>
+                            <td>{{ $caja->created_at->format('H:i:s') }}</td>
                             <td>Apertura</td>
-                            <td>Monto Inicial</td>
+                            <td>-</td>
                             <td></td>
                         </tr>
                         @foreach ($pagos as $p)
@@ -65,13 +65,13 @@
                             </td>
                             <td>{{ $p->facturas->pagos->first()->medios->descripcion ?? $p->facturas->pagos->first()->tipos->descripcion }}
                             </td>
-                                       <td>{{ $p->facturas->total }}</td>
+                            <td>{{ $p->facturas->total }}</td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
                 <div class="card-header d-flex justify-content-end">
-                 <!--    <h3> <strong> TOTAL ${{ $totalv }} </strong> </h3> -->
+                    <!--    <h3> <strong> TOTAL ${{ $totalv }} </strong> </h3> -->
                 </div>
             </div>
         </div>
@@ -106,7 +106,7 @@
                             <!--     <td></td> -->
                         </tr>
                         <tr>
-                            <td>Monto Inicila</td>
+                            <td>Monto Inicial</td>
                             <td> ${{ $montoInicial }}</td>
                             <!--     <td></td> -->
                         </tr>
@@ -121,14 +121,21 @@
 
     </div>
     <!-- BOTON PARA CERRAR CAJA  -->
-    <div class="row mr-1" style="display: flex; justify-content: end;">
-        <div class="info-box bg-danger d-flex align-items-center justify-content-center" wire:click='$dispatchTo("cerrar-caja","cerrar-caja-modal")' style="cursor: pointer; width: 25%;">
-            <span class="info-box-icon"> <i class="fas fa-cash-register"></i> </span>
-            <div class="info-box-content">
-                <h4 class="info-box-text m-0"> <strong> Cerrar Caja </strong> </h4>
+    <div class="row" style="display: flex; justify-content: end;">
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-danger" style="cursor: pointer;" wire:click='$dispatchTo("cerrar-caja","cerrar-caja-modal")'>
+                <div class="inner">
+                    <h3 class="m-0">Cerrar caja</h3>
+                    <p>Unique Visitors</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-cash-register"></i>
+                </div>
             </div>
         </div>
     </div>
+
+
 
     @livewire('add-presupuesto')
     @livewire('form-create-order')
