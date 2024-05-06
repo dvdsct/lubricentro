@@ -17,7 +17,7 @@
         <table style="border-collapse: collapse; width: 100%;">
             <tr>
                 <td colspan="2" class="logo" style="border: 1px solid black; padding: 8px; text-align: left;">
-                    <h1>Orden de Trabajo N° 32132132132</h1>   <!-- AGREGAR ID DE LA ORDEN -->
+                    <h1>Orden de Trabajo N° 0001-00806</h1>   <!-- AGREGAR ID DE LA ORDEN -->
                 </td>
 
                 <td class="logo" style="border: 1px solid black; display:flex; justify-content:center;">
