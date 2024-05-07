@@ -13,22 +13,7 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $orden = Orden::find($id);
 
-        if (!$orden) {
-            abort(404); // Orden no encontrada
-        }
-
-        $items = $orden->items;
-        $fecha = $orden->horario;
-        $encargado = $orden->clientes->perfiles->personas;
-        $vendedor = Auth::user();
-        return view('Lubricentro.dashboard', [
-            'items' => $items,
-            'fecha' => $fecha,
-            'encargado' => $encargado,
-            'vendedor' => $vendedor
-        ]);
     }
 
     /**
