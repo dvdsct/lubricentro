@@ -65,7 +65,7 @@
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-danger" wire:click="cerrarModal">Cancelar</button>
-                    <button type="button" class="btn btn-success" wire:click='abrirCaja>
+                    <button type="button" class="btn btn-success" wire:click='abrirCaja'>Aceptar</button>
                 </div>
             </div>
 

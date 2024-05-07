@@ -17,6 +17,7 @@ class ListaCajas extends Component
     public $perfil;
     public $montoInicial;
     public $modalAbrirCaja;
+    public $sucursal;
 
     public function mount()
     {
@@ -62,7 +63,8 @@ class ListaCajas extends Component
             if (Auth::user()->hasRole(['cajero', 'admin'])) {
                 $this->caja =  Caja::firstOrCreate([
                     'cajero_id' => $this->cajero->id,
-                    'estado' => '100'
+                    'estado' => '100',
+                    'sucursal_id' => '1'
 
                 ]);;
             }
