@@ -19,6 +19,11 @@ return new class extends Migration
                 ->references('id')
                 ->on('productos')
                 ->onDelete('cascade');
+            $table->unsignedBigInteger('sucursal_id');
+            $table->foreign('sucursal_id')
+                ->references('id')
+                ->on('sucursals')
+                ->onDelete('cascade');
 
             $table->integer('cantidad')->nullable();
             $table->string('unidad')->nullable();

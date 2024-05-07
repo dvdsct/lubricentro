@@ -2,7 +2,7 @@
     <!-- MODAL PARA ABRIR CAJA DEL DIA -->
     @can('caja')
     @if ($modalAbrirCaja)
-    <div class="modal fade show" id="modal-default" aria-modal="true" role="dialog" style="padding-right: 17px; display: block;">
+    <div class="modal fade show" id="modal-default" aria-modal="true" role="dialog" style="padding-right: 17px; display: block;" wire:ignore.self   >
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-info">
@@ -16,7 +16,6 @@
                         <h5 class="mb-3"><strong>Cajero: </strong> {{ $perfil->first()->personas->nombre }}</h5>
 
 
-                        <!--                         {{ $step }} -->
 
                         @if ($step == 1)
                         <!--     <button type="button" class="btn btn-block bg-gradient-success btn-lg mb-3" wire:click='abrirCaja'>Abrir caja</button> -->
@@ -58,7 +57,7 @@
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-danger" wire:click="cerrarModal">Cancelar</button>
-                    <button type="button" class="btn btn-success">Aceptar</button>
+                    <button type="button" class="btn btn-success" wire:click='abrirCaja>
                 </div>
             </div>
 
