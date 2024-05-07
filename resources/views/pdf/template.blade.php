@@ -11,67 +11,6 @@
 
 </head>
 
-<!-- <body>
-
-    <div>
-        <div class="cabecera">
-            <div class="tipo">
-                <h1>Orden de Trabajo N° </h1>
-            </div>
-
-            <div class="logo">
-                <h1>ROCKET </h1>
-            </div>
-        </div>
-
-
-
-        <p><strong>Fecha y Hora:</strong> {{ $fecha }}</p>
-        <p><strong>Encargado:</strong> {{ $encargado->nombre }} {{ $encargado->apellido }}</p>
-        <p><strong>Vendedor:</strong> {{ $vendedor->name }}</p>
-    </div>
-
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Cantidad</th>
-                <th>Descripción</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($items as $item)
-            <tr>
-                <td>{{ $item['id'] }}</td>
-                <td>{{ $item['cantidad'] }}</td>
-                <td>{{ $item->productos->descripcion }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-
-    <hr>
-    <br>
-    <br>
-    <div class="row">
-        <div class="col-6">
-            <p>___________________________</p>
-            <p>Encargado</p>
-        </div>
-
-    </div>
-
-
-
-
-
-
-
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
-    </script>
-</body> -->
 
 <body>
 
@@ -84,6 +23,15 @@
 
                 <td class="logo" style="border: 1px solid black;">
                     <h1>ROCKET</h1>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="logo" style="border: 1px solid black; padding: 8px; text-align: left;">
+                    <h1>Orden de Trabajo N° 0001-00806</h1>   <!-- AGREGAR ID DE LA ORDEN -->
+                </td>
+
+                <td class="logo" style="border: 1px solid black; display:flex; justify-content:center;">
+                    <img src="{{ asset('img/logo.png') }}" alt="Logo Rocket" style="width: 200px;">
                 </td>
             </tr>
 
