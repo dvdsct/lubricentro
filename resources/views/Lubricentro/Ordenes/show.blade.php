@@ -24,7 +24,6 @@
         @endif
         @livewire('final-order',['orden' => $orden])
         @livewire('form-pago',['orden' => $orden])
-        @livewire('form-pago',['orden' => $orden])
 
     </div>
 </div>

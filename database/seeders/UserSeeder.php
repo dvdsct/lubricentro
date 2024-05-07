@@ -9,6 +9,7 @@ use App\Models\Orden;
 use App\Models\Persona;
 use App\Models\Perfil;
 use App\Models\Proveedor;
+use App\Models\Sucursal;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -25,6 +26,11 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
+
+        Sucursal::create([
+            'nombre_sucursal' => 'Lugones',
+            'estado' => '1',
+        ]);
 
         Persona::create([
             'nombre' => 'John',
@@ -127,7 +133,8 @@ class UserSeeder extends Seeder
             'lista_precios' => '2',
         ]);
         Cajero::create([
-            'perfil_id' => '3'
+            'perfil_id' => '3',
+            'sucursal_id' => '1'
         ]);
 
         Proveedor::create([
@@ -143,13 +150,5 @@ class UserSeeder extends Seeder
             'tipo' => 'Mayorista',
             'estado' => '',
         ]);
-
-
-
-
-
-
     }
-
-
 }

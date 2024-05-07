@@ -31,6 +31,7 @@ class ListaCajas extends Component
             if ($this->caja->first()->estado) {
 
                 redirect('venta/' . $this->caja->first()->id);
+            } else {
             }
         }
     }

@@ -11,27 +11,31 @@ use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+
 class AddProductPresupuesto extends Component
 {
     use WithPagination;
-
 
     public $presupuesto;
     public $cliente;
     public $modalProductos;
 
-    #[Validate('required', message: 'Debe ingresar una cantidad')]
+    #[Validate('required', message: 'Infrese una cantidad')]
     public $cantidad;
-
     public $precio;
     public $producto;
     public $item;
     // public $stock;
-    public $total;
+    public $items;
     public $query = '';
 
 
+    public function mount($presupuesto)
+    {
+        $this->presupuesto = $presupuesto;
 
+        // $this->stock = Stock::all();
+    }
 
     public function search()
     {
@@ -39,49 +43,45 @@ class AddProductPresupuesto extends Component
     }
 
 
-    // Control del modal
-
     #[On('modal-presupuestos')]
     public function modalProdOn()
     {
         if ($this->modalProductos) {
-            // dd('false');
             $this->modalProductos = false;
         } else {
             $this->modalProductos = true;
         }
     }
-
-    //     public function modalProdOff()
-    // {
-    //     $this->modalProductos = false;
-    // }
     // ____________________________________
 
 
     // Cargar item de pedido
     public function addCantidad($id)
     {
+
+
+        // $this->validate();
         $item = PresupuestoItem::find($id);
         $p = Producto::find($item->producto_id);
-        // $stock = Stock::where('producto_id', $p->id)->first();
 
         // dd($stock);
-        $precio = $p->costo;
-        $c = $precio *  $this->cantidad;
+        // $p->update([
+        //     'costo' => $this->precio
+        // ]);
+        // $precio = $this->precio;
 
+        if ($this->presupuesto->estado == '1') {
 
+            $item->update([
+                'cantidad' => $this->cantidad,
+                'precio' => $p->costo,
+                'subtotal' => $p->costo *  $this->cantidad,
+                'estado' => '2',
 
-        $item->update([
-            'cantidad' => $this->cantidad,
-            'subtotal' => $c,
-            'estado' => '2',
-
-        ]);
-
-
-
-        $this->reset('cantidad');
+            ]);
+        }
+        $this->reset('cantidad', 'precio');
+        $this->modalProductos = false;
     }
     // _________________________________________
 
@@ -91,6 +91,7 @@ class AddProductPresupuesto extends Component
     public function addedProduct($p)
     {
         $this->producto = Producto::find($p);
+        $this->modalProdOn();
 
         $i = PresupuestoItem::create([
             'producto_id' => $this->producto->id,
@@ -104,8 +105,6 @@ class AddProductPresupuesto extends Component
             'estado' => '1',
 
         ]);
-        $this->dispatch('itempre-added');
-        $this->modalProdOn();
     }
     // ______________________________________________________
 
@@ -132,11 +131,11 @@ class AddProductPresupuesto extends Component
     }
     // _________________________________________________________
 
-    #[On('itempre-added')]
     public function render()
     {
 
 
+        $this->items = $this->presupuesto->itemspres;
         return view('livewire.add-product-presupuesto', [
             'stock' => Stock::select('stocks.*', 'productos.descripcion', 'productos.codigo', 'productos.costo')
                 ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')

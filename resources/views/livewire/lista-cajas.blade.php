@@ -2,7 +2,7 @@
     <!-- MODAL PARA ABRIR CAJA DEL DIA -->
     @can('caja')
     @if ($modalAbrirCaja)
-    <div class="modal fade show" id="modal-default" aria-modal="true" role="dialog" style="padding-right: 17px; display: block;">
+    <div class="modal fade show" id="modal-default" aria-modal="true" role="dialog" style="padding-right: 17px; display: block;" wire:ignore.self   >
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-info">
@@ -65,7 +65,7 @@
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-danger" wire:click="cerrarModal">Cancelar</button>
-                    <button type="button" class="btn btn-success">Aceptar</button>
+                    <button type="button" class="btn btn-success" wire:click='abrirCaja>
                 </div>
             </div>
 

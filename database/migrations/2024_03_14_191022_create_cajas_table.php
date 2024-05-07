@@ -18,6 +18,11 @@ return new class extends Migration
             ->references('id')
             ->on('cajeros')
             ->onDelete('cascade');
+            $table->unsignedBigInteger('sucursal_id');
+            $table->foreign('sucursal_id')
+            ->references('id')
+            ->on('sucursals')
+            ->onDelete('cascade');
             $table->float('turno')->nullable();
             $table->float('monto_inicial')->nullable();
             $table->float('salidas')->nullable();

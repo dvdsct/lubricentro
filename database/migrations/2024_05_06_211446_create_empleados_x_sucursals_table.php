@@ -11,22 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cajeros', function (Blueprint $table) {
+        Schema::create('empleados_x_sucursals', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('perfil_id');
-            $table->foreign('perfil_id')
-            ->references('id')
-            ->on('perfils')
-            ->onDelete('cascade');
             $table->unsignedBigInteger('sucursal_id');
             $table->foreign('sucursal_id')
             ->references('id')
             ->on('sucursals')
             ->onDelete('cascade');
 
-            $table->string('categoria')->nullable();
-            $table->string('lista_precios')->nullable();
-            $table->softDeletes();
+            $table->unsignedBigInteger('empleado_id');
+            $table->foreign('empleado_id')
+            ->references('id')
+            ->on('empleados')
+            ->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -36,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('cajeros');
+        Schema::dropIfExists('empleados_x_sucursals');
     }
 };

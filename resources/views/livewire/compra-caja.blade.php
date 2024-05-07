@@ -38,7 +38,8 @@
                             <label for="concepto" class="form-label">Concepto</label>
 
                                 <input wire:model="concepto" type="text" id="concepto" class="form-control">
-                
+
+                            </div>
                         </div>
 
                         {{-- Monto --}}
