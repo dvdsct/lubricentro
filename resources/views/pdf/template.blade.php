@@ -31,7 +31,7 @@
                 </td>
 
                 <td class="logo" style="border: 1px solid black; display:flex; justify-content:center;">
-                    <img src="{{ asset('img/logo.png') }}" alt="Logo Rocket" style="width: 200px;">
+                    <img src="{{ asset('img/logo.svg') }}" alt="Logo Rocket" style="width: 200px;">
                 </td>
             </tr>
 
