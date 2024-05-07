@@ -19,6 +19,11 @@ return new class extends Migration
             ->references('id')
             ->on('proveedors')
             ->onDelete('cascade');
+            $table->unsignedBigInteger('sucursal_id');
+            $table->foreign('sucursal_id')
+            ->references('id')
+            ->on('sucursals')
+            ->onDelete('cascade');
 
             $table->unsignedBigInteger('tipo_pedido_id');
             $table->foreign('tipo_pedido_id')

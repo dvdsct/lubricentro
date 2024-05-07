@@ -27,6 +27,7 @@ class AddProductPresupuesto extends Component
     public $item;
     // public $stock;
     public $items;
+    public $query = '';
 
 
     public function mount($presupuesto)
@@ -35,18 +36,17 @@ class AddProductPresupuesto extends Component
 
         // $this->stock = Stock::all();
     }
-    public $query = '';
 
     public function search()
     {
         $this->resetPage();
     }
-    // Control del modal
+
 
     #[On('modal-presupuestos')]
     public function modalProdOn()
     {
-        if ($this->modalProductos == true) {
+        if ($this->modalProductos) {
             $this->modalProductos = false;
         } else {
             $this->modalProductos = true;
@@ -60,7 +60,7 @@ class AddProductPresupuesto extends Component
     {
 
 
-        $this->validate();
+        // $this->validate();
         $item = PresupuestoItem::find($id);
         $p = Producto::find($item->producto_id);
 
@@ -79,9 +79,9 @@ class AddProductPresupuesto extends Component
                 'estado' => '2',
 
             ]);
-
-            $this->reset('cantidad', 'precio');
         }
+        $this->reset('cantidad', 'precio');
+        $this->modalProductos = false;
     }
     // _________________________________________
 
@@ -133,6 +133,8 @@ class AddProductPresupuesto extends Component
 
     public function render()
     {
+
+
         $this->items = $this->presupuesto->itemspres;
         return view('livewire.add-product-presupuesto', [
             'stock' => Stock::select('stocks.*', 'productos.descripcion', 'productos.codigo', 'productos.costo')
