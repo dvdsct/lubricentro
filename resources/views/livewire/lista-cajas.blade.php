@@ -13,47 +13,54 @@
                 </div>
                 <div class="modal-body">
                     <div>
-                        <h5 class="mb-3"><strong>Cajero: </strong> {{ $perfil->first()->personas->nombre }}</h5>
-
-
-                        <!--                         {{ $step }} -->
-
                         @if ($step == 1)
-                        <!--     <button type="button" class="btn btn-block bg-gradient-success btn-lg mb-3" wire:click='abrirCaja'>Abrir caja</button> -->
-                        <div class="row" style="display: flex; justify-content: center;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="sucursal">Sucursal</label>
+                                <select class="form-control" id="sucursal" disabled>
+                                    <option value="Rocket - Suc. Lugones">Rocket - Lugones</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="cajero">Cajero</label>
+                                <select class="form-control" id="cajero" disabled>
+                                    <option value="{{ $perfil->first()->personas->nombre }}">{{ $perfil->first()->personas->nombre }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">Monto inicial</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">$</span>
+                                        </div>
+                                        <input type="text" class="form-control" wire:model='montoInicial' wire:keydown.enter='abrirCaja'>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+
+                        @if ($step == 2)
+                        <div class="row mt-3" style="display: flex; justify-content: center;">
                             <div class="col-lg-6" style="cursor: pointer;" wire:click='abrirCaja'>
                                 <div class="small-box bg-info">
                                     <div class="inner">
-                                        <p>Saldo inicial</p>
-                                        <h3>$0.00</h3>
+                                        <p class="m-0">Saldo inicial</p>
+                                        <h3>${{$montoInicial}}</h3>
                                     </div>
                                     <div class="icon">
-                                        <!-- Cambiamos la clase del icono por el de rocket -->
                                         <i class="fas fa-rocket"></i>
                                     </div>
                                     <a href="#" class="small-box-footer">Abrir caja <i class="fas fa-arrow-circle-right"></i></a>
                                 </div>
                             </div>
                         </div>
-
-
-
                         @endif
-
-                        @if ($step == 2)
-                        <!-- INPUT PARA INDICAR MONTO INICIAL DE DINERO -->
-                        <div class="form-group">
-                            <label for="exampleInputEmail1">Indique monto inicial</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">$</span>
-                                </div>
-                                <input type="text" class="form-control" wire:model='montoInicial' wire:keydown.enter='abrirCaja'>
-                            </div>
-                        </div>
-                        @endif
-
-
                     </div>
                 </div>
                 <div class="modal-footer justify-content-between">

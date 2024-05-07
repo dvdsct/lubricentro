@@ -84,6 +84,14 @@ class ListaCajas extends Component
         }
     }
 
+        // Manejo del Modal
+
+        public function cerrarModal()
+        {
+            $this->modalAbrirCaja = false;
+    
+        }
+
 
 
     public function render()

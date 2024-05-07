@@ -1,41 +1,53 @@
+<!-- VISTA FACTURACION -->
 <div>
     <div class="row">
-        <div class="col-md-3 pl-0">
-            <a class="btn btn-app bg-warning btn-lg" style="width: 100%; height: 80px;cursor: pointer;" wire:click="$dispatchTo('add-presupuesto', 'addPresupuesto')">
-                <span class="badge bg-purple" style="font-size: 15px;">10</span>
-                <i class="fas fa-edit"></i>
-                <h4><strong> Presupuestos </strong></h4>
-            </a>
+        <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;" wire:click="$dispatchTo('add-presupuesto', 'addPresupuesto')">
+            <div class="info-box mb-3">
+                <span class="info-box-icon bg-warning elevation-1"><i class="fa fa-calculator" aria-hidden="true"></i></span>
+                <div class="info-box-content">
+                    <h5> <strong> <span class="info-box-text">PRESUPUESTO</span> </strong> </h5>
+                    <h5> <span class="info-box-number">10</span> </h5>
+                </div>
+            </div>
         </div>
 
-        <div class="col-md-3 pr-3">
-            <a class="btn btn-app bg-purple" style="width: 100%; height: 80px;cursor: pointer;" wire:click="$dispatchTo('compra-caja', 'modal-compra')">
-                <span class="badge bg-success" style="font-size: 15px;">4</span>
-                <i class="fas fa-arrow-circle-down"></i>
-                <h4><strong> Compras </strong></h4>
-            </a>
+
+        <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;" wire:click="$dispatchTo('compra-caja', 'modal-compra')">
+            <div class="info-box mb-3">
+                <span class="info-box-icon bg-purple elevation-1"><i class="fas fa-shopping-cart"></i></span>
+                <div class="info-box-content">
+                    <h5> <strong> <span class="info-box-text">COMPRAS</span> </strong> </h5>
+                    <h5> <span class="info-box-number">7</span> </h5>
+                </div>
+            </div>
         </div>
 
-        <div class="col-md-3 pl-0">
-            <a class="btn btn-app bg-success" style="width: 100%; height: 80px;cursor: pointer;" wire:click="$dispatchTo('form-create-order', 'modal-order')">
-                <span class="badge bg-danger" style="font-size: 15px;">15</span>
-                <i class="fas fa-arrow-circle-up"></i>
-                <h4><strong> Ventas </strong></h4>
-            </a>
+
+        <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;" wire:click="$dispatchTo('form-create-order', 'modal-order')">
+            <div class="info-box mb-3">
+                <span class="info-box-icon bg-success elevation-1"><i class="fa fa-usd-o" aria-hidden="true"></i></span>
+                <div class="info-box-content">
+                    <h5> <strong> <span class="info-box-text">VENTAS</span> </strong> </h5>
+                    <h5> <span class="info-box-number">15</span> </h5>
+                </div>
+            </div>
         </div>
 
-        <div class="col-md-3 pr-3">
-            <a class="btn btn-app bg-info" style="width: 100%; height: 80px;cursor: pointer;" wire:click="$dispatchTo('form-create-order', 'modal-order')">
-                <i class="fa fa-calendar"></i>
-                <h4><strong> Turnos </strong></h4>
-            </a>
+
+        <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;" wire:click="$dispatchTo('form-create-order', 'modal-order')">
+            <div class="info-box mb-3">
+                <span class="info-box-icon bg-info elevation-1"><i class="fa fa-calendar-check" aria-hidden="true"></i></span>
+                <div class="info-box-content">
+                    <h5> <strong> <span class="info-box-text">TURNOS</span> </strong> </h5>
+                    <h5> <span class="info-box-number">9</span> </h5>
+                </div>
+            </div>
         </div>
+
     </div>
 
 
-
     <div class="row">
-
         <!-- TABLA DE LA IZQUIERDA  -->
         <div class="col-md-6">
             <div class="card">
@@ -118,15 +130,15 @@
                 </div>
             </div>
         </div>
-
     </div>
+
     <!-- BOTON PARA CERRAR CAJA  -->
     <div class="row" style="display: flex; justify-content: end;">
         <div class="col-lg-3 col-6">
             <div class="small-box bg-danger" style="cursor: pointer;" wire:click='$dispatchTo("cerrar-caja","cerrar-caja-modal")'>
                 <div class="inner">
                     <h3 class="m-0">Cerrar caja</h3>
-                    <p>Unique Visitors</p>
+                    <p>${{ $pagosEfectivo->sum('total') }}</p>
                 </div>
                 <div class="icon">
                     <i class="fas fa-cash-register"></i>

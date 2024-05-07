@@ -25,7 +25,7 @@
                             </div>
 
 
-                            <div class="col-md-6">
+                            <div class="col-md-6 mb-3">
                                 <label for="tipo_pago" class="form-label">Tipo de Pago</label>
                                 <select wire:model.live="tipoPago" id="tipo_pago" class="form-control">
                                     <option selected>{{ $tipoPago }}</option>
@@ -66,6 +66,7 @@
 
 
                         @if ($tipoPago == 3)
+                        <!-- TIPO DE PAGO PREVENTA -->
                         <div class="mb-3">
                             <label for="montoPagado" class="form-label">Total a Pagar</label>
                             <div class="input-group">
@@ -73,16 +74,13 @@
                                     <span class="input-group-text">$</span>
                                 </div>
                                 <input wire:model="montoPagado" type="text" id="montoPagado" class="form-control">
-                                <div class="input-group-append">
-                                    <span class="input-group-text">.00</span>
-                                </div>
                             </div>
                         </div>
                         @endif
 
 
                         @if ($medioPago == 2)
-                        {{-- Efectivo --}}
+                        <!-- PAGO EN EFECTIVO  -->
                         <div class="mb-3">
                             <label for="efectivo" class="form-label">Efectivo</label>
                             <div class="input-group">
@@ -90,101 +88,112 @@
                                     <span class="input-group-text">$</span>
                                 </div>
                                 <input wire:model.live="efectivo" type="text" id="efectivo" class="form-control">
-                                <div class="input-group-append">
-                                    <span class="input-group-text">.00</span>
+                            </div>
+                        </div>
+                        @if ($vuelto < 0) <div class="mb-3 bg-light P-2" style="text-align: right; border: 1px solid grey; border-radius: 2%;">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h6> Total Producto o Servicio </h6>
+                                    <h4 for="monto" class="form-label"><strong> Total a pagar</strong></h4>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <h6>{{$montoAPagar}}</h6>
+                                    <h4 for="monto" class="form-label"><strong> ${{$montoAPagar}}</strong></h4>
+                                    <h4 for="vuelto" class="form-label"><strong> ${{ $vuelto }} </strong></h4>
+                                </div>
+
+                            </div>
+                            @else
+                            <!-- CUANDO HAY QUE ENTREGAR VUELTO IGUAL O MAYOR QUE 0 -->
+                            <div class="mb-3 bg-light p-2" style="text-align: right; border: 1px solid grey; border-radius: 2%;">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <h6> Total Producto o Servicio </h6>
+                                        <h6> Comision de {{ $interes }}% tarjeta Mastercard </h6>
+                                        <h4 for="vuelto" class="form-label"><strong> Su vuelto </strong></h4>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <h6> $ {{$montoAPagar}} </h6>
+                                        <h6> $ {{$montoInt }} </h6>
+                                        <h4 for="vuelto" class="form-label"><strong> ${{ $vuelto }} </strong></h4>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        @if ($vuelto < 0) <div class="mb-3 bg-light" style="text-align: right; border: 1px solid grey; border-radius: 2%;">
-                            <h4 for="vuelto" class="form-label"><strong> Total a pagar</strong></h4>
-                            <h4 for="vuelto" class="form-label"><strong> ${{ $vuelto }} </strong></h4>
-                    </div>
-                    @else
-                    <div class="mb-3 bg-light p-2" style="text-align: right; border: 1px solid grey; border-radius: 2%;">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <h6> Total Producto o Servicio </h6>
-                                <h6> Bonificacion 10% por cliente especial </h6>
-                                <h4 for="vuelto" class="form-label"><strong> Su vuelto </strong></h4>
+                            @endif
+
+                            @endif
+
+
+                            @if ($medioPago == 1)
+                            <!-- PAGO CON TARJETA -->
+                            <div class="mb-3">
+                                <label for="tipo_pago" class="form-label">Tarjeta</label>
+                                <select wire:model="tarjeta" wire:change='cargaInteres' id="tipo_pago" class="form-control">
+                                    <option value="">Seleccionar tarjeta</option>
+                                    @foreach ($tarjetasT as $tar)
+                                    <option value="{{ $tar->id }}">
+                                        {{ $tar->tarjetas->first()->nombre_tarjeta }} -
+                                        {{ $tar->planes->first()->descripcion_plan }}
+                                    </option>
+                                    @endforeach
+                                </select>
                             </div>
 
-                            <div class="col-md-4">
-                                <h6> $4000 </h6>
-                                <h6> -$400 </h6>
-                                <h4 for="vuelto" class="form-label"><strong> ${{ $vuelto }} </strong></h4>
+                            <div class="mb-3">
+                                <label for="codeOp" class="form-label">N° de cupon</label>
+                                <input wire:model="codeOp" type="number" id="codeOp" class="form-control">
                             </div>
-                        </div>
-                    </div>
-                    @endif
 
-                    @endif
-
-                    @if ($medioPago == 1)
-                    {{-- Tarjeta --}}
-                    <div class="mb-3">
-                        <label for="tipo_pago" class="form-label">Tarjeta</label>
-                        <select wire:model="tarjeta" wire:change='cargaInteres' id="tipo_pago" class="form-control">
-                            <option value="">Seleccionar tarjeta</option>
-                            @foreach ($tarjetasT as $tar)
-                            <option value="{{ $tar->id }}">
-                                {{ $tar->tarjetas->first()->nombre_tarjeta }} -
-                                {{ $tar->planes->first()->descripcion_plan }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="codeOp" class="form-label">Codigo de Operacion</label>
-                        <input wire:model="codeOp" type="number" id="codeOp" class="form-control">
-                    </div>
-                    <div class="mb-3 bg-light p-2" style="text-align: right; border: 1px solid grey; border-radius: 2%;">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <h6> Total Producto o Servicio </h6>
-                                <h6> Comision de {{ $interes }}% tarjeta Mastercard </h6>
-                                <span class="badge badge-danger"> <a href="" style="color: black;"> Omitir </a>
+                            <!-- RECUADRO DE TOTAL TARJETA -->
+                            <div class="mb-3 bg-light p-2" style="text-align: right; border: 1px solid grey; border-radius: 2%;">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <h6> Total Producto o Servicio </h6>
+                                        <h6> Comision de {{ $interes }}% tarjeta Mastercard </h6>
+                                        <!--                                 <span class="badge badge-danger"> <a href="" style="color: black;"> Omitir </a>
                                     <h6 style="display: inline;"> Bonificacion -{{ $descuentoTarjeta }}% cliente especial </h6>
-                                </span>
-                                <h4 for="monto" class="form-label"><strong> Total a pagar</strong></h4>
+                                </span> -->
+                                        <h4 for="monto" class="form-label"><strong> Total a pagar</strong></h4>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h6>{{$montoAPagar}}</h6>
+                                        <h6>$ {{$montoInt }}</h6>
+                                        <span class="badge badge-danger">
+                                            <h6 class="my-0"> -$400</h6>
+                                        </span>
+                                        <h4 for="monto" class="form-label"><strong> ${{ $montoAPagarInteres }}
+                                            </strong>
+                                        </h4>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <h6>{{$montoAPagar}}</h6>
-                                <h6>$ {{$montoInt  }}</h6>
-                                <span class="badge badge-danger">
-                                    <h6 class="my-0"> -$400</h6>
-                                </span>
-                                <h4 for="monto" class="form-label"><strong> ${{ $montoAPagarInteres }}
-                                    </strong>
-                                </h4>
-                            </div>
-                        </div>
+
+                            @endif
                     </div>
 
-                    @endif
+
                 </div>
 
-
-            </div>
-
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" wire:click='closeModal'>Cerrar</button>
-                <button type="button" class="btn btn-primary" wire:click='pagar'>Aceptar</button>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" wire:click='closeModal'>Cerrar</button>
+                    <button type="button" class="btn btn-primary" wire:click='pagar'>Aceptar</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-@endif
+    @endif
 
-@script
-<script>
-    $wire.on('no-hay-caja', (event) => {
-        Swal.fire({
-            icon: "error",
-            title: "Atención...",
-            text: "Debe Abrir caja antes de crear una orden",
+    @script
+    <script>
+        $wire.on('no-hay-caja', (event) => {
+            Swal.fire({
+                icon: "error",
+                title: "Atención...",
+                text: "Debe Abrir caja antes de crear una orden",
+            });
         });
-    });
-</script>
-@endscript
+    </script>
+    @endscript
 </div>
