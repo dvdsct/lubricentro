@@ -92,7 +92,7 @@ class ListaCajas extends Component
         public function cerrarModal()
         {
             $this->modalAbrirCaja = false;
-    
+
         }
 
 

@@ -28,7 +28,6 @@
                             <div class="col-md-6 mb-3">
                                 <label for="tipo_pago" class="form-label">Tipo de Pago</label>
                                 <select wire:model.live="tipoPago" id="tipo_pago" class="form-control">
-                                    <option selected>{{ $tipoPago }}</option>
                                     @foreach ($tiposPago as $t)
                                     <option value="{{ $t->id }}">{{ $t->descripcion }}</option>
                                     @endforeach
