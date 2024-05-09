@@ -36,7 +36,7 @@
                             @if ($tipoPago == 2 || $tipoPago == 3)
                         </div>
 
-
+                        <!-- MEDIO DE PAGO  -->
                         <div class="mb-3">
                             <label for="medioPago" class="form-label">Medio de Pago</label>
                             <select class="form-control" aria-label="Default select example" wire:model.live="medioPago" id="medio_pago">
@@ -78,8 +78,52 @@
                         @endif
 
 
+                        <!-- MEDIO DE PAGO EN CHEQUE -->
+                        @if ($medioPago == 3)
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="tipo_pago" class="form-label">Banco</label>
+                                <select class="form-control">
+                                    <option>Banco Nacion</option>
+                                    <option>BSE</option>
+                                    <option>BBVA</option>
+                                    <option>Santander Rio</option>
+                                    <option>Banco Frances</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="vencimiento" class="form-label">Fecha de vencimiento</label>
+                                <input type="date" wire:model="fecha" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="Numero_cheque">N° de cheque </label>
+                                <input type="number" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="mb-3 bg-light p-2" style="text-align: right; border: 1px solid grey; border-radius: 2%;">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <h6> Total Producto o Servicio </h6>
+                                        <h4 for="monto" class="form-label"><strong> Total a pagar</strong></h4>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h6>{{$montoAPagar}}</h6>
+                                        <h4 for="monto" class="form-label"><strong> ${{$montoAPagar}}
+                                            </strong>
+                                        </h4>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+
                         @if ($medioPago == 2)
-                        <!-- PAGO EN EFECTIVO  -->
+                        <!-- MEDIO DE PAGO EN EFECTIVO  -->
                         <div class="mb-3">
                             <label for="efectivo" class="form-label">Efectivo</label>
                             <div class="input-group">
@@ -126,7 +170,7 @@
 
 
                             @if ($medioPago == 1)
-                            <!-- PAGO CON TARJETA -->
+                            <!-- MEDIO DE PAGO CON TARJETA -->
                             <div class="mb-3">
                                 <label for="tipo_pago" class="form-label">Tarjeta</label>
                                 <select wire:model="tarjeta" wire:change='cargaInteres' id="tipo_pago" class="form-control">
@@ -151,17 +195,11 @@
                                     <div class="col-md-8">
                                         <h6> Total Producto o Servicio </h6>
                                         <h6> Comision de {{ $interes }}% tarjeta Mastercard </h6>
-                                        <!--                                 <span class="badge badge-danger"> <a href="" style="color: black;"> Omitir </a>
-                                    <h6 style="display: inline;"> Bonificacion -{{ $descuentoTarjeta }}% cliente especial </h6>
-                                </span> -->
                                         <h4 for="monto" class="form-label"><strong> Total a pagar</strong></h4>
                                     </div>
                                     <div class="col-md-4">
                                         <h6>{{$montoAPagar}}</h6>
                                         <h6>$ {{$montoInt }}</h6>
-                                        <span class="badge badge-danger">
-                                            <h6 class="my-0"> -$400</h6>
-                                        </span>
                                         <h4 for="monto" class="form-label"><strong> ${{ $montoAPagarInteres }}
                                             </strong>
                                         </h4>
@@ -171,8 +209,6 @@
 
                             @endif
                     </div>
-
-
                 </div>
 
                 <div class="modal-footer justify-content-between">
