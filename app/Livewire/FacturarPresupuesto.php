@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Orden;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class FacturarPresupuesto extends Component
@@ -23,6 +24,11 @@ class FacturarPresupuesto extends Component
     }
 
 
+    #[On('printPresupuesto')]
+    public function printPres(){
+
+            redirect('pdfpres/'.$this->presupuesto->id);
+    }
 
     public function render()
     {

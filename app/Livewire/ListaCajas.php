@@ -64,7 +64,7 @@ class ListaCajas extends Component
                 $this->caja =  Caja::firstOrCreate([
                     'cajero_id' => $this->cajero->id,
                     'estado' => '100',
-                    'sucursal_id' => '1'
+                    'sucursal_id' => $this->cajero->sucursal_id
 
                 ]);;
             }

@@ -24,7 +24,7 @@ use App\Http\Controllers\TarjetaController;
 */
 
 Route::get('/', function () {
-    return redirect('turnos');
+    return redirect('venta');
 });
 
 
@@ -46,7 +46,8 @@ Route::middleware([
     Route::resource('pedidos',PedidoProveedorController::class);
     Route::resource('presupuesto',PresupuestoController::class);
     Route::resource('tarjetas',TarjetaController::class);
-    Route::get('/pdf/{orden}', 'App\Http\Controllers\PDFController@generatePDF')->name('pdf');
+    Route::get('/pdf/{orden}', 'App\Http\Controllers\PDFController@generatePDF')->name('pdf.orden');
+    Route::get('/pdfpres/{presupuesto}', 'App\Http\Controllers\PDFController@presupuesto')->name('pdf.presupuesto');
 
     Route::get('register', function () {
         return view('Lubricentro.Turnos.index');

@@ -39,63 +39,69 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($items as $i)
-                    <tr>
-                        <td>{{ $i->id }}</td>
-                        <td>{{ $i->productos->descripcion . ' - ' . $i->productos->codigo }}</td>
+                @foreach ($items as $key => $producto)
+                    {{-- @livewire('producto-view', ['producto' => $producto, key($producto->id)]) --}}
+                    <div>
+                        <div id="{{ $producto->id }}">
+                            <tr>
+                                <td>{{ $producto->id }}</td>
+                                <td>{{ $producto->productos->descripcion . ' - ' . $producto->productos->codigo }}</td>
 
-                        @if ($i->estado == 1)
-                            <td><input type="text" class="form-control" style="width: 145px;"
-                                    placeholder="Ingresar cantidad" wire:model='cantidad'
-                                    wire:keydown.enter='addCantidad({{ $i->id }})'>
-                                @error('cantidad')
-                                    {{ $message }}
-                                @enderror
-                            </td>
+                                @if ($producto->estado == 1)
+                                    <td><input type="text" class="form-control" style="width: 145px;"
+                                            placeholder="Ingresar cantidad" wire:model='cantidad'
+                                            wire:keydown.enter='addCantidad({{ $producto->id }})'>
+                                        @error('cantidad')
+                                            {{ $message }}
+                                        @enderror
+                                    </td>
 
-                            <td>{{ $i->precio }}
+                                    <td>{{ $producto->precio }}
 
-                            </td>
-                            <td></td>
-                        @else
-                            <td>
-                                {{ $i->cantidad }}
-                            </td>
-                            <td>
-                                $ {{ $i->precio }}
-                            </td>
-                            <td>
-                                $ {{ $i->subtotal }}
-                            </td>
-                        @endif
+                                    </td>
+                                    <td></td>
+                                @else
+                                    <td>
+                                        {{ $producto->cantidad }}
+                                    </td>
+                                    <td>
+                                        $ {{ $producto->precio }}
+                                    </td>
+                                    <td>
+                                        $ {{ $producto->subtotal }}
+                                    </td>
+                                @endif
 
 
 
-                        @if ($i->estado == 2)
-                            {{-- Si el producto es estado 2 aun no se a recibido --}}
-                            <td class="project-actions text-right" style="width: 200px;">
-                                <a class="btn btn-info btn-sm" wire:click='editProd({{ $i->id }})'>
-                                    <i class="fas fa-pencil-alt">
-                                    </i>
-                                    Editar
-                                </a>
-                                <a class="btn btn-danger btn-sm" wire:click='delProd({{ $i->id }})'
-                                    wire:confirm="Si borras este articulo tendras que volver a agregarlo?">
-                                    <i class="fas fa-trash">
-                                    </i>
-                                    Eliminar
-                                </a>
-                            </td>
-                        @else
-                            <td class="project-actions text-right">
-                                <a class="btn btn-danger btn-sm" wire:click='delProd({{ $i->id }})'
-                                    wire:confirm="Si borras este articulo tendras que volver a agregarlo?">
-                                    <i class="fas fa-trash">
-                                    </i>
-                                    Eliminar
-                                </a>
-                        @endif
-                    </tr>
+                                @if ($producto->estado == 2)
+                                    {{-- Si el producto es estado 2 aun no se a recibido --}}
+                                    <td class="project-actions text-right" style="width: 200px;">
+                                        <a class="btn btn-info btn-sm" wire:click='editProd({{ $producto->id }})'>
+                                            <i class="fas fa-pencil-alt">
+                                            </i>
+                                            Editar
+                                        </a>
+                                        <a class="btn btn-danger btn-sm" wire:click='delProd({{ $producto->id }})'
+                                            wire:confirm="Si borras este articulo tendras que volver a agregarlo?">
+                                            <i class="fas fa-trash">
+                                            </i>
+                                            Eliminar
+                                        </a>
+                                    </td>
+                                @else
+                                    <td class="project-actions text-right">
+                                        <a class="btn btn-danger btn-sm" wire:click='delProd({{ $producto->id }})'
+                                            wire:confirm="Si borras este articulo tendras que volver a agregarlo?">
+                                            <i class="fas fa-trash">
+                                            </i>
+                                            Eliminar
+                                        </a>
+                                    </td>
+                                @endif
+                            </tr>
+                        </div>
+                    </div>
                 @endforeach
             </tbody>
         </table>
@@ -110,7 +116,9 @@
     </div>
 
 
-
+    <div class="col">
+        @livewire('facturar-presupuesto', ['presupuesto' => $presupuesto])
+    </div>
 
     <!-- MODAL PARA AGREGAR NUEVO ITEM  -->
     @if ($modalProductos)
@@ -119,14 +127,15 @@
                 <div class="modal-content">
                     <div class="modal-header bg-info">
                         <h4 class="m-0"> <strong> AGREGAR ITEM </strong> </h4>
-                        <button  class="close" wire:click='$dispatch("modal-presupuestos")'>
+                        <button class="close" wire:click='$dispatch("modal-presupuestos")'>
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
                     <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
                         <!-- BUSCADOR DE PRODUCTOS  -->
                         <div class="input-group input-group-sm pb-2" style="width: 300px;">
-                            <input type="text" class="form-control float-right" placeholder="Buscar" wire:model='query' wire:keypress='search'>
+                            <input type="text" class="form-control float-right" placeholder="Buscar"
+                                wire:model='query' wire:keypress='search'>
                             <div class="input-group-append">
                                 <button class="btn btn-default">
                                     <i class="fas fa-search"></i>
@@ -142,22 +151,21 @@
                             </thead>
                             <tbody>
 
-                                    @foreach ($stock as $s)
-                                        <tr wire:click='addedProduct({{ $s->id }})' style="cursor: pointer;"    >
-                                            <td >{{ $s->id }}</td>
-                                            <td >{{ $s->productos->descripcion }} -
-                                                {{ $s->productos->codigo }}</td>
-                                            @if ($s->cantidad == 0)
-                                                <td ><span
-                                                        class="badge bg-danger">{{ $s->cantidad }}</span></td>
-                                            @else
-                                                <td ><span
-                                                        class="badge bg-success">{{ $s->cantidad }}</span></td>
-                                            @endif
-                                            <td >$ {{ $s->costo }}</td>
+                                @foreach ($stock as $key => $s)
+                                    <tr style="cursor: pointer;" id="{{ $s->id }}"
+                                        wire:click='addedProduct({{ $s->id }})'>
+                                        <td>{{ $s->id }}</td>
+                                        <td>{{ $s->productos->descripcion }} -
+                                            {{ $s->productos->codigo }}</td>
+                                        @if ($s->cantidad == 0)
+                                            <td><span class="badge bg-danger">{{ $s->cantidad }}</span></td>
+                                        @else
+                                            <td><span class="badge bg-success">{{ $s->cantidad }}</span></td>
+                                        @endif
+                                        <td>$ {{ $s->costo }}</td>
 
-                                        </tr>
-                                    @endforeach
+                                    </tr>
+                                @endforeach
 
                             </tbody>
                         </table>
