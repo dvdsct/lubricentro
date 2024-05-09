@@ -60,6 +60,7 @@
                         <th>Tipo</th>
                         <th>Medio de Pago</th>
                         <th>N° Transaccion</th>
+                        <th>Monto</th>
                     </thead>
                     <tbody>
                         <tr>
@@ -67,24 +68,20 @@
                             <td>Apertura</td>
                             <td>-</td>
                             <td></td>
+                            <th> ${{ $montoInicial }}</th>
                         </tr>
                         @foreach ($pagos as $p)
                         <tr>
-                            <td>{{ $p->facturas->estado }}</td>
+                           <td>{{ $p->facturas->created_at->format('H:i') }}</td>
                             <td>{{ $p->facturas->orden_id }}</td>
+                            <td>{{ $p->facturas->pagos->first()->medios->descripcion ?? $p->facturas->pagos->first()->tipos->descripcion }}</td>
                             <td>{{ $p->facturas->ordenes->clientes->perfiles->personas->nombre  ?? $p->facturas->ordenes->proveedores->perfiles->personas->nombre ?? ''}}
-                                {{ $p->facturas->ordenes->clientes->perfiles->personas->apellido  ?? $p->facturas->ordenes->proveedores->perfiles->personas->apellido ?? ''}}
-                            </td>
-                            <td>{{ $p->facturas->pagos->first()->medios->descripcion ?? $p->facturas->pagos->first()->tipos->descripcion }}
-                            </td>
-                            <td>{{ $p->facturas->total }}</td>
+                                {{ $p->facturas->ordenes->clientes->perfiles->personas->apellido  ?? $p->facturas->ordenes->proveedores->perfiles->personas->apellido ?? ''}}</td>
+                            <td>$ {{ $p->facturas->total }}</td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
-                <div class="card-header d-flex justify-content-end">
-                    <!--    <h3> <strong> TOTAL ${{ $totalv }} </strong> </h3> -->
-                </div>
             </div>
         </div>
 
@@ -97,30 +94,37 @@
                     </thead>
                     <thead>
                         <th>Tipo</th>
-                        <th>Monto</th>
+                        <th>Cantidad</th>
+                        <th class="d-flex justify-content-end mr-2">Monto</th>
                     </thead>
                     <tbody>
                         <tr>
                             <td>Transferencias</td>
-                            <td> ${{ $pagosTrans->sum('total') }}</td>
-                            <!--     <td></td> -->
+                            <td></td>
+                            <td class="d-flex justify-content-end mr-2"> ${{ $pagosTrans->sum('total') }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Tarjetas</td>
+                            <td></td>
+                            <td class="d-flex justify-content-end mr-2"> ${{ $pagosTrans->sum('total') }}</td>
                         </tr>
 
                         <tr>
                             <td>Efectivo</td>
-                            <td> ${{ $pagosEfectivo->sum('total') }}</td>
-                            <!--     <td></td> -->
+                            <td></td>
+                            <td class="d-flex justify-content-end mr-2"> ${{ $pagosEfectivo->sum('total') }}</td>
                         </tr>
 
                         <tr>
                             <td>Cheques</td>
-                            <td> ${{ $pagosCheques->sum('total') }}</td>
-                            <!--     <td></td> -->
+                            <td></td>
+                            <td class="d-flex justify-content-end mr-2"> ${{ $pagosCheques->sum('total') }}</td>
                         </tr>
                         <tr>
                             <td>Monto Inicial</td>
-                            <td> ${{ $montoInicial }}</td>
-                            <!--     <td></td> -->
+                            <td>-</td>
+                            <td class="d-flex justify-content-end mr-2"> ${{ $montoInicial }}</td>
                         </tr>
 
                     </tbody>
@@ -138,7 +142,7 @@
             <div class="small-box bg-danger" style="cursor: pointer;" wire:click='$dispatchTo("cerrar-caja","cerrar-caja-modal")'>
                 <div class="inner">
                     <h3 class="m-0">Cerrar caja</h3>
-                    <p>${{ $pagosEfectivo->sum('total') }}</p>
+                    <p>Total del dia ${{ $pagosEfectivo->sum('total') }}</p>
                 </div>
                 <div class="icon">
                     <i class="fas fa-cash-register"></i>
