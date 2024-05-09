@@ -196,15 +196,11 @@
                                     <div class="col-md-8">
                                         <h6> Total Producto o Servicio </h6>
                                         <h6> Comision de {{ $interes }}% tarjeta Mastercard </h6>
-                                        <!--                                 <span class="badge badge-danger"> <a href="" style="color: black;"> Omitir </a>
-                                    <h6 style="display: inline;"> Bonificacion -{{ $descuentoTarjeta }}% cliente especial </h6>
-                                </span> -->
                                         <h4 for="monto" class="form-label"><strong> Total a pagar</strong></h4>
                                     </div>
                                     <div class="col-md-4">
                                         <h6>{{$montoAPagar}}</h6>
                                         <h6>$ {{$montoInt }}</h6>
-
                                         <h4 for="monto" class="form-label"><strong> ${{ $montoAPagarInteres }}
                                             </strong>
                                         </h4>
