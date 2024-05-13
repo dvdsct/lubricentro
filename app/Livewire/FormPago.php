@@ -72,18 +72,23 @@ class FormPago extends Component
             $this->perfil = Perfil::where('user_id', Auth::user()->id)->get();
             $this->cajero = $this->perfil->first()->cajeros->first();
 
-            // Verificar si existe caja
-            if (Caja::where('cajero_id', $this->cajero->id)
-                ->where('estado', '200')
-                ->get()->isEmpty()
-            ) {
 
-                $this->dispatch('setModalCaja')->To(ListaCajas::class);
-            } else {
+            if (Auth::user()->hasRole(['cajero'])) {
 
-                $this->caja = Caja::where('cajero_id', $this->cajero->id)
+                // Verificar si existe caja
+
+                if (Caja::where('cajero_id', $this->cajero->id)
                     ->where('estado', '200')
-                    ->first();
+                    ->get()->isEmpty()
+                ) {
+
+                    $this->dispatch('setModalCaja')->To(ListaCajas::class);
+                } else {
+
+                    $this->caja = Caja::where('cajero_id', $this->cajero->id)
+                        ->where('estado', '200')
+                        ->first();
+                }
             }
 
 
@@ -293,7 +298,40 @@ class FormPago extends Component
 
                 ]);
             }
-            // Tarjeta
+            // Tarjeta Estado = 101
+            if ($this->medioPago == 1) {
+
+                // dd();
+
+
+                $f =  Factura::create([
+
+                    'orden_id' => $this->orden->id,
+
+                    'tipo_factura_id' => $this->tipoFactura,
+                    'total' => $this->montoAPagar,
+                    'estado' => '101'
+                ]);
+
+
+                $p = Pago::create([
+                    'in_out' => $this->pagoDe,
+                    'factura_id' => $f->id,
+                    'cliente_id' => $this->cliente,
+                    'medio_pago_id' => $this->medioPago,
+                    'tipo_pago_id' => $this->tipoPago,
+                    'efectivo' => $this->efectivo,
+                    'total' => $this->montoAPagar,
+                    'estado' => '101',
+
+                ]);
+                PagosXCaja::create([
+                    'pago_id' => $p->id,
+                    'caja_id' => $this->caja->id,
+                    'estado' => '101',
+
+                ]);
+            }
         }
 
         // Mixto

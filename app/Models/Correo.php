@@ -11,9 +11,8 @@ class Correo extends Model
     use HasFactory;
     use SoftDeletes;
 
-    public function personas(){
-
-        return $this->hasOne(Persona::class);
+    public function personas()
+    {
+        return $this->belongsToMany(Persona::class, 'correo_x_personas');
     }
-
 }

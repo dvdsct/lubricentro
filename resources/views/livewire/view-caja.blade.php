@@ -99,6 +99,11 @@
                     </thead>
                     <tbody>
                         <tr>
+                            <td>Monto Inicial</td>
+                            <td>-</td>
+                            <td class="d-flex justify-content-end mr-2"> ${{ $montoInicial }}</td>
+                        </tr>
+                        <tr>
                             <td>Transferencias</td>
                             <td></td>
                             <td class="d-flex justify-content-end mr-2"> ${{ $pagosTrans->sum('total') }}</td>
@@ -107,7 +112,7 @@
                         <tr>
                             <td>Tarjetas</td>
                             <td></td>
-                            <td class="d-flex justify-content-end mr-2"> ${{ $pagosTrans->sum('total') }}</td>
+                            <td class="d-flex justify-content-end mr-2"> ${{ $pagosTarjeta->sum('total') }}</td>
                         </tr>
 
                         <tr>
@@ -122,15 +127,16 @@
                             <td class="d-flex justify-content-end mr-2"> ${{ $pagosCheques->sum('total') }}</td>
                         </tr>
                         <tr>
-                            <td>Monto Inicial</td>
-                            <td>-</td>
-                            <td class="d-flex justify-content-end mr-2"> ${{ $montoInicial }}</td>
+                            <td>Gastos</td>
+                            <td></td>
+                            <td class="d-flex justify-content-end mr-2"> ${{ $gastosEfectivo->sum('total') }}</td>
                         </tr>
+                 
 
                     </tbody>
                 </table>
                 <div class="card-header d-flex justify-content-end">
-                    <h3><strong> TOTAL ${{ $pagosEfectivo->sum('total') }} </strong> </h3>
+                    <h3><strong> TOTAL ${{ $totalEfectivo }} </strong> </h3>
                 </div>
             </div>
         </div>

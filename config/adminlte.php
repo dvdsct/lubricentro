@@ -347,7 +347,7 @@ return [
             'text' => 'Pedidos Proveedores',
             'url'  => 'pedidos',
             'icon' => 'fa fa-truck',
-            'can' => 'stock',
+            // 'can' => 'stock',
 
         ],
         [

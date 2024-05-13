@@ -8,15 +8,20 @@
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
-
+                        @can('hacerPedido')
                             <div>
-                                <button type="button" class="btn btn-success" wire:click="$dispatchTo('add-supplier-order', 'modalSupOrder')"> <i class="fas fa-plus-circle"></i> Nuevo
+                                <button type="button" class="btn btn-success"
+                                    wire:click="$dispatchTo('add-supplier-order', 'modalSupOrder')"> <i
+                                        class="fas fa-plus-circle"></i> Nuevo
                                     Pedido
                                 </button>
                             </div>
+                        @endcan
+
 
                         <div class="input-group" style="width: 300px;">
-                            <input type="text" wire:model='query' class="form-control float-right" placeholder="Buscar pedido" wire:keydown='search'>
+                            <input type="text" wire:model='query' class="form-control float-right"
+                                placeholder="Buscar pedido" wire:keydown='search'>
                             <div class="input-group-append">
                                 <button wire:keydown.enter='search' class="btn btn-default">
                                     <i class="fas fa-search"></i>
@@ -41,28 +46,29 @@
                         </thead>
                         <tbody>
                             @foreach ($pedidos as $p)
-                            <tr>
-                                <td>{{ $p->id }}</td>
-                                <td>{{ $p->proveedores->perfiles->personas->nombre . ' ' . $p->proveedores->perfiles->personas->apellido }}
-                                </td>
-                                <td>{{ \Carbon\Carbon::parse($p->fecha_ingreso)->format('d/m/Y') }}</td>
+                                <tr>
+                                    <td>{{ $p->id }}</td>
+                                    <td>{{ $p->proveedores->perfiles->personas->nombre . ' ' . $p->proveedores->perfiles->personas->apellido }}
+                                    </td>
+                                    <td>{{ \Carbon\Carbon::parse($p->fecha_ingreso)->format('d/m/Y') }}</td>
 
-                                <td><span class="tag tag-success">{{ $p->estado }}</span></td>
-                                <td>{{ $p->descripcion }}</td>
-                                <td class="project-actions text-right">
-                                    <a class="btn btn-primary btn-sm" href="{{route('pedidos.show',$p->id)}}">
-                                        <i class="fas fa-list">
-                                        </i>
-                                    </a>
-                                    <a class="btn btn-info btn-sm" href="{{route('pedidos.edit',$p->id)}}">
-                                        <i class="fas fa-truck"></i>
-                                    </a>
-                                    <a class="btn btn-danger btn-sm" href="{{route('pedidos.destroy',$p->id   )}}">
-                                        <i class="fas fa-trash">
-                                        </i>
-                                    </a>
-                                </td>
-                            </tr>
+                                    <td><span class="tag tag-success">{{ $p->estado }}</span></td>
+                                    <td>{{ $p->descripcion }}</td>
+                                    <td class="project-actions text-right">
+                                        <a class="btn btn-primary btn-sm" href="{{ route('pedidos.show', $p->id) }}">
+                                            <i class="fas fa-list">
+                                            </i>
+                                        </a>
+                                        <a class="btn btn-info btn-sm" href="{{ route('pedidos.edit', $p->id) }}">
+                                            <i class="fas fa-truck"></i>
+                                        </a>
+                                        <a class="btn btn-danger btn-sm"
+                                            href="{{ route('pedidos.destroy', $p->id) }}">
+                                            <i class="fas fa-trash">
+                                            </i>
+                                        </a>
+                                    </td>
+                                </tr>
                             @endforeach
 
                         </tbody>
