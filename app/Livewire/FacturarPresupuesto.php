@@ -27,7 +27,7 @@ class FacturarPresupuesto extends Component
     #[On('printPresupuesto')]
     public function printPres(){
 
-            redirect('pdfpres/'.$this->presupuesto->id);
+            redirect('pdfpres/'. $this->presupuesto->id);
     }
 
     public function render()

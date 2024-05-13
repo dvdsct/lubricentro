@@ -2,7 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Models\Banco;
 use App\Models\Caja;
+use App\Models\Cheque;
 use App\Models\Cliente;
 use App\Models\Factura;
 use App\Models\MedioPago;
@@ -47,6 +49,8 @@ class FormPago extends Component
 
     public $montoConInt;
     public $medioPago;
+    public $banco;
+    public $bancos;
     public $caja;
 
     // Formulario Compra
@@ -61,6 +65,8 @@ class FormPago extends Component
     public $pagoDe;
     public $perfil;
     public $cajero;
+    public $fechaCheque;
+    public $nroCheque;
 
 
     public function mount($orden)
@@ -71,6 +77,7 @@ class FormPago extends Component
             $this->pagoDe = 'pedido';
             $this->perfil = Perfil::where('user_id', Auth::user()->id)->get();
             $this->cajero = $this->perfil->first()->cajeros->first();
+            $this->bancos = Banco::all();
 
 
             if (Auth::user()->hasRole(['cajero'])) {
@@ -112,6 +119,8 @@ class FormPago extends Component
             $this->pagoDe = 'orden';
             $this->perfil = Perfil::where('user_id', Auth::user()->id)->get();
             $this->cajero = $this->perfil->first()->cajeros->first();
+            $this->bancos = Banco::all();
+
 
             // Verificar si existe caja
             if (Caja::where('cajero_id', $this->cajero->id)
@@ -407,7 +416,58 @@ class FormPago extends Component
                     ]);
                 }
 
-                // Medio Efectivo
+
+                // ------------------------------------------------------------------------------
+                //                                 Pago total Cheque  Estado = 30
+                // ------------------------------------------------------------------------------
+                if ($this->medioPago == 3) {
+
+
+
+
+                    $f =  Factura::create([
+
+                        'orden_id' => $this->orden->id,
+
+                        'tipo_factura_id' => $this->tipoFactura,
+                        'total' => $this->montoAPagar,
+                        'estado' => '30'
+                    ]);
+
+                    $p = Pago::create([
+                        'in_out' => $this->pagoDe,
+                        'factura_id' => $f->id,
+                        'cliente_id' => $this->cliente,
+                        'medio_pago_id' => $this->medioPago,
+                        'tipo_pago_id' => $this->tipoPago,
+                        'efectivo' => $this->efectivo,
+                        'total' => $this->montoAPagar,
+                        'estado' => '30',
+
+                    ]);
+                    PagosXCaja::create([
+                        'pago_id' => $p->id,
+                        'caja_id' => $this->caja->id,
+                        'estado' => '30',
+
+                    ]);
+
+                    $cheque = Cheque::create([
+
+                        'banco_id' => $this->banco,
+                        // 'cliente_id' => $this->cliente,
+                        'pago_id' => $p->id,
+                        'vencimiento' => $this->fechaCheque,
+                        'monto' => $this->montoAPagar,
+                        'nro_cheque' => $this->nroCheque,
+                        'estado' => '30',
+
+
+                    ]);
+                }
+
+
+
                 // ------------------------------------------------------------------------------
                 //                                 Pago total Efectivo  Estado = 20
                 // ------------------------------------------------------------------------------
@@ -442,9 +502,13 @@ class FormPago extends Component
 
                     ]);
                 }
-                // _____________________________________________________________________
-                // _____________________________________________________________________
-                // _____________________________________________________________________
+
+
+
+
+                // ______________________________________________________________________________
+                // ______________________________________________________________________________
+                // ______________________________________________________________________________
 
                 // ------------------------------------------------------------------------------
                 //                                 Pago Total Tarjeta  Estado = 10
