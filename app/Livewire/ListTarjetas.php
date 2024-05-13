@@ -2,6 +2,8 @@
 
 namespace App\Livewire;
 
+use App\Models\Plan;
+use App\Models\PlanXTarjeta;
 use App\Models\Tarjeta;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Validate;
@@ -11,6 +13,7 @@ class ListTarjetas extends Component
 {
     public $tarjetas;
     public $tarjeta;
+    public $planes;
 
     #[Validate('required',message:'Ingrese un valor')]
     public $descuento;
@@ -31,10 +34,11 @@ class ListTarjetas extends Component
     public function stTarjeta($id)
     {
         $this->validate();
+
+        $plan = Plan::find($id);
         if (Auth::user()->hasRole('admin')) {
 
-            $this->tarjeta = Tarjeta::find($id);
-            $this->tarjeta->update([
+            $plan->update([
                 'descuento' => $this->descuento,
                 'interes' => $this->interes,
                 'estado' => '1'
@@ -47,20 +51,20 @@ class ListTarjetas extends Component
     public function editTarjeta($id)
     {
 
-        $tarjeta = Tarjeta::find($id);
+        $plan = Plan::find($id);
 
-        $tarjeta->update([
+        $plan->update([
             'estado' => '2'
         ]);
-        $this->descuento = $tarjeta->descuento;
-        $this->interes = $tarjeta->interes;
+        $this->descuento = $plan->descuento;
+        $this->interes = $plan->interes;
     }
 
 
 
     public function render()
     {
-        $this->tarjetas = Tarjeta::all();
+        $this->planes = Plan::all();
 
         return view(
             'livewire.list-tarjetas'
