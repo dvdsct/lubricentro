@@ -82,7 +82,7 @@ class CompraCaja extends Component
         $p = Pago::create([
             'factura_id' => $f->id,
             'proveedor_id' => '1',
-            'medio_pago_id' => '4',
+            'medio_pago_id' => $this->medioPago,
             'tipo_pago_id' => $this->tipoPago,
             'concepto' => $this->concepto,
             'efectivo' => 0,

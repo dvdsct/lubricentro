@@ -59,15 +59,15 @@
                         <th>Hora</th>
                         <th>Tipo</th>
                         <th>Medio de Pago</th>
-                        <th>N° Transaccion</th>
+                        <th>Concepto</th>
                         <th>Monto</th>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ $caja->created_at->format('H:i:s') }}</td>
+                            <td>{{ $caja->created_at->format('H:i') }}</td>
                             <td>Apertura</td>
                             <td>-</td>
-                            <td></td>
+                            <td>-</td>
                             <th> ${{ $montoInicial }}</th>
                         </tr>
                         @foreach ($pagos as $p)
@@ -75,8 +75,7 @@
                            <td>{{ $p->facturas->created_at->format('H:i') }}</td>
                             <td>{{ $p->facturas->orden_id }}</td>
                             <td>{{ $p->facturas->pagos->first()->medios->descripcion ?? $p->facturas->pagos->first()->tipos->descripcion }}</td>
-                            <td>{{ $p->facturas->ordenes->clientes->perfiles->personas->nombre  ?? $p->facturas->ordenes->proveedores->perfiles->personas->nombre ?? ''}}
-                                {{ $p->facturas->ordenes->clientes->perfiles->personas->apellido  ?? $p->facturas->ordenes->proveedores->perfiles->personas->apellido ?? ''}}</td>
+                            <td>{{ $p->facturas->pagos->first()->concepto}}</td>
                             <td>$ {{ $p->facturas->total }}</td>
                         </tr>
                         @endforeach

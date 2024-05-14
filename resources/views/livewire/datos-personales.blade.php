@@ -29,7 +29,7 @@
                     <div class="col-md-3 d-flex flex-column">
                         <h6>
                             <strong>Email: </strong>
-                         {{$persona->perfiles->personas->correos }}
+                   <!--  -->
                         </h6>
 
 
