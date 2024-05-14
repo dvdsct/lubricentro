@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> --}}
     <title>Orden de Trabajo</title>
 
 
@@ -21,8 +21,8 @@
                     <h1>Orden de Trabajo N° 0001-00806</h1>   <!-- AGREGAR ID DE LA ORDEN -->
                 </td>
 
-                <td class="logo" style="border: 1px solid black;">
-                    <h1>ROCKET</h1>
+                <td class="logo" style="border: 1px solid black; display:flex; justify-content:center;">
+                    <img src="{{ asset('img/logo.png') }}" alt="Logo Rocket" style="width: 200px;">
                 </td>
             </tr>
 

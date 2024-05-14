@@ -24,12 +24,14 @@ class PDFController extends Controller
         $fecha = $orden->horario;
         $encargado = $orden->clientes->perfiles->personas;
         $vendedor = Auth::user();
+        $total = $items->sum('subtotal');
 
         $pdf = PDF::loadView('pdf.template', [
             'items' => $items,
             'fecha' => $fecha,
             'encargado' => $encargado,
-            'vendedor' => $vendedor
+            'vendedor' => $vendedor,
+            'total' => $total
         ]);
 
         return $pdf->stream('orden_' . $orden->id . '.pdf');

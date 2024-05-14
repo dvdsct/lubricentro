@@ -2,7 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Models\Banco;
 use App\Models\Caja;
+use App\Models\Cheque;
 use App\Models\Cliente;
 use App\Models\Factura;
 use App\Models\MedioPago;
@@ -10,6 +12,7 @@ use App\Models\Orden;
 use App\Models\Pago;
 use App\Models\PagosXCaja;
 use App\Models\Perfil;
+use App\Models\Plan;
 use App\Models\PlanXTarjeta;
 use App\Models\Proveedor;
 use App\Models\Tarjeta;
@@ -38,15 +41,17 @@ class FormPago extends Component
     public $montoAPagarInteres;
     public $montoInt;
     public $tarjetasT;
-    #[Validate('required')]
     public $tarjeta;
     public $interes;
     public $descuentoTarjeta;
+    #[Validate('required')]
     public $plan;
     public $planesT;
 
     public $montoConInt;
     public $medioPago;
+    public $banco;
+    public $bancos;
     public $caja;
 
     // Formulario Compra
@@ -61,6 +66,8 @@ class FormPago extends Component
     public $pagoDe;
     public $perfil;
     public $cajero;
+    public $fechaCheque;
+    public $nroCheque;
 
 
     public function mount($orden)
@@ -71,28 +78,31 @@ class FormPago extends Component
             $this->pagoDe = 'pedido';
             $this->perfil = Perfil::where('user_id', Auth::user()->id)->get();
             $this->cajero = $this->perfil->first()->cajeros->first();
+            $this->bancos = Banco::all();
 
-            // Verificar si existe caja
-            if (Caja::where('cajero_id', $this->cajero->id)
-                ->where('estado', '200')
-                ->get()->isEmpty()
-            ) {
 
-                $this->dispatch('setModalCaja')->To(ListaCajas::class);
-            } else {
+            if (Auth::user()->hasRole(['cajero'])) {
 
-                $this->caja = Caja::where('cajero_id', $this->cajero->id)
+                // Verificar si existe caja
+
+                if (Caja::where('cajero_id', $this->cajero->id)
                     ->where('estado', '200')
-                    ->first();
+                    ->get()->isEmpty()
+                ) {
+
+                    $this->dispatch('setModalCaja')->To(ListaCajas::class);
+                } else {
+
+                    $this->caja = Caja::where('cajero_id', $this->cajero->id)
+                        ->where('estado', '200')
+                        ->first();
+                }
             }
 
 
 
             $this->tiposPago = TipoPago::all();
-            $this->tarjetasT = PlanXTarjeta::leftJoin('plans', 'plan_x_tarjetas.plan_id', '=', 'plans.id')
-                ->leftJoin('tarjetas', 'plan_x_tarjetas.tarjeta_id', '=', 'tarjetas.id')
-                ->orderBy('tarjetas.nombre_tarjeta')
-                ->get(['plan_x_tarjetas.*', 'plans.*', 'tarjetas.*']);
+            $this->tarjetasT = Plan::all();
             $this->tiposFactura = TipoFactura::all();
             $this->mediosPago = MedioPago::all();
             $this->clientes = Cliente::where('lista_precios', '3')->get();
@@ -107,6 +117,8 @@ class FormPago extends Component
             $this->pagoDe = 'orden';
             $this->perfil = Perfil::where('user_id', Auth::user()->id)->get();
             $this->cajero = $this->perfil->first()->cajeros->first();
+            $this->bancos = Banco::all();
+
 
             // Verificar si existe caja
             if (Caja::where('cajero_id', $this->cajero->id)
@@ -124,10 +136,7 @@ class FormPago extends Component
 
 
             $this->tiposPago = TipoPago::all();
-            $this->tarjetasT = PlanXTarjeta::leftJoin('plans', 'plan_x_tarjetas.plan_id', '=', 'plans.id')
-                ->leftJoin('tarjetas', 'plan_x_tarjetas.tarjeta_id', '=', 'tarjetas.id')
-                ->orderBy('tarjetas.nombre_tarjeta')
-                ->get(['plan_x_tarjetas.*', 'plans.*', 'tarjetas.*']);
+            $this->tarjetasT = Plan::all();
             $this->tiposFactura = TipoFactura::all();
             $this->mediosPago = MedioPago::all();
             $this->proveedores = Proveedor::all();
@@ -164,15 +173,15 @@ class FormPago extends Component
     public function cargaInteres()
     {
         $this->validate();
-        if ($this->tarjeta) {
+        $planE = Plan::find($this->plan);
+        
+        if ($this->plan) {
 
 
-            $tarjeta = PlanXTarjeta::find($this->tarjeta);
-            // dd($this->tarjeta);
             $this->montoAPagar = $this->orden->items->sum('subtotal');
 
-            $this->interes = $tarjeta->planes->first()->interes;
-            $this->descuentoTarjeta = $tarjeta->planes->first()->descuento;
+            $this->interes = $planE->interes;
+            $this->descuentoTarjeta = $planE->descuento;
 
             $this->montoInt = floatval($this->montoAPagar / 100) * floatval($this->interes);
             $this->montoAPagarInteres = $this->montoAPagar + $this->montoInt;
@@ -293,7 +302,40 @@ class FormPago extends Component
 
                 ]);
             }
-            // Tarjeta
+            // Tarjeta Estado = 101
+            if ($this->medioPago == 1) {
+
+                // dd();
+
+
+                $f =  Factura::create([
+
+                    'orden_id' => $this->orden->id,
+
+                    'tipo_factura_id' => $this->tipoFactura,
+                    'total' => $this->montoAPagar,
+                    'estado' => '101'
+                ]);
+
+
+                $p = Pago::create([
+                    'in_out' => $this->pagoDe,
+                    'factura_id' => $f->id,
+                    'cliente_id' => $this->cliente,
+                    'medio_pago_id' => $this->medioPago,
+                    'tipo_pago_id' => $this->tipoPago,
+                    'efectivo' => $this->efectivo,
+                    'total' => $this->montoAPagar,
+                    'estado' => '101',
+
+                ]);
+                PagosXCaja::create([
+                    'pago_id' => $p->id,
+                    'caja_id' => $this->caja->id,
+                    'estado' => '101',
+
+                ]);
+            }
         }
 
         // Mixto
@@ -369,7 +411,58 @@ class FormPago extends Component
                     ]);
                 }
 
-                // Medio Efectivo
+
+                // ------------------------------------------------------------------------------
+                //                                 Pago total Cheque  Estado = 30
+                // ------------------------------------------------------------------------------
+                if ($this->medioPago == 3) {
+
+
+
+
+                    $f =  Factura::create([
+
+                        'orden_id' => $this->orden->id,
+
+                        'tipo_factura_id' => $this->tipoFactura,
+                        'total' => $this->montoAPagar,
+                        'estado' => '30'
+                    ]);
+
+                    $p = Pago::create([
+                        'in_out' => $this->pagoDe,
+                        'factura_id' => $f->id,
+                        'cliente_id' => $this->cliente,
+                        'medio_pago_id' => $this->medioPago,
+                        'tipo_pago_id' => $this->tipoPago,
+                        'efectivo' => $this->efectivo,
+                        'total' => $this->montoAPagar,
+                        'estado' => '30',
+
+                    ]);
+                    PagosXCaja::create([
+                        'pago_id' => $p->id,
+                        'caja_id' => $this->caja->id,
+                        'estado' => '30',
+
+                    ]);
+
+                    $cheque = Cheque::create([
+
+                        'banco_id' => $this->banco,
+                        // 'cliente_id' => $this->cliente,
+                        'pago_id' => $p->id,
+                        'vencimiento' => $this->fechaCheque,
+                        'monto' => $this->montoAPagar,
+                        'nro_cheque' => $this->nroCheque,
+                        'estado' => '30',
+
+
+                    ]);
+                }
+
+
+
                 // ------------------------------------------------------------------------------
                 //                                 Pago total Efectivo  Estado = 20
                 // ------------------------------------------------------------------------------
@@ -404,9 +497,13 @@ class FormPago extends Component
 
                     ]);
                 }
-                // _____________________________________________________________________
-                // _____________________________________________________________________
-                // _____________________________________________________________________
+
+
+
+
+                // ______________________________________________________________________________
+                // ______________________________________________________________________________
+                // ______________________________________________________________________________
 
                 // ------------------------------------------------------------------------------
                 //                                 Pago Total Tarjeta  Estado = 10

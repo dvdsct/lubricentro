@@ -11,17 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('plans', function (Blueprint $table) {
+        Schema::create('bancos', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('tarjeta_id');
-            $table->foreign('tarjeta_id')
-                ->references('id')
-                ->on('tarjetas')
-                ->onDelete('cascade');
-            $table->string('nombre_plan');
-            $table->string('descripcion_plan');
-            $table->string('descuento');
-            $table->string('interes');
+            $table->string('descripcion');
+            $table->string('sucursal_banco');
             $table->string('estado');
             $table->softDeletes();
             $table->timestamps();
@@ -33,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('plans');
+        Schema::dropIfExists('bancos');
     }
 };

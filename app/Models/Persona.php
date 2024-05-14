@@ -48,6 +48,6 @@ class Persona extends Model
 
     public function correos(){
 
-        return $this->hasMany(Correo::class);
+        return $this->belongsToMany(Correo::class, 'correo_x_personas','correo_id');
     }
 }

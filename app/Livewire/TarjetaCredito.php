@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Tarjeta;
+use Illuminate\Support\Facades\Auth;
 
 class TarjetaCredito extends Component
 {
@@ -24,8 +25,10 @@ class TarjetaCredito extends Component
 
 
     public function stTarjeta($id){
+
+        $this->tarjeta = Tarjeta::find($id);
         if(Auth::user()->hasRole('admin')){
-            
+
             $this->tarjeta->update([
                 'descuento' => $this->descuento,
                 'interes' => $this->interes,
@@ -35,7 +38,7 @@ class TarjetaCredito extends Component
 
     }
 
-    
+
     public function render()
     {
         return view('livewire.tarjeta-credito');
