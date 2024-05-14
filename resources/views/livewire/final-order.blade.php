@@ -31,7 +31,7 @@
 
     <div class="row" style="display: flex; justify-content: end;">
         <div class="col-lg-8">
-            <a href="{{ route('pdf', $orden->id) }}" target="_blank">
+            <a href="{{ route('pdf.orden', $orden->id) }}" target="_blank">
                 <div class="small-box bg-warning" style="cursor: pointer;">
                     <div class="inner">
                         <h3 class="m-0">Imprimir</h3>

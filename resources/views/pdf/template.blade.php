@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> --}}
     <title>Orden de Trabajo</title>
 
 
@@ -21,8 +21,8 @@
                     <h1>Orden de Trabajo N° 0001-00806</h1>   <!-- AGREGAR ID DE LA ORDEN -->
                 </td>
 
-                <td class="logo" style="border: 1px solid black;">
-                    <h1>ROCKET</h1>
+                <td class="logo" style="border: 1px solid black; display:flex; justify-content:center;">
+                    <img src="{{ asset('img/logo.png') }}" alt="Logo Rocket" style="width: 200px;">
                 </td>
             </tr>
             <tr>
@@ -80,10 +80,13 @@
                 <td>{{ $item['id'] }}</td>
                 <td>{{ $item['cantidad'] }}</td>
                 <td>{{ $item->productos->codigo }}</td>
+                <td>{{ $item->subtotal }}</td>
             </tr>
             @endforeach
         </tbody>
     </table>
+
+    {{ $total }}
     </div>
 
     <hr>
@@ -98,15 +101,6 @@
     </div>
 
 
-
-
-
-
-
-<!--     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
-    </script> -->
 </body>
 
 </html>

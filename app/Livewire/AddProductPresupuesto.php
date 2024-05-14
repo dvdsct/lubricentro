@@ -25,6 +25,7 @@ class AddProductPresupuesto extends Component
     public $precio;
     public $producto;
     public $item;
+    public $sucrusal;
     // public $stock;
     public $items;
     public $query = '';
@@ -37,10 +38,7 @@ class AddProductPresupuesto extends Component
         // $this->stock = Stock::all();
     }
 
-    public function search()
-    {
-        $this->resetPage();
-    }
+
 
 
     #[On('modal-presupuestos')]

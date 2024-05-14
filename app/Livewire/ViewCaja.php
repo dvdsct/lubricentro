@@ -16,6 +16,7 @@ class ViewCaja extends Component
     public $totalv;
     public $caja;
     public $montoInicial;
+    public $totalEfectivo;
 
     public $pagosEfectivo;
     public $pagosTrans;
@@ -28,6 +29,7 @@ class ViewCaja extends Component
     public $gastosTarjeta;
     public $gastosCheques;
     public $gastosCtaCte;
+    public $gastosTotal;
     public $pagos;
 
 
@@ -61,6 +63,16 @@ class ViewCaja extends Component
             return $pago->medio_pago_id == 1;
         });
 
+
+
+
+        // Gatos
+        $this->gastosEfectivo = $this->caja->pagos->filter(function ($pago) {
+            return $pago->estado == 200;
+        });
+
+
+
         $this->totalv = $this->caja->pagos->sum('total');
 
     }
@@ -87,7 +99,15 @@ class ViewCaja extends Component
             return $pago->medio_pago_id == 1;
         });
 
+        $this->totalEfectivo = $this->pagosEfectivo->sum('total') + $this->montoInicial;
         $this->totalv = $this->caja->pagos->sum('total');
+
+        
+        // Gatos
+        $this->gastosEfectivo = $this->caja->pagos->filter(function ($pago) {
+            return $pago->estado == 200;
+        });
+
 
         return view('livewire.view-caja');
     }

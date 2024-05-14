@@ -9,14 +9,8 @@
 @section('content')
 
     @livewire('datos-personales', ['orden' => $presupuesto, 'persona' => $cliente])
-    <div class="row">
-        <div class="col">
-            @livewire('add-product-presupuesto', ['presupuesto' => $presupuesto])
-        </div>
-        <div class="col">
-            @livewire('facturar-presupuesto', ['presupuesto' => $presupuesto])
-        </div>
-    </div>
+    @livewire('add-product-presupuesto', ['presupuesto' => $presupuesto])
+
 
 
 @stop
@@ -26,7 +20,5 @@
 @stop
 
 @section('js')
-    <script>
-        console.log('Hi!');
-    </script>
+
 @stop

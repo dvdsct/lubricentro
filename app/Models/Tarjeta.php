@@ -12,6 +12,6 @@ class Tarjeta extends Model
     protected $fillable = ['estado', 'descuento','interes'];
 
     public function planes(){
-        return $this->belongsToMany(Plan::class,'plan_x_tarjetas');
+        return $this->hasMany(Plan::class,'plan_id');
     }
 }
