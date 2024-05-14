@@ -69,7 +69,7 @@
                             <h3><strong>Lavadero </strong></h3>
                         </span>
                     </thead>
-                    @if ($turnlub->isEmpty())
+                    @if ($turnlav->isEmpty())
                     <h6 class="font-italic pt-2 pl-3"> Aun no hay turnos asignados para este día!</h6>
                     @else
                     <thead>

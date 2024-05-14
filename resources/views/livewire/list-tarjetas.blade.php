@@ -34,7 +34,10 @@
                     @foreach ($planes as $plan)
                         <tr>
                             <td>1.</td>
+
                             <td>{{ $plan->tarjetas->nombre_tarjeta }}</td>
+
+                            {{-- Muetra descuento e interes --}}
                             @if ($plan->estado == 1)
                                 <td>
                                     <span class="badge bg-primary ">{{ $plan->descuento }}</span>
@@ -42,7 +45,8 @@
                                 <td>
                                     <span class="badge bg-danger">{{ $plan->interes }}</span>
                                 </td>
-                            @elseif ($plan->tarjetas->estado == 2)
+
+                            @else
                                 <td>
                                     <div class="col">
                                         <div class="input-group mb-3">

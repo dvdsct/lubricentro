@@ -12,6 +12,7 @@ use App\Models\Orden;
 use App\Models\Pago;
 use App\Models\PagosXCaja;
 use App\Models\Perfil;
+use App\Models\Plan;
 use App\Models\PlanXTarjeta;
 use App\Models\Proveedor;
 use App\Models\Tarjeta;
@@ -40,10 +41,10 @@ class FormPago extends Component
     public $montoAPagarInteres;
     public $montoInt;
     public $tarjetasT;
-    #[Validate('required')]
     public $tarjeta;
     public $interes;
     public $descuentoTarjeta;
+    #[Validate('required')]
     public $plan;
     public $planesT;
 
@@ -101,10 +102,7 @@ class FormPago extends Component
 
 
             $this->tiposPago = TipoPago::all();
-            $this->tarjetasT = PlanXTarjeta::leftJoin('plans', 'plan_x_tarjetas.plan_id', '=', 'plans.id')
-                ->leftJoin('tarjetas', 'plan_x_tarjetas.tarjeta_id', '=', 'tarjetas.id')
-                ->orderBy('tarjetas.nombre_tarjeta')
-                ->get(['plan_x_tarjetas.*', 'plans.*', 'tarjetas.*']);
+            $this->tarjetasT = Plan::all();
             $this->tiposFactura = TipoFactura::all();
             $this->mediosPago = MedioPago::all();
             $this->clientes = Cliente::where('lista_precios', '3')->get();
@@ -138,10 +136,7 @@ class FormPago extends Component
 
 
             $this->tiposPago = TipoPago::all();
-            $this->tarjetasT = PlanXTarjeta::leftJoin('plans', 'plan_x_tarjetas.plan_id', '=', 'plans.id')
-                ->leftJoin('tarjetas', 'plan_x_tarjetas.tarjeta_id', '=', 'tarjetas.id')
-                ->orderBy('tarjetas.nombre_tarjeta')
-                ->get(['plan_x_tarjetas.*', 'plans.*', 'tarjetas.*']);
+            $this->tarjetasT = Plan::all();
             $this->tiposFactura = TipoFactura::all();
             $this->mediosPago = MedioPago::all();
             $this->proveedores = Proveedor::all();
@@ -178,15 +173,15 @@ class FormPago extends Component
     public function cargaInteres()
     {
         $this->validate();
-        if ($this->tarjeta) {
+        $planE = Plan::find($this->plan);
+        
+        if ($this->plan) {
 
 
-            $tarjeta = PlanXTarjeta::find($this->tarjeta);
-            // dd($this->tarjeta);
             $this->montoAPagar = $this->orden->items->sum('subtotal');
 
-            $this->interes = $tarjeta->planes->first()->interes;
-            $this->descuentoTarjeta = $tarjeta->planes->first()->descuento;
+            $this->interes = $planE->interes;
+            $this->descuentoTarjeta = $planE->descuento;
 
             $this->montoInt = floatval($this->montoAPagar / 100) * floatval($this->interes);
             $this->montoAPagarInteres = $this->montoAPagar + $this->montoInt;
