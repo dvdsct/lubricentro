@@ -7,12 +7,8 @@
 @stop
 
 @section('content')
-
     @livewire('datos-personales', ['orden' => $presupuesto, 'persona' => $cliente])
     @livewire('add-product-presupuesto', ['presupuesto' => $presupuesto])
-
-
-
 @stop
 
 @section('css')

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Orden;
+use App\Models\PedidoProveedor;
 use App\Models\Presupuesto;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
@@ -37,6 +38,31 @@ class PDFController extends Controller
         return $pdf->stream('orden_' . $orden->id . '.pdf');
     }
 
+    public function generatePedido(string $id)
+    {
+        $orden = PedidoProveedor::find($id);
+
+        if (!$orden) {
+            abort(404); // Pedido no encontrada
+        }
+
+        $items = $orden->items;
+        $total = $orden->items->sum('subtotal');
+        // dd($items);
+        $fecha = $orden->horario;
+        $encargado = $orden->proveedores->perfiles->personas;
+        $vendedor = Auth::user();
+
+        $pdf = PDF::loadView('pdf.template_prov', [
+            'items' => $items,
+            'fecha' => $fecha,
+            'total' => $total,
+            'encargado' => $encargado,
+            'vendedor' => $vendedor
+        ]);
+
+        return $pdf->stream('presupuesto_' . $orden->id . '.pdf');
+    }
 
 
 
@@ -59,7 +85,7 @@ class PDFController extends Controller
         $encargado = $orden->clientes->perfiles->personas;
         $vendedor = Auth::user();
 
-        $pdf = PDF::loadView('pdf.template', [
+        $pdf = PDF::loadView('pdf.template_presupuesto', [
             'items' => $items,
             'fecha' => $fecha,
             'total' => $total,

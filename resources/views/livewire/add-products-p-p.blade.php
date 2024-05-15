@@ -90,39 +90,44 @@
 
             <div class="card-header justify-content-end">
                 <div class="text-right">
-                    <h3><strong>TOTAL ${{ $total ?? '0' }}</strong></h3>
+                    <h3><strong>TOTAL ${{ $total ?? '0.00' }}</strong></h3>
                 </div>
             </div>
 
         </div>
-        <div style="display: flex; justify-content: end;">
-            <button class="info-box bg-primary d-flex align-items-center justify-content-center" wire:click='$dispatchTo("form-pago","formPago",{ tipo: "proveedor" })' style="width: 25%;">
-                <span class="info-box-icon"> <i class="fas fa-check-circle"></i> </span>
-                <div class="info-box-content">
-                    <h4 class="info-box-text m-0" style="display: inline;"><strong>Recibir pedido</strong></h4>
-                    <span class="info-box-number"></span>
-                </div>
-            </button>
 
 
-            <!-- AGREGAR EL WIRECKICK APUNTANDO AL PDF CORRESPONDIENTE -->
-            <div class="info-box bg-warning d-flex align-items-center justify-content-end ml-3" style="width: 25%; cursor: pointer;">
-                <span class="info-box-icon"><i class="fas fa-print"></i></span>
-                <div class="info-box-content">
-                    <h4 class="info-box-text m-0"> <strong> Imprimir </strong> </h4>
-                    <span class="info-box-number"></span>
+            <div class="row" style="display: flex; justify-content: end;">
+            <!-- BOTON DE RECIBIR PEDIDO DE PROVEEDOR -->
+            <div class="col-md-3">
+                <div class="small-box bg-primary" style="cursor: pointer;" wire:click='$dispatchTo("form-pago","formPago",{ tipo: "proveedor" })'>
+                    <div class="inner">
+                        <h3 class="m-0">Recibir Pedido</h3>
+                        <p> Todo lo detallado llegó</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
                 </div>
             </div>
-        </div>
+            
+            <!-- BOTON DE IMPRIMIR PEDIDO A PROVEEDOR -->
+                <div class="col-md-3">
+                    <a href="{{ route('pdf.pedido', $pedido->id) }}" target="_blank">
+                        <div class="small-box bg-warning" style="cursor: pointer;">
+                            <div class="inner">
+                                <h3 class="m-0">Imprimir</h3>
+                                <p>Pedido a proveedor</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-print"></i>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
 
-
-
-
-
-
-
-
-
+    
         @livewire('form-pago',['orden' => $pedido])
 
 
@@ -137,8 +142,7 @@
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
-                    <div class="modal-body" style="max-height: 80vh; overflow-y: auto;"
-                    >
+                    <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
                         <!-- BUSCADOR DE PRODUCTOS  -->
                         <div class="input-group input-group-sm pb-2" style="width: 300px;">
                             <input type="text" wire:model='query' wire:keydown='search' class="form-control float-right" placeholder="Buscar">

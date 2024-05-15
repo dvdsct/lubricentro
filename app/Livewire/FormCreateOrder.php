@@ -138,9 +138,6 @@ class FormCreateOrder extends Component
                 'estado' => 1
             ]);
 
-            /*         $perfil = Perfil::create([
-        'persona_id'=>$persona->id,
-        ]); */
             $perfil = Perfil::create([
                 'persona_id' => $persona->id
             ]);
@@ -215,11 +212,6 @@ class FormCreateOrder extends Component
 
         $this->selectVehiculo();
     }
-
-
-
-
-
 
 
     public function selectVehiculo()
