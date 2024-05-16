@@ -26,19 +26,19 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">$</span>
                         </div>
-                        <input type="text" class="form-control">
+                        <input type="text" class="form-control" wire:model.live='efectivo'>
                     </div>
 
 
 
                     <label for="observaciones"> Observaciones: </label>
-                    <textarea class="form-control" rows="3" placeholder="Observaciones adicionales.."></textarea>
+                    <textarea class="form-control" rows="3" placeholder="Observaciones adicionales.." wire:click='observaciones'></textarea>
 
                 </div>
 
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-danger" data-dismiss="modal" wire:click="modalCerrarCaja">Cancelar</button>
-                    <button type="button" class="btn btn-success">Aceptar</button>
+                    <button type="button" class="btn btn-success" wire:click='dispatchTo("view-caja","cierre-caja",{efectivo:"{{$efectivo}}"})'>Aceptar</button>
                 </div>
             </div>
         </div>

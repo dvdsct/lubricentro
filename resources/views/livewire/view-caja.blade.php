@@ -5,22 +5,14 @@
             <div class="info-box mb-3">
                 <span class="info-box-icon bg-warning elevation-1"><i class="fa fa-calculator" aria-hidden="true"></i></span>
                 <div class="info-box-content">
-                    <h5> <strong> <span class="info-box-text">PRESUPUESTO</span> </strong> </h5>
-                    <h5> <span class="info-box-number">10</span> </h5>
+                    <h5> <strong> <span class="info-box-text">Gastos</span> </strong> </h5>
+                    <h5> <span class="info-box-number">${{ $gastos }}</span> </h5>
                 </div>
             </div>
         </div>
 
 
-        <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;" wire:click="$dispatchTo('compra-caja', 'modal-compra')">
-            <div class="info-box mb-3">
-                <span class="info-box-icon bg-purple elevation-1"><i class="fas fa-shopping-cart"></i></span>
-                <div class="info-box-content">
-                    <h5> <strong> <span class="info-box-text">COMPRAS</span> </strong> </h5>
-                    <h5> <span class="info-box-number">7</span> </h5>
-                </div>
-            </div>
-        </div>
+
 
 
         <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;" wire:click="$dispatchTo('form-create-order', 'modal-order')">
@@ -28,18 +20,27 @@
                 <span class="info-box-icon bg-success elevation-1"><i class="fa fa-usd-o" aria-hidden="true"></i></span>
                 <div class="info-box-content">
                     <h5> <strong> <span class="info-box-text">VENTAS</span> </strong> </h5>
-                    <h5> <span class="info-box-number">15</span> </h5>
+                    <h5> <span class="info-box-number">${{ $venta }}</span> </h5>
                 </div>
             </div>
         </div>
 
+        <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;" wire:click="$dispatchTo('compra-caja', 'modal-compra')">
+            <div class="info-box mb-3">
+                <span class="info-box-icon bg-purple elevation-1"><i class="fas fa-shopping-cart"></i></span>
+                <div class="info-box-content">
+                    <h5> <strong> <span class="info-box-text">COMPRAS</span> </strong> </h5>
+                    <h5> <span class="info-box-number"></span> </h5>
+                </div>
+            </div>
+        </div>
 
         <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;" wire:click="$dispatchTo('form-create-order', 'modal-order')">
             <div class="info-box mb-3">
                 <span class="info-box-icon bg-info elevation-1"><i class="fa fa-calendar-check" aria-hidden="true"></i></span>
                 <div class="info-box-content">
                     <h5> <strong> <span class="info-box-text">TURNOS</span> </strong> </h5>
-                    <h5> <span class="info-box-number">9</span> </h5>
+                    <h5> <span class="info-box-number">{{ count($ventaTotal) }}</span> </h5>
                 </div>
             </div>
         </div>
@@ -59,15 +60,15 @@
                         <th>Hora</th>
                         <th>Tipo</th>
                         <th>Medio de Pago</th>
-                        <th>N° Transaccion</th>
+                        <th>Concepto</th>
                         <th>Monto</th>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ $caja->created_at->format('H:i:s') }}</td>
+                            <td>{{ $caja->created_at->format('H:i') }}</td>
                             <td>Apertura</td>
                             <td>-</td>
-                            <td></td>
+                            <td>Monto incial Efectivo</td>
                             <th> ${{ $montoInicial }}</th>
                         </tr>
                         @foreach ($pagos as $p)
@@ -75,13 +76,15 @@
                            <td>{{ $p->facturas->created_at->format('H:i') }}</td>
                             <td>{{ $p->facturas->orden_id }}</td>
                             <td>{{ $p->facturas->pagos->first()->medios->descripcion ?? $p->facturas->pagos->first()->tipos->descripcion }}</td>
-                            <td>{{ $p->facturas->ordenes->clientes->perfiles->personas->nombre  ?? $p->facturas->ordenes->proveedores->perfiles->personas->nombre ?? ''}}
-                                {{ $p->facturas->ordenes->clientes->perfiles->personas->apellido  ?? $p->facturas->ordenes->proveedores->perfiles->personas->apellido ?? ''}}</td>
+                            <td>{{ $p->facturas->pagos->first()->concepto}}</td>
                             <td>$ {{ $p->facturas->total }}</td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
+                <div class="card-header d-flex justify-content-end">
+                    <h3><strong> SUBTOTAL ${{ $totalv }} </strong> </h3>
+                </div>
             </div>
         </div>
 
@@ -94,44 +97,42 @@
                     </thead>
                     <thead>
                         <th>Tipo</th>
-                        <th>Cantidad</th>
+                        <th></th>
                         <th class="d-flex justify-content-end mr-2">Monto</th>
                     </thead>
                     <tbody>
+
+
+
                         <tr>
-                            <td>Monto Inicial</td>
-                            <td>-</td>
-                            <td class="d-flex justify-content-end mr-2"> ${{ $montoInicial }}</td>
+                            <td><strong>SUTOTAL</strong></td>
+                            <td></td>
+                            <td class="d-flex justify-content-end mr-2"> ${{ $totalv }}</td>
                         </tr>
+
                         <tr>
                             <td>Transferencias</td>
                             <td></td>
-                            <td class="d-flex justify-content-end mr-2"> ${{ $pagosTrans->sum('total') }}</td>
+                            <td class="d-flex justify-content-end mr-2"> ${{ $pagosTrans }}</td>
                         </tr>
 
                         <tr>
                             <td>Tarjetas</td>
                             <td></td>
-                            <td class="d-flex justify-content-end mr-2"> ${{ $pagosTarjeta->sum('total') }}</td>
-                        </tr>
-
-                        <tr>
-                            <td>Efectivo</td>
-                            <td></td>
-                            <td class="d-flex justify-content-end mr-2"> ${{ $pagosEfectivo->sum('total') }}</td>
+                            <td class="d-flex justify-content-end mr-2"> ${{ $pagosTarjeta }}</td>
                         </tr>
 
                         <tr>
                             <td>Cheques</td>
                             <td></td>
-                            <td class="d-flex justify-content-end mr-2"> ${{ $pagosCheques->sum('total') }}</td>
+                            <td class="d-flex justify-content-end mr-2"> ${{ $pagosCtaCte }}</td>
                         </tr>
                         <tr>
-                            <td>Gastos</td>
+                            <td>Cuenta Corriente</td>
                             <td></td>
-                            <td class="d-flex justify-content-end mr-2"> ${{ $gastosEfectivo->sum('total') }}</td>
+                            <td class="d-flex justify-content-end mr-2"> ${{ $pagosCheques }}</td>
                         </tr>
-                 
+
 
                     </tbody>
                 </table>
@@ -148,7 +149,7 @@
             <div class="small-box bg-danger" style="cursor: pointer;" wire:click='$dispatchTo("cerrar-caja","cerrar-caja-modal")'>
                 <div class="inner">
                     <h3 class="m-0">Cerrar caja</h3>
-                    <p>Total del dia ${{ $pagosEfectivo->sum('total') }}</p>
+                    <p>Total del dia ${{ $totalEfectivo }}</p>
                 </div>
                 <div class="icon">
                     <i class="fas fa-cash-register"></i>

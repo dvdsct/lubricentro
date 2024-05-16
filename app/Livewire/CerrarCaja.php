@@ -9,12 +9,13 @@ class CerrarCaja extends Component
 {
     public $efectivo;
     public $faltante;
-    public $sobrante;
+    public $observaciones;
     public $modalCierreCaja;
 
     
     public function cerrarCaja()
     {
+
     }
 
 

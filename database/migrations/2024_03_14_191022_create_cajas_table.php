@@ -24,13 +24,22 @@ return new class extends Migration
             ->on('sucursals')
             ->onDelete('cascade');
             $table->float('turno')->nullable();
+
             $table->float('monto_inicial')->nullable();
-            $table->float('salidas')->nullable();
-            $table->float('ingresos')->nullable();
+            $table->float('gastos')->nullable();
+            $table->float('venta')->nullable();
+            
             $table->float('transferencias')->nullable();
+            $table->float('tarjetas')->nullable();
             $table->float('efectivo')->nullable();
+            $table->float('cheques')->nullable();
+            $table->float('cuenta_corriente')->nullable();
+
             $table->string('observaciones')->nullable();
             $table->string('estado');
+
+
+
             $table->softDeletes();
 
             $table->timestamps();

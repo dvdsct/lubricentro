@@ -2,6 +2,8 @@
 
 namespace App\Livewire;
 
+use App\Models\Caja;
+use App\Models\Cajero;
 use App\Models\Colores;
 use App\Models\ModeloVehiculo;
 use App\Models\MarcaVehiculo;
@@ -80,6 +82,8 @@ class FormCreateOrder extends Component
     public $version;
     public $año;
 
+    public $caja;
+    public $cajero;
 
     public $query = '';
 
@@ -87,6 +91,12 @@ class FormCreateOrder extends Component
 
     public function mount()
     {
+        $perfil = Perfil::where('user_id', Auth::user()->id)->get();
+        $this->cajero = Cajero::where('perfil_id' , $perfil->first()->id)->get();
+        $this->caja = Caja::where('cajero_id', $this->cajero->first()->id)->get();
+
+
+
         $this->clientes = Cliente::all();
 
         $this->servicios = Servicio::all();
@@ -138,9 +148,6 @@ class FormCreateOrder extends Component
                 'estado' => 1
             ]);
 
-            /*         $perfil = Perfil::create([
-        'persona_id'=>$persona->id,
-        ]); */
             $perfil = Perfil::create([
                 'persona_id' => $persona->id
             ]);
@@ -217,11 +224,6 @@ class FormCreateOrder extends Component
     }
 
 
-
-
-
-
-
     public function selectVehiculo()
     {
         $this->vehiculo = Vehiculo::find($this->vehiculo);
@@ -243,11 +245,11 @@ class FormCreateOrder extends Component
         if ($this->btnLav == true) {
 
 
-
             $this->orden = Orden::create([
 
                 'cliente_id' => $this->cliente->id,
                 'vehiculo_id' => $this->vehiculo,
+                'sucursal_id' => $this->caja->first()->sucursal_id,
                 'motivo' => '1',
                 'horario' => $this->horario,
                 'estado' => '1'
@@ -258,19 +260,26 @@ class FormCreateOrder extends Component
                 'cliente_id' => $this->cliente->id,
                 'vehiculo_id' => $this->vehiculo,
                 'motivo' => '2',
+                'sucursal_id' => $this->caja->first()->sucursal_id,
+
                 'horario' => $this->horario,
                 'estado' => '1'
             ]);
         }
 
         if($this->presupuesto != null){
+            $this->orden->update([
+                'estado' => '555'
+            ]);
             foreach ($this->presupuesto->itemspres as $i) {
 
                 // dd($this->presupuesto->clientes);
 
                 $p = $i->producto_id;
                 $this->producto = Producto::find($p);
+
                 $stock = Stock::where('producto_id', $this->producto->id)->first();
+                $pst = $this->producto->costo * floatval($i->cantidad);
 
                 if ($stock->cantidad == 0) {
                     return  $this->dispatch('nonstock');
@@ -280,7 +289,7 @@ class FormCreateOrder extends Component
                         'producto_id' => $this->producto->id,
                         'precio' => $i->costo,
                         'cantidad' => $i->cantidad,
-                        'subtotal' => $i->subtotal,
+                        'subtotal' => $pst,
                         'estado' => '2',
                     ]);
 
@@ -294,9 +303,12 @@ class FormCreateOrder extends Component
                     $stock->update([
                         'cantidad' => $stock->cantidad - $i->cantidad
                     ]);
+
                 }
 
             }
+
+
 
         }
 

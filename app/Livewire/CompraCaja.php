@@ -70,6 +70,9 @@ class CompraCaja extends Component
     public function pagar(){
         $this->validate();
 
+        $this->montoAPagar  = $this->montoAPagar * (-1);
+
+
         $f =  Factura::create([
 
             'pedido_proveedor_id' => '1',
@@ -82,7 +85,9 @@ class CompraCaja extends Component
         $p = Pago::create([
             'factura_id' => $f->id,
             'proveedor_id' => '1',
-            'medio_pago_id' => '4',
+            'in_out' => 'out',
+
+            'medio_pago_id' => $this->medioPago,
             'tipo_pago_id' => $this->tipoPago,
             'concepto' => $this->concepto,
             'efectivo' => 0,

@@ -41,9 +41,7 @@
                             <tr>
                                 <td>{{ $pre->id }}</td>
                                 <td>{{ Carbon\Carbon::parse($pre->created_at)->diffForHumans() }}</td>
-                                <td>{{ $pre->clientes->perfiles->personas->nombre . ' ' . $pre->clientes->perfiles->personas->apellido }}
-                                </td>
-
+                                <td>{{ $pre->clientes->perfiles->personas->nombre . ' ' . $pre->clientes->perfiles->personas->apellido }}</td>
                                 <td>{{ $pre->total }}</td>
                                 <td><a href="{{ route('presupuesto.show', $pre->id) }}" class="btn btn-info"> <i class="fas fa-eye"></i> Ver</a></td>
                             </tr>

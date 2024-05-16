@@ -47,6 +47,7 @@ Route::middleware([
     Route::resource('presupuesto',PresupuestoController::class);
     Route::resource('tarjetas',TarjetaController::class);
     Route::get('/pdf/{orden}', 'App\Http\Controllers\PDFController@generatePDF')->name('pdf.orden');
+    Route::get('/pdfpedido/{pedido}', 'App\Http\Controllers\PDFController@generatePedido')->name('pdf.pedido');
     Route::get('/pdfpres/{presupuesto}', 'App\Http\Controllers\PDFController@presupuesto')->name('pdf.presupuesto');
 
     Route::get('register', function () {

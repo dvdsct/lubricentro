@@ -21,6 +21,9 @@ class ListTarjetas extends Component
     #[Validate('required',message:'Ingrese un valor')]
     public $interes;
 
+        // Propiedad para controlar el estado del modal
+        public $modal = false;
+
 
     public function mount()
     {
@@ -60,6 +63,24 @@ class ListTarjetas extends Component
         $this->interes = $plan->interes;
     }
 
+
+    public function delTarjeta($id)
+    {
+        Plan::find($id)->delete();
+    }
+    
+
+    // Método para abrir el modal
+    public function abrirModal()
+    {
+        $this->modal = true;
+    }
+
+    // Método para cerrar el modal
+    public function cerrarModal()
+    {
+        $this->modal = false;
+    }
 
 
     public function render()

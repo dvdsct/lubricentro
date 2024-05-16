@@ -69,12 +69,15 @@ class FormPago extends Component
     public $fechaCheque;
     public $nroCheque;
 
+    public $cupon;
+
 
     public function mount($orden)
     {
 
         if (get_class($orden->getModel()) == "App\Models\PedidoProveedor") {
             $this->pedido = $orden;
+            $this->montoAPagar = $this->pedido->items->sum('subtotal');
             $this->pagoDe = 'pedido';
             $this->perfil = Perfil::where('user_id', Auth::user()->id)->get();
             $this->cajero = $this->perfil->first()->cajeros->first();
@@ -106,14 +109,10 @@ class FormPago extends Component
             $this->tiposFactura = TipoFactura::all();
             $this->mediosPago = MedioPago::all();
             $this->clientes = Cliente::where('lista_precios', '3')->get();
-
-
-
-
-            $this->montoAPagar = $this->orden->items->sum('subtotal');
         }
         if (get_class($orden->getModel()) == "App\Models\Orden") {
             $this->orden = $orden;
+            $this->montoAPagar = $this->orden->items->sum('subtotal');
             $this->pagoDe = 'orden';
             $this->perfil = Perfil::where('user_id', Auth::user()->id)->get();
             $this->cajero = $this->perfil->first()->cajeros->first();
@@ -140,10 +139,6 @@ class FormPago extends Component
             $this->tiposFactura = TipoFactura::all();
             $this->mediosPago = MedioPago::all();
             $this->proveedores = Proveedor::all();
-
-
-
-            $this->montoAPagar = $this->orden->items->sum('subtotal');
         }
     }
 
@@ -174,7 +169,7 @@ class FormPago extends Component
     {
         $this->validate();
         $planE = Plan::find($this->plan);
-        
+
         if ($this->plan) {
 
 
@@ -188,10 +183,10 @@ class FormPago extends Component
         }
     }
 
-    public function updatedMedioPago()
-    {
-        $this->montoAPagar = $this->orden->items->sum('subtotal');
-    }
+    // public function updatedMedioPago()
+    // {
+    //     $this->montoAPagar = $this->orden->items->sum('subtotal');
+    // }
 
     // ______________________________________________________________________________________________________________________
     // ______________________________________________________________________________________________________________________
@@ -212,7 +207,14 @@ class FormPago extends Component
     }
 
 
+    #[On('suma-items')]
+    public function sumaItems()
+    {
 
+        $this->montoAPagar =  $this->orden->items->sum('subtotal');
+        if ($this->pagoDe == 'orden') {
+        }
+    }
 
 
     // ______________________________________________________________________________________________________________________
@@ -221,7 +223,7 @@ class FormPago extends Component
 
     public function pagarProvedor()
     {
-
+        $this->montoAPagar  = $this->montoAPagar * (-1);
         // Pago Parcial
         if ($this->tipoPago == 1) {
             // Mixto
@@ -251,13 +253,14 @@ class FormPago extends Component
                 ]);
 
                 $p = Pago::create([
-                    'in_out' => $this->pagoDe,
+                    'in_out' => 'out',
                     'factura_id' => $f->id,
                     'proveedor_id' => $this->proveedor,
                     'medio_pago_id' => '4',
                     'tipo_pago_id' => $this->tipoPago,
                     'efectivo' => 0,
                     'total' => $this->montoAPagar,
+                    'concepto' => 'proveedor',
                     'estado' => '400',
 
                 ]);
@@ -285,12 +288,14 @@ class FormPago extends Component
                 ]);
 
                 $p = Pago::create([
-                    'in_out' => $this->pagoDe,
+                    'in_out' => 'out',
                     'factura_id' => $f->id,
                     'proveedor_id' => $this->proveedor,
                     'medio_pago_id' => $this->medioPago,
                     'tipo_pago_id' => $this->tipoPago,
                     'efectivo' => $this->efectivo,
+                    'concepto' => 'proveedor',
+
                     'total' => $this->montoAPagar,
                     'estado' => '200',
 
@@ -319,9 +324,11 @@ class FormPago extends Component
 
 
                 $p = Pago::create([
-                    'in_out' => $this->pagoDe,
+                    'in_out' => 'out',
                     'factura_id' => $f->id,
                     'cliente_id' => $this->cliente,
+                    'concepto' => 'proveedor',
+
                     'medio_pago_id' => $this->medioPago,
                     'tipo_pago_id' => $this->tipoPago,
                     'efectivo' => $this->efectivo,
@@ -392,12 +399,13 @@ class FormPago extends Component
                     ]);
 
                     $p = Pago::create([
-                        'in_out' => $this->pagoDe,
+                        'in_out' => 'in',
                         'factura_id' => $f->id,
                         'cliente_id' => $this->cliente,
                         'medio_pago_id' => '4',
                         'tipo_pago_id' => $this->tipoPago,
                         'efectivo' => 0,
+                        'concepto' => 'venta',
                         'total' => $this->montoAPagar,
                         'estado' => '40',
 
@@ -430,12 +438,14 @@ class FormPago extends Component
                     ]);
 
                     $p = Pago::create([
-                        'in_out' => $this->pagoDe,
+                        'in_out' => 'in',
                         'factura_id' => $f->id,
                         'cliente_id' => $this->cliente,
                         'medio_pago_id' => $this->medioPago,
                         'tipo_pago_id' => $this->tipoPago,
                         'efectivo' => $this->efectivo,
+                        'concepto' => 'venta',
+
                         'total' => $this->montoAPagar,
                         'estado' => '30',
 
@@ -480,12 +490,14 @@ class FormPago extends Component
                     ]);
 
                     $p = Pago::create([
-                        'in_out' => $this->pagoDe,
+                        'in_out' => 'in',
                         'factura_id' => $f->id,
                         'cliente_id' => $this->cliente,
                         'medio_pago_id' => $this->medioPago,
                         'tipo_pago_id' => $this->tipoPago,
                         'efectivo' => $this->efectivo,
+                        'concepto' => 'venta',
+
                         'total' => $this->montoAPagar,
                         'estado' => '20',
 
@@ -524,12 +536,15 @@ class FormPago extends Component
 
 
                     $p = Pago::create([
-                        'in_out' => $this->pagoDe,
+                        'in_out' => 'in',
                         'factura_id' => $f->id,
                         'cliente_id' => $this->cliente,
                         'medio_pago_id' => $this->medioPago,
                         'tipo_pago_id' => $this->tipoPago,
                         'efectivo' => $this->efectivo,
+                        'concepto' => 'venta',
+                        'code_op' => $this->cupon,
+
                         'total' => $this->montoAPagar,
                         'estado' => '10',
 
@@ -541,46 +556,53 @@ class FormPago extends Component
 
                     ]);
                 }
+
+
+                // ______________________________________________________________________________
+                // ______________________________________________________________________________
+                // ______________________________________________________________________________
+
+                // ------------------------------------------------------------------------------
+                //                                 Pago Total Transferencia  Estado = 90
+                // ------------------------------------------------------------------------------
+                if ($this->medioPago == 5) {
+
+
+
+                    $f =  Factura::create([
+
+                        'orden_id' => $this->orden->id,
+
+                        'tipo_factura_id' => $this->tipoFactura,
+                        'total' => $this->montoAPagar,
+                        'estado' => '90'
+                    ]);
+
+
+                    $p = Pago::create([
+                        'in_out' => 'in',
+                        'factura_id' => $f->id,
+                        'cliente_id' => $this->cliente,
+                        'medio_pago_id' => $this->medioPago,
+                        'tipo_pago_id' => $this->tipoPago,
+                        'efectivo' => $this->efectivo,
+                        'code_op' => $this->cupon,
+                        'concepto' => 'venta',
+
+                        'total' => $this->montoAPagar,
+                        'estado' => '90',
+
+                    ]);
+                    PagosXCaja::create([
+                        'pago_id' => $p->id,
+                        'caja_id' => $this->caja->id,
+                        'estado' => '90',
+
+                    ]);
+                }
             }
 
-            // ------------------------------------------------------------------------------
-            // ------------------------------------------------------------------------------
-            //                           Medio parcial
-            // ------------------------------------------------------------------------------
-            // ------------------------------------------------------------------------------
 
-            if ($this->medioPago == 3) {
-
-                $f =  Factura::create([
-
-                    'orden_id' => $this->orden->id,
-
-                    'tipo_factura_id' => $this->tipoFactura,
-                    'total' => $this->montoAPagar,
-                    'estado' => '2'
-                ]);
-
-                $p  = Pago::create([
-                    'in_out' => $this->pagoDe,
-                    'factura_id' => $f->id,
-                    'cliente_id' => $this->cliente,
-                    'medio_pago_id' => $this->medioPago,
-                    'tipo_pago_id' => $this->tipoPago,
-                    'efectivo' => $this->efectivo,
-                    'total' => $this->montoAPagar,
-                    'parcial' => $this->montoPagado,
-                    'code_op' => $this->codeOp,
-                    'estado' => '20',
-
-                ]);
-
-                PagosXCaja::create([
-                    'pago_id' => $p->id,
-                    'caja_id' => $this->caja->id,
-                    'estado' => '10',
-
-                ]);
-            }
 
             $this->orden->update([
                 'estado' => '100'

@@ -19,6 +19,8 @@ class Pago extends Model
         'total',
         'code_op',
         'estado',
+        'concepto',
+        'in_out'
     ];
 
 

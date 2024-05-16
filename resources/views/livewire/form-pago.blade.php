@@ -88,8 +88,8 @@
             <div class="col-md-6">
                 <label for="tipo_pago" class="form-label">Banco</label>
                 <select class="form-control" wire:model='banco'>
-                    @foreach ($bancos as $b )
-                    <option value="{{ $b->id }}">{{$b->descripcion }}</option>
+                    @foreach ($bancos as $b)
+                        <option value="{{ $b->id }}">{{ $b->descripcion }}</option>
                     @endforeach
 
                 </select>
@@ -127,8 +127,7 @@
 
 
 
-    {{-- _________________________________________________________________________________________________________________________________________________________________ --}}
-    {{-- _________________________________________________________________________________________________________________________________________________________________ --}}
+
     {{-- _________________________________________________________________________________________________________________________________________________________________ --}}
     {{-- _________________________________________________________________________________________________________________________________________________________________ --}}
     {{-- _________________________________________________________________________________________________________________________________________________________________ --}}
@@ -145,42 +144,27 @@
                 <input wire:model.live="efectivo" type="text" id="efectivo" class="form-control">
             </div>
         </div>
-        @if ($vuelto < 0)
-            <div class="mb-3 bg-light P-2" style="text-align: right; border: 1px solid grey; border-radius: 2%;">
-                <div class="row">
-                    <div class="col-md-8">
-                        <h6> Total Producto o Servicio </h6>
-                        <h4 for="monto" class="form-label"><strong> Total a pagar</strong></h4>
-                    </div>
-
-                    <div class="col-md-4">
-                        <h6>{{ $montoAPagar }}</h6>
-                        <h4 for="monto" class="form-label"><strong> ${{ $montoAPagar }}</strong></h4>
-                        <h4 for="vuelto" class="form-label"><strong> ${{ $vuelto }} </strong></h4>
-                    </div>
-
+        <div class="mb-3 bg-light P-2" style="text-align: right; border: 1px solid grey; border-radius: 2%;">
+            <div class="row">
+                <div class="col-md-8">
+                    <h6> Total Producto o Servicio </h6>
+                    <h4 for="monto" class="form-label"><strong> Total a pagar</strong></h4>
                 </div>
-            @else
-                <!-- CUANDO HAY QUE ENTREGAR VUELTO IGUAL O MAYOR QUE 0 -->
-                <div class="mb-3 bg-light p-2" style="text-align: right; border: 1px solid grey; border-radius: 2%;">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <h6> Total Producto o Servicio </h6>
-                            <h6> Comision de {{ $interes }}% tarjeta Mastercard </h6>
-                            <h4 for="vuelto" class="form-label"><strong> Su vuelto </strong></h4>
-                        </div>
 
-                        <div class="col-md-4">
-                            <h6> $ {{ $montoAPagar }} </h6>
-                            <h6> $ {{ $montoInt }} </h6>
-                            <h4 for="vuelto" class="form-label"><strong> ${{ $vuelto }} </strong></h4>
-                        </div>
-                    </div>
+                <div class="col-md-4">
+                    <h6>{{ $montoAPagar }}</h6>
+                    <h4 for="monto" class="form-label"><strong> ${{ $montoAPagar }}</strong></h4>
+                    <h4 for="vuelto" class="form-label"><strong> ${{ $vuelto }} </strong></h4>
                 </div>
-        @endif
 
+            </div>
+        </div>
     @endif
 
+
+
+    {{-- _________________________________________________________________________________________________________________________________________________________________ --}}
+    {{-- _________________________________________________________________________________________________________________________________________________________________ --}}
 
     @if ($medioPago == 1)
         <!-- MEDIO DE PAGO CON TARJETA -->
@@ -188,10 +172,10 @@
             <label for="tipo_pago" class="form-label">Tarjeta</label>
             <select wire:model="plan" wire:change='cargaInteres' id="tipo_pago" class="form-control">
                 <option value="">Seleccionar tarjeta</option>
-                @foreach ($tarjetasT as $p  )
-                    <option value="{{ $p    ->id }}">
-                        {{ $p   ->tarjetas->nombre_tarjeta }} -
-                        {{ $p   ->descripcion_plan }}
+                @foreach ($tarjetasT as $p)
+                    <option value="{{ $p->id }}">
+                        {{ $p->tarjetas->nombre_tarjeta }} -
+                        {{ $p->descripcion_plan }}
                     </option>
                 @endforeach
             </select>
@@ -199,7 +183,7 @@
 
         <div class="mb-3">
             <label for="codeOp" class="form-label">N° de cupon</label>
-            <input wire:model="codeOp" type="number" id="codeOp" class="form-control">
+            <input wire:model="codeOp" type="number" wire:model='cupon' id="codeOp" class="form-control">
         </div>
 
         <!-- RECUADRO DE TOTAL TARJETA -->
@@ -221,7 +205,35 @@
         </div>
 
     @endif
-</div>
+
+
+    @if ($medioPago == 5)
+        <!-- MEDIO DE PAGO CON TRANSFERENCIA -->
+
+
+        <div class="mb-3">
+            <label for="codeOp" class="form-label">N° de cupon</label>
+            <input wire:model="codeOp" type="number" id="codeOp" wire:model='cupon' class="form-control">
+        </div>
+
+        <!-- RECUADRO DE TOTAL TARJETA -->
+        <div class="mb-3 bg-light P-2" style="text-align: right; border: 1px solid grey; border-radius: 2%;">
+            <div class="row">
+                <div class="col-md-8">
+                    <h6> Total Producto o Servicio </h6>
+                    <h4 for="monto" class="form-label"><strong> Total a pagar</strong></h4>
+                </div>
+
+                <div class="col-md-4">
+                    <h6>{{ $montoAPagar }}</h6>
+                    <h4 for="monto" class="form-label"><strong> ${{ $montoAPagar }}</strong></h4>
+                    <h4 for="vuelto" class="form-label"><strong> ${{ $vuelto }} </strong></h4>
+                </div>
+
+            </div>
+        </div>
+    @endif
+
 </div>
 
 <div class="modal-footer justify-content-between">
