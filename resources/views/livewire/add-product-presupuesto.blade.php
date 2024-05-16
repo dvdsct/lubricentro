@@ -46,7 +46,6 @@
                             <tr>
                                 <td>{{ $producto->id }}</td>
                                 <td>{{ $producto->productos->descripcion . ' - ' . $producto->productos->codigo }}</td>
-
                                 @if ($producto->estado == 1)
                                     <td><input type="text" class="form-control" style="width: 145px;"
                                             placeholder="Ingresar cantidad" wire:model='cantidad'
@@ -108,7 +107,6 @@
     </div>
 
 
-    <!-- AGREGAR VARIABLE DE TOTAL  -->
     <div class="card-header justify-content-end">
         <div class="text-right">
             <h3><strong> TOTAL ${{ $presupuesto->itemspres->sum('subtotal') }}</strong></h3>

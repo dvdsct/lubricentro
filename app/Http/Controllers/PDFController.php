@@ -38,6 +38,7 @@ class PDFController extends Controller
         return $pdf->stream('orden_' . $orden->id . '.pdf');
     }
 
+
     public function generatePedido(string $id)
     {
         $orden = PedidoProveedor::find($id);
@@ -48,7 +49,6 @@ class PDFController extends Controller
 
         $items = $orden->items;
         $total = $orden->items->sum('subtotal');
-        // dd($items);
         $fecha = $orden->horario;
         $encargado = $orden->proveedores->perfiles->personas;
         $vendedor = Auth::user();
