@@ -103,6 +103,18 @@
                             <td class="d-flex justify-content-end mr-2"> ${{ $montoInicial }}</td>
                         </tr>
                         <tr>
+                            <td>Gastos</td>
+                            <td></td>
+                            <td class="d-flex justify-content-end mr-2"> ${{ $gastosEfectivo->sum('total')  }}</td>
+                        </tr>
+                 
+                        <tr>
+                            <td>Venta</td>
+                            <td></td>
+                            <td class="d-flex justify-content-end mr-2"> ${{ $venta->sum('total') }}</td>
+                        </tr>
+                 
+                        <tr>
                             <td>Transferencias</td>
                             <td></td>
                             <td class="d-flex justify-content-end mr-2"> ${{ $pagosTrans->sum('total') }}</td>
@@ -114,28 +126,19 @@
                             <td class="d-flex justify-content-end mr-2"> ${{ $pagosTarjeta->sum('total') }}</td>
                         </tr>
 
-                        <tr>
-                            <td>Efectivo</td>
-                            <td></td>
-                            <td class="d-flex justify-content-end mr-2"> ${{ $pagosEfectivo->sum('total') }}</td>
-                        </tr>
+         
 
                         <tr>
                             <td>Cheques</td>
                             <td></td>
                             <td class="d-flex justify-content-end mr-2"> ${{ $pagosCheques->sum('total') }}</td>
                         </tr>
-                        <tr>
-                            <td>Gastos</td>
-                            <td></td>
-                            <td class="d-flex justify-content-end mr-2"> ${{ $gastosEfectivo->sum('total') }}</td>
-                        </tr>
-                 
+
 
                     </tbody>
                 </table>
                 <div class="card-header d-flex justify-content-end">
-                    <h3><strong> TOTAL ${{ $totalEfectivo }} </strong> </h3>
+                    <h3><strong> SUBTOTAL ${{ $totalEfectivo }} </strong> </h3>
                 </div>
             </div>
         </div>
@@ -147,7 +150,7 @@
             <div class="small-box bg-danger" style="cursor: pointer;" wire:click='$dispatchTo("cerrar-caja","cerrar-caja-modal")'>
                 <div class="inner">
                     <h3 class="m-0">Cerrar caja</h3>
-                    <p>Total del dia ${{ $pagosEfectivo->sum('total') }}</p>
+                    {{-- <p>Total del dia ${{ $balance->sum('total') }}</p> --}}
                 </div>
                 <div class="icon">
                     <i class="fas fa-cash-register"></i>

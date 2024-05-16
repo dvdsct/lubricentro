@@ -20,6 +20,7 @@ class Pago extends Model
         'code_op',
         'estado',
         'concepto',
+        'in_out'
     ];
 
 

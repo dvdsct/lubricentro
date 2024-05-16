@@ -17,6 +17,8 @@ class ViewCaja extends Component
     public $caja;
     public $montoInicial;
     public $totalEfectivo;
+    public $venta;
+    public $balance;
 
     public $pagosEfectivo;
     public $pagosTrans;
@@ -86,28 +88,70 @@ class ViewCaja extends Component
         $this->pagos = $this->caja->pagos;
     }
 
+
+
+
+
+
+    // _____________________________________________________________
+    // _________________CIERRE DE CAJA______________________________
+    // _____________________________________________________________
+    #[On('cierre-caja')]
+    public function cerrarCaja($efectivo){
+        dd($efectivo);
+        
+$this->caja->update([
+
+    'monto_inicial' => $this->montoInicial,
+
+    'gastos' => '',
+    'venta' => '',
+
+    'transferencias' => '',
+    'tarjetas' => '',
+    'efectivo' => '',
+    'cheques' => '',
+    'cuenta_corriente' => '',
+    
+    'observaciones' => '',
+    'estado' => '',
+]);
+    }
+
     public function render()
     {
         $this->pagos = $this->caja->pagos;
+        $this->venta = $this->caja->pagos->filter(function ($pago) {
+            return $pago->in_out != 'out';
+        });
         $this->pagosEfectivo = $this->caja->pagos->filter(function ($pago) {
-            return $pago->medio_pago_id == 2;
+            return $pago->medio_pago_id == 2 && $pago->in_out != 'out';
         });
         $this->pagosTrans = $this->caja->pagos->filter(function ($pago) {
-            return $pago->medio_pago_id == 5;
+            return $pago->medio_pago_id == 5 && $pago->in_out != 'out';
         });
         $this->pagosTarjeta = $this->caja->pagos->filter(function ($pago) {
-            return $pago->medio_pago_id == 1;
+            return $pago->medio_pago_id == 1 && $pago->in_out != 'out';
         });
-
-        $this->totalEfectivo = $this->pagosEfectivo->sum('total') + $this->montoInicial;
-        $this->totalv = $this->caja->pagos->sum('total');
 
         
+        
         // Gatos
+        
         $this->gastosEfectivo = $this->caja->pagos->filter(function ($pago) {
-            return $pago->estado == 200;
+            return $pago->estado == 200  && $pago->in_out != 'in';
         });
+        
+        $this->gastosTrans = $this->caja->pagos->filter(function ($pago) {
+            return $pago->estado == 200  && $pago->in_out != 'in';
+        });
+        
+        
+        // Balance        
+        $this->totalEfectivo = ($this->pagosEfectivo->sum('total') + $this->montoInicial);
+        $this->totalv = $this->caja->pagos->sum('total');
 
+        $this->balance = '';
 
         return view('livewire.view-caja');
     }

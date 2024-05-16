@@ -88,8 +88,8 @@
             <div class="col-md-6">
                 <label for="tipo_pago" class="form-label">Banco</label>
                 <select class="form-control" wire:model='banco'>
-                    @foreach ($bancos as $b )
-                    <option value="{{ $b->id }}">{{$b->descripcion }}</option>
+                    @foreach ($bancos as $b)
+                        <option value="{{ $b->id }}">{{ $b->descripcion }}</option>
                     @endforeach
 
                 </select>
@@ -104,7 +104,7 @@
         <div class="row mb-3">
             <div class="col-md-12">
                 <label for="Numero_cheque">N° de cheque </label>
-                <input type="number" class="form-control">
+                <input type="number" class="form-control" >
             </div>
         </div>
 
@@ -188,10 +188,10 @@
             <label for="tipo_pago" class="form-label">Tarjeta</label>
             <select wire:model="plan" wire:change='cargaInteres' id="tipo_pago" class="form-control">
                 <option value="">Seleccionar tarjeta</option>
-                @foreach ($tarjetasT as $p  )
-                    <option value="{{ $p    ->id }}">
-                        {{ $p   ->tarjetas->nombre_tarjeta }} -
-                        {{ $p   ->descripcion_plan }}
+                @foreach ($tarjetasT as $p)
+                    <option value="{{ $p->id }}">
+                        {{ $p->tarjetas->nombre_tarjeta }} -
+                        {{ $p->descripcion_plan }}
                     </option>
                 @endforeach
             </select>
