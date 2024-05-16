@@ -17,7 +17,7 @@
         <table style="border-collapse: collapse; width: 100%;">
             <tr>
                 <td colspan="2" class="logo" style="border: 1px solid black; padding: 8px; text-align: left;">
-                    <h1 style="font-family: Arial, Helvetica, sans-serif;">Presupuesto N° X</h1> <!-- AGREGAR ID DEL PRESUPUESTO -->
+                    <h1 style="font-family: Arial, Helvetica, sans-serif;">Presupuesto N° 000-{{ $orden->id }}</h1> <!-- AGREGAR ID DEL PRESUPUESTO -->
                 </td>
 
                 <td class="logo" style="border: 1px solid black; display:flex; justify-content:center;">
@@ -27,11 +27,11 @@
 
             <tr>
                 <td style="border: 1px solid black;">
-                    <p><strong>Cliente:</strong> </p> <!-- AGREGAR NOMBRE Y APELLIDO DE CLIENTE  -->
+                    <p><strong>Cliente: {{ $cliente }} </strong> </p> <!-- AGREGAR NOMBRE Y APELLIDO DE CLIENTE  -->
                 </td>
 
                 <td style="border: 1px solid black;">
-                    <p> <strong>Vendedor: </strong> </p> <!-- AGREGAR CAJERO  -->
+                    <p> <strong>Vendedor: {{ $vendedor }} </strong> </p> <!-- AGREGAR CAJERO  -->
                 </td>
 
                 <td style="border: 1px solid black;">

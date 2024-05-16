@@ -56,6 +56,7 @@ class AddSupplierOrder extends Component
             'proveedor_id' => $this->proveedor,
             'tipo_pedido_id' => $this->tipoPedido,
             'fecha_ingreso' => $this->fechaIn,
+            'sucursal_id' => '1',
             'observaciones' => $this->observaciones,
         ]);
 

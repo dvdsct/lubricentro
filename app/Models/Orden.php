@@ -16,6 +16,7 @@ class Orden extends Model
         'motivo' ,
         'horario' ,
         'estado' ,
+        'sucursal_id'
     ];
 
     protected $table = 'ordens';
@@ -50,6 +51,12 @@ class Orden extends Model
 
         return $this->hasMany(Factura::class);
     }
+
+    public function sucursales(){
+
+        return $this->belongsTo(Sucursal::class, 'sucursal_id');
+    }
+
 
 }
 

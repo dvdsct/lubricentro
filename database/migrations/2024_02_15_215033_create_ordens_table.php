@@ -20,6 +20,12 @@ return new class extends Migration
             ->on('empleados')
             ->onDelete('cascade');
 
+            $table->unsignedBigInteger('sucursal_id')->nullable();
+            $table->foreign('sucursal_id')
+            ->references('id')
+            ->on('sucursals')
+            ->onDelete('cascade');
+
             $table->unsignedBigInteger('servicio_id')->nullable();
             $table->foreign('servicio_id')
             ->references('id')

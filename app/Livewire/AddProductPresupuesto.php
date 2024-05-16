@@ -80,6 +80,8 @@ class AddProductPresupuesto extends Component
         }
         $this->reset('cantidad', 'precio');
         $this->modalProductos = false;
+        $this->dispatch('suma-items');
+
     }
     // _________________________________________
 

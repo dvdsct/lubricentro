@@ -74,6 +74,8 @@ class AddProducts extends Component
             // dd('no hay stock');
             return  $this->dispatch('nonstock');
         }
+
+        $this->dispatch('suma-items');
     }
 
     // Manejo del Modal

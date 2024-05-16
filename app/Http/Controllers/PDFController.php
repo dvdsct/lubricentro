@@ -39,6 +39,7 @@ class PDFController extends Controller
     }
 
 
+    // PEDIDO
     public function generatePedido(string $id)
     {
         $orden = PedidoProveedor::find($id);
@@ -49,19 +50,22 @@ class PDFController extends Controller
 
         $items = $orden->items;
         $total = $orden->items->sum('subtotal');
-        $fecha = $orden->horario;
+        $fecha = $orden->created_at;
         $encargado = $orden->proveedores->perfiles->personas;
         $vendedor = Auth::user();
+        $categoria = $orden->tipos->descripcion;
 
         $pdf = PDF::loadView('pdf.template_prov', [
+            'orden' => $orden,
             'items' => $items,
             'fecha' => $fecha,
+            'categoria' => $categoria,
             'total' => $total,
             'encargado' => $encargado,
             'vendedor' => $vendedor
         ]);
 
-        return $pdf->stream('presupuesto_' . $orden->id . '.pdf');
+        return $pdf->stream('pedido_' . $orden->id . '.pdf');
     }
 
 
@@ -69,7 +73,7 @@ class PDFController extends Controller
 
 
 
-    
+
     public function presupuesto(string $id)
     {
         $orden = Presupuesto::find($id);
@@ -81,15 +85,16 @@ class PDFController extends Controller
         $items = $orden->itemspres;
         $total = $orden->itemspres->sum('subtotal');
         // dd($items);
-        $fecha = $orden->horario;
-        $encargado = $orden->clientes->perfiles->personas;
-        $vendedor = Auth::user();
+        $fecha = $orden->created_at;
+        $cliente = $orden->clientes->perfiles->personas->apellido .' '. $orden->clientes->perfiles->personas->nombre;
+        $vendedor = Auth::user()->name;
 
         $pdf = PDF::loadView('pdf.template_presupuesto', [
+            'orden' => $orden,
             'items' => $items,
             'fecha' => $fecha,
             'total' => $total,
-            'encargado' => $encargado,
+            'cliente' => $cliente,
             'vendedor' => $vendedor
         ]);
 

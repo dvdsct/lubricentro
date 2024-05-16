@@ -13,6 +13,7 @@ class PedidoProveedor extends Model
         'tipo_pedido_id',
         'fecha_ingreso',
         'observaciones',
+        'sucursal_id',
     ];
 
 
@@ -24,5 +25,10 @@ class PedidoProveedor extends Model
 
     public function items(){
         return $this->belongsToMany(PedItem::class, 'item_x_pedidos');
+    }
+
+    public function tipos(){
+
+        return $this->belongsTo(TipoPedido::class,'tipo_pedido_id');
     }
 }
