@@ -22,16 +22,16 @@
             </div>
         </div>
 
-
-        <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;" wire:click="$dispatchTo('form-create-order', 'modal-order')">
+        <div class="col-md-3" style="cursor: pointer;" wire:click="$dispatchTo('form-create-order', 'modal-order')">
             <div class="info-box mb-3">
-                <span class="info-box-icon bg-success elevation-1"><i class="fa fa-usd-o" aria-hidden="true"></i></span>
+                <span class="info-box-icon bg-success"><i class="fa fa-handshake" aria-hidden="true"></i></span>
                 <div class="info-box-content">
                     <h5> <strong> <span class="info-box-text">VENTAS</span> </strong> </h5>
                     <h5> <span class="info-box-number">15</span> </h5>
                 </div>
             </div>
         </div>
+
 
 
         <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;" wire:click="$dispatchTo('form-create-order', 'modal-order')">
@@ -68,11 +68,11 @@
                             <td>Apertura</td>
                             <td>-</td>
                             <td>-</td>
-                            <th> ${{ $montoInicial }}</th>
+                            <td> ${{ $montoInicial }}</td>
                         </tr>
                         @foreach ($pagos as $p)
                         <tr>
-                           <td>{{ $p->facturas->created_at->format('H:i') }}</td>
+                            <td>{{ $p->facturas->created_at->format('H:i') }}</td>
                             <td>{{ $p->facturas->orden_id }}</td>
                             <td>{{ $p->facturas->pagos->first()->medios->descripcion ?? $p->facturas->pagos->first()->tipos->descripcion }}</td>
                             <td>{{ $p->facturas->pagos->first()->concepto}}</td>
@@ -107,13 +107,13 @@
                             <td></td>
                             <td class="d-flex justify-content-end mr-2"> ${{ $gastosEfectivo->sum('total')  }}</td>
                         </tr>
-                 
+
                         <tr>
                             <td>Venta</td>
                             <td></td>
                             <td class="d-flex justify-content-end mr-2"> ${{ $venta->sum('total') }}</td>
                         </tr>
-                 
+
                         <tr>
                             <td>Transferencias</td>
                             <td></td>
@@ -126,7 +126,7 @@
                             <td class="d-flex justify-content-end mr-2"> ${{ $pagosTarjeta->sum('total') }}</td>
                         </tr>
 
-         
+
 
                         <tr>
                             <td>Cheques</td>
