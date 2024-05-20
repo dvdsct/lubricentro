@@ -112,7 +112,7 @@
                                 <td>{{ $c->id }}</td>
                                 <td>{{ \Carbon\Carbon::parse($c->created_at)->format('d/m/Y') }}</td>
 
-                                <td><span class="tag tag-success">{{ $c->estado }}</span></td>
+                                <td><span class="tag tag-success">{{ $c->rendicion }}</span></td>
                                 <td>{{ $c->ingresos }}</td>
                                 <td class="project-actions text-right">
                                     <a class="btn btn-primary btn-sm" href="{{ route('venta.show', $c->id) }}">
