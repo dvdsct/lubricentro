@@ -75,7 +75,7 @@
     @endif
     @endcan
 
-    @can('admin')
+    @can('adminCajas')
 
     <div class="row">
         <div class="col-12">

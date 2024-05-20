@@ -21,19 +21,24 @@ class ListaCajas extends Component
 
     public function mount()
     {
+        if (Auth::user()->hasRole(['cajero'])) {
 
-        $this->caja = Caja::where('estado', '200')->get();
-        $this->perfil = Perfil::where('user_id', Auth::user()->id)->get();
+            $this->caja = Caja::where('estado', '200')->get();
+            $this->perfil = Perfil::where('user_id', Auth::user()->id)->get();
 
 
-        if ($this->caja->isEmpty()) {
-            $this->modalAbrirCaja = true;
-        } else {
-            if ($this->caja->first()->estado) {
-
-                redirect('venta/' . $this->caja->first()->id);
+            if ($this->caja->isEmpty()) {
+                $this->modalAbrirCaja = true;
             } else {
+                if ($this->caja->first()->estado) {
+
+                    redirect('venta/' . $this->caja->first()->id);
+                } else {
+                }
             }
+        }
+        if (Auth::user()->hasRole(['admin'])) {
+            $this->cajas = Caja::all();
         }
     }
 
@@ -60,7 +65,7 @@ class ListaCajas extends Component
             $this->cajero = $this->perfil->first()->cajeros->first();
             // dd($this->cajero);
 
-            if (Auth::user()->hasRole(['cajero', 'admin'])) {
+            if (Auth::user()->hasRole(['cajero'])) {
                 $this->caja =  Caja::firstOrCreate([
                     'cajero_id' => $this->cajero->id,
                     'estado' => '100',
@@ -87,13 +92,12 @@ class ListaCajas extends Component
         }
     }
 
-        // Manejo del Modal
+    // Manejo del Modal
 
-        public function cerrarModal()
-        {
-            $this->modalAbrirCaja = false;
-
-        }
+    public function cerrarModal()
+    {
+        $this->modalAbrirCaja = false;
+    }
 
 
 

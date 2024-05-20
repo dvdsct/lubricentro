@@ -99,25 +99,26 @@ class ViewCaja extends Component
     // _________________CIERRE DE CAJA______________________________
     // _____________________________________________________________
     #[On('cierre-caja')]
-    public function cerrarCaja($efectivo)
+    public function cerrarCaja($efectivo,$observaciones)
     {
-        dd($efectivo);
+            // dd($observaciones);
 
         $this->caja->update([
 
             'monto_inicial' => $this->montoInicial,
 
-            'gastos' => '',
-            'venta' => '',
+            'gastos' => $this->gastos,
+            'venta' => $this->venta,
 
-            'transferencias' => '',
-            'tarjetas' => '',
-            'efectivo' => '',
-            'cheques' => '',
-            'cuenta_corriente' => '',
+            'transferencias' => $this->pagosTrans,
+            'tarjetas' => $this->pagosTarjeta,
+            'efectivo' => $this->pagosEfectivo,
+            'rendicion' => $efectivo,
+            'cheques' => $this->pagosCheques,
+            'cuenta_corriente' => $this->pagosCtaCte,
 
-            'observaciones' => '',
-            'estado' => '',
+            'observaciones' => $observaciones,
+            'estado' => '500',
         ]);
     }
 

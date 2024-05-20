@@ -11,7 +11,19 @@ class Caja extends Model
     use SoftDeletes;
 
     use HasFactory;
-    protected $fillable = ['estado', 'cajero_id', 'monto_inicial', 'sucursal_id'];
+    protected $fillable = ['estado', 'cajero_id', 'monto_inicial', 'sucursal_id',
+   'gastos',
+    'venta',
+    'transferencias',
+    'tarjetas',
+    'efectivo',
+    'rendicion',
+    'cheques',
+    'cuenta_corriente',
+    'observaciones',
+
+
+];
 
     public function pagos()
     {

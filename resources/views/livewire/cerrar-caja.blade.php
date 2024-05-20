@@ -32,13 +32,13 @@
 
 
                     <label for="observaciones"> Observaciones: </label>
-                    <textarea class="form-control" rows="3" placeholder="Observaciones adicionales.." wire:click='observaciones'></textarea>
+                    <textarea class="form-control" rows="3" placeholder="Observaciones adicionales.." wire:model.live='observaciones'></textarea>
 
                 </div>
 
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-danger" data-dismiss="modal" wire:click="modalCerrarCaja">Cancelar</button>
-                    <button type="button" class="btn btn-success" wire:click='dispatchTo("view-caja","cierre-caja",{efectivo:"{{$efectivo}}"})'>Aceptar</button>
+                    <button type="button" class="btn btn-success" wire:click='dispatchTo("view-caja","cierre-caja",{efectivo: "{{$efectivo}}", observaciones :"{{ $observaciones }}"})'>Aceptar</button>
                 </div>
             </div>
         </div>

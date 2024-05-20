@@ -28,7 +28,8 @@ return new class extends Migration
             $table->float('monto_inicial')->nullable();
             $table->float('gastos')->nullable();
             $table->float('venta')->nullable();
-            
+            $table->float('rendicion')->nullable();
+
             $table->float('transferencias')->nullable();
             $table->float('tarjetas')->nullable();
             $table->float('efectivo')->nullable();

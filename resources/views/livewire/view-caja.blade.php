@@ -1,9 +1,11 @@
 <!-- VISTA FACTURACION -->
 <div>
     <div class="row">
-        <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;" wire:click="$dispatchTo('add-presupuesto', 'addPresupuesto')">
+        <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;"
+            >
             <div class="info-box mb-3">
-                <span class="info-box-icon bg-warning elevation-1"><i class="fa fa-calculator" aria-hidden="true"></i></span>
+                <span class="info-box-icon bg-warning elevation-1"><i class="fa fa-calculator"
+                        aria-hidden="true"></i></span>
                 <div class="info-box-content">
                     <h5> <strong> <span class="info-box-text">Gastos</span> </strong> </h5>
                     <h5> <span class="info-box-number">${{ $gastos }}</span> </h5>
@@ -15,7 +17,8 @@
 
 
 
-        <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;" wire:click="$dispatchTo('form-create-order', 'modal-order')">
+        <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;"
+            >
             <div class="info-box mb-3">
                 <span class="info-box-icon bg-success elevation-1"><i class="fa fa-usd-o" aria-hidden="true"></i></span>
                 <div class="info-box-content">
@@ -25,7 +28,8 @@
             </div>
         </div>
 
-        <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;" wire:click="$dispatchTo('compra-caja', 'modal-compra')">
+        <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;"
+            wire:click="$dispatchTo('compra-caja', 'modal-compra')">
             <div class="info-box mb-3">
                 <span class="info-box-icon bg-purple elevation-1"><i class="fas fa-shopping-cart"></i></span>
                 <div class="info-box-content">
@@ -35,9 +39,11 @@
             </div>
         </div>
 
-        <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;" wire:click="$dispatchTo('form-create-order', 'modal-order')">
+        <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;"
+            wire:click="$dispatchTo('form-create-order', 'modal-order')">
             <div class="info-box mb-3">
-                <span class="info-box-icon bg-info elevation-1"><i class="fa fa-calendar-check" aria-hidden="true"></i></span>
+                <span class="info-box-icon bg-info elevation-1"><i class="fa fa-calendar-check"
+                        aria-hidden="true"></i></span>
                 <div class="info-box-content">
                     <h5> <strong> <span class="info-box-text">TURNOS</span> </strong> </h5>
                     <h5> <span class="info-box-number">{{ count($ventaTotal) }}</span> </h5>
@@ -54,7 +60,8 @@
             <div class="card">
                 <table class="table table-striped">
                     <thead style="height: 10px;">
-                        <h5 style="text-align: center; margin-top: 10px;"> <span> <strong> MOVIMIENTOS </strong> </span> </h5>
+                        <h5 style="text-align: center; margin-top: 10px;"> <span> <strong> MOVIMIENTOS </strong> </span>
+                        </h5>
                     </thead>
                     <thead>
                         <th>Hora</th>
@@ -72,13 +79,14 @@
                             <th> ${{ $montoInicial }}</th>
                         </tr>
                         @foreach ($pagos as $p)
-                        <tr>
-                           <td>{{ $p->facturas->created_at->format('H:i') }}</td>
-                            <td>{{ $p->facturas->orden_id }}</td>
-                            <td>{{ $p->facturas->pagos->first()->medios->descripcion ?? $p->facturas->pagos->first()->tipos->descripcion }}</td>
-                            <td>{{ $p->facturas->pagos->first()->concepto}}</td>
-                            <td>$ {{ $p->facturas->total }}</td>
-                        </tr>
+                            <tr>
+                                <td>{{ $p->facturas->created_at->format('H:i') }}</td>
+                                <td>{{ $p->facturas->orden_id }}</td>
+                                <td>{{ $p->facturas->pagos->first()->medios->descripcion ?? $p->facturas->pagos->first()->tipos->descripcion }}
+                                </td>
+                                <td>{{ $p->facturas->pagos->first()->concepto }}</td>
+                                <td>$ {{ $p->facturas->total }}</td>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>
@@ -146,7 +154,8 @@
     <!-- BOTON PARA CERRAR CAJA  -->
     <div class="row" style="display: flex; justify-content: end;">
         <div class="col-lg-3 col-6">
-            <div class="small-box bg-danger" style="cursor: pointer;" wire:click='$dispatchTo("cerrar-caja","cerrar-caja-modal")'>
+            <div class="small-box bg-danger" style="cursor: pointer;"
+                wire:click='$dispatchTo("cerrar-caja","cerrar-caja-modal")'>
                 <div class="inner">
                     <h3 class="m-0">Cerrar caja</h3>
                     <p>Total del dia ${{ $totalEfectivo }}</p>
@@ -159,11 +168,12 @@
     </div>
 
 
-
-    @livewire('add-presupuesto')
-    @livewire('form-create-order')
-    @livewire('compra-caja',['caja' => $caja])
-    @livewire('cerrar-caja',['caja' => $caja])
+    @can('caja')
+        @livewire('add-presupuesto')
+        @livewire('form-create-order')
+        @livewire('compra-caja', ['caja' => $caja])
+        @livewire('cerrar-caja', ['caja' => $caja])
+    @endcan
 
 
 
