@@ -47,6 +47,8 @@ class AddProductsPP extends Component
     {
         $this->pedido = $pedido;
         $this->proveedor = $proveedor;
+        $this->total = $this->pedido->items->sum('subtotal');
+
     }
 
     public function search()
@@ -68,8 +70,8 @@ class AddProductsPP extends Component
 
             $stock = Stock::firstOrCreate(
                 [
-                    'producto_id'=> $p->id,
-                    'estado'=> '1'
+                    'producto_id' => $p->id,
+                    'estado' => '1'
                 ]
             );
 
@@ -115,6 +117,9 @@ class AddProductsPP extends Component
 
             $this->reset('cantidad', 'precio');
         }
+
+        $this->dispatch('suma-items');
+
     }
 
     // Manejo del Modal
@@ -187,7 +192,7 @@ class AddProductsPP extends Component
         $this->servicios = Servicio::all();
 
 
-        /*  $this->total = $this->pedido->items->sum('subtotal'); */
+        $this->total = $this->pedido->items->sum('subtotal');
 
         return view('livewire.add-products-p-p', [
             'stock' => Stock::select('stocks.*', 'productos.descripcion as descripcion', 'productos.codigo', 'productos.costo')

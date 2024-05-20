@@ -18,7 +18,7 @@
             <div class="small-box bg-success" style="cursor: pointer;" wire:click='$dispatchTo("form-pago","formPago",{ tipo: "orden" })'>
                 <div class="inner">
                     <h3 class="m-0">Cobrar</h3>
-                    <p> $ 0.00</p>
+                    <p> ${{$total}}</p>
                 </div>
                 <div class="icon">
                     <i class="fas fa-cash-register"></i>

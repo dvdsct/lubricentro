@@ -53,13 +53,14 @@ class ViewTurnos extends Component
             'personas.apellido',
             'personas.DNI'
         )
-        ->leftJoin('clientes', 'ordens.cliente_id', '=', 'clientes.id')
-        ->leftJoin('perfils', 'clientes.perfil_id', '=', 'perfils.id')
-        ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
-        ->whereColumn('perfils.id', 'clientes.perfil_id')
-        ->whereColumn('personas.id', 'perfils.persona_id')
+            ->leftJoin('clientes', 'ordens.cliente_id', '=', 'clientes.id')
+            ->leftJoin('perfils', 'clientes.perfil_id', '=', 'perfils.id')
+            ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
+            ->whereColumn('perfils.id', 'clientes.perfil_id')
+            ->whereColumn('personas.id', 'perfils.persona_id')
             ->whereDate('ordens.created_at', $this->fecha)
             ->where('motivo', '1')
+            ->where('ordens.estado', '!=', '555')
             ->get();
 
         $this->turnlub = Orden::select(
@@ -70,13 +71,14 @@ class ViewTurnos extends Component
             'personas.apellido',
             'personas.DNI'
         )
-        ->leftJoin('clientes', 'ordens.cliente_id', '=', 'clientes.id')
-        ->leftJoin('perfils', 'clientes.perfil_id', '=', 'perfils.id')
-        ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
-        ->whereColumn('perfils.id', 'clientes.perfil_id')
-        ->whereColumn('personas.id', 'perfils.persona_id')
+            ->leftJoin('clientes', 'ordens.cliente_id', '=', 'clientes.id')
+            ->leftJoin('perfils', 'clientes.perfil_id', '=', 'perfils.id')
+            ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
+            ->whereColumn('perfils.id', 'clientes.perfil_id')
+            ->whereColumn('personas.id', 'perfils.persona_id')
             ->whereDate('ordens.created_at', $this->fecha)
             ->where('motivo', '2')
+            ->where('ordens.estado', '!=', '555')
             ->get();
 
         return view('livewire.view-turnos');

@@ -19,6 +19,7 @@ class ViewCaja extends Component
     public $totalEfectivo;
     public $venta;
     public $balance;
+    public $gastos;
 
     public $pagosEfectivo;
     public $pagosTrans;
@@ -34,6 +35,8 @@ class ViewCaja extends Component
     public $gastosTotal;
     public $pagos;
 
+    public $ventaTotal;
+
 
 
 
@@ -43,26 +46,31 @@ class ViewCaja extends Component
         // Caja Estado 200 es una caja abierta
         $this->caja = $caja;
         $this->montoInicial = $this->caja->monto_inicial;
+        $this->ventaTotal = $this->caja->sucursales->ordenes;
 
-        // Tarjeta de Credito
-        $this->pagosTarjeta = $this->caja->pagos->filter(function ($pago) {
-            return $pago->medio_pago_id == 1;
-        });
+        // ____________________________________________________________________
+        // ___________________PAGOS____________________________________________
+        // ____________________________________________________________________
+
         // Efectivo
         $this->pagosEfectivo = $this->caja->pagos->filter(function ($pago) {
-            return $pago->medio_pago_id == 2;
-        });
-        // Cheque
-        $this->pagosCheques = $this->caja->pagos->filter(function ($pago) {
-            return $pago->medio_pago_id == 3;
-        });
-        // Cuenta Corriente
-        $this->pagosCtaCte = $this->caja->pagos->filter(function ($pago) {
-            return $pago->medio_pago_id == 1;
+            return $pago->medio_pago_id == 2 && $pago->in_out != 'out';
         });
         // Transferencias
         $this->pagosTrans = $this->caja->pagos->filter(function ($pago) {
-            return $pago->medio_pago_id == 1;
+            return $pago->medio_pago_id == 5 && $pago->in_out != 'out';
+        });
+        // Tarjetas
+        $this->pagosTarjeta = $this->caja->pagos->filter(function ($pago) {
+            return $pago->medio_pago_id == 1 && $pago->in_out != 'out';
+        });
+        // Cuenta Corriente
+        $this->pagosCtaCte = $this->caja->pagos->filter(function ($pago) {
+            return $pago->medio_pago_id == 4 && $pago->in_out != 'out';
+        });
+        // Cuenta Cheques
+        $this->pagosCheques = $this->caja->pagos->filter(function ($pago) {
+            return $pago->medio_pago_id == 3 && $pago->in_out != 'out';
         });
 
 
@@ -76,7 +84,6 @@ class ViewCaja extends Component
 
 
         $this->totalv = $this->caja->pagos->sum('total');
-
     }
 
 
@@ -88,34 +95,30 @@ class ViewCaja extends Component
         $this->pagos = $this->caja->pagos;
     }
 
-
-
-
-
-
     // _____________________________________________________________
     // _________________CIERRE DE CAJA______________________________
     // _____________________________________________________________
     #[On('cierre-caja')]
-    public function cerrarCaja($efectivo){
+    public function cerrarCaja($efectivo)
+    {
         dd($efectivo);
-        
-$this->caja->update([
 
-    'monto_inicial' => $this->montoInicial,
+        $this->caja->update([
 
-    'gastos' => '',
-    'venta' => '',
+            'monto_inicial' => $this->montoInicial,
 
-    'transferencias' => '',
-    'tarjetas' => '',
-    'efectivo' => '',
-    'cheques' => '',
-    'cuenta_corriente' => '',
-    
-    'observaciones' => '',
-    'estado' => '',
-]);
+            'gastos' => '',
+            'venta' => '',
+
+            'transferencias' => '',
+            'tarjetas' => '',
+            'efectivo' => '',
+            'cheques' => '',
+            'cuenta_corriente' => '',
+
+            'observaciones' => '',
+            'estado' => '',
+        ]);
     }
 
     public function render()
@@ -123,33 +126,50 @@ $this->caja->update([
         $this->pagos = $this->caja->pagos;
         $this->venta = $this->caja->pagos->filter(function ($pago) {
             return $pago->in_out != 'out';
-        });
+        })->sum('total');
+
+        // ____________________________________________________________________
+        // ___________________PAGOS____________________________________________
+        // ____________________________________________________________________
+
+        // Efectivo
         $this->pagosEfectivo = $this->caja->pagos->filter(function ($pago) {
             return $pago->medio_pago_id == 2 && $pago->in_out != 'out';
-        });
+        })->sum('total');
+        // Transferencias
         $this->pagosTrans = $this->caja->pagos->filter(function ($pago) {
             return $pago->medio_pago_id == 5 && $pago->in_out != 'out';
-        });
+        })->sum('total');
+        // Tarjetas
         $this->pagosTarjeta = $this->caja->pagos->filter(function ($pago) {
             return $pago->medio_pago_id == 1 && $pago->in_out != 'out';
-        });
+        })->sum('total');
+        // Cuenta Corriente
+        $this->pagosCtaCte = $this->caja->pagos->filter(function ($pago) {
+            return $pago->medio_pago_id == 4 && $pago->in_out != 'out';
+        })->sum('total');
+        // Cuenta Cheques
+        $this->pagosCheques = $this->caja->pagos->filter(function ($pago) {
+            return $pago->medio_pago_id == 3 && $pago->in_out != 'out';
+        })->sum('total');
 
-        
-        
+
+
+
+
         // Gatos
-        
-        $this->gastosEfectivo = $this->caja->pagos->filter(function ($pago) {
-            return $pago->estado == 200  && $pago->in_out != 'in';
-        });
-        
-        $this->gastosTrans = $this->caja->pagos->filter(function ($pago) {
-            return $pago->estado == 200  && $pago->in_out != 'in';
-        });
-        
-        
-        // Balance        
-        $this->totalEfectivo = ($this->pagosEfectivo->sum('total') + $this->montoInicial);
-        $this->totalv = $this->caja->pagos->sum('total');
+
+        $this->gastos = $this->caja->pagos->filter(function ($pago) {
+            return $pago->in_out != 'in';
+        })->sum('total') * (-1);
+
+
+
+
+        // Balance
+        $this->totalv = $this->caja->pagos->sum('total') + $this->montoInicial;
+
+        $this->totalEfectivo = $this->totalv - $this->pagosCheques - $this->pagosCtaCte - $this->pagosTarjeta - $this->pagosTrans ;
 
         $this->balance = '';
 

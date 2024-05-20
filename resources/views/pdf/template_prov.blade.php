@@ -14,7 +14,7 @@
         <table style="border-collapse: collapse; width: 100%;">
             <tr>
                 <td colspan="2" class="logo" style="border: 1px solid black; padding: 8px; text-align: left;">
-                    <h1 style="font-family: Arial, Helvetica, sans-serif;">Pedido a proveedor N° x</h1> <!-- AGREGAR ID DE PEDIDO PROVEEDOR -->
+                    <h1 style="font-family: Arial, Helvetica, sans-serif;">Pedido a proveedor N° 000- {{ $orden->id }}</h1> <!-- AGREGAR ID DE PEDIDO PROVEEDOR -->
                 </td>
 
                 <td class="logo" style="border: 1px solid black; display:flex; justify-content:center;">
@@ -24,11 +24,11 @@
 
             <tr>
                 <td style="border: 1px solid black;">
-                    <p><strong>Proveedor:</strong> </p> <!-- AGREGAR NOMBRE DEL PROVEEDOR  -->
+                    <p><strong>Proveedor: {{ $encargado->nombre . ' '. $encargado->apellido }}</strong> </p> <!-- AGREGAR NOMBRE DEL PROVEEDOR  -->
                 </td>
 
                 <td style="border: 1px solid black;">
-                    <p> <strong>Cajero: </strong> </p> <!-- AGREGAR NOMBRE Y APELLIDO DEL CAJERO  -->
+                    <p> <strong>Categoria:  </strong>  {{ $categoria }}</p> <!-- AGREGAR NOMBRE Y APELLIDO DEL CAJERO  -->
                 </td>
 
                 <td style="border: 1px solid black;">
