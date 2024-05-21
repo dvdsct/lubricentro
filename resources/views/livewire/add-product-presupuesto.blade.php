@@ -132,8 +132,8 @@
                     <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
                         <!-- BUSCADOR DE PRODUCTOS  -->
                         <div class="input-group input-group-sm pb-2" style="width: 300px;">
-                            <input type="text" class="form-control float-right" placeholder="Buscar"
-                                wire:model='query' wire:keypress='search'>
+                            <input type="text" class="form-control float-right"
+                             wire:model='query' wire:keydown='search'  placeholder="Buscar">
                             <div class="input-group-append">
                                 <button class="btn btn-default">
                                     <i class="fas fa-search"></i>

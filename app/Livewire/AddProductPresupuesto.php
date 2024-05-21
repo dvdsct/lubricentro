@@ -30,6 +30,11 @@ class AddProductPresupuesto extends Component
     public $items;
     public $query = '';
 
+    public function search()
+    {
+        $this->resetPage();
+    }
+
 
     public function mount($presupuesto)
     {
@@ -81,7 +86,6 @@ class AddProductPresupuesto extends Component
         $this->reset('cantidad', 'precio');
         $this->modalProductos = false;
         $this->dispatch('suma-items');
-
     }
     // _________________________________________
 
