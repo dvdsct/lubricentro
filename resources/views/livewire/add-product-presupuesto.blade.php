@@ -160,7 +160,7 @@
                                         @else
                                             <td><span class="badge bg-success">{{ $s->cantidad }}</span></td>
                                         @endif
-                                        <td>$ {{ $s->costo }}</td>
+                                        <td>$ {{ $s->precio_venta }}</td>
 
                                     </tr>
                                 @endforeach

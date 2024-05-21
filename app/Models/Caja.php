@@ -36,4 +36,9 @@ class Caja extends Model
 
         return $this->belongsTo(Sucursal::class, 'sucursal_id');
     }
+    public function cajeros()
+    {
+
+        return $this->belongsTo(Cajero::class, 'cajero_id');
+    }
 }

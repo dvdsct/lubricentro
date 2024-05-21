@@ -3,7 +3,7 @@
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <button type="button" class="btn btn-success" wire:click='modalOn'>
+                    <button type="button" class="btn btn-success" wire:click='dispatchTo("form-add-prod","modal-prod-on")'>
                         <i class="fas fa-plus-circle"></i> Agregar Producto
                     </button>
                 </div>

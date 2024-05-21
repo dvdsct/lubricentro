@@ -104,6 +104,8 @@ class CompraCaja extends Component
         ]);
 
         $this->modalCompraOn();
+
+        $this->dispatch('pago-added')->To(ViewCaja::class);
     }
 
 

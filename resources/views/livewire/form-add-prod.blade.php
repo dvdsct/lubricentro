@@ -1,6 +1,6 @@
 <div>
     
-    @if ($modal == true)
+    @if ($modalProductos == true)
 
     <!-- MODAL PARA CARGAR UN NUEVO PRODUCTO -->
     <div class="modal fade show" id="modal-default" style="display: block; padding-right: 17px;" role="dialog">

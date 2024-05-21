@@ -3,11 +3,14 @@
 namespace App\Livewire;
 
 use Livewire\Attributes\On;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 class CerrarCaja extends Component
 {
-    public $efectivo;
+
+    
+    public $rendicion;
     public $faltante;
     public $observaciones;
     public $modalCierreCaja;
@@ -15,7 +18,7 @@ class CerrarCaja extends Component
     
     public function cerrarCaja()
     {
-
+        // $this->dispatch("cierre-caja,{rendicion : {{$this->rendicion}}, observaciones :{{ $this->observaciones}}}")->To(ViewCaja::class);
     }
 
 

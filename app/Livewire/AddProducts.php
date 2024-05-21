@@ -50,7 +50,7 @@ class AddProducts extends Component
         $stock = Stock::where('producto_id', $p->id)->first();
 
         // dd($stock);
-        $precio = $p->costo;
+        $precio = $p->precio_venta;
 
 
         if (
@@ -110,7 +110,7 @@ class AddProducts extends Component
 
             $i = Item::create([
                 'producto_id' => $this->producto->id,
-                'precio' => $this->producto->costo,
+                'precio' => $this->producto->precio_venta,
                 'estado' => '1',
             ]);
 
@@ -144,7 +144,7 @@ class AddProducts extends Component
         $this->total = $this->orden->items->sum('subtotal');
 
         return view('livewire.add-products',[
-            'stock' => Stock::select('stocks.*', 'productos.descripcion as descripcion', 'productos.codigo', 'productos.costo')
+            'stock' => Stock::select('stocks.*', 'productos.descripcion as descripcion', 'productos.codigo', 'productos.precio_venta')
             ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')
             ->where('descripcion', 'like', '%' . $this->query . '%')
             ->orWhere('productos.codigo', 'like', '%' . $this->query . '%')

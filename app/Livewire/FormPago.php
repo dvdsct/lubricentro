@@ -223,6 +223,10 @@ class FormPago extends Component
 
     public function pagarProvedor()
     {
+
+        $this->orden->update([
+            'estado' => '555'
+        ]);
         $this->montoAPagar  = $this->montoAPagar * (-1);
         // Pago Parcial
         if ($this->tipoPago == 1) {

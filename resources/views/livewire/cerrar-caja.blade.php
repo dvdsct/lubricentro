@@ -26,7 +26,10 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">$</span>
                         </div>
-                        <input type="text" class="form-control" wire:model.live='efectivo'>
+                        <input type="text" class="form-control" wire:model.live='rendicion'>
+                        @error('rendicion')
+                ****                            
+                        @enderror
                     </div>
 
 
@@ -38,7 +41,7 @@
 
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-danger" data-dismiss="modal" wire:click="modalCerrarCaja">Cancelar</button>
-                    <button type="button" class="btn btn-success" wire:click='dispatchTo("view-caja","cierre-caja",{efectivo: "{{$efectivo}}", observaciones :"{{ $observaciones }}"})'>Aceptar</button>
+                    <button type="button" class="btn btn-success" wire:click='dispatchTo("view-caja","cierre-caja",{rendicion: "{{$rendicion}}", observaciones :"{{ $observaciones }}"})'>Aceptar</button>
                 </div>
             </div>
         </div>

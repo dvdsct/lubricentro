@@ -27,11 +27,8 @@
                         @foreach ($pedido->items as $i)
                         <tr>
                             <td>{{ $i->id }}</td>
-                            <td>{{ $i->productos->descripcion }}</td>
-                            <td>
-                                WO-059
+                            <td>{{ $i->productos->descripcion . ' - ' . $i->productos->codigo }}</td>
 
-                            </td>
                             @if ($i->estado == 1)
                             <td><input type="text" class="form-control" style="width: 145px;" placeholder="Ingresar cantidad" wire:model='cantidad' wire:keydown.enter='addCantidad({{ $i->id }})'>
                                 @error('cantidad')

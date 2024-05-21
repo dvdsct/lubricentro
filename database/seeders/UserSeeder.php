@@ -32,68 +32,71 @@ class UserSeeder extends Seeder
             'estado' => '1',
         ]);
 
+
         Persona::create([
-            'nombre' => 'John',
-            'apellido' => 'Doe',
-            'DNI' => '5456465456',
-            'fecha_nac' => '20/05/05',
-            'estado' => '1',
-        ]);
-        Persona::create([
-            'nombre' => 'John T',
-            'apellido' => 'Durval',
-            'DNI' => '5456465456',
-            'fecha_nac' => '20/05/05',
-            'estado' => '1',
-        ]);
-        Persona::create([
-            'nombre' => 'John Wick',
-            'apellido' => 'Dale',
-            'DNI' => '5456465456',
-            'fecha_nac' => '20/05/05',
-            'estado' => '1',
-        ]);
-        Persona::create([
-            'nombre' => 'John Wake',
-            'apellido' => 'Togedemaru',
-            'DNI' => '5456465456',
-            'fecha_nac' => '20/05/05',
-            'estado' => '1',
-        ]);
-        Persona::create([
-            'nombre' => 'Wage',
+            'nombre' => 'Hugo',
             'apellido' => '',
-            'DNI' => '5456465456',
+            'DNI' => '1111111111',
             'fecha_nac' => '20/05/05',
             'estado' => '1',
         ]);
+        Persona::create([
+            'nombre' => 'Walter',
+            'apellido' => '',
+            'DNI' => '222222222',
+            'fecha_nac' => '20/05/05',
+            'estado' => '1',
+        ]);
+        Persona::create([
+            'nombre' => 'Kari',
+            'apellido' => '',
+            'DNI' => '333333333',
+            'fecha_nac' => '20/05/05',
+            'estado' => '1',
+        ]);
+
+        Persona::create([
+            'nombre' => 'cliente',
+            'apellido' => '',
+            'DNI' => '0000000',
+            'fecha_nac' => '1/12/05',
+            'estado' => '1',
+        ]);
+        Persona::create([
+            'nombre' => 'proveedor',
+            'apellido' => '',
+            'DNI' => '0000000',
+            'fecha_nac' => '1/12/05',
+            'estado' => '1',
+        ]);
+
 
 
 
 
         User::create([
-            'name' => 'admin',
+            'name' => 'Kari',
             'email' => 'admin@test.com',
             'password' => bcrypt('Admin@159')
         ])->assignRole('admin');
 
 
         User::create([
-            'name' => 'user',
+            'name' => 'Walter',
             'email' => 'user@test.com',
             'password' => bcrypt('User@159')
-        ])->assignRole('user');
+        ])->assignRole('admin');
 
         User::create([
-            'name' => 'cajero',
-            'email' => 'cajero@test.com',
+            'name' => 'Hugo',
+            'email' => 'hugo@test.com',
             'password' => bcrypt('Cajero@159')
         ])->assignRole('cajero');
 
 
         Perfil::create([
             'persona_id' => '1',
-            'user_id' => '1',
+            'user_id' => '3',
         ]);
         Perfil::create([
             'persona_id' => '2',
@@ -101,7 +104,7 @@ class UserSeeder extends Seeder
         ]);
         Perfil::create([
             'persona_id' => '3',
-            'user_id' => '3',
+            'user_id' => '1',
         ]);
         Perfil::create([
             'persona_id' => '4',
@@ -112,37 +115,28 @@ class UserSeeder extends Seeder
 
 
 
-        Empleado::create([
-            'perfil_id' => '1',
-            'puesto' => '1',
-            'estado' => '1',
 
-        ]);
+        // Empleado::create([
+        //     'perfil_id' => '1',
+        //     'puesto' => '1',
+        //     'estado' => '1',
+
+        // ]);
 
         Cliente::create([
-            'perfil_id' => '2',
+            'perfil_id' => '4',
             'categoria' => '2',
             'lista_precios' => '3',
 
 
         ]);
 
-        Cliente::create([
-            'perfil_id' => '3',
-            'categoria' => '2',
-            'lista_precios' => '2',
-        ]);
+
         Cajero::create([
-            'perfil_id' => '3',
+            'perfil_id' => '1',
             'sucursal_id' => '1'
         ]);
 
-        Proveedor::create([
-
-            'perfil_id' => '4',
-            'tipo' => 'Mayorista',
-            'estado' => '',
-        ]);
 
         Proveedor::create([
 

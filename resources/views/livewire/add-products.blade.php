@@ -33,7 +33,7 @@
                             <td>{{ $i->productos->descripcion }} - {{ $i->productos->codigo }}</td>
 
                             <td>
-                                $ {{ $i->productos->costo }}
+                                $ {{ $i->productos->precio_venta }}
                             </td>
                             @if ($i->estado == 1)
                             <td><input type="text" class="form-control" wire:model='cantidad' wire:keydown.enter='addCantidad({{ $i->id }})'></td>
@@ -126,7 +126,7 @@
                                     @else
                                     <td><span class="badge bg-success">{{ $i->cantidad }}</span></td>
                                     @endif
-                                    <td style="cursor: pointer;">$ {{ $i->costo }}</td>
+                                    <td style="cursor: pointer;">$ {{ $i->precio_venta }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>

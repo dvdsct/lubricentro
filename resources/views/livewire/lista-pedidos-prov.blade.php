@@ -51,10 +51,10 @@
                                     <td><span class="tag tag-success">{{ $p->estado }}</span></td>
                                     <td>{{ $p->descripcion }}</td>
                                     <td class="project-actions text-right">
-                                        <a class="btn btn-primary btn-sm" href="{{ route('pedidos.show', $p->id) }}">
+                                        {{-- <a class="btn btn-primary btn-sm" href="{{ route('pedidos.show', $p->id) }}">
                                             <i class="fas fa-list">
                                             </i>
-                                        </a>
+                                        </a> --}}
                                         <a class="btn btn-info btn-sm" href="{{ route('pedidos.edit', $p->id) }}">
                                             <i class="fas fa-truck"></i>
                                         </a>

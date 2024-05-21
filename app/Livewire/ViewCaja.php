@@ -99,10 +99,9 @@ class ViewCaja extends Component
     // _________________CIERRE DE CAJA______________________________
     // _____________________________________________________________
     #[On('cierre-caja')]
-    public function cerrarCaja($efectivo,$observaciones)
+    public function cerrarCaja($rendicion,$observaciones)
     {
-            // dd($observaciones);
-
+        // dd($observaciones);
         $this->caja->update([
 
             'monto_inicial' => $this->montoInicial,
@@ -113,13 +112,14 @@ class ViewCaja extends Component
             'transferencias' => $this->pagosTrans,
             'tarjetas' => $this->pagosTarjeta,
             'efectivo' => $this->pagosEfectivo,
-            'rendicion' => $efectivo,
+            'rendicion' => $rendicion,
             'cheques' => $this->pagosCheques,
             'cuenta_corriente' => $this->pagosCtaCte,
 
             'observaciones' => $observaciones,
             'estado' => '500',
         ]);
+        redirect('venta');
     }
 
     public function render()

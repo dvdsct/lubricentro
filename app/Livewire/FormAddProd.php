@@ -13,17 +13,21 @@ class FormAddProd extends Component
     public $cod_barra;
     public $costo;
     public $codigo;
-    public $modal;
+    public $modalProductos = false;
 
 
-    public function modalOn()
-    {
-        $this->modal = true;
+    #[On('modal-prod-on')]
+    public function modalProductosOn()
+    {   
+        if($this->modalProductos){
+
+            $this->modalProductos = false;        
+        }else{
+            
+            $this->modalProductos = true;        
+        }
     }
-    public function modalOff()
-    {
-        $this->modal = false;
-    }
+
 
     public function saveproduct()
     {

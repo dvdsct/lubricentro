@@ -13,4 +13,7 @@ class Cajero extends Model
     {
         return $this->belongsTo(Perfil::class,'perfil_id');
     }
+    public function cajas(){
+        return $this->hasMany(Caja::class);
+    }
 }

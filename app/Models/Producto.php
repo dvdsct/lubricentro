@@ -12,7 +12,8 @@ class Producto extends Model
         'descripcion',
         'stock',
         'costo',
-        'codigo'
+        'codigo',
+        'precio_venta'
     ];
 
 

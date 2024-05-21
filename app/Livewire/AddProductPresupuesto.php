@@ -72,8 +72,8 @@ class AddProductPresupuesto extends Component
 
             $item->update([
                 'cantidad' => $this->cantidad,
-                'precio' => $p->costo,
-                'subtotal' => $p->costo *  $this->cantidad,
+                'precio' => $p->precio_venta,
+                'subtotal' => $p->precio_venta *  $this->cantidad,
                 'estado' => '2',
 
             ]);
@@ -95,7 +95,7 @@ class AddProductPresupuesto extends Component
 
         $i = PresupuestoItem::create([
             'producto_id' => $this->producto->id,
-            'precio' => $this->producto->costo,
+            'precio' => $this->producto->precio_venta,
             'estado' => '1',
         ]);
 
@@ -137,7 +137,7 @@ class AddProductPresupuesto extends Component
 
         $this->items = $this->presupuesto->itemspres;
         return view('livewire.add-product-presupuesto', [
-            'stock' => Stock::select('stocks.*', 'productos.descripcion', 'productos.codigo', 'productos.costo')
+            'stock' => Stock::select('stocks.*', 'productos.descripcion', 'productos.codigo', 'productos.precio_venta')
                 ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')
                 ->where('productos.descripcion', 'like', '%' . $this->query . '%')
                 ->orWhere('productos.codigo', 'like', '%' . $this->query . '%')

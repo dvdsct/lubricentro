@@ -102,7 +102,10 @@
                                 <th>ID</th>
                                 <th>FECHA</th>
                                 <th>CAJERO</th>
-                                <th>ESTADO</th>
+                                <th>RENDICION</th>
+                                <th>VENTA</th>
+                                <th>GASTOS</th>
+                                <th>OBSERVACIONES</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -112,16 +115,18 @@
                                 <td>{{ $c->id }}</td>
                                 <td>{{ \Carbon\Carbon::parse($c->created_at)->format('d/m/Y') }}</td>
 
-                                <td><span class="tag tag-success">{{ $c->rendicion }}</span></td>
-                                <td>{{ $c->ingresos }}</td>
+                                <td><span class="tag tag-success">{{ $c->cajeros->perfiles->personas->nombre }}</span></td>
+                                <td>{{ $c->rendicion }}</td>
+                                <td>{{ $c->venta }}</td>
+                                <td>{{ $c->gastos }}</td>
+                                
+                                <td>{{ $c->observaciones }}</td>
                                 <td class="project-actions text-right">
                                     <a class="btn btn-primary btn-sm" href="{{ route('venta.show', $c->id) }}">
                                         <i class="fas fa-list">
                                         </i>
                                     </a>
-                                    <a class="btn btn-info btn-sm" href="{{ route('venta.edit', $c->id) }}">
-                                        <i class="fas fa-truck"></i>
-                                    </a>
+                          
                                     <a class="btn btn-danger btn-sm" href="{{ route('venta.destroy', $c->id) }}">
                                         <i class="fas fa-trash">
                                         </i>
