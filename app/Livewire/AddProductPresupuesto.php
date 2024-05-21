@@ -20,7 +20,7 @@ class AddProductPresupuesto extends Component
     public $cliente;
     public $modalProductos;
 
-    #[Validate('required', message: 'Infrese una cantidad')]
+    #[Validate('required', message: 'Ingrese una cantidad')]
     public $cantidad;
     public $precio;
     public $producto;
