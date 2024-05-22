@@ -55,8 +55,8 @@
         <!-- TABLA DE LA IZQUIERDA  -->
         <div class="col-md-6">
             <div class="card">
-                <table class="table table-striped">
-                    <thead style="height: 10px;">
+                <table class="table table-striped" >
+                    <thead style="height: 10px;"  class="thead-dark">
                         <h5 style="text-align: center; margin-top: 10px;"> <span> <strong> MOVIMIENTOS </strong> </span>
                         </h5>
                     </thead>

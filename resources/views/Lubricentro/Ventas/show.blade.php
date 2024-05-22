@@ -3,7 +3,15 @@
 @section('title', 'Facturacion - Rocket')
 
 @section('content_header')
-    <h1> <strong> FACTURACION  <span class="badge-primary"> {{ Carbon\Carbon::parse($caja->created_at)->format('j \d\e F \d\e Y') }} </span> </strong> </h1>
+<h1>
+    <strong>
+        FACTURACION
+        <span class="badge badge-info">
+            {{ mb_strtoupper(Carbon\Carbon::parse($caja->created_at)->locale('es')->translatedFormat('j \d\e F \d\e Y')) }}
+        </span>
+    </strong>
+</h1>
+
 @stop
 
 @section('content')
