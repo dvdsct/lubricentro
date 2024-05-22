@@ -109,7 +109,8 @@
 
     <div class="card-header justify-content-end">
         <div class="text-right">
-            <h3><strong> TOTAL ${{ $presupuesto->itemspres->sum('subtotal') }}</strong></h3>
+        <h3><strong> TOTAL ${{ $presupuesto->itemspres->isEmpty() ? '0.00' : $presupuesto->itemspres->sum('subtotal') }}</strong></h3>
+
         </div>
     </div>
 

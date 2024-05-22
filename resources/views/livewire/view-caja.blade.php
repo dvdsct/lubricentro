@@ -14,10 +14,7 @@
         </div>
 
 
-
-
-
-        <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;" wire:click="$dispatchTo('form-create-order', 'modal-order')">
+        <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;">
             <div class="info-box mb-3">
                 <span class="info-box-icon bg-success"><i class="fa fa-handshake" aria-hidden="true"></i></span>
                 <div class="info-box-content">
@@ -31,9 +28,9 @@
         <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;"
             wire:click="$dispatchTo('compra-caja', 'modal-compra')">
             <div class="info-box mb-3">
-                <span class="info-box-icon bg-purple elevation-1"><i class="fas fa-shopping-cart"></i></span>
+                <span class="info-box-icon bg-purple elevation-1"><i class="fas fa-share"></i></span>
                 <div class="info-box-content">
-                    <h5> <strong> <span class="info-box-text">COMPRAS</span> </strong> </h5>
+                    <h5> <strong> <span class="info-box-text">EGRESOS</span> </strong> </h5>
                     <h5> <span class="info-box-number"></span> </h5>
                 </div>
             </div>
@@ -76,7 +73,7 @@
                             <td>Apertura</td>
                             <td>-</td>
                             <td>Monto incial Efectivo</td>
-                            <th> ${{ $montoInicial }}</th>
+                            <td> ${{ $montoInicial }}</td>
                         </tr>
                         @foreach ($pagos as $p)
                         <tr>
@@ -104,7 +101,6 @@
                     </thead>
                     <thead>
                         <th>Tipo</th>
-                        <th></th>
                         <th class="d-flex justify-content-end mr-2">Monto</th>
                     </thead>
                     <tbody>
@@ -112,32 +108,28 @@
 
 
                         <tr>
-                            <td><strong>SUTOTAL</strong></td>
-                            <td></td>
+                            <td><strong>SUBTOTAL</strong></td>
                             <td class="d-flex justify-content-end mr-2"> ${{ $totalv }}</td>
                         </tr>
 
                         <tr>
                             <td>Transferencias</td>
-                            <td></td>
                             <td class="d-flex justify-content-end mr-2"> ${{ $pagosTrans }}</td>
                         </tr>
 
                         <tr>
                             <td>Tarjetas</td>
-                            <td></td>
                             <td class="d-flex justify-content-end mr-2"> ${{ $pagosTarjeta }}</td>
                         </tr>
 
                         <tr>
                             <td>Cheques</td>
-                            <td></td>
-                            <td class="d-flex justify-content-end mr-2"> ${{ $pagosCtaCte }}</td>
+                            <td class="d-flex justify-content-end mr-2"> ${{ $pagosCheques }}</td>
+                            
                         </tr>
                         <tr>
                             <td>Cuenta Corriente</td>
-                            <td></td>
-                            <td class="d-flex justify-content-end mr-2"> ${{ $pagosCheques }}</td>
+                            <td class="d-flex justify-content-end mr-2"> ${{ $pagosCtaCte }}</td>
                         </tr>
 
 

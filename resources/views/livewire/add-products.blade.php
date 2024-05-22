@@ -73,11 +73,7 @@
             </div>
             <div class="card-header justify-content-end">
                 <div class="text-right">
-                    @if($total != null)
-                    <h3> <strong> TOTAL ${{ $total }} </strong> </h3>
-                    @else
-                    <h3> <strong> TOTAL $0 </strong> </h3>
-                    @endif
+                <h3><strong> TOTAL ${{ $total ?? '0.00' }}</strong></h3>
                 </div>
             </div>
 
