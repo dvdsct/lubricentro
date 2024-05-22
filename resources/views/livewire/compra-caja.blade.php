@@ -3,11 +3,11 @@
     <!-- MODAL PARA GENERAR COMPRA - EXTRACCION DE CAJA  -->
 
     @if ($modalCompra)
-    <div class="modal fade show" id="modal-default" style="display: block; padding-right: 17px;" role="dialog">
+    <div class="modal fade show" id="modal-default" style="display: block; background-color: rgba(0, 0, 0, 0.5);" role="dialog">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-info">
-                    <h5 class="modal-title" id="supplierOrderModalLabel"> <strong> EGRESOS - EXTRACCION DE CAJA </strong>
+                    <h5 class="modal-title" id="supplierOrderModalLabel"> <strong> EXTRACCION DE CAJA </strong>
                     </h5>
                     <button type="button" class="close" wire:click='$dispatch("modal-compra")'>
                         <span aria-hidden="true">×</span>
@@ -47,9 +47,6 @@
                                 <span class="input-group-text">$</span>
                             </div>
                             <input wire:model="montoAPagar" type="text" id="montoAPagar" class="form-control">
-                            <div class="input-group-append">
-                                <span class="input-group-text">.00</span>
-                            </div>
                         </div>
                     </div>
                 </div>
