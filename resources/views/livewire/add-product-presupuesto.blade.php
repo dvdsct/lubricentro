@@ -14,12 +14,15 @@
                                 <i class="fas fa-barcode"></i>
                             </span>
                         </div>
-                        <input type="text" class="form-control" placeholder="Buscar producto por codigo">
+                        <input type="text" class="form-control" placeholder="Buscar producto por codigo" wire:model='codigoBarras' wire:keydown.enter='codeBar'>
                         <div class="input-group-append">
                             <button class="btn btn-default">
                                 <i class="fas fa-search"></i>
                             </button>
                         </div>
+                        @error('codigoBarras')
+                            <span class="danger"> ****</span>
+                    @enderror
                     </div>
         @endif
     </div>
