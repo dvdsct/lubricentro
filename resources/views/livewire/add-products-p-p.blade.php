@@ -15,9 +15,9 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th style="width: 10px">#</th>
+
+                            <th style="width: 100px">Codigo</th>
                             <th>Producto</th>
-                            <th>Codigo</th>
                             <th style="width: 100px">Cantidad</th>
                             <th style="width: 250px">Precio unitario de compra</th>
                             <th style="width: 40px">Subtotal</th>
@@ -107,7 +107,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- BOTON DE IMPRIMIR PEDIDO A PROVEEDOR -->
                 <div class="col-md-3">
                     <a href="{{ route('pdf.pedido', $pedido->id) }}" target="_blank">
@@ -124,7 +124,7 @@
                 </div>
             </div>
 
-    
+
         @livewire('form-pago',['orden' => $pedido])
 
 

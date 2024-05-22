@@ -25,6 +25,8 @@ class AddProductPresupuesto extends Component
     public $precio;
     public $producto;
     public $item;
+
+    public $codigoBarras;
     public $sucrusal;
     // public $stock;
     public $items;
@@ -90,11 +92,38 @@ class AddProductPresupuesto extends Component
     }
     // _________________________________________
 
+    public function codeBar(){
 
+
+        if(strlen($this->codigoBarras) == 13){
+            $producto = Producto::where('codigo_de_barras',$this->codigoBarras)->get();
+
+            $producto_id = $producto->first()->id;
+            $precio_venta = $producto->first()->precio_venta;
+
+            $i = PresupuestoItem::create([
+                'producto_id' => $producto_id,
+                'precio' => $precio_venta,
+                'estado' => '1',
+            ]);
+
+            ItemsXPresupuesto::create([
+                'presupuesto_id' => $this->presupuesto->id,
+                'presupuesto_item_id' => $i->id,
+                'estado' => '1',
+
+            ]);
+        }
+
+
+
+
+    }
 
     // Agrega un producto al presupuesto
     public function addedProduct($p)
     {
+
         $this->producto = Producto::find($p);
         $this->modalProdOn();
 
