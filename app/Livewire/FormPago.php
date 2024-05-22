@@ -68,6 +68,7 @@ class FormPago extends Component
     public $cajero;
     public $fechaCheque;
     public $nroCheque;
+    public $concepto;
 
     public $cupon;
 
@@ -365,7 +366,12 @@ class FormPago extends Component
 
     public function pagarOrden()
     {
+        if ($this->orden->motivo == '1') {
 
+            $this->concepto = 'Lubricentro';
+        } else {
+            $this->concepto = 'Lavadero';
+        }
 
         if ($this->orden->estado != 100) {
 
@@ -409,7 +415,7 @@ class FormPago extends Component
                         'medio_pago_id' => '4',
                         'tipo_pago_id' => $this->tipoPago,
                         'efectivo' => 0,
-                        'concepto' => 'venta',
+                        'concepto' =>  $this->concepto,
                         'total' => $this->montoAPagar,
                         'estado' => '40',
 
@@ -448,7 +454,7 @@ class FormPago extends Component
                         'medio_pago_id' => $this->medioPago,
                         'tipo_pago_id' => $this->tipoPago,
                         'efectivo' => $this->efectivo,
-                        'concepto' => 'venta',
+                        'concepto' =>  $this->concepto,
 
                         'total' => $this->montoAPagar,
                         'estado' => '30',
@@ -500,7 +506,7 @@ class FormPago extends Component
                         'medio_pago_id' => $this->medioPago,
                         'tipo_pago_id' => $this->tipoPago,
                         'efectivo' => $this->efectivo,
-                        'concepto' => 'venta',
+                        'concepto' =>  $this->concepto,
 
                         'total' => $this->montoAPagar,
                         'estado' => '20',
@@ -546,7 +552,7 @@ class FormPago extends Component
                         'medio_pago_id' => $this->medioPago,
                         'tipo_pago_id' => $this->tipoPago,
                         'efectivo' => $this->efectivo,
-                        'concepto' => 'venta',
+                        'concepto' =>  $this->concepto,
                         'code_op' => $this->cupon,
 
                         'total' => $this->montoAPagar,
@@ -591,7 +597,7 @@ class FormPago extends Component
                         'tipo_pago_id' => $this->tipoPago,
                         'efectivo' => $this->efectivo,
                         'code_op' => $this->cupon,
-                        'concepto' => 'venta',
+                        'concepto' =>  $this->concepto,
 
                         'total' => $this->montoAPagar,
                         'estado' => '90',
