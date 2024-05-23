@@ -21,14 +21,26 @@ class PDFController extends Controller
             abort(404); // Orden no encontrada
         }
 
+        if($orden->motivo == '1'){
+            $sector = 'Lavadero';
+        }else{
+            $sector = 'Lubricentro';
+
+        }
+        $contador = 0;
         $items = $orden->items;
         $fecha = $orden->horario;
+        $vehiculo = $orden->vehiculos->modelos->descripcion . ' ' . $orden->vehiculos->descripcion . ' ' . $orden->vehiculos->año;
+
         $encargado = $orden->clientes->perfiles->personas;
         $vendedor = Auth::user();
         $total = $items->sum('subtotal');
 
         $pdf = PDF::loadView('pdf.template', [
             'items' => $items,
+            'sector' => $sector,
+            'vehiculo' => $vehiculo,
+            'orden' => $orden,
             'fecha' => $fecha,
             'encargado' => $encargado,
             'vendedor' => $vendedor,

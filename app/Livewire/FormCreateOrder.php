@@ -70,8 +70,8 @@ class FormCreateOrder extends Component
     public $dni;
 
     //Select formperson==TRUE
-    public $tipos_vehiculo;
-    public $tipos;
+    public $tiposVehiculo;
+    public $tipo;
     public $marcas;
     public $marca;
     public $modelos;
@@ -100,9 +100,9 @@ class FormCreateOrder extends Component
         $this->clientes = Cliente::all();
 
         $this->servicios = Servicio::all();
-        $this->tipos_vehiculo = TipoVehiculo::all();
-        $this->marcas = MarcaVehiculo::all();
-        $this->modelos = ModeloVehiculo::all();
+        $this->tiposVehiculo = TipoVehiculo::all();
+        $this->marcas = [];
+        $this->modelos = [];
         $this->colores = Colores::all();
         $this->horario = Carbon::now()->format('H:i');
         // $this->cliente = 'ok';
@@ -115,6 +115,19 @@ class FormCreateOrder extends Component
     }
 
 
+    // public function upMarcas(){
+
+    //     $this->marcas = ModeloVehiculo::where('tipo_vehiculo_id',$this->tipo)
+
+    //     ->get();
+
+    // }
+    public function upMarcas(){
+
+        $this->modelos = ModeloVehiculo::where('tipo_vehiculo_id',$this->tipo)
+      ->get();
+
+    }
 
 
     public function up()
@@ -383,7 +396,7 @@ class FormCreateOrder extends Component
             'vehiculo',
             'servicio',
             'motivo',
-            'tipos',
+            'tipo',
             'modelo',
             'marca',
             'dominio',

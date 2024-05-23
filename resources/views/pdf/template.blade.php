@@ -16,18 +16,10 @@
 
     <div style="margin-bottom: 6px;">
         <table style="border-collapse: collapse; width: 100%;">
-            <tr>
-                <td colspan="2" class="logo" style="border: 1px solid black; padding: 8px; text-align: left;">
-                    <h1 style="font-family: Arial, Helvetica, sans-serif;">Orden de Trabajo N° x</h1> <!-- AGREGAR ID DE LA ORDEN -->
-                </td>
 
-                <td class="logo" style="border: 1px solid black; display:flex; justify-content:center;">
-                       <img src="{{ asset('img/logo.png') }}" alt="Logo Rocket" style="width: 200px;">
-                </td>
-            </tr>
             <tr>
-                <td colspan="2" class="logo" style="border: 1px solid black; padding: 8px; text-align: left;">
-                    <h1>Orden de Trabajo N° 0001-00806</h1>   <!-- AGREGAR ID DE LA ORDEN -->
+                <td colspan="2" class="logo" style="border: 1px solid black; padding: 8px; text-align: left; font-family: Arial , Helevetica, sans-serif">
+                    <h1>Orden de Trabajo N° 0000-{{ $orden->id }}</h1>   <!-- AGREGAR ID DE LA ORDEN -->
                 </td>
 
                 <td class="logo" style="border: 1px solid black; display:flex; justify-content:center;">
@@ -37,11 +29,11 @@
 
             <tr>
                 <td style="border: 1px solid black;">
-                    <p><strong>Cliente:</strong> </p> <!-- AGREGAR NOMBRE Y APELLIDO DE CLIENTE  -->
+                    <p><strong>Cliente: </strong>{{ $encargado->nombre }} {{ $encargado->apellido }} </p> <!-- AGREGAR NOMBRE Y APELLIDO DE CLIENTE  -->
                 </td>
 
                 <td style="border: 1px solid black;">
-                    <p> <strong>Vehiculo: </strong> </p> <!-- AGREGAR MARCA MODELO Y PATENTE DE AUTO DEL CLIENTE  -->
+                    <p> <strong>Vehiculo: </strong> {{ $vehiculo }}</p> <!-- AGREGAR MARCA MODELO Y PATENTE DE AUTO DEL CLIENTE  -->
                 </td>
 
                 <td style="border: 1px solid black;">
@@ -51,7 +43,7 @@
 
             <tr>
                 <td style="border: 1px solid black;">
-                    <p><strong>Operario:</strong> {{ $encargado->nombre }} {{ $encargado->apellido }}</p>
+                    <p><strong>Operario:</strong> </p>
                 </td>
 
                 <td style="border: 1px solid black;">
@@ -59,7 +51,7 @@
                 </td>
 
                 <td style="border: 1px solid black;">
-                    <p><strong>Sector:</strong> </p> <!-- AGREGAR SECTOR DE LA ORDEN -->
+                    <p><strong>Sector: </strong> {{ $sector }} </p> <!-- AGREGAR SECTOR DE LA ORDEN -->
                 </td>
             </tr>
         </table>
@@ -76,9 +68,9 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($items as $item)
+                @foreach ($items as $index =>$item)
                 <tr>
-                    <td style="border: 1px solid black;">{{ $item['id'] }}</td>
+                    <td style="border: 1px solid black;">{{ $index + 1 }}</td>
                     <td style="border: 1px solid black;">{{ $item['cantidad'] }}</td>
                     <td style="border: 1px solid black;">{{ $item->productos->codigo }}</td>
                     <td style="border: 1px solid black;">$ {{ $item->subtotal }}</td>

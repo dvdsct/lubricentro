@@ -1,6 +1,7 @@
 <div>
     @if ($modal == true)
-        <div class="modal fade show" id="modal-default" style="display: block; background-color: rgba(0, 0, 0, 0.5);" aria-modal="true" role="dialog">
+        <div class="modal fade show" id="modal-default" style="display: block; background-color: rgba(0, 0, 0, 0.5);"
+            aria-modal="true" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header bg-info">
@@ -45,8 +46,8 @@
                             </div>
                         </div>
 
-   <!-- LISTADO DESPLEGABLE DE CLIENTES  -->
-   
+                        <!-- LISTADO DESPLEGABLE DE CLIENTES  -->
+
                         @if ($formperson == false)
                             <div class="row pt-2 d-flex justify-content-between">
                                 <h4 class="pl-2"> <strong> CLIENTE </strong> </h4>
@@ -166,36 +167,39 @@
                                 <!-- SI EL VEHICULO NO EXISTE, CREAR NUEVO VEHICULO -->
                                 <div class="px-3">
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col">
                                             <select class="form-control" aria-label="Default select example"
-                                                wire:model='marca'>
+                                                wire:model='tipo' wire:change='upMarcas'>
+                                                <option selected>Tipo de vehiculo</option>
+                                                @foreach ($tiposVehiculo as $tipos)
+                                                    <option value="{{ $tipos->id }}">{{ $tipos->descripcion }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        {{-- <div class="col-md-6">
+                                            <select class="form-control" aria-label="Default select example"
+                                                wire:model='marca' wire:change='upModelos'>
                                                 <option selected>Marca</option>
                                                 @foreach ($marcas as $marca)
-                                                    <option value="{{ $marca->id }}">{{ $marca->descripcion }}
+                                                    <option value="{{ $marca->marcas->id }}">{{ $marca->marcas->descripcion }} - {{ $marca->descripcion }}
                                                     </option>
                                                 @endforeach
                                             </select>
-                                        </div>
+                                        </div> --}}
 
-                                        <div class="col-md-6">
-                                            <select class="form-control" aria-label="Default select example"
-                                                wire:model='modelo'>
-                                                <option selected>Modelo</option>
-                                                @foreach ($modelos as $modelo)
-                                                    <option value="{{ $modelo->id }}">{{ $modelo->descripcion }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+
+
+
                                     </div>
 
                                     <div class="row pt-4">
                                         <div class="col-md-6">
                                             <select class="form-control" aria-label="Default select example"
-                                                wire:model='tipos'>
-                                                <option selected>Tipo de vehiculo</option>
-                                                @foreach ($tipos_vehiculo as $tipos)
-                                                    <option value="{{ $tipos->id }}">{{ $tipos->descripcion }}
+                                                wire:model='modelo'>
+                                                <option selected>Modelo</option>
+                                                @foreach ($modelos as $modelo)
+                                                    <option value="{{ $modelo->id }}">{{ $modelo->marcas->descripcion }} - {{ $modelo->descripcion }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -244,21 +248,21 @@
 
                                     <!-- AQUI MUESTRA EL VEHICULO DEL CLIENTE JUNTO CON SU DOMINIO -->
 
-                                        <div class="row px-3">
-                                            <h2> <span class="font-italic float-right badge bg-secondary">
-                                                    {{ $vehiculo->modelos->marcas->descripcion }}
-                                                    {{ $vehiculo->modelos->descripcion . ' - ' . $vehiculo->dominio }}
-                                                    <!-- VARIABLES PARA MOSTRAR VECHICULO Y DOMINIO --></span> </h2>
+                                    <div class="row px-3">
+                                        <h2> <span class="font-italic float-right badge bg-secondary">
+                                                {{ $vehiculo->modelos->marcas->descripcion }}
+                                                {{ $vehiculo->modelos->descripcion . ' - ' . $vehiculo->dominio }}
+                                                <!-- VARIABLES PARA MOSTRAR VECHICULO Y DOMINIO --></span> </h2>
 
-                                            <!-- BOTON PARA ELIMINAR VEHICULO SELECCIONADO -->
-                                            <div class="col-1">
-                                                <button class="btn btn-danger" wire:click='setForm'>
-                                                    <div class="icon">
-                                                        <i class="fas fa-car"></i>
-                                                    </div>
-                                                </button>
-                                            </div>
+                                        <!-- BOTON PARA ELIMINAR VEHICULO SELECCIONADO -->
+                                        <div class="col-1">
+                                            <button class="btn btn-danger" wire:click='setForm'>
+                                                <div class="icon">
+                                                    <i class="fas fa-car"></i>
+                                                </div>
+                                            </button>
                                         </div>
+                                    </div>
                                 @else
                                     <!-- SELECCIONAR VEHICULO EXISTENTE -->
                                     <div class="row px-3">
