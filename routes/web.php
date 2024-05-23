@@ -2,13 +2,13 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrdenController;
+use App\Http\Controllers\PagoTarjetaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\TurnosController;
 use App\Http\Controllers\PedidoProveedorController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PDFController;
 use App\Http\Controllers\PresupuestoController;
 use App\Http\Controllers\TarjetaController;
 
@@ -46,6 +46,7 @@ Route::middleware([
     Route::resource('pedidos',PedidoProveedorController::class);
     Route::resource('presupuesto',PresupuestoController::class);
     Route::resource('tarjetas',TarjetaController::class);
+    Route::resource('pagos-tarjetas',PagoTarjetaController::class);
     Route::get('/pdf/{orden}', 'App\Http\Controllers\PDFController@generatePDF')->name('pdf.orden');
     Route::get('/pdfpedido/{pedido}', 'App\Http\Controllers\PDFController@generatePedido')->name('pdf.pedido');
     Route::get('/pdfpres/{presupuesto}', 'App\Http\Controllers\PDFController@presupuesto')->name('pdf.presupuesto');

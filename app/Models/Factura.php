@@ -14,6 +14,11 @@ class Factura extends Model
         'tipo_factura_id',
         'total',
         'estado',
+        'subtotal',
+        'intereses',
+        'descuentos',
+
+
     ];
 
 

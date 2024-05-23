@@ -8,10 +8,6 @@
 
 @section('content')
 
-
-
-
-
 <div class="row">
     <div class="col-md-8">
         @livewire('datos-personales',['orden' => $orden, 'persona' => $cliente])

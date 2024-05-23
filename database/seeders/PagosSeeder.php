@@ -32,7 +32,6 @@ class PagosSeeder extends Seeder
 
                 'descripcion' => $t,
                 'estado' => '1'
-
             ]);
         }
     }

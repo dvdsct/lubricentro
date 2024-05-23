@@ -17,8 +17,23 @@
 @section('content')
 
 
-@livewire('view-caja',['caja' => $caja])
+<table class="table">
+    <thead>
+        <th>Subtotal</th>
+        <th>total</th>
+        <th>cupon</th>
+        <th></th>
+    </thead>
+    <tbody>
+        @foreach ($pagos as $pago )
+        <td>{{ $pago->subtotal }}</td>
+        <td>{{ $pago->total }}</td>
+        <td>{{ $pago->nro_cupon }}</td>
+        <td></td>
 
+        @endforeach
+    </tbody>
+</table>
 
 @stop
 

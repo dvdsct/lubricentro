@@ -1,6 +1,6 @@
 <div>
     @if ($modal == true)
-        <div class="modal fade show" id="modal-default" style="display: block;" aria-modal="true" role="dialog">
+        <div class="modal fade show" id="modal-default" style="display: block; background-color: rgba(0, 0, 0, 0.5);" aria-modal="true" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header bg-info">
