@@ -144,7 +144,7 @@
                                 </div>
 
                                 <div class="col-md-4">
-                                <button type="button" class="btn btn-secondary float-right"><i class="fas fa-money-bill-alt"></i> PAGO EXACTO </button>
+                                <button type="button" class="btn btn-secondary float-right" wire:click='montoExacto'><i class="fas fa-money-bill-alt"></i> PAGO EXACTO </button>
                                 </div>
 
                             </div>

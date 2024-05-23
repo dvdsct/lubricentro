@@ -279,7 +279,7 @@ class FormCreateOrder extends Component
                 $this->producto = Producto::find($p);
 
                 $stock = Stock::where('producto_id', $this->producto->id)->first();
-                $pst = $this->producto->costo * floatval($i->cantidad);
+                $pst = $this->producto->precio_venta * floatval($i->cantidad);
 
                 if ($stock->cantidad == 0) {
                     return  $this->dispatch('nonstock');
@@ -287,7 +287,7 @@ class FormCreateOrder extends Component
 
                     $iO = Item::create([
                         'producto_id' => $this->producto->id,
-                        'precio' => $i->costo,
+                        'precio' => $i->precio_venta,
                         'cantidad' => $i->cantidad,
                         'subtotal' => $pst,
                         'estado' => '2',

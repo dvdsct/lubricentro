@@ -655,12 +655,22 @@ class FormPago extends Component
     }
 
 
+    public function montoExacto(){
 
+        $this->efectivo = $this->montoAPagar;
+    }
 
 
     public function render()
     {
         $this->vuelto = floatval($this->efectivo) - floatval($this->montoAPagar);
+
+        if($this->vuelto < 0 ){
+            $this->vuelto = 0;
+        }else{
+            $this->vuelto = floatval($this->efectivo) - floatval($this->montoAPagar);
+
+        }
         return view('livewire.form-pago');
     }
 }
