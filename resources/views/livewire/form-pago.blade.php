@@ -176,7 +176,7 @@
                         <!-- MEDIO DE PAGO CON TARJETA -->
                         <div class="mb-3">
                             <label for="tipo_pago" class="form-label">Tarjeta</label>
-                            <select wire:model="plan" wire:change='cargaInteres' id="tipo_pago" class="form-control">
+                            <select wire:model="planSelected" wire:change='cargaInteres' id="tipo_pago" class="form-control">
                                 <option value="">Seleccionar tarjeta</option>
                                 @foreach ($tarjetasT as $p)
                                 <option value="{{ $p->id }}">

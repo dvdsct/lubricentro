@@ -30,8 +30,11 @@ return new class extends Migration
             ->references('id')
             ->on('tipo_facturas')
             ->onDelete('cascade');
+            $table->string('subtotal')->nullable();
+            $table->string('intereses')->nullable();
+            $table->string('descuentos')->nullable();
             $table->string('total');
-            $table->string('estado');
+            $table->string('estado')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

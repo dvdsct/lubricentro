@@ -11,6 +11,7 @@ use App\Models\MedioPago;
 use App\Models\Orden;
 use App\Models\Pago;
 use App\Models\PagosXCaja;
+use App\Models\PagoTarjeta;
 use App\Models\Perfil;
 use App\Models\Plan;
 use App\Models\PlanXTarjeta;
@@ -45,8 +46,9 @@ class FormPago extends Component
     public $interes;
     public $descuentoTarjeta;
     #[Validate('required')]
-    public $plan;
+    public $planSelected;
     public $planesT;
+    public $plan;
 
     public $montoConInt;
     public $medioPago;
@@ -169,15 +171,15 @@ class FormPago extends Component
     public function cargaInteres()
     {
         $this->validate();
-        $planE = Plan::find($this->plan);
+        $this->plan = Plan::find($this->planSelected);
 
         if ($this->plan) {
 
 
             $this->montoAPagar = $this->orden->items->sum('subtotal');
 
-            $this->interes = $planE->interes;
-            $this->descuentoTarjeta = $planE->descuento;
+            $this->interes = $this->plan->interes;
+            $this->descuentoTarjeta = $this->plan->descuento;
 
             $this->montoInt = floatval($this->montoAPagar / 100) * floatval($this->interes);
             $this->montoAPagarInteres = $this->montoAPagar + $this->montoInt;
@@ -430,6 +432,7 @@ class FormPago extends Component
                 }
 
 
+                // ______________________________________________________________________________
                 // ------------------------------------------------------------------------------
                 //                                 Pago total Cheque  Estado = 30
                 // ------------------------------------------------------------------------------
@@ -483,6 +486,7 @@ class FormPago extends Component
 
 
 
+                // ______________________________________________________________________________
                 // ------------------------------------------------------------------------------
                 //                                 Pago total Efectivo  Estado = 20
                 // ------------------------------------------------------------------------------
@@ -524,9 +528,6 @@ class FormPago extends Component
 
 
                 // ______________________________________________________________________________
-                // ______________________________________________________________________________
-                // ______________________________________________________________________________
-
                 // ------------------------------------------------------------------------------
                 //                                 Pago Total Tarjeta  Estado = 10
                 // ------------------------------------------------------------------------------
@@ -540,7 +541,10 @@ class FormPago extends Component
                         'orden_id' => $this->orden->id,
 
                         'tipo_factura_id' => $this->tipoFactura,
-                        'total' => $this->montoAPagar,
+                        'total' => $this->montoAPagarInteres,
+                        'subtotal' => $this->montoAPagar,
+                        'intereses' => $this->montoInt,
+                        'descuentos' => '',
                         'estado' => '10'
                     ]);
 
@@ -555,7 +559,7 @@ class FormPago extends Component
                         'concepto' =>  $this->concepto,
                         'code_op' => $this->cupon,
 
-                        'total' => $this->montoAPagar,
+                        'total' => $this->montoAPagarInteres,
                         'estado' => '10',
 
                     ]);
@@ -563,6 +567,20 @@ class FormPago extends Component
                         'pago_id' => $p->id,
                         'caja_id' => $this->caja->id,
                         'estado' => '10',
+
+                    ]);
+
+                    PagoTarjeta::create([
+
+                        'plan_id' => $this->plan->id,
+                        'cliente_id' => $this->cliente,
+                        'pago_id' => $p->id,
+                        'caja_id' => $this->caja->id,
+                        'subtotal' => $this->montoAPagar,
+                        'total' => $this->montoAPagarInteres,
+                        'nro_cupon' => $this->codeOp,
+                        'estado' => '1',
+
 
                     ]);
                 }
