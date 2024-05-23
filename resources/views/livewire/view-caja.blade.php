@@ -1,43 +1,47 @@
 <!-- VISTA FACTURACION -->
 <div>
     <div class="row">
+        <!-- NUEVO CARD DE ESTADISTICAS DE GASTOS -->
         <div class="col-12 col-sm-6 col-md-3">
-            <div class="info-box mb-3">
-                <span class="info-box-icon bg-warning elevation-1"><i class="fa fa-calculator" aria-hidden="true"></i></span>
+            <div class="info-box bg-gradient-warning">
+                <span class="info-box-icon"><i class="fa fa-calculator"></i></span>
                 <div class="info-box-content">
-                    <h5> <strong> <span class="info-box-text">GASTOS</span> </strong> </h5>
-                    <h5> <span class="info-box-number">${{ $gastos }}</span> </h5>
+                <h5> <strong> <span class="info-box-text">GASTOS</span> </strong> </h5>
+                <h5> <strong> <span class="info-box-number">${{ $gastos }}</span> </strong></h5>
                 </div>
             </div>
         </div>
 
 
+        <!-- NUEVO CARD DE ESTADISTICAS DE VENTAS -->
         <div class="col-12 col-sm-6 col-md-3">
-            <div class="info-box mb-3">
-                <span class="info-box-icon bg-success"><i class="fa fa-handshake" aria-hidden="true"></i></span>
+            <div class="info-box bg-gradient-success">
+                <span class="info-box-icon"><i class="fa fa-handshake"></i></span>
                 <div class="info-box-content">
-                    <h5> <strong> <span class="info-box-text">VENTAS</span> </strong> </h5>
-                    <h5> <span class="info-box-number">${{ $venta }}</span> </h5>
+                <h5> <strong> <span class="info-box-text">VENTAS</span> </strong> </h5>
+                <h5> <strong> <span class="info-box-number">${{ $venta }}</span> </strong></h5>
                 </div>
             </div>
         </div>
+
 
 
         <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;" wire:click="$dispatchTo('compra-caja', 'modal-compra')">
             <div class="info-box mb-3">
                 <span class="info-box-icon bg-purple elevation-1"><i class="fas fa-share"></i></span>
                 <div class="info-box-content">
-                    <h5> <strong> <span class="info-box-text">GENERAR <br> EXTRACCION</span> </strong> </h5>
+                    <h5> <strong> <span class="info-box-text">REALIZAR <br> EXTRACCION</span> </strong> </h5>
                 </div>
             </div>
         </div>
 
         <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;" wire:click="$dispatchTo('form-create-order', 'modal-order')">
             <div class="info-box mb-3">
-                <span class="info-box-icon bg-info elevation-1"><i class="fa fa-calendar-check" aria-hidden="true"></i></span>
+                <span class="info-box-icon bg-info elevation-1"><i class="fas fa-calendar-alt"></i>
+                </span>
                 <div class="info-box-content">
-                    <h5> <strong> <span class="info-box-text">GENERAR TURNO</span> </strong> </h5>
-                    <h5> <span class="info-box-number">{{ count($ventaTotal) }}</span> </h5>
+                    <h5> <strong> <span class="info-box-text">GENERAR <br> TURNO</span> </strong> </h5>
+                    <!-- <h5> <span class="info-box-number">{{ count($ventaTotal) }}</span> </h5> -->
                 </div>
             </div>
         </div>
@@ -67,7 +71,7 @@
                     <tbody>
                         <tr>
                             <td>{{ $caja->created_at->format('H:i') }} Hs.</td>
-                            <td> <span class="badge badge-success"> Apertura</span> </td>
+                            <td> <span class="badge badge-primary"> Apertura</span> </td>
                             <td>Efectivo</td>
                             <td>Monto incial</td>
                             <td> ${{ $montoInicial }}</td>
@@ -79,7 +83,7 @@
                                 @if($p->in_out == 'in')
                                 <span class="badge badge-success">Ingreso</span>
                                 @elseif($p->in_out == 'out')
-                                <span class="badge badge-danger">Extraccion</span>
+                                <span class="badge badge-danger">Egreso</span>
                                 @else
                                 @endif
                             </td>
