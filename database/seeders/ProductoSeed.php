@@ -19,8 +19,16 @@ class ProductoSeed extends Seeder
      */
     public function run(): void
     {
-        DB::table('productos')->truncate();
-        DB::table('stocks')->truncate();
+                // Deshabilitar las comprobaciones de clave foránea
+                DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+                // Truncar las tablas
+                DB::table('items')->truncate();
+                DB::table('productos')->truncate();
+        
+                DB::table('stocks')->truncate();
+                // Habilitar las comprobaciones de clave foránea
+                DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
 
 
