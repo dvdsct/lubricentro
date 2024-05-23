@@ -19,6 +19,11 @@ class ProductoSeed extends Seeder
      */
     public function run(): void
     {
+        DB::table('productos')->truncate();
+        DB::table('stocks')->truncate();
+
+
+
         $productos = [
             ['NORMAL 20/30/40','','3.812','6.098','3.900','5.460','','','','',''],
         ['HD SUPLEMENTO 1','','4.356','6.970','4.400','6.160','','','','',''],
@@ -2244,14 +2249,8 @@ class ProductoSeed extends Seeder
         ['J3743R','(B) SCANIA G230 - G490; P230 - P490 PRIM','163.836','262.137','201.518','282.125','','','','',''],
         ['J3744R','(B) SCANIA G230 - G490; P230 - P490 SECU','50.184','80.295','61.727','86.418','','','','',''],
         ['J3751R','(A) FORD CARGO 2622/23/28',' 3132/33','70.360','112.576','86.543','121.160','','','','',''],
-        ['Lavado completo','',' 3132/33','70.360','112.576','86.543','121.160','','','','',''],
-        ['Lavado Premium','',' 3132/33','70.360','112.576','86.543','121.160','','','','',''],
-        ['Lavado de Motor','',' 3132/33','70.360','112.576','86.543','121.160','','','','',''],
-        ['Service MO','',' 3132/33','70.360','112.576','86.543','121.160','','','','',''],
-        ['Frenos MO','',' 3132/33','70.360','112.576','86.543','121.160','','','','',''],
+  
     ];
-
-
 
 
         foreach ($productos as $prod) {
@@ -2275,6 +2274,40 @@ class ProductoSeed extends Seeder
                 'escaso' => '3',
             ]);
         }
+
+
+        $productos2 =[
+            ['Lavado completo','','6500','','','',''],
+            ['Lavado Premium','','12000','','','',''],
+            ['Lavado de Motor','','12000','','','',''],
+            ['Service MO','','','','','',''],
+            ['Frenos MO','','15000','','','',''],
+        ];
+    
+    
+    
+    
+            foreach ($productos2 as $prod2) {
+    
+                $p = Producto::firstOrCreate([
+                    'proveedor_id' => '1',
+                    'precio_venta'  => $prod2[2],
+                    'descripcion' => $prod2[1],
+                    'codigo' => $prod2[0],
+                    'estado' => '1',
+                ]);
+    
+                Stock::create([
+    
+                    'producto_id' => $p->id,
+                    'sucursal_id' => '1',
+                    'cantidad' => '1000000',
+                    'unidad' => 'un',
+                    'estado' => '1',
+                    'ideal' => '8',
+                    'escaso' => '3',
+                ]);
+            }
 
         $faker1 = Faker::create();
 

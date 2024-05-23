@@ -14,7 +14,7 @@ class ProdSeed extends Seeder
      */
     public function run(): void
     {
-        $productos =[
+        $productos2 =[
             ['Lavado completo','','6500','','','',''],
             ['Lavado Premium','','12000','','','',''],
             ['Lavado de Motor','','12000','','','',''],
@@ -25,13 +25,13 @@ class ProdSeed extends Seeder
     
     
     
-            foreach ($productos as $prod) {
+            foreach ($productos2 as $prod2) {
     
-                $p = Producto::create([
+                $p = Producto::firstOrCreate([
                     'proveedor_id' => '1',
-                    'precio_venta'  => $prod[2],
-                    'descripcion' => $prod[1],
-                    'codigo' => $prod[0],
+                    'precio_venta'  => $prod2[2],
+                    'descripcion' => $prod2[1],
+                    'codigo' => $prod2[0],
                     'estado' => '1',
                 ]);
     
