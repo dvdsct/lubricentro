@@ -130,7 +130,7 @@
 
         <!-- MODAL PARA AGREGAR NUEVO ITEM  -->
         @if ($modal == true)
-        <div class="modal fade show" id="modal-lg" style="display: block; padding-right: 17px;">
+        <div class="modal fade show" id="modal-lg" style="display: block; padding-right: 17px;background-color:rgba(0, 0, 0, 0.5)">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header bg-info">
@@ -154,7 +154,6 @@
                                 <tr>
                                     <th style="width: 10px">#</th>
                                     <th>Producto</th>
-                                    <th>Codigo</th>
                                     <th style="width: 40px">Stock</th>
                                     <th>Precio</th>
                                 </tr>
@@ -163,8 +162,7 @@
                                 @foreach ($stock as $i)
                                 <tr wire:click='addedProduct({{ $i->id }})' wire:loading.attr="disabled">
                                     <td style="cursor: pointer;">{{ $i->id }}</td>
-                                    <td style="cursor: pointer;">{{ $i->descripcion }}</td>
-                                    <td style="cursor: pointer;">{{ $i->codigo }}</td>
+                                    <td style="cursor: pointer;">{{ $i->descripcion }} - {{ $i->codigo }}</td>
                                     @if ($i->cantidad == 0)
                                     <td><span class="badge bg-danger">{{ $i->cantidad }}</span></td>
                                     @else

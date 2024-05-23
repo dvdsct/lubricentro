@@ -2,7 +2,7 @@
     <!-- MODAL PARA ABRIR CAJA DEL DIA -->
     @can('caja')
     @if ($modalAbrirCaja)
-    <div class="modal fade show" id="modal-default" aria-modal="true" role="dialog" style="padding-right: 17px; display: block;" wire:ignore.self   >
+    <div class="modal fade show" id="modal-default" aria-modal="true" role="dialog" style="padding-right: 17px;background-color:rgba(0, 0, 0, 0.5); display: block;" wire:ignore.self   >
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-info">
@@ -119,14 +119,14 @@
                                 <td>{{ $c->rendicion }}</td>
                                 <td>{{ $c->venta }}</td>
                                 <td>{{ $c->gastos }}</td>
-                                
+
                                 <td>{{ $c->observaciones }}</td>
                                 <td class="project-actions text-right">
                                     <a class="btn btn-primary btn-sm" href="{{ route('venta.show', $c->id) }}">
                                         <i class="fas fa-list">
                                         </i>
                                     </a>
-                          
+
                                     <a class="btn btn-danger btn-sm" href="{{ route('venta.destroy', $c->id) }}">
                                         <i class="fas fa-trash">
                                         </i>

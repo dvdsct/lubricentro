@@ -1,6 +1,6 @@
 <div>
     @if ($modalCierreCaja)
-    <div class="modal fade show" id="modal-lg" aria-modal="true" role="dialog" style="padding-right: 17px; display: block;">
+    <div class="modal fade show" id="modal-lg" aria-modal="true" role="dialog" style="padding-right: 17px; display: block;background-color:rgba(0, 0, 0, 0.5)">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-info">
@@ -28,7 +28,7 @@
                         </div>
                         <input type="text" class="form-control" wire:model.live='rendicion'>
                         @error('rendicion')
-                ****                            
+                ****
                         @enderror
                     </div>
 

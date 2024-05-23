@@ -62,21 +62,22 @@ class AddProductsPP extends Component
 
     #[On('pedido-recibido')]
     public function recibirPedido()
-    {   
+    {
 
         foreach ($this->pedido->items as $i) {
 
             $p = Producto::find($i->producto_id);
             $n_costo = $p->costo + (($p->costo/100) * 60);
-            
+
             $p->update([
                 'precio_venta' => $n_costo
             ]);
 
             $stock = Stock::firstOrCreate(
                 [
+                    'sucursal_id' => '1',
                     'producto_id' => $p->id,
-                    'estado' => '1'
+                    'estado' => '1',
                 ]
             );
 

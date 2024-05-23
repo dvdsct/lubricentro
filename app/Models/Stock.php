@@ -9,7 +9,7 @@ class Stock extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['cantidad','estado'];
+    protected $fillable = ['cantidad','estado','sucursal_id','producto_id'];
 
     public function productos(){
 

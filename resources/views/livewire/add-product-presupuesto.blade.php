@@ -124,7 +124,7 @@
 
     <!-- MODAL PARA AGREGAR NUEVO ITEM  -->
     @if ($modalProductos)
-        <div class="modal fade show" id="modal-lg" style="display: block; padding-right: 17px;" wire:ignore.self>
+        <div class="modal fade show" id="modal-lg" style="display: block; padding-right: 17px;background-color:rgba(0, 0, 0, 0.5)" wire:ignore.self>
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header bg-info">

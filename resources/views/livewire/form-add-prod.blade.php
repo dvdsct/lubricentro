@@ -1,14 +1,14 @@
 <div>
-    
+
     @if ($modalProductos == true)
 
     <!-- MODAL PARA CARGAR UN NUEVO PRODUCTO -->
-    <div class="modal fade show" id="modal-default" style="display: block; padding-right: 17px;" role="dialog">
+    <div class="modal fade show" id="modal-default" style="display: block; padding-right: 17px;background-color:rgba(0, 0, 0, 0.5)" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-info">
                     <h4 class="modal-title"> <strong> NUEVO PRODUCTO </strong> </h4>
-                    <button type="button" class="close" wire:click='modalOff'>
+                    <button type="button" class="close" wire:click='modalProductosOn'>
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
@@ -56,7 +56,7 @@
 
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" wire:click='modalOff'>Cerrar</button>
+                    <button type="button" class="btn btn-default" wire:click='modalProductosOn'>Cerrar</button>
                     <button type="button" class="btn btn-primary" wire:click='saveproduct'>Guardar</button>
                 </div>
                 </form>

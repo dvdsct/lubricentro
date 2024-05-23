@@ -52,12 +52,12 @@
                                 {{-- <a class="btn btn-info btn-sm" wire:click='editProd({{ $i->id }})'>
                                 <i class="fas fa-pencil-alt">
                                 </i>
-                              
+
                                 </a> --}}
                                 <a class="btn btn-danger btn-sm" wire:click='delProd({{ $i->id }})' wire:confirm="Si borras este articulo tendras que volver a agregarlo">
                                     <i class="fas fa-trash">
                                     </i>
-                                    
+
                                 </a>
                             </td>
                             @endif
@@ -82,7 +82,7 @@
 
         <!-- MODAL PARA AGREGAR NUEVO ITEM  -->
         @if ($modal == true)
-        <div class="modal fade show" id="modal-lg" style="display: block; padding-right: 17px; overflow-y: auto;">
+        <div class="modal fade show" id="modal-lg" style="display: block; padding-right: 17px;background-color:rgba(0, 0, 0, 0.5); overflow-y: auto;">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header bg-info">
