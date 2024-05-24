@@ -17,6 +17,7 @@ class ViewTurnos extends Component
 
     public $ordenes;
     public $fecha;
+    public $vehiculo;
 
 
     public function mount()

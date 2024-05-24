@@ -43,4 +43,7 @@
             </tbody>
         </table>
     </div>
+    <div>
+       {{$productos->links()}}
+    </div>
 </div>
