@@ -12,6 +12,7 @@ use App\Models\Orden;
 use App\Models\Pago;
 use App\Models\PagosXCaja;
 use App\Models\PagoTarjeta;
+use App\Models\PedidoProveedor;
 use App\Models\Perfil;
 use App\Models\Plan;
 use App\Models\PlanXTarjeta;
@@ -112,7 +113,7 @@ class FormPago extends Component
             $this->tiposPago = TipoPago::all();
             $this->tarjetasT = Plan::all();
             $this->tiposFactura = TipoFactura::all();
-            $this->mediosPago = MedioPago::where('descripcion','Efectivo')->get();
+            $this->mediosPago = MedioPago::where('descripcion', 'Efectivo')->get();
             $this->clientes = Cliente::where('lista_precios', '3')->get();
         }
         if (get_class($orden->getModel()) == "App\Models\Orden") {
@@ -282,6 +283,9 @@ class FormPago extends Component
                     'estado' => '400',
 
                 ]);
+                $this->pedido->update([
+                    'estado' => '3'
+                ]);
             }
 
 
@@ -317,7 +321,13 @@ class FormPago extends Component
                     'estado' => '200',
 
                 ]);
+
+                $this->pedido->update([
+                    'estado' => '4'
+                ]);
             }
+
+
             // Tarjeta Estado = 101
             if ($this->medioPago == 1) {
 
@@ -661,9 +671,10 @@ class FormPago extends Component
     public function render()
     {
         $this->vuelto = floatval($this->efectivo) - floatval($this->montoAPagar);
-        if($this->vuelto < 0 ){
+
+        if ($this->vuelto < 0) {
             $this->vuelto = 0;
-        }else{
+        } else {
             $this->vuelto = floatval($this->efectivo) - floatval($this->montoAPagar);
         }
         return view('livewire.form-pago');

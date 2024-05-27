@@ -13,6 +13,7 @@ class PedidoProveedor extends Model
         'tipo_pedido_id',
         'fecha_ingreso',
         'observaciones',
+        'estado',
         'sucursal_id',
     ];
 
