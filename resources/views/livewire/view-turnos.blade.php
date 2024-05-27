@@ -44,6 +44,7 @@
                             <th>HORARIO</th>
                             <th>CLIENTE</th>
                             <th>VEHICULO</th>
+                            <th></th>
                         </thead>
                         <tbody>
                             @foreach ($turnlub as $t)

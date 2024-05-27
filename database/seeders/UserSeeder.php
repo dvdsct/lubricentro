@@ -56,7 +56,7 @@ class UserSeeder extends Seeder
         ]);
 
         Persona::create([
-            'nombre' => 'cliente',
+            'nombre' => 'Consumidor final',
             'apellido' => '',
             'DNI' => '0000000',
             'fecha_nac' => '1/12/05',
