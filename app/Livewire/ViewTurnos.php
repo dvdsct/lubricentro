@@ -18,7 +18,7 @@ class ViewTurnos extends Component
     public $ordenes;
     public $fecha;
     public $vehiculo;
-
+    public $orden;
 
     public function mount()
     {
@@ -41,6 +41,27 @@ class ViewTurnos extends Component
         }
     }
 
+    #[On('preo-turn')]
+    public function reproTurn(){
+        $turno = Orden::where('orden_id', $this->orden->id)->get();
+        $turno->update([
+            
+            'estado' => '600'
+
+        ]);
+    }
+
+
+    #[On('canceled-turn')]
+    public function cancelTurn($orden){
+        $turno = Orden::where('orden_id', $this->orden->id)->get();
+        $turno->update([
+            'estado' => '700'
+
+        ]);
+
+
+    }
 
 
     #[On('added-turn')]
@@ -81,7 +102,6 @@ class ViewTurnos extends Component
             ->where('motivo', '2')
             ->where('ordens.estado', '!=', '555')
             ->get();
-
-        return view('livewire.view-turnos');
+ return view('livewire.view-turnos');
     }
 }

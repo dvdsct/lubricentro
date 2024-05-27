@@ -51,7 +51,7 @@
                                 <tr>
                                     <td class="py-0">{{ $t->id }} </td>
                                     <td class="py-0">{{ \Carbon\Carbon::parse($t->horario)->format('H:i') }} hs</td>
-                                    <td class="py-0">{{ $t->nombre . ' ' . $t->apellido }} </td>
+                                    <td class="py-0">{{ $t->clientes->perfiles->personas->nombre . ' ' . $t->clientes->perfiles->personas->apellido }} </td>
                                     @if ($vehiculo != null)
                                         <td class="py-0">
                                             {{ $t->vehiculos->modelos->descripcion . ' ' . $t->vehiculos->descripcion . ' ' . $t->vehiculos->año }}
@@ -91,7 +91,7 @@
                                 <tr>
                                     <td class="py-0">{{ $t->id }}</td>
                                     <td class="py-0">{{ \Carbon\Carbon::parse($t->horario)->format('H:i') }} hs</td>
-                                    <td class="py-0">{{ $t->nombre . ' ' . $t->apellido }}</td>
+                                    <td class="py-0">{{ $t->clientes->perfiles->personas->nombre . ' ' . $t->clientes->perfiles->personas->apellido }} </td>
                                     @if ($t->vehiculos != null)
                                         <td class="py-0">
                                             {{ $t->vehiculos->modelos->descripcion . ' ' . $t->vehiculos->descripcion . ' ' . $t->vehiculos->año }}
