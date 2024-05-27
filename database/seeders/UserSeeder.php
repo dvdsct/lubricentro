@@ -63,7 +63,7 @@ class UserSeeder extends Seeder
             'estado' => '1',
         ]);
         Persona::create([
-            'nombre' => 'proveedor',
+            'nombre' => 'Proveedor',
             'apellido' => '',
             'DNI' => '0000000',
             'fecha_nac' => '1/12/05',
