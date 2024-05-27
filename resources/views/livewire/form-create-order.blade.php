@@ -199,7 +199,9 @@
                                                 wire:model='modelo'>
                                                 <option selected>Modelo</option>
                                                 @foreach ($modelos as $modelo)
-                                                    <option value="{{ $modelo->id }}">{{ $modelo->marcas->descripcion }} - {{ $modelo->descripcion }}
+                                                    <option value="{{ $modelo->id }}">
+                                                        {{ $modelo->marcas->descripcion }} -
+                                                        {{ $modelo->descripcion }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -304,6 +306,16 @@
             </div>
 
             @script
+                <script>
+                    $wire.on('nonstock', (event) => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "La cantidad ingresada supera a el Stock actual!",
+                        });
+                    });
+                </script>
+
                 <script>
                     $(document).ready(function() {
                         $('#mySelect').select2();

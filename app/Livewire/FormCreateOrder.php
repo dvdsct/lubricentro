@@ -286,15 +286,15 @@ class FormCreateOrder extends Component
             ]);
             foreach ($this->presupuesto->itemspres as $i) {
 
-                // dd($this->presupuesto->clientes);
-
+                
                 $p = $i->producto_id;
                 $this->producto = Producto::find($p);
-
+                
                 $stock = Stock::where('producto_id', $this->producto->id)->first();
                 $pst = $this->producto->precio_venta * floatval($i->cantidad);
-
+                
                 if ($stock->cantidad == 0) {
+                    // dd('aqui');
                     return  $this->dispatch('nonstock');
                 } else {
 
