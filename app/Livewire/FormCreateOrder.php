@@ -89,10 +89,13 @@ class FormCreateOrder extends Component
 
 
 
-    public function mount()
+    public function mount($fecha)
+
     {
+        $this->fecha = $fecha;
+
         $perfil = Perfil::where('user_id', Auth::user()->id)->get();
-        $this->cajero = Cajero::where('perfil_id' , $perfil->first()->id)->get();
+        $this->cajero = Cajero::where('perfil_id', $perfil->first()->id)->get();
         $this->caja = Caja::where('cajero_id', $this->cajero->first()->id)->get();
 
 
@@ -109,6 +112,21 @@ class FormCreateOrder extends Component
     }
 
 
+    #[On('change-day')]
+    public function change_day()
+    {
+
+            $this->fecha = Carbon::parse($this->fecha)->addDay()->format('Y-m-d');
+
+    }
+
+    #[On('change-yes')]
+    public function change_yes()
+    {
+            $this->fecha = Carbon::parse($this->fecha)->subDay()->format('Y-m-d');
+
+    }
+
     public function search()
     {
         $this->resetPage();
@@ -122,11 +140,11 @@ class FormCreateOrder extends Component
     //     ->get();
 
     // }
-    public function upMarcas(){
+    public function upMarcas()
+    {
 
-        $this->modelos = ModeloVehiculo::where('tipo_vehiculo_id',$this->tipo)
-      ->get();
-
+        $this->modelos = ModeloVehiculo::where('tipo_vehiculo_id', $this->tipo)
+            ->get();
     }
 
 
@@ -265,6 +283,7 @@ class FormCreateOrder extends Component
                 'sucursal_id' => $this->caja->first()->sucursal_id,
                 'motivo' => '1',
                 'horario' => $this->horario,
+                'fecha_turno' => $this->fecha,
                 'estado' => '1'
             ]);
         } else {
@@ -276,23 +295,24 @@ class FormCreateOrder extends Component
                 'sucursal_id' => $this->caja->first()->sucursal_id,
 
                 'horario' => $this->horario,
+                'fecha_turno' => $this->fecha,
                 'estado' => '1'
             ]);
         }
 
-        if($this->presupuesto != null){
+        if ($this->presupuesto != null) {
             $this->orden->update([
                 'estado' => '555'
             ]);
             foreach ($this->presupuesto->itemspres as $i) {
 
-                
+
                 $p = $i->producto_id;
                 $this->producto = Producto::find($p);
-                
+
                 $stock = Stock::where('producto_id', $this->producto->id)->first();
                 $pst = $this->producto->precio_venta * floatval($i->cantidad);
-                
+
                 if ($stock->cantidad == 0) {
                     // dd('aqui');
                     return  $this->dispatch('nonstock');
@@ -316,20 +336,15 @@ class FormCreateOrder extends Component
                     $stock->update([
                         'cantidad' => $stock->cantidad - $i->cantidad
                     ]);
-
                 }
-
             }
-
-
-
         }
 
 
         $this->dispatch('added-turn');
         $this->formperson == false;
         $this->closeModal();
-        redirect('ordenes/'.$this->orden->id);
+        redirect('ordenes/' . $this->orden->id);
     }
 
 
@@ -355,12 +370,13 @@ class FormCreateOrder extends Component
     #[On('modal-order')]
     public function openModal()
     {
-        if($this->modal){
+        if ($this->modal) {
 
             $this->modal = false;
-        }else{
-        $this->modal = true;
-    }}
+        } else {
+            $this->modal = true;
+        }
+    }
 
 
 
@@ -379,7 +395,6 @@ class FormCreateOrder extends Component
         $this->dni = $this->cliente->perfiles->personas->DNI ?? '';
         $this->fecha_nac = $this->cliente->perfiles->personas->fecha_nac ?? '';
         $this->openModal();
-
     }
 
 

@@ -12,7 +12,6 @@
 
 
 @livewire('view-turnos')
-@livewire('form-create-order')
 
 
 
