@@ -74,6 +74,8 @@ class FormPago extends Component
 
     public $cupon;
 
+    public $colorBoton = 'btn-secondary'; // Por defecto, el color del botón es secundario
+
 
     public function mount($orden)
     {
@@ -439,10 +441,6 @@ class FormPago extends Component
                 //                                 Pago total Cheque  Estado = 30
                 // ------------------------------------------------------------------------------
                 if ($this->medioPago == 3) {
-
-
-
-
                     $f =  Factura::create([
 
                         'orden_id' => $this->orden->id,
@@ -596,9 +594,6 @@ class FormPago extends Component
                 //                                 Pago Total Transferencia  Estado = 90
                 // ------------------------------------------------------------------------------
                 if ($this->medioPago == 5) {
-
-
-
                     $f =  Factura::create([
 
                         'orden_id' => $this->orden->id,
@@ -658,21 +653,20 @@ class FormPago extends Component
 
 
     public function montoExacto(){
-
         $this->efectivo = $this->montoAPagar;
+         $this->colorBoton = 'btn-success';
     }
 
 
     public function render()
     {
         $this->vuelto = floatval($this->efectivo) - floatval($this->montoAPagar);
-
         if($this->vuelto < 0 ){
             $this->vuelto = 0;
         }else{
             $this->vuelto = floatval($this->efectivo) - floatval($this->montoAPagar);
-
         }
         return view('livewire.form-pago');
     }
+
 }

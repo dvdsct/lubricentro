@@ -3,7 +3,7 @@
 
     <!-- MODAL PARA REALIZAR UN NUEVO PRESUPUESTO -->
 
-    <div class="modal fade show" id="modal-default" style="display: block; padding-right: 17px;" role="dialog">
+    <div class="modal fade show" id="modal-default" style="display: block; background-color: rgba(0, 0, 0, 0.5);" role="dialog">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-info">
