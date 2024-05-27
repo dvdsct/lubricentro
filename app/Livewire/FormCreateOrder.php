@@ -116,15 +116,13 @@ class FormCreateOrder extends Component
     public function change_day()
     {
 
-            $this->fecha = Carbon::parse($this->fecha)->addDay()->format('Y-m-d');
-
+        $this->fecha = Carbon::parse($this->fecha)->addDay()->format('Y-m-d');
     }
 
     #[On('change-yes')]
     public function change_yes()
     {
-            $this->fecha = Carbon::parse($this->fecha)->subDay()->format('Y-m-d');
-
+        $this->fecha = Carbon::parse($this->fecha)->subDay()->format('Y-m-d');
     }
 
     public function search()
@@ -300,9 +298,16 @@ class FormCreateOrder extends Component
             ]);
         }
 
+
+        // __________________________________________________________
+        //____________________ PRESUPUESTO___________________________
+        // __________________________________________________________
         if ($this->presupuesto != null) {
             $this->orden->update([
                 'estado' => '555'
+            ]);
+            $this->presupuesto->update([
+                'estado' => '4'
             ]);
             foreach ($this->presupuesto->itemspres as $i) {
 
@@ -339,6 +344,7 @@ class FormCreateOrder extends Component
                 }
             }
         }
+        // END PRESUPUESTO
 
 
         $this->dispatch('added-turn');
