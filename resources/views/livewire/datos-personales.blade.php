@@ -19,39 +19,39 @@
                     <div class="col-md-2 d-flex flex-column">
                         <h6><strong>DNI: </strong>{{ $persona->perfiles->personas->DNI }}</h6>
                         <h6>
-                            <strong>Edad: </strong>
+                            <strong>EDAD: </strong>
                             {{ \Carbon\Carbon::parse($persona->perfiles->personas->fecha_nac)->age }} años
                         </h6>
                     </div>
 
                     <div class="col-md-3 d-flex flex-column">
                         <h6>
-                            <strong>Email: </strong>
+                            <strong>EMAIL: </strong>
                             {{$persona->perfiles->first()->personas->correos->first()->direccion ?? ''}}
                         </h6>
 
 
                         <h6>
-                            <strong>Telefono: </strong>
+                            <strong>TELEFONO: </strong>
                             {{-- {{ optional($persona->perfiles->personas->telefonos)->first()->numero ?? '-' }} --}}
                         </h6>
                     </div>
 
                     <div class="col-md-4 d-flex flex-column">
                         <h6>
-                            <strong>Domicilio: </strong>
+                            <strong>DOMICILIO: </strong>
                             {{-- {{ $persona->perfiles->personas->direcciones->first()->barrio ?? '-' }} --}}
                         </h6>
 
                         <h6>
-                            <strong>Cumpleaños: </strong>
+                            <strong>CUMPLEAÑOS: </strong>
                             {{ \Carbon\Carbon::parse($persona->perfiles->personas->fecha_nac)->translatedFormat('j \\d\\e F', 'es') }}
                         </h6>
                     </div>
 
                     <div class="col-md-3 d-flex flex-column" style="display: flex; justify-content: flex-end; align-items: flex-end;">
                         <a href="" class="nav-link" style="display: flex; justify-content: flex-end;" data-toggle="modal" data-target="#modal-datos-pac"  wire:click='$dispatch("modal-datosPac")'>
-                            <i class="fas fa-edit"></i> Completar datos de cliente
+                            <i class="fas fa-edit"></i> EDITAR
                         </a>
                     </div>
                 </div>

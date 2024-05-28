@@ -7,8 +7,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-info">
-                    <h5 class="modal-title" id="supplierOrderModalLabel"> <strong> EXTRACCION DE CAJA </strong>
-                    </h5>
+                    <h5 class="modal-title" id="supplierOrderModalLabel"> <strong> EXTRACCION DE CAJA </strong> </h5>
                     <button type="button" class="close" wire:click='$dispatch("modal-compra")'>
                         <span aria-hidden="true">×</span>
                     </button>
@@ -16,7 +15,7 @@
 
 
                 <div class="modal-body">
-                    {{-- MEdio de pago --}}
+                    {{-- Medio de pago --}}
                     <div class="mb-3">
                         <label for="medioPago" class="form-label">Medio de Pago</label>
                         <select class="form-control" aria-label="Default select example" wire:model.live="medioPago" id="medio_pago">
@@ -26,7 +25,7 @@
                             @endforeach
                         </select>
                         @error('medioPago')
-                        <span class="text-danger">{{ $message }}</span>
+                        <strong> <span class="text-danger">{{ $message }}</span> </strong>
                         @enderror
                     </div>
                     {{-- End medio de pago --}}
@@ -36,6 +35,9 @@
                     <div class="mb-3">
                         <label for="concepto" class="form-label">Concepto</label>
                         <input wire:model="concepto" type="text" id="concepto" class="form-control">
+                        @error('concepto')
+                        <strong> <span class="text-danger">{{ $message }}</span> </strong>
+                        @enderror
                     </div>
 
 
@@ -48,6 +50,9 @@
                             </div>
                             <input wire:model="montoAPagar" type="text" id="montoAPagar" class="form-control">
                         </div>
+                        @error('montoAPagar')
+                        <strong> <span class="text-danger">{{ $message }}</span> </strong>
+                        @enderror
                     </div>
                 </div>
 

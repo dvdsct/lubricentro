@@ -60,21 +60,12 @@
                             @endif
                             <td class="p-1">
                                 @if ($t->estado == '100')
-                                <button class="btn btn-secondary" disabled >Atendido</button>
+                                <button class="btn btn-secondary" disabled>Atendido</button>
                                 @else
-
                                 <div class="btn-group">
-                                    <a type="button" class="btn btn-info btn-sm" href="{{ route('ordenes.show', $t->id) }}">Atender</a>
-                                    <button type="button" class="btn btn-danger btn-sm"  wire:click="cancelTurn('{{ $t->id }}')"><i class="fas fa-trash"></i></button>
-                                </div>
-
-<!--                                 <button class="btn btn-info btn-sm" href="{{ route('ordenes.show', $t->id) }}">Atender</button>
-                                <div wire:click="cancelTurn('{{ $t->id }}')">
-                                    <a class="btn btn-danger btn-sm" href="">
-                                        <i class="fas fa-trash">
-                                        </i>
-                                    </a>
-                                </div> -->
+                                    <a type="button" class="btn btn-info btn-sm" href="{{ route('ordenes.show', $t->id) }}"><strong> IR </strong></a>
+                                    <button type="button" class="btn btn-danger btn-sm" wire:click="cancelTurn('{{ $t->id }}')"><i class="fas fa-trash"></i></button>
+                                </div> 
                                 @endif
                             </td>
                         </tr>
@@ -139,6 +130,5 @@
     </div>
     @livewire('form-create-order', ['fecha' => $fecha])
 
-
-
 </div>
+
