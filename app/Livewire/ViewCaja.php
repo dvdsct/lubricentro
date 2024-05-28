@@ -34,6 +34,7 @@ class ViewCaja extends Component
     public $gastosCtaCte;
     public $gastosTotal;
     public $pagos;
+    public $fecha;
 
     public $ventaTotal;
 

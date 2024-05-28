@@ -1,15 +1,6 @@
 <div>
 
 
-    <!--         <div class="info-box bg-success d-flex align-items-center justify-content-center" wire:click='$dispatchTo("form-pago","formPago",{ tipo: "orden" })' style="cursor: pointer;">
-            <span class="info-box-icon"><i class="fas fa-cash-register"></i></span>
-            <div class="info-box-content">
-                <h4 class="info-box-text m-0"> <strong> Cobrar </strong> </h4>
-                <span class="info-box-number"></span>
-            </div>
-        </div> -->
-
-
     <div class="row" style="display: flex; justify-content: end;">
         @if ($orden->estado == 100)
         .

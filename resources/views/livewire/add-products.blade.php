@@ -3,7 +3,7 @@
 <div>
     <div class="card">
         @if ($orden->estado == 100)
-        <div class="card-header bg-danger">PAGADO
+        <div class="card-header bg-danger">  <h5 class="m-0"> <strong> PAGADO </strong> </h5>
             @else
             <div class="card-header">
 
@@ -82,7 +82,7 @@
 
         <!-- MODAL PARA AGREGAR NUEVO ITEM  -->
         @if ($modal == true)
-        <div class="modal fade show" id="modal-lg" style="display: block; padding-right: 17px; overflow-y: auto;">
+        <div class="modal fade show" id="modal-lg" style="display: block; background-color: rgba(0, 0, 0, 0.5); overflow-y: auto;">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header bg-info">

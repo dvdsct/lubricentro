@@ -14,7 +14,8 @@
                             <i class="fas fa-barcode"></i>
                         </span>
                     </div>
-                    <input type="text" class="form-control" placeholder="Buscar producto por codigo" wire:model='codigoBarras' wire:keydown.enter='codeBar'>
+                    <input type="text" id="codigoBarrasInput" class="form-control" placeholder="Buscar producto por codigo" wire:model='codigoBarras' wire:keydown.enter='codeBar'>
+
                     <div class="input-group-append">
                         <button class="btn btn-default">
                             <i class="fas fa-search"></i>
@@ -57,6 +58,7 @@
 
                                     <td>{{ $producto->precio }}
                                     </td>
+                                    <td></td>
 
                                     @else
                                     <td>
@@ -110,67 +112,74 @@
 
                 </div>
             </div>
+        </div>
+        <div class="col">
+            @livewire('facturar-presupuesto', ['presupuesto' => $presupuesto])
+        </div>
 
 
-            <div class="col">
-                @livewire('facturar-presupuesto', ['presupuesto' => $presupuesto])
-            </div>
-
-            <!-- MODAL PARA AGREGAR NUEVO ITEM  -->
-            @if ($modalProductos)
-            <div class="modal fade show" id="modal-lg" style="display: block; padding-right: 17px;" wire:ignore.self>
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header bg-info">
-                            <h4 class="m-0"> <strong> AGREGAR ITEM </strong> </h4>
-                            <button class="close" wire:click='$dispatch("modal-presupuestos")'>
-                                <span aria-hidden="true">×</span>
+    <!-- MODAL PARA AGREGAR NUEVO ITEM  -->
+    @if ($modalProductos)
+    <div class="modal fade show" id="modal-lg" style="display: block; background-color: rgba(0, 0, 0, 0.5);" wire:ignore.self>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h4 class="m-0"> <strong> AGREGAR ITEM </strong> </h4>
+                    <button class="close" wire:click='$dispatch("modal-presupuestos")'>
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
+                    <!-- BUSCADOR DE PRODUCTOS  -->
+                    <div class="input-group input-group-sm pb-2" style="width: 300px;">
+                        <input type="text" class="form-control float-right" wire:model='query' wire:keydown='search' placeholder="Buscar">
+                        <div class="input-group-append">
+                            <button class="btn btn-default">
+                                <i class="fas fa-search"></i>
                             </button>
                         </div>
-                        <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
-                            <!-- BUSCADOR DE PRODUCTOS  -->
-                            <div class="input-group input-group-sm pb-2" style="width: 300px;">
-                                <input type="text" class="form-control float-right" wire:model='query' wire:keydown='search' placeholder="Buscar">
-                                <div class="input-group-append">
-                                    <button class="btn btn-default">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <table class="table table-bordered  table-hover">
-                                <thead>
-                                    <th style="width: 10px">#</th>
-                                    <th>Producto</th>
-                                    <th style="width: 40px">Stock</th>
-                                    <th>Precio</th>
-                                </thead>
-                                <tbody>
-
-                                    @foreach ($stock as $key => $s)
-                                    <tr style="cursor: pointer;" id="{{ $s->id }}" wire:click='addedProduct({{ $s->id }})'>
-                                        <td>{{ $s->id }}</td>
-                                        <td>{{ $s->productos->descripcion }} -
-                                            {{ $s->productos->codigo }}
-                                        </td>
-                                        @if ($s->cantidad == 0)
-                                        <td><span class="badge bg-danger">{{ $s->cantidad }}</span></td>
-                                        @else
-                                        <td><span class="badge bg-success">{{ $s->cantidad }}</span></td>
-                                        @endif
-                                        <td>$ {{ $s->precio_venta }}</td>
-
-                                    </tr>
-                                    @endforeach
-
-                                </tbody>
-                            </table>
-                        </div>
                     </div>
+                    <table class="table table-bordered  table-hover">
+                        <thead>
+                            <th style="width: 10px">#</th>
+                            <th>Producto</th>
+                            <th style="width: 40px">Stock</th>
+                            <th>Precio</th>
+                        </thead>
+                        <tbody>
 
+                            @foreach ($stock as $key => $s)
+                            <tr style="cursor: pointer;" id="{{ $s->id }}" wire:click='addedProduct({{ $s->id }})'>
+                                <td>{{ $s->id }}</td>
+                                <td>{{ $s->productos->descripcion }} -
+                                    {{ $s->productos->codigo }}
+                                </td>
+                                @if ($s->cantidad == 0)
+                                <td><span class="badge bg-danger">{{ $s->cantidad }}</span></td>
+                                @else
+                                <td><span class="badge bg-success">{{ $s->cantidad }}</span></td>
+                                @endif
+                                <td>$ {{ $s->precio_venta }}</td>
+
+                            </tr>
+                            @endforeach
+
+                        </tbody>
+                    </table>
                 </div>
-
             </div>
-            @endif
-
 
         </div>
+
+    </div>
+    @endif
+
+    </div>
+
+
+
+
+
+
+
+</div>
