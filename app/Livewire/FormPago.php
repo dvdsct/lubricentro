@@ -12,6 +12,7 @@ use App\Models\Orden;
 use App\Models\Pago;
 use App\Models\PagosXCaja;
 use App\Models\PagoTarjeta;
+use App\Models\PagoTransferencia;
 use App\Models\PedidoProveedor;
 use App\Models\Perfil;
 use App\Models\Plan;
@@ -30,9 +31,12 @@ class FormPago extends Component
     public $modal = false;
 
     public $tiposPago;
+
+
     public $mediosPago;
     public $efectivo;
     public $vuelto;
+    public $total;
     public $montoAPagar;
     public $montoPagado;
     public $tipoPago = '2';
@@ -72,6 +76,8 @@ class FormPago extends Component
     public $fechaCheque;
     public $nroCheque;
     public $concepto;
+    public $iva = 0;
+    public $checkIva = false;
 
     public $cupon;
 
@@ -153,6 +159,12 @@ class FormPago extends Component
         $this->modal = false;
     }
 
+    public function updatedMedioPago(){
+$this->reset(
+    'iva',
+    'total',
+    'checkIva'
+);    }
 
     #[On('formPago')]
     public function genPago($tipo)
@@ -185,14 +197,13 @@ class FormPago extends Component
             $this->descuentoTarjeta = $this->plan->descuento;
 
             $this->montoInt = floatval($this->montoAPagar / 100) * floatval($this->interes);
-            $this->montoAPagarInteres = $this->montoAPagar + $this->montoInt;
+            $this->montoAPagar = $this->montoAPagar + $this->montoInt;
+
+            $this->reset('checkIva','iva');
         }
     }
 
-    // public function updatedMedioPago()
-    // {
-    //     $this->montoAPagar = $this->orden->items->sum('subtotal');
-    // }
+
 
     // ______________________________________________________________________________________________________________________
     // ______________________________________________________________________________________________________________________
@@ -229,6 +240,9 @@ class FormPago extends Component
 
     public function pagarProvedor()
     {
+        $this->validate([
+            'medioPago' => 'required'
+        ]);
 
         $this->orden->update([
             'estado' => '555'
@@ -382,6 +396,10 @@ class FormPago extends Component
 
     public function pagarOrden()
     {
+
+        $this->validate([
+            'medioPago' => 'required'
+        ]);
         if ($this->orden->motivo == '1') {
 
             $this->concepto = 'Lavadero';
@@ -421,6 +439,8 @@ class FormPago extends Component
 
                         'tipo_factura_id' => $this->tipoFactura,
                         'total' => $this->montoAPagar,
+                        'iva' => $this->iva,
+
                         'estado' => '40'
                     ]);
 
@@ -432,6 +452,8 @@ class FormPago extends Component
                         'tipo_pago_id' => $this->tipoPago,
                         'efectivo' => 0,
                         'concepto' =>  $this->concepto,
+                        'iva' => $this->iva,
+
                         'total' => $this->montoAPagar,
                         'estado' => '40',
 
@@ -457,6 +479,8 @@ class FormPago extends Component
 
                         'tipo_factura_id' => $this->tipoFactura,
                         'total' => $this->montoAPagar,
+                        'iva' => $this->iva,
+
                         'estado' => '30'
                     ]);
 
@@ -467,6 +491,8 @@ class FormPago extends Component
                         'medio_pago_id' => $this->medioPago,
                         'tipo_pago_id' => $this->tipoPago,
                         'efectivo' => $this->efectivo,
+                        'iva' => $this->iva,
+
                         'concepto' =>  $this->concepto,
 
                         'total' => $this->montoAPagar,
@@ -510,6 +536,8 @@ class FormPago extends Component
 
                         'tipo_factura_id' => $this->tipoFactura,
                         'total' => $this->montoAPagar,
+                        'iva' => $this->iva,
+
                         'estado' => '20'
                     ]);
 
@@ -521,6 +549,7 @@ class FormPago extends Component
                         'tipo_pago_id' => $this->tipoPago,
                         'efectivo' => $this->efectivo,
                         'concepto' =>  $this->concepto,
+                        'iva' => $this->iva,
 
                         'total' => $this->montoAPagar,
                         'estado' => '20',
@@ -551,10 +580,11 @@ class FormPago extends Component
                         'orden_id' => $this->orden->id,
 
                         'tipo_factura_id' => $this->tipoFactura,
-                        'total' => $this->montoAPagarInteres,
-                        'subtotal' => $this->montoAPagar,
+                        'total' => $this->montoAPagar,
+                        'subtotal' => $this->montoAPagar - $this->montoConInt,
                         'intereses' => $this->montoInt,
                         'descuentos' => '',
+                        'iva' => $this->iva,
                         'estado' => '10'
                     ]);
 
@@ -568,8 +598,10 @@ class FormPago extends Component
                         'efectivo' => $this->efectivo,
                         'concepto' =>  $this->concepto,
                         'code_op' => $this->cupon,
+                        'iva' => $this->iva,
 
-                        'total' => $this->montoAPagarInteres,
+
+                        'total' => $this->montoAPagar,
                         'estado' => '10',
 
                     ]);
@@ -587,7 +619,7 @@ class FormPago extends Component
                         'pago_id' => $p->id,
                         'caja_id' => $this->caja->id,
                         'subtotal' => $this->montoAPagar,
-                        'total' => $this->montoAPagarInteres,
+                        'total' => $this->montoAPagar,
                         'nro_cupon' => $this->codeOp,
                         'estado' => '1',
 
@@ -610,6 +642,8 @@ class FormPago extends Component
 
                         'tipo_factura_id' => $this->tipoFactura,
                         'total' => $this->montoAPagar,
+                        'iva' => $this->iva,
+
                         'estado' => '90'
                     ]);
 
@@ -622,6 +656,8 @@ class FormPago extends Component
                         'tipo_pago_id' => $this->tipoPago,
                         'efectivo' => $this->efectivo,
                         'code_op' => $this->cupon,
+                        'iva' => $this->iva,
+
                         'concepto' =>  $this->concepto,
 
                         'total' => $this->montoAPagar,
@@ -632,6 +668,19 @@ class FormPago extends Component
                         'pago_id' => $p->id,
                         'caja_id' => $this->caja->id,
                         'estado' => '90',
+
+                    ]);
+
+                    PagoTransferencia::create([
+
+                        'cliente_id' => $this->cliente,
+                        'pago_id' => $p->id,
+                        'caja_id' => $this->caja->id,
+                        'subtotal' => $this->montoAPagar - $this->montoConInt,
+                        'total' => $this->montoAPagar,
+                        'nro_cupon' => $this->codeOp,
+                        'estado' => '1',
+
 
                     ]);
                 }
@@ -662,22 +711,53 @@ class FormPago extends Component
     }
 
 
-    public function montoExacto(){
-        $this->efectivo = $this->montoAPagar;
-         $this->colorBoton = 'btn-success';
+    public function montoExacto()
+    {
+        $this->efectivo = $this->total;
+        $this->colorBoton = 'btn-success';
     }
+
+    public function setIva()
+    {
+
+        if ($this->medioPago == 1) {
+            $this->validate([
+                'planSelected' => 'required'
+            ]);
+
+        }
+        if ($this->checkIva) {
+
+            $this->iva = (($this->montoAPagar / 100) * 21);
+            $this->total = $this->montoAPagar + $this->iva;
+        } else {
+            $this->iva = 0;
+            $this->total = $this->montoAPagar + $this->iva;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
 
 
     public function render()
     {
-        $this->vuelto = floatval($this->efectivo) - floatval($this->montoAPagar);
+        $this->total = $this->montoAPagar + $this->iva;
+
+        $this->vuelto = floatval($this->efectivo) - floatval($this->total);
 
         if ($this->vuelto < 0) {
             $this->vuelto = 0;
         } else {
-            $this->vuelto = floatval($this->efectivo) - floatval($this->montoAPagar);
+            $this->vuelto = floatval($this->efectivo) - floatval($this->total);
         }
         return view('livewire.form-pago');
     }
-
 }

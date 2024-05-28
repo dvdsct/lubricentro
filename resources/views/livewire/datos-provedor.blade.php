@@ -18,6 +18,7 @@
                 <div class="row p-2">
                     <div class="col-md-2 d-flex flex-column">
                         <h6><strong>CUIT: </strong>{{ $persona->perfiles->personas->DNI }}</h6>
+                        <h6><strong>cuit: </strong>{{ $proveedor->cuit }}</h6>
                         <h6>
                             <strong>CATEGORIA: </strong>
                             {{ \Carbon\Carbon::parse($persona->perfiles->personas->fecha_nac)->age }} años
@@ -26,22 +27,30 @@
 
                     <div class="col-md-3 d-flex flex-column">
                         <h6>
-                            <strong>EMAIL: </strong>
-                            {{ $persona->perfiles->first()->personas->correos->first()->direccion  ?? ''}}
+                            <strong>Email: </strong>
+                            {{ $proveedor->perfiles->first()->personas->correos->first()->direccion  ?? ''}}
                         </h6>
 
 
                         <h6>
-                            <strong>TELEFONO: </strong>
-                            {{-- {{ optional($persona->perfiles->personas->telefonos)->first()->numero ?? '-' }} --}}
+                            <strong>Telefono: </strong>
+                            {{-- {{ optional($proveedor->perfiles->personas->telefonos)->first()->numero ?? '-' }} --}}
                         </h6>
                     </div>
 
                     <div class="col-md-4 d-flex flex-column">
                         <h6>
-                            <strong>DIRECCION: </strong>
-                            {{-- {{ $persona->perfiles->personas->direcciones->first()->barrio ?? '-' }} --}}
+                            <strong>Domicilio: </strong>
+                            {{-- {{ $proveedor->perfiles->personas->direcciones->first()->barrio ?? '-' }} --}}
                         </h6>
+
+                        <h6>
+                            <strong>Cumpleaños: </strong>
+                            {{ \Carbon\Carbon::parse($proveedor->perfiles->personas->fecha_nac)->translatedFormat('j \\d\\e F', 'es') }}
+                        </h6>
+
+
+
                     </div>
 
                     <div class="col-md-3 d-flex flex-column"

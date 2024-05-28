@@ -6,13 +6,13 @@ use Livewire\Component;
 
 class DatosProvedor extends Component
 {
-    public $persona;
+    public $proveedor;
     public $orden;
 
-    public function mount($orden,$persona){
+    public function mount($orden,$proveedor){
         $this->orden = $orden;
-        $this->persona = $persona;
-        
+        $this->proveedor = $proveedor;
+
     }
     public function render()
     {

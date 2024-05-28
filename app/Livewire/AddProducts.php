@@ -25,6 +25,7 @@ class AddProducts extends Component
 
     // De la Orden
     public $producto;
+    public $codigoBarras;
     public $servicio;
     public $item;
     public $total;
@@ -133,6 +134,63 @@ class AddProducts extends Component
 
         $item = Item::find($id);
         $item->delete();
+    }
+
+
+
+    public function codeBar(){
+
+
+        if(strlen($this->codigoBarras) == 13){
+            $producto = Producto::where('codigo_de_barras',$this->codigoBarras)->get();
+
+            $producto_id = $producto->first()->id;
+            $precio_venta = $producto->first()->precio_venta;
+
+            $i = Item::create([
+                'producto_id' => $producto_id,
+                'precio' => $precio_venta,
+                'estado' => '1',
+            ]);
+
+            ItemsXOrden::create([
+                'item_id' => $i->id,
+                'orden_id' => $this->orden->id,
+                'estado' => '1',
+
+            ]);
+        }else{
+            $producto = Producto::find($this->codigoBarras);
+            $stock = Stock::where('producto_id', $producto->id)->first();
+
+            if ($stock->cantidad == 0) {
+
+
+               return  $this->dispatch('nonstock');
+
+            }
+
+            $producto_id = $producto->first()->id;
+            $precio_venta = $producto->first()->precio_venta;
+            $i = Item::create([
+                'producto_id' => $producto->id,
+                'precio' => $producto->precio_venta,
+                'estado' => '1',
+            ]);
+
+            ItemsXOrden::create([
+                'item_id' => $i->id,
+                'orden_id' => $this->orden->id,
+                'estado' => '1',
+
+            ]);
+            $this->reset('codigoBarras');
+
+        }
+
+
+
+
     }
 
     public function render()

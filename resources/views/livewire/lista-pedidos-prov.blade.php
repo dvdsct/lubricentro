@@ -65,7 +65,7 @@
                                     <i class="fas fa-list">
                                     </i>
                                     </a> --}}
-                                    <a class="btn btn-info btn-sm" href="{{ route('pedidos.edit', $p->id) }}">
+                                    <a class="btn btn-info btn-sm" href="{{ route('pedidos.show', $p->id) }}">
                                         <i class="fas fa-truck"></i>
                                     </a>
                                     @can('')
