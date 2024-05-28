@@ -20,6 +20,7 @@
 
         <table class="table table-striped">
             <thead>
+                <th>ID</th>
                 <th>codigo</th>
                 <th>Descripcion</th>
                 <th>Precio de venta</th>
@@ -29,15 +30,11 @@
             <tbody>
                 @foreach ($productos as $p)
                 <tr>
+                    <td>{{ $p->id }}</td>
                     <td>{{ $p->codigo }}</td>
                     <td>{{ $p->descripcion }}</td>
-                    <td>
-                        @if($p->costo != null)
-                        ${{ $p->costo }}
-
-                        @endif
-                    </td>
-                    <td></td>
+                    <td>{{ $p->precio_venta }}</td>
+                    <td> ${{ $p->costo }}</td>
                     <td>{{ $p->proveedores->perfiles->personas->nombre }}</td>
                 </tr>
                 @endforeach
