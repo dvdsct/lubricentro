@@ -59,13 +59,13 @@
                             </td>
                             @endif
                             <td class="p-1">
-                                @if ($t->estado == 700)
-                                <button class="btn btn-secondary" disabled href="{{ route('ordenes.show', $t->id) }}">Atendido</button>
+                                @if ($t->estado == '100')
+                                <button class="btn btn-secondary" disabled >Atendido</button>
                                 @else
 
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-info btn-sm">Atender</button>
-                                    <button type="button" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                    <a type="button" class="btn btn-info btn-sm" href="{{ route('ordenes.show', $t->id) }}">Atender</a>
+                                    <button type="button" class="btn btn-danger btn-sm"  wire:click="cancelTurn('{{ $t->id }}')"><i class="fas fa-trash"></i></button>
                                 </div>
 
 <!--                                 <button class="btn btn-info btn-sm" href="{{ route('ordenes.show', $t->id) }}">Atender</button>

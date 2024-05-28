@@ -52,6 +52,7 @@ class FormCreateOrder extends Component
     public $servicio;
     public $vehiculos;
     public $fecha;
+    public $fechaSelected;
     public $horario;
     public $motivo;
     public $producto;
@@ -93,6 +94,7 @@ class FormCreateOrder extends Component
 
     {
         $this->fecha = $fecha;
+        $this->fechaSelected = $fecha;
 
         $perfil = Perfil::where('user_id', Auth::user()->id)->get();
         $this->cajero = Cajero::where('perfil_id', $perfil->first()->id)->get();
@@ -117,12 +119,14 @@ class FormCreateOrder extends Component
     {
 
         $this->fecha = Carbon::parse($this->fecha)->addDay()->format('Y-m-d');
+        $this->fechaSelected = Carbon::parse($this->fechaSelected)->addDay()->format('Y-m-d');
     }
 
     #[On('change-yes')]
     public function change_yes()
     {
         $this->fecha = Carbon::parse($this->fecha)->subDay()->format('Y-m-d');
+        $this->fechaSelected = Carbon::parse($this->fechaSelected)->subDay()->format('Y-m-d');
     }
 
     public function search()
@@ -131,13 +135,7 @@ class FormCreateOrder extends Component
     }
 
 
-    // public function upMarcas(){
 
-    //     $this->marcas = ModeloVehiculo::where('tipo_vehiculo_id',$this->tipo)
-
-    //     ->get();
-
-    // }
     public function upMarcas()
     {
 
@@ -146,9 +144,6 @@ class FormCreateOrder extends Component
     }
 
 
-    public function up()
-    {
-    }
 
     public function upPerson()
     {
@@ -433,6 +428,7 @@ class FormCreateOrder extends Component
         );
         $this->modal = false;
         $this->formperson = false;
+        $this->fecha = $this->fechaSelected;
         $this->horario = Carbon::now()->format('H:i');
 
         // $this->reset('nombre');

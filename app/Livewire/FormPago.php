@@ -384,9 +384,9 @@ class FormPago extends Component
     {
         if ($this->orden->motivo == '1') {
 
-            $this->concepto = 'Lubricentro';
-        } else {
             $this->concepto = 'Lavadero';
+        } else {
+            $this->concepto = 'Lubricentro';
         }
 
         if ($this->orden->estado != 100) {

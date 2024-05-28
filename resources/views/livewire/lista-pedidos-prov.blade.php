@@ -68,7 +68,10 @@
                                     <a class="btn btn-info btn-sm" href="{{ route('pedidos.edit', $p->id) }}">
                                         <i class="fas fa-truck"></i>
                                     </a>
-                                    <a class="btn btn-danger btn-sm" href="{{ route('pedidos.destroy', $p->id) }}">
+                                    @can('')
+
+                                    @endcan
+                                    <a class="btn btn-danger btn-sm" wire:click='delPedido({{ $p->id }})'>
                                         <i class="fas fa-trash">
                                         </i>
                                     </a>

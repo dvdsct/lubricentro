@@ -15,7 +15,15 @@ class ListaPedidosProv extends Component
     {
         // $this->resetPage();
     }
- 
+
+    public function delPedido($id)
+    {
+
+        $model = PedidoProveedor::find($id);
+        $model->delete();
+    }
+
+
     public function render()
     {
         return view('livewire.lista-pedidos-prov', [
@@ -38,5 +46,4 @@ class ListaPedidosProv extends Component
                 ->paginate(20)
         ]);
     }
-       
 }
