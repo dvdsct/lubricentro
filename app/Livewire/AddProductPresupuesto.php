@@ -142,6 +142,26 @@ class AddProductPresupuesto extends Component
                 'estado' => '1',
 
             ]);
+        }else{
+
+            $producto = Producto::find($this->codigoBarras);
+
+            $producto_id = $producto->id;
+            $precio_venta = $producto->precio_venta;
+
+            $i = PresupuestoItem::create([
+                'producto_id' => $producto_id,
+                'precio' => $precio_venta,
+                'estado' => '1',
+            ]);
+
+            ItemsXPresupuesto::create([
+                'presupuesto_id' => $this->presupuesto->id,
+                'presupuesto_item_id' => $i->id,
+                'estado' => '1',
+
+            ]);
+
         }
 
 
