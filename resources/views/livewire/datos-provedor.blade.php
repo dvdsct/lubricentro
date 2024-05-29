@@ -4,7 +4,7 @@
         <div class="card card-info">
             <div class="card-header">
                 <h3 class="card-title"><strong>
-                        {{ mb_strtoupper($persona->perfiles->personas->nombre) }}
+                        {{ mb_strtoupper($proveedor->perfiles->personas->nombre) }}
                     </strong></h3>
                 <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -17,47 +17,42 @@
             <div class="card-body py-1 px-3" style="display: block;">
                 <div class="row p-2">
                     <div class="col-md-2 d-flex flex-column">
-                        <h6><strong>CUIT: </strong>{{ $persona->perfiles->personas->DNI }}</h6>
-                        <h6><strong>cuit: </strong>{{ $proveedor->cuit }}</h6>
+                        <h6><strong>CUIT: </strong>{{ $proveedor->cuit }}</h6>
                         <h6>
                             <strong>CATEGORIA: </strong>
-                            {{ \Carbon\Carbon::parse($persona->perfiles->personas->fecha_nac)->age }} años
+                            {{ \Carbon\Carbon::parse($proveedor->perfiles->personas->fecha_nac)->age }} años
                         </h6>
                     </div>
 
                     <div class="col-md-3 d-flex flex-column">
                         <h6>
-                            <strong>Email: </strong>
+                            <strong>ALIAS: </strong>
                             {{ $proveedor->perfiles->first()->personas->correos->first()->direccion  ?? ''}}
                         </h6>
 
-
                         <h6>
-                            <strong>Telefono: </strong>
+                            <strong>TELEFONO: </strong>
                             {{-- {{ optional($proveedor->perfiles->personas->telefonos)->first()->numero ?? '-' }} --}}
                         </h6>
                     </div>
 
                     <div class="col-md-4 d-flex flex-column">
                         <h6>
-                            <strong>Domicilio: </strong>
+                            <strong>DIRECCION: </strong>
                             {{-- {{ $proveedor->perfiles->personas->direcciones->first()->barrio ?? '-' }} --}}
                         </h6>
 
                         <h6>
-                            <strong>Cumpleaños: </strong>
-                            {{ \Carbon\Carbon::parse($proveedor->perfiles->personas->fecha_nac)->translatedFormat('j \\d\\e F', 'es') }}
+                            <strong>EMAIL: </strong>
+                            {{ $proveedor->perfiles->first()->personas->correos->first()->direccion  ?? ''}}
                         </h6>
-
-
-
                     </div>
 
                     <div class="col-md-3 d-flex flex-column"
                         style="display: flex; justify-content: flex-end; align-items: flex-end;">
                         <a href="" class="nav-link" style="display: flex; justify-content: flex-end;"
                             data-toggle="modal" data-target="#modal-datos-pac">
-                            <i class="fas fa-edit"></i> Completar datos del proveedor
+                            <i class="fas fa-edit"></i> EDITAR
                         </a>
                     </div>
                     @can('xx')
@@ -65,7 +60,7 @@
                             style="display: flex; justify-content: flex-end; align-items: flex-end;">
                             <a href="" class="nav-link" style="display: flex; justify-content: flex-end;"
                                 data-toggle="modal" data-target="#modal-datos-pac">
-                                <i class="fas fa-edit"></i> Completar datos del proveedor
+                                <i class="fas fa-edit"></i> EDITAR
                             </a>
                         </div>
                     @endcan
@@ -74,7 +69,7 @@
             </div>
         </div>
         @can('xx')
-            <!-- MODAL PARA COMPLETAR DATOS DE Cliente  -->
+            <!-- MODAL PARA COMPLETAR DATOS DEL PROVEEDOR  -->
 
             <div class="modal fade" id="modal-datos-pac" style="display: none;" aria-hidden="true" wire:ignore.self>
                 <div class="modal-dialog modal-l">
