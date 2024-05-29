@@ -17,10 +17,9 @@ return new class extends Migration
 
             $table->unsignedBigInteger('tipo_vehiculo_id')->nullable();
             $table->foreign('tipo_vehiculo_id')
-            ->references('id')
-            ->on('tipo_vehiculos')
-            ->onDelete('cascade');
-
+                ->references('id')
+                ->on('tipo_vehiculos')
+                ->onDelete('cascade');
             $table->unsignedBigInteger('marca_vehiculo_id');
             $table->foreign('marca_vehiculo_id')
             ->references('id')

@@ -139,8 +139,16 @@ class FormCreateOrder extends Component
     public function upMarcas()
     {
 
-        $this->modelos = ModeloVehiculo::where('tipo_vehiculo_id', $this->tipo)
+        $this->marcas = MarcaVehiculo::where('tipo_vehiculo_id', $this->tipo)
             ->get();
+    }
+    public function upModelos()
+    {
+        // dd($this->marca . $this->tipo   );
+        $this->modelos = ModeloVehiculo::where('marca_vehiculo_id', $this->marca)
+            ->where('tipo_vehiculo_id', $this->tipo)
+            ->get();
+        // dd($this->marca   );
     }
 
 
