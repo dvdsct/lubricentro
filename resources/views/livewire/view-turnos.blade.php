@@ -16,7 +16,7 @@
         </div>
 
         <!-- BOTON PARA GENERAR NUEVO TURNO -->
-        <div class="col-md-2 pt-2">
+        <div class="pt-2 col-md-2">
             @can('caja')
             <button type="button" class="btn btn-block btn-info" data-target="modal-default" wire:click="$dispatchTo('form-create-order', 'modal-order')">
                 <i class="fas fa-plus-circle"></i> Nuevo Turno</button>
@@ -24,7 +24,7 @@
         </div>
     </div>
 
-    <div class="row pt-2">
+    <div class="pt-2 row">
         <!-- TABLA LUBRICENTRO -->
         <div class="col-md-6">
             <div class="card">
@@ -35,7 +35,7 @@
                         </span>
                     </thead>
                     @if ($turnlub->isEmpty())
-                    <h6 class="font-italic pt-2 pl-3"> Aun no hay turnos asignados para este día!</h6>
+                    <h6 class="pt-2 pl-3 font-italic"> Aun no hay turnos asignados para este día!</h6>
                     @else
                     <thead>
                         <th class="pr-0">ORDEN</th>
@@ -86,7 +86,7 @@
                         </span>
                     </thead>
                     @if ($turnlav->isEmpty())
-                    <h6 class="font-italic pt-2 pl-3"> Aun no hay turnos asignados para este día!</h6>
+                    <h6 class="pt-2 pl-3 font-italic"> Aun no hay turnos asignados para este día!</h6>
                     @else
                     <thead>
                         <th>ORDEN</th>
@@ -108,17 +108,15 @@
                                 <span class="badge bg-primary">{{ $t->vehiculos->dominio }}</span>
                             </td>
                             @endif
-                            <td class="py-1">
-
-
+                            <td class="p-1">
+                                @if ($t->estado == '100')
+                                <button class="btn btn-secondary" disabled>Atendido</button>
+                                @else
                                 <div class="btn-group">
-                                    <a class="btn btn-info" href="{{ route('ordenes.show', $t->id) }}">Atender</a>
-
-                                </div>
-                                <div class="dropdown-item" {{ $des }} wire:click="cancelTurn('8')">
-                                    <i class="fas fa-trash-alt"></i> Eliminar
-
-                                </div>
+                                    <a type="button" class="btn btn-info btn-sm" href="{{ route('ordenes.show', $t->id) }}"><strong> IR </strong></a>
+                                    <button type="button" class="btn btn-danger btn-sm" wire:click="cancelTurn('{{ $t->id }}')"><i class="fas fa-trash"></i></button>
+                                </div> 
+                                @endif
                             </td>
                         </tr>
                         @endforeach
