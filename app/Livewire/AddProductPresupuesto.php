@@ -28,7 +28,8 @@ class AddProductPresupuesto extends Component
 
     public $codigoBarras;
     public $sucrusal;
-    // public $stock;
+    public $precioPres;
+    public $editPrecio = false;
     public $items;
     public $query = '';
 
@@ -60,6 +61,12 @@ class AddProductPresupuesto extends Component
     // ____________________________________
 
 
+
+    public function editPrecioPres(){
+        $this->editPrecio = true;
+
+    }
+
     // Cargar item de pedido
     public function addCantidad($id)
     {
@@ -70,20 +77,43 @@ class AddProductPresupuesto extends Component
         $p = Producto::find($item->producto_id);
 
         // dd($stock);
-        // $p->update([
-        //     'costo' => $this->precio
-        // ]);
+
         // $precio = $this->precio;
+
+
 
         if ($this->presupuesto->estado == '1') {
 
-            $item->update([
-                'cantidad' => $this->cantidad,
-                'precio' => $p->precio_venta,
-                'subtotal' => $p->precio_venta *  $this->cantidad,
-                'estado' => '2',
+            if($this->editPrecio){
 
-            ]);
+                $p->update([
+                    'precio_presupuesto' => $this->precioPres
+                ]);
+
+                $item->update([
+                    'cantidad' => $this->cantidad,
+                    'precio_presupuesto' => $this->precioPres,
+                    'subtotal' => $this->precioPres *  $this->cantidad,
+                    'estado' => '2',
+
+                ]);
+
+            }else{
+
+                $p->update([
+                    'precio_presupuesto' => $p->precio_venta
+                ]);
+                
+                $item->update([
+                    'cantidad' => $this->cantidad,
+                    'precio_venta' => $p->precio_venta,
+                    'subtotal' => $p->precio_venta *  $this->cantidad,
+                    'estado' => '2',
+
+                ]);
+            }
+
+
         }
         $this->reset('cantidad', 'precio');
         $this->modalProductos = false;

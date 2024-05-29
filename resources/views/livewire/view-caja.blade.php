@@ -165,7 +165,7 @@
     </div>
     @can('caja')
     @livewire('add-presupuesto')
-    @livewire('form-create-order')
+    @livewire('form-create-order',['fecha' => $fecha])
     @livewire('compra-caja', ['caja' => $caja])
     @livewire('cerrar-caja', ['caja' => $caja])
     @endcan

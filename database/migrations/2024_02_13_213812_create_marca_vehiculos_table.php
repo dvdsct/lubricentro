@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('marca_vehiculos', function (Blueprint $table) {
             $table->id();
+
+            $table->unsignedBigInteger('tipo_vehiculo_id')->nullable();
+            $table->foreign('tipo_vehiculo_id')
+                ->references('id')
+                ->on('tipo_vehiculos')
+                ->onDelete('cascade');
             $table->string('descripcion');
             $table->softDeletes();
             $table->timestamps();

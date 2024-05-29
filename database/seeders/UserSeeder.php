@@ -28,23 +28,23 @@ class UserSeeder extends Seeder
     {
 
         Sucursal::create([
-            'nombre_sucursal' => 'Lugones',
+            'nombre_sucursal' => 'Av. Lugones',
             'estado' => '1',
         ]);
 
 
         Persona::create([
             'nombre' => 'Hugo',
-            'apellido' => '',
-            'DNI' => '1111111111',
-            'fecha_nac' => '20/05/05',
+            'apellido' => 'Larcher',
+            'DNI' => '33520739',
+            'fecha_nac' => '27/10/05',
             'estado' => '1',
         ]);
         Persona::create([
             'nombre' => 'Walter',
-            'apellido' => '',
-            'DNI' => '222222222',
-            'fecha_nac' => '20/05/05',
+            'apellido' => 'Aguirre Pranzoni',
+            'DNI' => '29861378',
+            'fecha_nac' => '24/05/05',
             'estado' => '1',
         ]);
         Persona::create([
@@ -56,14 +56,14 @@ class UserSeeder extends Seeder
         ]);
 
         Persona::create([
-            'nombre' => 'cliente',
+            'nombre' => 'Consumidor final',
             'apellido' => '',
             'DNI' => '0000000',
             'fecha_nac' => '1/12/05',
             'estado' => '1',
         ]);
         Persona::create([
-            'nombre' => 'proveedor',
+            'nombre' => 'Proveedor',
             'apellido' => '',
             'DNI' => '0000000',
             'fecha_nac' => '1/12/05',

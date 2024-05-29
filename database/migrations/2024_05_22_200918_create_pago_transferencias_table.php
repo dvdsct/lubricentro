@@ -24,7 +24,12 @@ return new class extends Migration
             ->on('pagos')
             ->onDelete('cascade');
 
-            $table->date('vencimiento');
+            $table->unsignedBigInteger('caja_id');
+            $table->foreign('caja_id')
+            ->references('id')
+            ->on('cajas')
+            ->onDelete('cascade');
+
             $table->string('subtotal');
             $table->string('total');
             $table->string('nro_cupon')->nullable();

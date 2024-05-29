@@ -13,28 +13,18 @@ class TipoVehiculoSeeder extends Seeder
      */
     public function run(): void
     {
-        $tipos=[
-            'Sedán',
-            'Hatchback',
-            'Coupé',
-            'SUV (Vehículo utilitario deportivo)',
-            'Convertible',
-            'Pick-up',
-            'Furgoneta',
-            'Motocicleta o Ciclomotor',
-            'Vehículo de lujo',
-            'VAN',
-            'Otro'
+        $tipos = [
+            ['AUTO', 'FORD', 'Bronco',],
+            ['CAMIONETA', 'VOLKSWAGEN', 'Transporter',]
         ];
 
 
-        foreach ($tipos as $t){
+        foreach ($tipos as $t) {
 
             TipoVehiculo::create([
 
-                'descripcion'=>$t
+                'descripcion' => $t[0]
             ]);
-
         }
     }
 }

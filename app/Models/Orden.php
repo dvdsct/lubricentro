@@ -16,7 +16,8 @@ class Orden extends Model
         'motivo' ,
         'horario' ,
         'estado' ,
-        'sucursal_id'
+        'sucursal_id',
+        'fecha_turno',
     ];
 
     protected $table = 'ordens';

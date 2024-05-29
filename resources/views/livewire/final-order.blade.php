@@ -1,8 +1,6 @@
 <div>
 
 
-
-
     <div class="row" style="display: flex; justify-content: end;">
         @if ($orden->estado == 100)
         .

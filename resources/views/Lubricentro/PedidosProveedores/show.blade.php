@@ -9,9 +9,8 @@
 @section('content')
 
 
-@livewire('datos-provedor',['orden' => $pedido, 'persona'=> $proveedor])
-@livewire('add-products-p-p')
-
+@livewire('datos-provedor',['orden' => $pedido, 'proveedor'=> $proveedor])
+@livewire('add-products-p-p',['pedido' => $pedido, 'proveedor'=> $proveedor])
 
 @stop
 

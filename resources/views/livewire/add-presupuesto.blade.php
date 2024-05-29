@@ -3,7 +3,7 @@
 
     <!-- MODAL PARA REALIZAR UN NUEVO PRESUPUESTO -->
 
-    <div class="modal fade show" id="modal-default" style="display: block; padding-right: 17px;background-color:rgba(0, 0, 0, 0.5)" role="dialog">
+    <div class="modal fade show" id="modal-default" style="display: block; background-color: rgba(0, 0, 0, 0.5);" role="dialog">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-info">
@@ -16,7 +16,7 @@
                 </div>
                 <div class="modal-body">
                     @if ($formperson == false)
-                    <div class="row pt-2 d-flex justify-content-between">
+                    <div class="pt-2 row d-flex justify-content-between">
                         <h4 class="pl-2"> <strong> CLIENTE </strong> </h4>
                     </div>
                     @if ($cliente == null)
@@ -45,12 +45,12 @@
                     </div>
                     @else
                     <!-- MUESTRA NOMBRE APELLIDO Y DNI DEL CLIENTE SELECCIONADO -->
-                    <div class="row px-3">
-                        <h2> <span class="font-italic float-right badge bg-secondary"> {{ $nombre }}
+                    <div class="px-3 row">
+                        <h2> <span class="float-right font-italic badge bg-secondary"> {{ $nombre }}
                                 {{ $apellido }} - {{ $dni }} </span> </h2>
 
                         <!-- BOTON ELIMINAR CLIENTE SELECCIONADO -->
-                        <div class="col-1 pl-2">
+                        <div class="pl-2 col-1">
                             <button class="btn btn-danger" wire:click='formPerson'>
                                 <div class="icon">
                                     <i class="fas fa-user-minus"></i>
@@ -65,10 +65,10 @@
 
                     @if ($formperson == true)
                     <!-- SECCION DONDE SE CREA EL NUEVO CLIENTE -->
-                    <div class="row pl-4">
+                    <div class="pl-4 row">
                         <h4><strong> Agregar nuevo cliente </strong> </h4>
                     </div>
-                    <div class="row px-3">
+                    <div class="px-3 row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="inputCliente" class="col-sm-2 col-form-label">Nombre</label>
@@ -111,9 +111,9 @@
                                 <input type="date" class="form-control" id="inputCliente" wire:model='fecha_nac'>
                             </div>
                         </div>
-                        <div class="col-md-12 pt-2">
+                        <div class="pt-2 col-md-12">
                             <div class="form-group d-flex justify-content-end">
-                                <button class="btn btn-danger mr-2" wire:click='formPerson'>Cancelar</button>
+                                <button class="mr-2 btn btn-danger" wire:click='formPerson'>Cancelar</button>
                                 <button class="btn btn-success" wire:click='addClient'>Guardar</button>
                             </div>
                         </div>

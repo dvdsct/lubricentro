@@ -13,12 +13,15 @@ class LwProductos extends Component
     public $head = ['descripcion', 'costo'];
     public $list;
     public $producto;
-    // public $productos;
+    public $query;
 
-    public $query = ' ';
+    // public function mount(){
 
-    public function search()
-    {
+    //     $this->list = Producto::all();
+
+    // }
+
+    public function search(){
         $this->resetPage();
     }
 
@@ -32,11 +35,10 @@ class LwProductos extends Component
 
     public function render()
     {
-        return view('livewire.lw-productos', [
-            'productos' => Producto::where('descripcion','like', '%'. $this->query .'%')
-            ->orWhere('codigo','like', '%'. $this->query .'%')
-            ->orderBy('descripcion', 'desc')
-            ->paginate(10)
+        return view('livewire.lw-productos',[
+            'productos' => Producto::where('descripcion','like','%'.$this->query .'%')
+            ->orWhere('codigo','like','%'.$this->query .'%')
+            ->paginate(20)
         ]);
     }
 }

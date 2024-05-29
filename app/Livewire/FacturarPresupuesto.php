@@ -15,6 +15,7 @@ class FacturarPresupuesto extends Component
     public $vehiculo;
     public $horario;
     public $modalOrdenPres;
+    public $fecha;
 
     public function mount($presupuesto)
     {

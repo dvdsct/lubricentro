@@ -70,7 +70,8 @@ class AddProductsPP extends Component
             $n_costo = $p->costo + (($p->costo/100) * 60);
 
             $p->update([
-                'precio_venta' => $n_costo
+                'precio_venta' => $n_costo,
+                'precio_presupuesto' => $n_costo,
             ]);
 
             $stock = Stock::firstOrCreate(

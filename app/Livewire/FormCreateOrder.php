@@ -52,6 +52,7 @@ class FormCreateOrder extends Component
     public $servicio;
     public $vehiculos;
     public $fecha;
+    public $fechaSelected;
     public $horario;
     public $motivo;
     public $producto;
@@ -89,10 +90,14 @@ class FormCreateOrder extends Component
 
 
 
-    public function mount()
+    public function mount($fecha)
+
     {
+        $this->fecha = $fecha;
+        $this->fechaSelected = $fecha;
+
         $perfil = Perfil::where('user_id', Auth::user()->id)->get();
-        $this->cajero = Cajero::where('perfil_id' , $perfil->first()->id)->get();
+        $this->cajero = Cajero::where('perfil_id', $perfil->first()->id)->get();
         $this->caja = Caja::where('cajero_id', $this->cajero->first()->id)->get();
 
 
@@ -109,30 +114,44 @@ class FormCreateOrder extends Component
     }
 
 
+    #[On('change-day')]
+    public function change_day()
+    {
+
+        $this->fecha = Carbon::parse($this->fecha)->addDay()->format('Y-m-d');
+        $this->fechaSelected = Carbon::parse($this->fechaSelected)->addDay()->format('Y-m-d');
+    }
+
+    #[On('change-yes')]
+    public function change_yes()
+    {
+        $this->fecha = Carbon::parse($this->fecha)->subDay()->format('Y-m-d');
+        $this->fechaSelected = Carbon::parse($this->fechaSelected)->subDay()->format('Y-m-d');
+    }
+
     public function search()
     {
         $this->resetPage();
     }
 
 
-    // public function upMarcas(){
 
-    //     $this->marcas = ModeloVehiculo::where('tipo_vehiculo_id',$this->tipo)
-
-    //     ->get();
-
-    // }
-    public function upMarcas(){
-
-        $this->modelos = ModeloVehiculo::where('tipo_vehiculo_id',$this->tipo)
-      ->get();
-
-    }
-
-
-    public function up()
+    public function upMarcas()
     {
+
+        $this->marcas = MarcaVehiculo::where('tipo_vehiculo_id', $this->tipo)
+            ->get();
     }
+    public function upModelos()
+    {
+        // dd($this->marca . $this->tipo   );
+        $this->modelos = ModeloVehiculo::where('marca_vehiculo_id', $this->marca)
+            ->where('tipo_vehiculo_id', $this->tipo)
+            ->get();
+        // dd($this->marca   );
+    }
+
+
 
     public function upPerson()
     {
@@ -265,6 +284,7 @@ class FormCreateOrder extends Component
                 'sucursal_id' => $this->caja->first()->sucursal_id,
                 'motivo' => '1',
                 'horario' => $this->horario,
+                'fecha_turno' => $this->fecha,
                 'estado' => '1'
             ]);
         } else {
@@ -276,17 +296,24 @@ class FormCreateOrder extends Component
                 'sucursal_id' => $this->caja->first()->sucursal_id,
 
                 'horario' => $this->horario,
+                'fecha_turno' => $this->fecha,
                 'estado' => '1'
             ]);
         }
 
-        if($this->presupuesto != null){
+
+        // __________________________________________________________
+        //____________________ PRESUPUESTO___________________________
+        // __________________________________________________________
+        if ($this->presupuesto != null) {
             $this->orden->update([
                 'estado' => '555'
             ]);
+            $this->presupuesto->update([
+                'estado' => '4'
+            ]);
             foreach ($this->presupuesto->itemspres as $i) {
 
-                // dd($this->presupuesto->clientes);
 
                 $p = $i->producto_id;
                 $this->producto = Producto::find($p);
@@ -295,6 +322,7 @@ class FormCreateOrder extends Component
                 $pst = $this->producto->precio_venta * floatval($i->cantidad);
 
                 if ($stock->cantidad == 0) {
+                    // dd('aqui');
                     return  $this->dispatch('nonstock');
                 } else {
 
@@ -316,20 +344,16 @@ class FormCreateOrder extends Component
                     $stock->update([
                         'cantidad' => $stock->cantidad - $i->cantidad
                     ]);
-
                 }
-
             }
-
-
-
         }
+        // END PRESUPUESTO
 
 
         $this->dispatch('added-turn');
         $this->formperson == false;
         $this->closeModal();
-        redirect('ordenes/'.$this->orden->id);
+        redirect('ordenes/' . $this->orden->id);
     }
 
 
@@ -355,12 +379,13 @@ class FormCreateOrder extends Component
     #[On('modal-order')]
     public function openModal()
     {
-        if($this->modal){
+        if ($this->modal) {
 
             $this->modal = false;
-        }else{
-        $this->modal = true;
-    }}
+        } else {
+            $this->modal = true;
+        }
+    }
 
 
 
@@ -379,7 +404,6 @@ class FormCreateOrder extends Component
         $this->dni = $this->cliente->perfiles->personas->DNI ?? '';
         $this->fecha_nac = $this->cliente->perfiles->personas->fecha_nac ?? '';
         $this->openModal();
-
     }
 
 
@@ -412,6 +436,7 @@ class FormCreateOrder extends Component
         );
         $this->modal = false;
         $this->formperson = false;
+        $this->fecha = $this->fechaSelected;
         $this->horario = Carbon::now()->format('H:i');
 
         // $this->reset('nombre');

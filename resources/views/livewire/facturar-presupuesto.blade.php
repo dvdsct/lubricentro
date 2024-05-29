@@ -34,6 +34,6 @@
 
 
 
-        @livewire('form-create-order')
+        @livewire('form-create-order',['fecha' => $fecha])
     </div>
 </div>

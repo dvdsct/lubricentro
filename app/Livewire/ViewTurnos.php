@@ -18,7 +18,8 @@ class ViewTurnos extends Component
     public $ordenes;
     public $fecha;
     public $vehiculo;
-
+    public $orden;
+    public $des;
 
     public function mount()
     {
@@ -31,16 +32,44 @@ class ViewTurnos extends Component
         $this->dispatch('modal-order')->to(FormCreateOrder::class);
     }
 
-    public function change_day($day)
+
+    #[On('change-day')]
+    public function change_day()
     {
-        if ($day == 'yes') {
-            $this->fecha = Carbon::parse($this->fecha)->subDay()->format('Y-m-d');
-        }
-        if ($day == 'tmw') {
+
             $this->fecha = Carbon::parse($this->fecha)->addDay()->format('Y-m-d');
-        }
+
     }
 
+    #[On('change-yes')]
+    public function change_yes()
+    {
+            $this->fecha = Carbon::parse($this->fecha)->subDay()->format('Y-m-d');
+
+    }
+
+    #[On('repro-turn')]
+    public function reproTurn(){
+        $turno = Orden::where('orden_id', $this->orden->id)->get();
+        $turno->update([
+
+            'estado' => '600'
+
+        ]);
+    }
+
+
+    public function cancelTurn($orden){
+        // dd($orden);
+        $turno = Orden::find($orden);
+        $turno->update([
+            'estado' => '700'
+
+        ]);
+        $this->des = 'disabled';
+
+
+    }
 
 
     #[On('added-turn')]
@@ -59,7 +88,7 @@ class ViewTurnos extends Component
             ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
             ->whereColumn('perfils.id', 'clientes.perfil_id')
             ->whereColumn('personas.id', 'perfils.persona_id')
-            ->whereDate('ordens.created_at', $this->fecha)
+            ->whereDate('ordens.fecha_turno', $this->fecha)
             ->where('motivo', '1')
             ->where('ordens.estado', '!=', '555')
             ->get();
@@ -77,11 +106,10 @@ class ViewTurnos extends Component
             ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
             ->whereColumn('perfils.id', 'clientes.perfil_id')
             ->whereColumn('personas.id', 'perfils.persona_id')
-            ->whereDate('ordens.created_at', $this->fecha)
+            ->whereDate('ordens.fecha_turno', $this->fecha)
             ->where('motivo', '2')
             ->where('ordens.estado', '!=', '555')
             ->get();
-
-        return view('livewire.view-turnos');
+ return view('livewire.view-turnos');
     }
 }

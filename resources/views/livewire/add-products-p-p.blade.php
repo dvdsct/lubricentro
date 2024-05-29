@@ -58,7 +58,7 @@
 
                             @if ($i->estado == 2)
                             {{-- Si el producto es estado 2 aun no se a recibido --}}
-                            <td class="project-actions text-right" style="width: 200px;">
+                            <td class="text-right project-actions" style="width: 200px;">
                                 <a class="btn btn-info btn-sm" wire:click='editProd({{ $i->id }})'>
                                     <i class="fas fa-pencil-alt">
                                     </i>
@@ -70,7 +70,7 @@
                                     Eliminar
                                 </a>
                                 @else
-                            <td class="project-actions text-right" style="width: 150px;">
+                            <td class="text-right project-actions" style="width: 150px;">
                                 <a class="btn btn-danger btn-sm" wire:click='delProd({{ $i->id }})' wire:confirm="Si borras este articulo tendras que volver a agregarlo, estas seguro">
                                     <i class="fas fa-trash">
                                     </i>
@@ -130,7 +130,7 @@
 
         <!-- MODAL PARA AGREGAR NUEVO ITEM  -->
         @if ($modal == true)
-        <div class="modal fade show" id="modal-lg" style="display: block; padding-right: 17px;background-color:rgba(0, 0, 0, 0.5)">
+        <div class="modal fade show" id="modal-lg" style="display: block; background-color: rgba(0, 0, 0, 0.5);">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header bg-info">
@@ -141,15 +141,15 @@
                     </div>
                     <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
                         <!-- BUSCADOR DE PRODUCTOS  -->
-                        <div class="input-group input-group-sm pb-2" style="width: 300px;">
-                            <input type="text" wire:model='query' wire:keydown='search' class="form-control float-right" placeholder="Buscar">
+                        <div class="pb-2 input-group" style="width: 300px;">
+                            <input type="text" wire:model='query' wire:keydown='search' class="float-right form-control" placeholder="Buscar">
                             <div class="input-group-append">
                                 <button type="submit" class="btn btn-default">
                                     <i class="fas fa-search"></i>
                                 </button>
                             </div>
                         </div>
-                        <table class="table table-bordered  table-hover">
+                        <table class="table table-bordered table-hover">
                             <thead>
                                 <tr>
                                     <th style="width: 10px">#</th>
@@ -163,6 +163,7 @@
                                 <tr wire:click='addedProduct({{ $i->id }})' wire:loading.attr="disabled">
                                     <td style="cursor: pointer;">{{ $i->id }}</td>
                                     <td style="cursor: pointer;">{{ $i->descripcion }} - {{ $i->codigo }}</td>
+                                    <td style="cursor: pointer;"></td>
                                     @if ($i->cantidad == 0)
                                     <td><span class="badge bg-danger">{{ $i->cantidad }}</span></td>
                                     @else
@@ -181,5 +182,6 @@
         @endif
 
     </div>
+
 
 </div>

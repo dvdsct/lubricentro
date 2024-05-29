@@ -34,6 +34,10 @@ return new class extends Migration
             $table->string('codigo_de_barras')->nullable();
             $table->string('codigo')->nullable();
             $table->string('precio_venta')->nullable();
+            $table->string('precio_cliente1')->nullable();
+            $table->string('precio_cliente2')->nullable();
+            $table->string('precio_cliente3')->nullable();
+            $table->string('precio_presupuesto')->nullable();
             $table->string('estado')->default('1');
             $table->softDeletes();
             $table->timestamps();

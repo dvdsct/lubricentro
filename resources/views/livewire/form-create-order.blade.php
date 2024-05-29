@@ -5,7 +5,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header bg-info">
-                        <h4 class="modal-title"> <strong> ORDEN </strong> </h4>
+                        <h4 class="modal-title"> <strong> ORDEN</strong> </h4>
                         <button type="button" class="close" wire:click='closeModal'>
                             <span aria-hidden="true">×</span>
                         </button>
@@ -13,6 +13,29 @@
 
                     <!-- SI EL CLIENTE NO EXISTE - CREAR NUEVO CLIENTE -->
                     <div class="modal-body">
+                        <!-- FECHA Y HORA DEL TURNO -->
+                        <div class="row  d-flex justify-content-between">
+                            <h4 class="pl-2"> <strong> FECHA Y HORA </strong> </h4>
+                        </div>
+                        <div class="px-3 d-flex justify-content-center pb-1">
+                            <div class="row">
+                                <div class="d-flex justify-content-between">
+                                    <div class="col-md-6 col-xs-12">
+                                        <div class="input-group input-group-lg">
+                                            <input type="date" class="form-control" aria-label="Sizing example input"
+                                                aria-describedby="inputGroup-sizing-lg" wire:model='fecha'>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-xs-12">
+                                        <div class="input-group input-group-lg">
+                                            <input type="time" class="form-control" aria-label="Sizing example input"
+                                                aria-describedby="inputGroup-sizing-lg" wire:model='horario'>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- SECTOR AL QUE SE LE ASIGNARA EL TURNO -->
                         <div class="row  d-flex justify-content-between">
                             <h4 class="pl-2"> <strong> SERVICIO </strong> </h4>
@@ -20,27 +43,20 @@
                         <div class="px-3 d-flex justify-content-center pb-1">
                             <div class="row">
                                 <div class="d-flex justify-content-between">
-                                    <div class="col-md-4 col-xs-12">
+                                    <div class="col-md-6 col-xs-12">
                                         <button wire:click="setMot('lub')" type="button"
-                                            class="btn btn-lg {{ $s_btnLub }}" style="width: 150px; ">
+                                            class="btn btn-lg {{ $s_btnLub }}" style="width: 150px;">
                                             <i class="fas fa-tools"></i>
                                             <h6 style="display: inline;"><strong>Lubricentro</strong></h6>
                                         </button>
                                     </div>
 
-                                    <div class="col-md-4">
-                                        <button wire:click="setMot('lav')" class="btn btn-lg {{ $s_btnLav }}"
-                                            style="width: 150px;">
+                                    <div class="col-md-6 col-xs-12">
+                                        <button wire:click="setMot('lav')" type="button"
+                                            class="btn btn-lg {{ $s_btnLav }}" style="width: 150px;">
                                             <i class="fas fa-hand-sparkles"></i>
                                             <h6 style="display: inline;"> <strong> Lavadero </strong> </h6>
                                         </button>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="input-group input-group-lg">
-                                            <input type="time" class="form-control" aria-label="Sizing example input"
-                                                aria-describedby="inputGroup-sizing-lg" wire:model='horario'>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -167,7 +183,7 @@
                                 <!-- SI EL VEHICULO NO EXISTE, CREAR NUEVO VEHICULO -->
                                 <div class="px-3">
                                     <div class="row">
-                                        <div class="col">
+                                        <div class="col-6">
                                             <select class="form-control" aria-label="Default select example"
                                                 wire:model='tipo' wire:change='upMarcas'>
                                                 <option selected>Tipo de vehiculo</option>
@@ -177,16 +193,17 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        {{-- <div class="col-md-6">
+                                        <div class="col-md-6">
                                             <select class="form-control" aria-label="Default select example"
                                                 wire:model='marca' wire:change='upModelos'>
                                                 <option selected>Marca</option>
-                                                @foreach ($marcas as $marca)
-                                                    <option value="{{ $marca->marcas->id }}">{{ $marca->marcas->descripcion }} - {{ $marca->descripcion }}
+                                                @foreach ($marcas as $m)
+                                                    <option value="{{ $m->id }}">
+                                                        {{ $m->descripcion }}
                                                     </option>
                                                 @endforeach
                                             </select>
-                                        </div> --}}
+                                        </div>
 
 
 
@@ -198,8 +215,9 @@
                                             <select class="form-control" aria-label="Default select example"
                                                 wire:model='modelo'>
                                                 <option selected>Modelo</option>
-                                                @foreach ($modelos as $modelo)
-                                                    <option value="{{ $modelo->id }}">{{ $modelo->marcas->descripcion }} - {{ $modelo->descripcion }}
+                                                @foreach ($modelos as $mo)
+                                                    <option value="{{ $mo->id }}">
+                                                        {{ $mo->descripcion }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -209,8 +227,8 @@
                                             <select class="form-control" aria-label="Default select example"
                                                 wire:model='color'>
                                                 <option selected>Color</option>
-                                                @foreach ($colores as $color)
-                                                    <option value="{{ $color->id }}">{{ $color->descripcion }}
+                                                @foreach ($colores as $co)
+                                                    <option value="{{ $co->id }}">{{ $co->descripcion }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -304,6 +322,16 @@
             </div>
 
             @script
+                <script>
+                    $wire.on('nonstock', (event) => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "La cantidad ingresada supera a el Stock actual!",
+                        });
+                    });
+                </script>
+
                 <script>
                     $(document).ready(function() {
                         $('#mySelect').select2();
