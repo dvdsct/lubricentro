@@ -13,8 +13,12 @@ class Producto extends Model
         'stock',
         'costo',
         'codigo',
+        'subcategoria_producto_id',
         'precio_venta',
-        'precio_presupuesto'
+        'categcategoria_producto_idoria',
+        'precio_presupuesto',
+        'codigo_de_barras'
+
     ];
 
 
