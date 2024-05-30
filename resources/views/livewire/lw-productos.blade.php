@@ -21,21 +21,35 @@
         <table class="table table-striped">
             <thead>
                 <th>ID</th>
-                <th>codigo</th>
-                <th>Descripcion</th>
-                <th>Precio de venta</th>
-                <th>Costo</th>
-                <th>Proveedor</th>
+                <th>PRODUCTO</th>
+                <th>CATEGORIA</th>
+                <th>CODIGO DE BARRAS</th>
+                <th>PRECIO DE VENTA</th>
+                <th>COSTO</th>
+                <th>PROVEEDOR</th>
+                <th></th>
             </thead>
             <tbody>
                 @foreach ($productos as $p)
                 <tr>
                     <td>{{ $p->id }}</td>
-                    <td>{{ $p->codigo }}</td>
-                    <td>{{ $p->descripcion }}</td>
-                    <td>{{ $p->precio_venta }}</td>
-                    <td> ${{ $p->costo }}</td>
+                    <td>{{ $p->codigo }} {{ $p->descripcion }} </td>
+                    <td>{{ $p->categoria_productos }}</td>     <!-- COLOCAR LA CATEGORIA DEL PRODUCTO -->
+                    <td>{{ $p->codigo_de_barras}}</td>
+                    <td> $ {{ number_format($p->precio_venta ?? 0, 2) }}</td>
+                    <td> ${{ number_format($p->costo  ?? 0, 2) }}</td>
                     <td>{{ $p->proveedores->perfiles->personas->nombre }}</td>
+                    <td class="project-actions text-right">
+
+                        <button class="btn btn-info btn-sm" >
+                            <i class="fas fa-pencil-alt">
+                            </i>
+
+                        </button>
+                        <a class="btn btn-danger btn-sm"  wire:confirm="¿Esta seguro de que desea eliminar este registro?">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
