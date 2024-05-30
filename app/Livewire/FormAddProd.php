@@ -64,9 +64,8 @@ class FormAddProd extends Component
     }
 
 
-    public function updatedCosto($costo){
-        dd($costo);
-        $this->precioVenta = floatval($this->costo) + (floatval($this->costo) / 100)* 60;
+    public function updatingCosto($costo){
+        $this->precioVenta = floatval($costo) + (floatval($costo) / 100)* 60;
 
     }
 
