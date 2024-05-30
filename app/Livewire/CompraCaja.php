@@ -32,8 +32,8 @@ class CompraCaja extends Component
     public $montoConInt;
     public $efectivo;
 
-    #[Validate('required',message:'Debe indicar un medio de pago!')]
-    public $medioPago;
+    // #[Validate('required',message:'Debe indicar un medio de pago!')]
+    // public $medioPago;
     #[Validate('required',message:'Debe indicar un monto!')]
     public $montoAPagar;
     #[Validate('required',message:'Debe indicar el concepto!')]
@@ -83,7 +83,7 @@ class CompraCaja extends Component
             'factura_id' => $f->id,
             'proveedor_id' => '1',
             'in_out' => 'out',
-            'medio_pago_id' => $this->medioPago,
+            'medio_pago_id' => '1',
             'tipo_pago_id' => $this->tipoPago,
             'concepto' => $this->concepto,
             'efectivo' => 0,
