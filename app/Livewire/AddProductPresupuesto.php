@@ -115,7 +115,7 @@ class AddProductPresupuesto extends Component
 
 
         }
-        $this->reset('cantidad', 'precio');
+        $this->reset('cantidad', 'precio','editPrecio');
         $this->modalProductos = false;
         $this->dispatch('suma-items');
     }
@@ -211,6 +211,7 @@ class AddProductPresupuesto extends Component
 
         $item = PresupuestoItem::find($id);
         $item->delete();
+        $this->reset('editPrecio');
     }
     // _________________________________________________________
 
