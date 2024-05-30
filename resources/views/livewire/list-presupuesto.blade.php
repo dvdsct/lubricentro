@@ -29,10 +29,10 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Fecha</th>
-                                <th>Cliente</th>
-                                <th>Monto</th>
-                                <th>Estado</th>
+                                <th>FECHA</th>
+                                <th>CLIENTE</th>
+                                <th>MONTO</th>
+                                <th>ESTADO</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -43,8 +43,16 @@
                                 <td>{{ $pre->id }}</td>
                                 <td>{{ Carbon\Carbon::parse($pre->created_at)->diffForHumans() }}</td>
                                 <td>{{ $pre->clientes->perfiles->personas->nombre . ' ' . $pre->clientes->perfiles->personas->apellido }}</td>
-                                <td> $ {{ $pre->total }}</td>
-                                <td> {{$pre->estado}}</td>
+                                <td> ${{ $pre->itemspres->isEmpty() ? '0.00' : $pre->itemspres->sum('subtotal') }}</td>
+                                <td>
+                                @if($pre->estado==1)
+                                <span class="text">
+                                        <small class="badge badge-danger"><i class="far fa-clock"></i> PENDIENTE</small>
+                                    </span>
+                                @elseif($pre->estado==2)
+                                <small class="badge badge-success"><i class="far fa-check"></i> COBRADO </small>
+                            @endif
+                            </td>
                                 <td style="text-align: center;">
                                     <a href="{{ route('presupuesto.show', $pre->id) }}" class="btn btn-info"> <i class="fas fa-eye"></i> Ver detalle</a>
                                 </td>
