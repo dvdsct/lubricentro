@@ -40,15 +40,15 @@
                     <td>{{ $p->codigo_de_barras}}</td>
                     <td> $ {{ number_format($p->precio_venta ?? 0, 2) }}</td>
                     <td> ${{ number_format($p->costo  ?? 0, 2) }}</td>
-                    <td>{{ $p->proveedores->perfiles->personas->nombre }}</td>
+                    <td>{{ $p->proveedores->first()->perfiles->personas->nombre }}</td>
                     <td class="text-right project-actions">
 
-                        <button class="btn btn-info btn-sm" >
+                        <button class="btn btn-info btn-sm" wire:click='dispatchTo("form-add-prod","modal-prod-edit",{id:{{$p->id}}})'>
                             <i class="fas fa-pencil-alt">
                             </i>
 
                         </button>
-                        <a class="btn btn-danger btn-sm"  wire:confirm="¿Esta seguro de que desea eliminar este registro?">
+                        <a class="btn btn-danger btn-sm" wire:click='delProd({{$p->id}})'  wire:confirm="¿Esta seguro de que desea eliminar este registro?">
                             <i class="fas fa-trash"></i>
                         </a>
                     </td>

@@ -33,6 +33,15 @@ class LwProductos extends Component
         // dd('here');
     }
 
+
+
+    public function delProd(string $id)
+    {
+
+        $item = Producto::find($id);
+        $item->delete();
+    }
+
     public function render()
     {
         return view('livewire.lw-productos',[

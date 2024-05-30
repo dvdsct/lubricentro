@@ -6,6 +6,7 @@ use App\Models\PedidoProveedor;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Producto;
+use App\Models\ProductoXProveedor;
 use App\Models\Proveedor;
 use App\Models\Proveedores;
 use App\Models\Stock;
@@ -2264,7 +2265,6 @@ class ProductoSeed extends Seeder
         foreach ($productos as $prod) {
 
             $p = Producto::create([
-                'proveedor_id' => '1',
                 'costo'  => '0',
                 'descripcion' => $prod[1],
                 'codigo' => $prod[0],
@@ -2281,6 +2281,11 @@ class ProductoSeed extends Seeder
                 'ideal' => '8',
                 'escaso' => '3',
             ]);
+            ProductoXProveedor::create([
+                'proveedor_id' => '1',
+                'producto_id' => $p->id,
+            ]
+            );
         }
 
 
@@ -2298,7 +2303,6 @@ class ProductoSeed extends Seeder
             foreach ($productos2 as $prod2) {
     
                 $p = Producto::firstOrCreate([
-                    'proveedor_id' => '1',
                     'precio_venta'  => $prod2[2],
                     'descripcion' => $prod2[1],
                     'codigo' => $prod2[0],
@@ -2315,31 +2319,16 @@ class ProductoSeed extends Seeder
                     'ideal' => '8',
                     'escaso' => '3',
                 ]);
+
+                ProductoXProveedor::create([
+                    'proveedor_id' => '1',
+                    'producto_id' => $p->id,
+                ]
+                );
             }
 
-        $faker1 = Faker::create();
 
-        foreach (range(1, 10) as $index) {
-            DB::table('proveedors')->insert([
-                'perfil_id' => $faker1->numberBetween(1, 5),
-                'tipo' => $faker1->randomElement(['A', 'B', 'C']),
-                'cuit' => $faker1->unique()->numerify('##-########-#'),
-            ]);
-        }
 
-        $faker = Faker::create();
 
-            // foreach (range(1, 10) as $index) {
-            //     DB::table('pedido_proveedors')->insert([
-            //         'proveedor_id' => $faker->numberBetween(1, 5),
-            //         'sucursal_id' => '1',
-
-            //         'tipo_pedido_id' => $faker->numberBetween(1, 5),
-            //         'descripcion' => $faker->sentence,
-            //         'fecha_ingreso' => $faker->dateTimeThisMonth,
-            //         'monto_total' => $faker->randomFloat(2, 100, 1000),
-            //         'observaciones' => substr($faker->text(200), 0, 100),
-            //     ]);
-            // }
     }
 }

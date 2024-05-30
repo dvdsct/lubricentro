@@ -36,7 +36,7 @@ class ModeloSeeder extends Seeder
                 ['1','1','Focus III'],
                 ['1','1','Fusion'],
                 ['1','1','Galaxy'],
-                ['1','1',' selected>KA'],
+                ['1','1','KA'],
                 ['1','1','KA II'],
                 ['1','1','KA III'],
                 ['1','1','Kuga'],

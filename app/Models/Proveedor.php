@@ -8,19 +8,23 @@ use Illuminate\Database\Eloquent\Model;
 class Proveedor extends Model
 {
     use HasFactory;
-    
 
-    public function perfiles(){
 
-        return $this->belongsTo(Perfil::class,'perfil_id');
+    public function perfiles()
+    {
+
+        return $this->belongsTo(Perfil::class, 'perfil_id');
     }
 
-    public function productos(){
+    public function productos()
+    {
 
-        return $this->hasMany(Producto::class);
+        return $this->belongsToMany(Producto::class, 'producto_x_proveedors');
     }
 
-    public function pedidos(){
+
+    public function pedidos()
+    {
         return $this->hasMany(PedidoProveedor::class);
     }
 }

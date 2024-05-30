@@ -24,6 +24,8 @@ class DatosPersonales extends Component
     }
 
 
+    
+
     #[On('modal-datosPac')]
     public function modalDatosOn()
     {

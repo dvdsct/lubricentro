@@ -39,7 +39,7 @@
                             <th style="width: 12px">CANTIDAD</th>
                             <th style="width: 160px">PRECIO UNITARIO</th>
                             <th style="width: 40px">SUBTOTAL</th>
-                            <th></th>
+                            <th style="width: 160px"></th>
                         </tr>
                     </thead>
                     <tbody>

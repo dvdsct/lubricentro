@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Producto;
+use App\Models\ProductoXProveedor;
 use App\Models\Stock;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -170,7 +171,6 @@ class ProdSeed extends Seeder
             foreach ($productos2 as $prod2) {
     
                 $p = Producto::create([
-                    'proveedor_id' => '1',
                     'precio_venta'  => '0',
                     'descripcion' => $prod2[1],
                     'codigo' => $prod2[2],
@@ -186,6 +186,11 @@ class ProdSeed extends Seeder
                     'ideal' => '8',
                     'escaso' => '3',
                 ]);
+                ProductoXProveedor::create([
+                    'proveedor_id' => '1',
+                    'producto_id' => $p->id,
+                ]
+                );
             }
     }
 }

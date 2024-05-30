@@ -18,11 +18,8 @@
                     {{-- Medio de pago --}}
                     <div class="mb-3">
                         <label for="medioPago" class="form-label">Medio de Pago</label>
-                        <select class="form-control" aria-label="Default select example" wire:model.live="medioPago" id="medio_pago">
-                            <option selected>Seleccione el medio</option>
-                            @foreach ($mediosPago as $m)
-                            <option value="{{ $m->id }}">{{ $m->descripcion }}</option>
-                            @endforeach
+                        <select class="form-control" disabled aria-label="Default select example" wire:model.live="medioPago" id="medio_pago">
+                            <option value="2">Efectivo</option>
                         </select>
                         @error('medioPago')
                         <strong> <span class="text-danger">{{ $message }}</span> </strong>

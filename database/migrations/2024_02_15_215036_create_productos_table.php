@@ -13,11 +13,7 @@ return new class extends Migration
     {
         Schema::create('productos', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('proveedor_id')->nullable();
-            $table->foreign('proveedor_id')
-            ->references('id')
-            ->on('proveedors')
-            ->onDelete('cascade');
+
             $table->unsignedBigInteger('categoria_productos_id')->nullable();
             $table->foreign('categoria_productos_id')
             ->references('id')

@@ -39,6 +39,7 @@ class RolesSeeder extends Seeder
         $caja->assignRole($cajero);
         $adminCajas->assignRole($admin);
         $recibirPedido->assignRole($cajero);
+        $hacerPedido->assignRole($cajero);
         $delPedido->assignRole($admin);
         // $caja->assignRole($admin);
         $stock->assignRole($admin);

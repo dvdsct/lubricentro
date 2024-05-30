@@ -10,6 +10,7 @@ use App\Http\Controllers\TurnosController;
 use App\Http\Controllers\PedidoProveedorController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PresupuestoController;
+use App\Http\Controllers\ProveedoresController;
 use App\Http\Controllers\TarjetaController;
 
 /*
@@ -47,6 +48,7 @@ Route::middleware([
     Route::resource('presupuesto',PresupuestoController::class);
     Route::resource('tarjetas',TarjetaController::class);
     Route::resource('pagos-tarjetas',PagoTarjetaController::class);
+    Route::resource('proveedores',ProveedoresController::class);
     Route::get('/pdf/{orden}', 'App\Http\Controllers\PDFController@generatePDF')->name('pdf.orden');
     Route::get('/pdfpedido/{pedido}', 'App\Http\Controllers\PDFController@generatePedido')->name('pdf.pedido');
     Route::get('/pdfpres/{presupuesto}', 'App\Http\Controllers\PDFController@presupuesto')->name('pdf.presupuesto');
