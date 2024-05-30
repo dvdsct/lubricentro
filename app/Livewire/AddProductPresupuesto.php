@@ -72,7 +72,7 @@ class AddProductPresupuesto extends Component
     {
 
 
-        // $this->validate();
+        $this->validate();
         $item = PresupuestoItem::find($id);
         $p = Producto::find($item->producto_id);
 
@@ -93,7 +93,7 @@ class AddProductPresupuesto extends Component
                 $item->update([
                     'cantidad' => $this->cantidad,
                     'precio_presupuesto' => $this->precioPres,
-                    'subtotal' => $this->precioPres *  $this->cantidad,
+                    'subtotal' => floatval($this->precioPres) *  floatval($this->cantidad),
                     'estado' => '2',
 
                 ]);
