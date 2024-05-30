@@ -60,7 +60,7 @@ class AddSupplierOrder extends Component
             'observaciones' => $this->observaciones,
         ]);
 
-        redirect(route('pedidos.edit',$p->id));
+        redirect(route('pedidos.show',$p->id));
     }
     public function render()
     {
