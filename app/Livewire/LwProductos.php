@@ -58,7 +58,6 @@ class LwProductos extends Component
 
             // 'productos' => Producto::where('descripcion','like','%'.$this->query .'%')
             // ->orWhere('codigo','like','%'.$this->query .'%')
-            // ->orderBy('descripcion', 'desc')
             //             ->paginate(20)
         ]);
     }

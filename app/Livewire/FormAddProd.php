@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\CategoriaProducto;
 use App\Models\Producto;
+use App\Models\ProductoXProveedor;
 use App\Models\Proveedor;
 use App\Models\Stock;
 use App\Models\SubcategoriaProducto;
@@ -72,6 +73,8 @@ class FormAddProd extends Component
     public function saveproduct()
     {
         $precio  = $this->costo + (($this->costo /100)*60);
+
+         
         $p = Producto::firstOrCreate([
             'descripcion' => $this->descripcion,
             'codigo_de_barras' => $this->cod_barra,
@@ -94,6 +97,11 @@ class FormAddProd extends Component
             'cantidad' => $ns,
 
         ]);
+        ProductoXProveedor::firstOrCreate([
+            'proveedor_id' => $this->proveedor,
+            'producto_id' => $p->id
+        ]);
+
 
 
 
