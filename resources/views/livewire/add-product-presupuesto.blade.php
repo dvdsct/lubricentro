@@ -95,17 +95,23 @@
 
                                     @if ($producto->estado == 2)
                                     {{-- Si el producto es estado 2 aun no se a recibido --}}
-                                    <td class="text-right project-actions" style="width: 200px;">
-                                        <a class="btn btn-info btn-sm" wire:click='editProd({{ $producto->id }})'>
-                                            <i class="fas fa-pencil-alt">
-                                            </i>
-                                            Editar
-                                        </a>
-                                        <a class="btn btn-danger btn-sm" wire:click='delProd({{ $producto->id }})' wire:confirm="Estas seguro de que desesas eliminar este articulo?">
-                                            <i class="fas fa-trash">
-                                            </i>
-                                            Eliminar
-                                        </a>
+                                    <td class="text-right project-actions d-flex" style="width: 200px;">
+                                        <div>
+                                            
+                                            <a class="btn btn-info btn-sm" wire:click='editProd({{ $producto->id }})'>
+                                                <i class="fas fa-pencil-alt">
+                                                </i>
+                                                Editar
+                                            </a>
+                                        </div>
+                                        <div>
+                                            
+                                            <a class="btn btn-danger btn-sm" id="eliminar" wire:click='delProd({{ $producto->id }})' wire:confirm="Estas seguro de que desesas eliminar este articulo?">
+                                                <i class="fas fa-trash">
+                                                </i>
+                                                Eliminar
+                                            </a>
+                                        </div>
                                     </td>
                                     @else
                                     <td class="text-right project-actions">
