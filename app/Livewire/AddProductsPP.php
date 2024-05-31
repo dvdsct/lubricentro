@@ -88,7 +88,7 @@ class AddProductsPP extends Component
         }
 
 
-        redirect('stock');
+        redirect('pedidos');
     }
 
 
