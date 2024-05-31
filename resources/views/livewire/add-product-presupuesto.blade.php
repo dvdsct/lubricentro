@@ -59,21 +59,8 @@
                                     </td>
 
                                     <td>
-                                        @if ($editPrecio)
-                                        <div class="input-group" style="width: 160px;">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">$</span>
-                                            </div>
-                                            <input type="text" class="form-control"  placeholder="Ingresar Precio" wire:model='precioPres' wire:keydown.enter='addCantidad({{ $producto->id }})'>
-                                        </div>
-                                        @error('precioPres')
-                                        {{ $message }}
-                                        @enderror
-
-                                        @else
+                              
                                         $ {{ number_format($producto->precio ?? 0, 2) }}
-                                        <button wire:click='editPrecioPres' class="btn btn-info btn-sm"> <i class="fas fa-edit"></i> </button>
-                                        @endif
 
                                     </td>
                                     <td>

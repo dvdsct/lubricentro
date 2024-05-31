@@ -78,7 +78,6 @@ class FormAddProd extends Component
     {
 
 
-        $precio  = $this->costo + (($this->costo /100)*60);
 
 
         $p = Producto::firstOrCreate([
@@ -89,7 +88,7 @@ class FormAddProd extends Component
 
         $p->update([
             'costo' => $this->costo,
-            'precio_venta' => $precio,
+            'precio_venta' => $this->precioVenta,
         ]);
 
         $s = Stock::firstOrCreate([

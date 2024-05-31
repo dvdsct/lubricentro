@@ -62,10 +62,10 @@ class AddProductPresupuesto extends Component
 
 
 
-    public function editPrecioPres(){
-        $this->editPrecio = true;
+    // public function editPrecioPres(){
+    //     $this->editPrecio = true;
 
-    }
+    // }
 
     // Cargar item de pedido
     public function addCantidad($id)
