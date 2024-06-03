@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrdenController;
 use App\Http\Controllers\PagoTarjetaController;
+use App\Http\Controllers\PagoTransferenciaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\VentaController;
@@ -48,6 +49,7 @@ Route::middleware([
     Route::resource('presupuesto',PresupuestoController::class);
     Route::resource('tarjetas',TarjetaController::class);
     Route::resource('pagos-tarjetas',PagoTarjetaController::class);
+    Route::resource('pagos-transferencia',PagoTransferenciaController::class);
     Route::resource('proveedores',ProveedoresController::class);
     Route::get('/pdf/{orden}', 'App\Http\Controllers\PDFController@generatePDF')->name('pdf.orden');
     Route::get('/pdfpedido/{pedido}', 'App\Http\Controllers\PDFController@generatePedido')->name('pdf.pedido');

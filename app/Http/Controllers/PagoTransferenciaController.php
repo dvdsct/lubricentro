@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Caja;
 use App\Models\PagoTransferencia;
 use Illuminate\Http\Request;
 
@@ -34,9 +35,16 @@ class PagoTransferenciaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(PagoTransferencia $pagoTransferencia)
+    public function show(string $id)
     {
-        //
+        $pagos = Caja::where('caja_id', $id)->get();
+
+        return view(
+            'Lubricentro.Ventas.Transferencias.index',
+            [
+                'pagos' => $pagos
+            ]
+        );
     }
 
     /**
