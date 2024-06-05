@@ -52,7 +52,7 @@ class FormAddProd extends Component
 
     #[On('modal-prod-edit')]
     public function editProd(string $id){
-        
+
         $this->producto = Producto::find($id);
         $sp = Stock::where('producto_id',$id)->get();
         $this->descripcion =  $this->producto->descripcion;
@@ -60,7 +60,7 @@ class FormAddProd extends Component
         $this->costo =  $this->producto->costo;
         $this->codigo =  $this->producto->codigo;
         $this->stock =  $sp->first()->cantidad;
-        
+
         $this->modalProductosOn();
     }
 
@@ -69,12 +69,17 @@ class FormAddProd extends Component
         $this->precioVenta = floatval($costo) + (floatval($costo) / 100)* 60;
 
     }
+    public function updatingPrecioVenta($precio){
+        $this->precioVenta = $precio;
+
+    }
 
     public function saveproduct()
     {
-        $precio  = $this->costo + (($this->costo /100)*60);
 
-         
+
+
+
         $p = Producto::firstOrCreate([
             'descripcion' => $this->descripcion,
             'codigo_de_barras' => $this->cod_barra,
@@ -83,7 +88,7 @@ class FormAddProd extends Component
 
         $p->update([
             'costo' => $this->costo,
-            'precio_venta' => $precio,
+            'precio_venta' => $this->precioVenta,
         ]);
 
         $s = Stock::firstOrCreate([
