@@ -12,7 +12,11 @@ class PagoCtacteController extends Controller
      */
     public function index()
     {
-        //
+        $clientes = PagoCtacte::distinct('cliente_id')
+        ->with('clientes')
+        ->get();
+
+        return view();
     }
 
     /**
