@@ -36,8 +36,11 @@
                 <tr>
                     <td>{{ $p->id }}</td>
                     <td>{{ $p->codigo }} {{ $p->descripcion }} </td>
-                    <td>{{ $p->categoria_productos }}</td>     <!-- COLOCAR LA CATEGORIA DEL PRODUCTO -->
+                    <td>{{ $p->categoria_producto_id }}</td>     <!-- COLOCAR LA CATEGORIA DEL PRODUCTO -->
                     <td>{{ $p->codigo_de_barras}}</td>
+                    @if ($p->categoria_producto_id)
+                        
+                    @endif
                     <td> $ {{ number_format($p->precio_venta ?? 0, 2) }}</td>
                     <td> ${{ number_format($p->costo  ?? 0, 2) }}</td>
                     <td>{{ $p->nombre }}</td>

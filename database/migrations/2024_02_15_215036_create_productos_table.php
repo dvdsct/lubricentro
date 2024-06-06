@@ -27,8 +27,10 @@ return new class extends Migration
 
             $table->string('descripcion')->nullable();
             $table->string('costo')->nullable();
+            $table->string('monto')->nullable();
             $table->string('codigo_de_barras')->nullable();
             $table->string('codigo')->nullable();
+            $table->string('porcentaje')->nullable();
             $table->string('precio_venta')->nullable();
             $table->string('precio_cliente1')->nullable();
             $table->string('precio_cliente2')->nullable();

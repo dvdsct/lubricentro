@@ -48,6 +48,7 @@
             </div>
         </div>
 
+
     </div>
 
 
@@ -79,21 +80,21 @@
                             <td> ${{ $montoInicial }}</td>
                         </tr>
                         @foreach ($pagos as $p)
-                        <tr>
-                            <td>{{ $p->facturas->created_at->format('H:i') }} Hs.</td>
-                            <td>
-                                @if($p->in_out == 'in')
-                                <span class="badge badge-success">Ingreso</span>
-                                @elseif($p->in_out == 'out')
-                                <span class="badge badge-danger">Egreso</span>
-                                @else
-                                @endif
-                            </td>
-                            <td>{{ $p->facturas->pagos->first()->medios->descripcion ??
-                                $p->facturas->pagos->first()->tipos->descripcion }}</td>
-                            <td>{{ $p->facturas->pagos->first()->concepto}}</td>
-                            <td>$ {{ $p->facturas->total }}</td>
-                        </tr>
+                            <tr>
+                                <td>{{ $p->facturas->created_at->format('H:i') }} Hs.</td>
+                                <td>
+                                    @if ($p->in_out == 'in')
+                                        <span class="badge badge-success">Ingreso</span>
+                                    @elseif($p->in_out == 'out')
+                                        <span class="badge badge-danger">Egreso</span>
+                                    @else
+                                    @endif
+                                </td>
+                                <td>{{ $p->facturas->pagos->first()->medios->descripcion ?? $p->facturas->pagos->first()->tipos->descripcion }}
+                                </td>
+                                <td>{{ $p->facturas->pagos->first()->concepto }}</td>
+                                <td>$ {{ $p->facturas->total }}</td>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>
@@ -125,7 +126,7 @@
                         </tr>
 
                         <tr>
-                            <a class="aa" href="pagos-transferencia/{{$caja->id}}">
+                            <a class="aa" href="pagos-transferencia/{{ $caja->id }}">
                                 <td>Transferencias</td>
                                 <td class="mr-2 d-flex justify-content-end"> ${{ $pagosTrans }}</td>
                             </a>
@@ -158,7 +159,9 @@
     <div class="row" style="display: flex; justify-content: end;">
         <div class="col-lg-3 col-6">
             <div class="small-box bg-danger" style="cursor: pointer;"
-                wire:click='$dispatchTo("cerrar-caja","cerrar-caja-modal")'>
+                @can('caja')
+                    wire:click='$dispatchTo("cerrar-caja","cerrar-caja-modal")'
+                    @endcan>
                 <div class="inner">
                     <h3 class="m-0">Cerrar caja</h3>
                     <p>Total del dia ${{ $totalEfectivo }}</p>
@@ -170,9 +173,9 @@
         </div>
     </div>
     @can('caja')
-    @livewire('add-presupuesto')
-    @livewire('form-create-order',['fecha' => $fecha])
-    @livewire('compra-caja', ['caja' => $caja])
-    @livewire('cerrar-caja', ['caja' => $caja])
+        @livewire('add-presupuesto')
+        @livewire('form-create-order', ['fecha' => $fecha])
+        @livewire('compra-caja', ['caja' => $caja])
+        @livewire('cerrar-caja', ['caja' => $caja])
     @endcan
 </div>

@@ -17,6 +17,8 @@ class Producto extends Model
         'precio_venta',
         'categcategoria_producto_idoria',
         'precio_presupuesto',
+        'monto',
+        'porcentaje',
         'codigo_de_barras'
 
     ];

@@ -127,10 +127,10 @@
                                         </i>
                                     </a>
 
-                                    <a class="btn btn-danger btn-sm" href="{{ route('venta.destroy', $c->id) }}">
+                                    {{-- <a class="btn btn-danger btn-sm" href="{{ route('venta.destroy', $c->id) }}">
                                         <i class="fas fa-trash">
                                         </i>
-                                    </a>
+                                    </a> --}}
                                 </td>
                             </tr>
                             @endforeach

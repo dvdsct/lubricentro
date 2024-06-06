@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Caja;
 use App\Models\Factura;
 use App\Models\Pago;
+use App\Models\PagosXCaja;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -46,6 +47,7 @@ class ViewCaja extends Component
 
         // Caja Estado 200 es una caja abierta
         $this->caja = $caja;
+        // $this->pagos = PagosXCaja::where('caja_id',$this->caja)->get();
         $this->montoInicial = $this->caja->monto_inicial;
         $this->ventaTotal = $this->caja->sucursales->ordenes;
 

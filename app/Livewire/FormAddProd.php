@@ -27,34 +27,73 @@ class FormAddProd extends Component
     public $proveedores;
     public $proveedor = '1';
     public $modalProductos = false;
+    public $formProd;
+    public $formDes;
+    public $tipoDes;
+    public $monto;
+    public $porcentaje;
 
 
-    public function mount(){
-        $this->proveedores= Proveedor::all();
-        $this->categorias= CategoriaProducto::all();
-        $this->subcategorias= SubcategoriaProducto::all();
+    public function mount()
+    {
+        $this->proveedores = Proveedor::all();
+        $this->categorias = CategoriaProducto::all();
+        $this->subcategorias = SubcategoriaProducto::all();
+    }
 
+
+    // Formulario Producto o descuento
+    public function selTipo()
+    {
+
+        if ($this->categoria == 1) {
+
+            $this->formDes = true;
+            $this->formProd = false;
+
+
+            $this->descripcion = 'Descuento';
+            $this->codigo = $this->porcentaje;
+
+            $this->subcategorias = [
+                ['1', 'Monto'],
+                ['2', 'Porcentaje']
+            ];
+        } else {
+            $this->formDes = false;
+            $this->formProd = true;
+        }
+    }
+
+    public function selSubTipo()
+    {
+
+        if ($this->subcategoria == 2) {
+            $this->tipoDes = true;
+        } else {
+            $this->tipoDes = false;
+        }
     }
 
     #[On('modal-prod-on')]
     public function modalProductosOn()
     {
-        if($this->modalProductos){
+        if ($this->modalProductos) {
 
             $this->modalProductos = false;
-            $this->reset('descripcion','codigo','stock','costo','cod_barra','producto');
-        }else{
+            $this->reset('descripcion', 'codigo', 'stock', 'costo', 'cod_barra', 'producto');
+        } else {
 
             $this->modalProductos = true;
         }
-
     }
 
     #[On('modal-prod-edit')]
-    public function editProd(string $id){
+    public function editProd(string $id)
+    {
 
         $this->producto = Producto::find($id);
-        $sp = Stock::where('producto_id',$id)->get();
+        $sp = Stock::where('producto_id', $id)->get();
         $this->descripcion =  $this->producto->descripcion;
         $this->cod_barra =  $this->producto->codigo_de_barras;
         $this->costo =  $this->producto->costo;
@@ -65,47 +104,77 @@ class FormAddProd extends Component
     }
 
 
-    public function updatingCosto($costo){
-        $this->precioVenta = floatval($costo) + (floatval($costo) / 100)* 60;
-
+    public function updatingCosto($costo)
+    {
+        $this->precioVenta = floatval($costo) + (floatval($costo) / 100) * 60;
     }
-    public function updatingPrecioVenta($precio){
+    public function updatingPrecioVenta($precio)
+    {
         $this->precioVenta = $precio;
-
     }
 
     public function saveproduct()
     {
 
 
+        if ($this->categoria == 1) {
 
+            $p = Producto::firstOrCreate([
+                'descripcion' => $this->descripcion,
+                'codigo_de_barras' => $this->cod_barra,
+                'codigo' => $this->codigo,
+            ]);
 
-        $p = Producto::firstOrCreate([
-            'descripcion' => $this->descripcion,
-            'codigo_de_barras' => $this->cod_barra,
-            'codigo' => $this->codigo,
-        ]);
+            $p->update([
+                'monto' => $this->monto,
+                'porcentaje' => $this->porcentaje,
+            ]);
 
-        $p->update([
-            'costo' => $this->costo,
-            'precio_venta' => $this->precioVenta,
-        ]);
+            $s = Stock::firstOrCreate([
+                'sucursal_id' => '1',
+                'producto_id' => $p->id,
+                'estado' => '1'
+            ]);
+            $ns = $s->cantidad + $this->stock;
 
-        $s = Stock::firstOrCreate([
-            'sucursal_id' => '1',
-            'producto_id' => $p->id,
-            'estado' => '1'
-        ]);
-        $ns = $s->cantidad + $this->stock;
+            $s->update([
+                'cantidad' => $ns,
 
-        $s->update([
-            'cantidad' => $ns,
+            ]);
 
-        ]);
-        ProductoXProveedor::firstOrCreate([
-            'proveedor_id' => $this->proveedor,
-            'producto_id' => $p->id
-        ]);
+            ProductoXProveedor::firstOrCreate([
+                'proveedor_id' => $this->proveedor,
+                'producto_id' => $p->id
+            ]);
+        } else {
+            $p = Producto::firstOrCreate([
+                'descripcion' => $this->descripcion,
+                'codigo_de_barras' => $this->cod_barra,
+                'codigo' => $this->codigo,
+            ]);
+
+            $p->update([
+                'costo' => $this->costo,
+                'precio_venta' => $this->precioVenta,
+            ]);
+
+            $s = Stock::firstOrCreate([
+                'sucursal_id' => '1',
+                'producto_id' => $p->id,
+                'estado' => '1'
+            ]);
+            $ns = $s->cantidad + $this->stock;
+
+            $s->update([
+                'cantidad' => $ns,
+
+            ]);
+            ProductoXProveedor::firstOrCreate([
+                'proveedor_id' => $this->proveedor,
+                'producto_id' => $p->id
+            ]);
+        }
+
 
 
 

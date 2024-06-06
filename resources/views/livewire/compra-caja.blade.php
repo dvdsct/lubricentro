@@ -20,14 +20,14 @@
                         {{-- Medio de pago --}}
                         <div class="mb-3">
                             <div class=" mb-3">
-                                <button class="btn btn-success" @if($in) disabled @endif wire:click='setMov'>
+                                <button  @if($in) class="btn btn-success"  @else class="btn btn-secondary" @endif wire:click='setMov("in")'>
                                     <span class="info-box-icon ">
                                         <i class="fas fa-caret-up"></i>
                                         ENTRADA
                                     </span>
                                 </button>
 
-                                <button class="btn btn-danger"@if($out) disabled @endif wire:click='setMov'>
+                                <button @if($out) class="btn btn-danger"  @else class="btn btn-secondary" @endif wire:click='setMov("out")'>
                                     <span class="info-box-icon ">
                                         <i class="fas fa-caret-down"></i>
                                     SALIDA </span>

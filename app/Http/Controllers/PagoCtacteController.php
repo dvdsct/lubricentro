@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cliente;
 use App\Models\PagoCtacte;
 use Illuminate\Http\Request;
 
@@ -12,11 +13,14 @@ class PagoCtacteController extends Controller
      */
     public function index()
     {
-        $clientes = PagoCtacte::distinct('cliente_id')
-        ->with('clientes')
+        $clientes = Cliente::whereHas('pagosctas')
+        // ->distinct()
+        // ->select('id', 'nombre', 'perfil_id') // Agrega aquí los campos que necesitas
         ->get();
 
-        return view();
+        return view('Lubricentro.Ventas.CtaCte.index',[
+            'clientes' => $clientes
+        ]);
     }
 
     /**
@@ -38,9 +42,16 @@ class PagoCtacteController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(PagoCtacte $pagoCtacte)
+    public function show(string $id)
     {
-        //
+        $cliente = Cliente::find($id);
+        $pagos = PagoCtacte::where('cliente_id',$cliente->id)->get();
+
+
+        return view('Lubricentro.Ventas.CtaCte.show',[
+            'cliente' => $cliente,
+            'pagos' => $pagos
+        ]);
     }
 
     /**

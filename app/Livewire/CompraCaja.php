@@ -32,8 +32,7 @@ class CompraCaja extends Component
     public $montoConInt;
     public $efectivo;
 
-    #[Validate('required',message:'Debe indicar un medio de pago!')]
-    public $medioPago;
+    public $medioPago = '2';
     #[Validate('required',message:'Debe indicar un monto!')]
     public $montoAPagar;
     #[Validate('required', message: 'Debe indicar el concepto!')]
@@ -74,10 +73,10 @@ class CompraCaja extends Component
 
 
     // Seleccionar tipo de movimiento
-    public function setMov(){
+    public function setMov($mov){
 
 
-        if($this->tipoMov == true){            
+        if($mov == 'in'){            
             $this->tipoMov = false;
             $this->in = true;
             $this->out = false;
@@ -114,7 +113,7 @@ class CompraCaja extends Component
             'factura_id' => $f->id,
             'proveedor_id' => '1',
             'in_out' => 'out',
-            'medio_pago_id' => '1',
+            'medio_pago_id' => '2',
             'tipo_pago_id' => $this->tipoPago,
             'concepto' => $this->concepto,
             'efectivo' => 0,

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrdenController;
+use App\Http\Controllers\PagoCtacteController;
 use App\Http\Controllers\PagoTarjetaController;
 use App\Http\Controllers\PagoTransferenciaController;
 use App\Http\Controllers\ProductoController;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PresupuestoController;
 use App\Http\Controllers\ProveedoresController;
 use App\Http\Controllers\TarjetaController;
+use App\Models\PagoCtacte;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +52,7 @@ Route::middleware([
     Route::resource('tarjetas',TarjetaController::class);
     Route::resource('pagos-tarjetas',PagoTarjetaController::class);
     Route::resource('pagos-transferencia',PagoTransferenciaController::class);
+    Route::resource('pagos-cta',PagoCtacteController::class);
     Route::resource('proveedores',ProveedoresController::class);
     Route::get('/pdf/{orden}', 'App\Http\Controllers\PDFController@generatePDF')->name('pdf.orden');
     Route::get('/pdfpedido/{pedido}', 'App\Http\Controllers\PDFController@generatePedido')->name('pdf.pedido');
