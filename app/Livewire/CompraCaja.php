@@ -33,7 +33,7 @@ class CompraCaja extends Component
     public $efectivo;
 
     public $medioPago = '2';
-    #[Validate('required',message:'Debe indicar un monto!')]
+    #[Validate('required', message: 'Debe indicar un monto!')]
     public $montoAPagar;
     #[Validate('required', message: 'Debe indicar el concepto!')]
     public $concepto;
@@ -49,10 +49,11 @@ class CompraCaja extends Component
     public $tipoMov = false;
     public $in = false;
     public $out = false;
+    public $inOut;
 
 
 
-    
+
 
     public $step = 1;
     public $modalCompra = false;
@@ -73,20 +74,19 @@ class CompraCaja extends Component
 
 
     // Seleccionar tipo de movimiento
-    public function setMov($mov){
+    public function setMov($mov)
+    {
 
 
-        if($mov == 'in'){            
+        if ($mov == 'in') {
             $this->tipoMov = false;
             $this->in = true;
             $this->out = false;
-            
-        }else{
+        } else {
             $this->tipoMov = true;
             $this->in = false;
             $this->out = true;
         }
-
     }
 
 
@@ -94,10 +94,14 @@ class CompraCaja extends Component
     {
         $this->validate();
 
-        if($this->tipoMov){
+        if ($this->tipoMov) {
 
 
             $this->montoAPagar  = $this->montoAPagar * (-1);
+            $this->inOut = 'out';
+        } else {
+
+            $this->inOut = 'in';
         }
 
 
@@ -112,7 +116,7 @@ class CompraCaja extends Component
         $p = Pago::create([
             'factura_id' => $f->id,
             'proveedor_id' => '1',
-            'in_out' => 'out',
+            'in_out' => $this->inOut,
             'medio_pago_id' => '2',
             'tipo_pago_id' => $this->tipoPago,
             'concepto' => $this->concepto,
@@ -130,7 +134,7 @@ class CompraCaja extends Component
         ]);
 
         $this->modalCompraOn();
-        $this->reset('montoAPagar','concepto','in','out','tipoMov');
+        $this->reset('montoAPagar', 'concepto', 'in', 'out', 'tipoMov');
 
         $this->dispatch('pago-added')->To(ViewCaja::class);
     }
