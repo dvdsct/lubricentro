@@ -16,6 +16,8 @@ class PagoCtacte extends Model
         'subtotal',
         'total',
         'nro_cupon',
+        'nro_cupon',
+        'vencimiento',
         'estado',
         'caja_id',
     ];
