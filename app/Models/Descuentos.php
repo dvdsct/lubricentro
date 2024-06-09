@@ -5,13 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProductoXProveedor extends Model
+class Descuentos extends Model
 {
     use HasFactory;
-
-    protected $fillable =[
-'proveedor_id',
-'producto_id',
-    ];
-
 }

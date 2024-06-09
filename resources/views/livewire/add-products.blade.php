@@ -6,7 +6,7 @@
             <div class="card-header bg-danger">
                 <h5 class="m-0"> <strong> PAGADO </strong> </h5>
             @else
-            <div class="card-header" style="display: flex; justify-content: space-between;">
+                <div class="card-header" style="display: flex; justify-content: space-between;">
 
 
                     <button type="button" class="btn btn-success" wire:click='modalProdOn'>
@@ -87,6 +87,7 @@
                         @endif
                     </tr>
                 @endforeach
+                
 
             </tbody>
 

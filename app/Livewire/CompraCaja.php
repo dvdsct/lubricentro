@@ -32,11 +32,10 @@ class CompraCaja extends Component
     public $montoConInt;
     public $efectivo;
 
-    #[Validate('required',message:'Debe indicar un medio de pago!')]
-    public $medioPago;
-    #[Validate('required',message:'Debe indicar un monto!')]
+    public $medioPago = '2';
+    #[Validate('required', message: 'Debe indicar un monto!')]
     public $montoAPagar;
-    #[Validate('required',message:'Debe indicar el concepto!')]
+    #[Validate('required', message: 'Debe indicar el concepto!')]
     public $concepto;
 
     public $caja;
@@ -47,11 +46,20 @@ class CompraCaja extends Component
     public $proveedor;
     public $cajero;
     public $perfil;
+    public $tipoMov = false;
+    public $in = false;
+    public $out = false;
+    public $inOut;
+
+
+
+
 
     public $step = 1;
     public $modalCompra = false;
 
-    public function mount($caja){
+    public function mount($caja)
+    {
         $this->tiposPago = TipoPago::all();
         $this->tarjetas = Tarjeta::all();
         $this->tiposFactura = TipoFactura::all();
@@ -65,10 +73,36 @@ class CompraCaja extends Component
     }
 
 
-    public function pagar(){
+    // Seleccionar tipo de movimiento
+    public function setMov($mov)
+    {
+
+
+        if ($mov == 'in') {
+            $this->tipoMov = false;
+            $this->in = true;
+            $this->out = false;
+        } else {
+            $this->tipoMov = true;
+            $this->in = false;
+            $this->out = true;
+        }
+    }
+
+
+    public function pagar()
+    {
         $this->validate();
 
-        $this->montoAPagar  = $this->montoAPagar * (-1);
+        if ($this->tipoMov) {
+
+
+            $this->montoAPagar  = $this->montoAPagar * (-1);
+            $this->inOut = 'out';
+        } else {
+
+            $this->inOut = 'in';
+        }
 
 
         $f =  Factura::create([
@@ -82,8 +116,8 @@ class CompraCaja extends Component
         $p = Pago::create([
             'factura_id' => $f->id,
             'proveedor_id' => '1',
-            'in_out' => 'out',
-            'medio_pago_id' => $this->medioPago,
+            'in_out' => $this->inOut,
+            'medio_pago_id' => '2',
             'tipo_pago_id' => $this->tipoPago,
             'concepto' => $this->concepto,
             'efectivo' => 0,
@@ -100,6 +134,7 @@ class CompraCaja extends Component
         ]);
 
         $this->modalCompraOn();
+        $this->reset('montoAPagar', 'concepto', 'in', 'out', 'tipoMov');
 
         $this->dispatch('pago-added')->To(ViewCaja::class);
     }

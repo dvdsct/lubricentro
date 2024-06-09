@@ -36,11 +36,14 @@
                 <tr>
                     <td>{{ $p->id }}</td>
                     <td>{{ $p->codigo }} {{ $p->descripcion }} </td>
-                    <td>{{ $p->categoria_productos }}</td>     <!-- COLOCAR LA CATEGORIA DEL PRODUCTO -->
+                    <td>{{ $p->categoria_producto_id }}</td>     <!-- COLOCAR LA CATEGORIA DEL PRODUCTO -->
                     <td>{{ $p->codigo_de_barras}}</td>
+                    @if ($p->categoria_producto_id)
+                        
+                    @endif
                     <td> $ {{ number_format($p->precio_venta ?? 0, 2) }}</td>
                     <td> ${{ number_format($p->costo  ?? 0, 2) }}</td>
-                    <td>{{ $p->proveedores->first()->perfiles->personas->nombre }}</td>
+                    <td>{{ $p->nombre }}</td>
                     <td class="text-right project-actions">
 
                         <button class="btn btn-info btn-sm" wire:click='dispatchTo("form-add-prod","modal-prod-edit",{id:{{$p->id}}})'>
@@ -57,7 +60,7 @@
             </tbody>
         </table>
     </div>
-    <div>
+    <div style="max-width: 500px">
        {{$productos->links()}}
     </div>
 </div>

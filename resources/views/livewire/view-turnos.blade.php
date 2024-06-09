@@ -112,7 +112,10 @@
                             @endif
                             <td class="p-1">
                                 @if ($t->estado == '100')
-                                <button class="btn btn-secondary" disabled>Atendido</button>
+                                <div class="btn-group">
+                                    <a type="button" class="btn btn-info btn-sm" href="{{ route('ordenes.show', $t->id) }}"><strong> IR </strong></a>
+                                    <button class="btn btn-secondary" disabled>Atendido</button>
+                                </div> 
                                 @elseif ($t->estado == '700')
                                 <button class="btn btn-secondary" disabled>Cancelado</button>
                                 @else

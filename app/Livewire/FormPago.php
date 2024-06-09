@@ -10,6 +10,7 @@ use App\Models\Factura;
 use App\Models\MedioPago;
 use App\Models\Orden;
 use App\Models\Pago;
+use App\Models\PagoCtacte;
 use App\Models\PagosXCaja;
 use App\Models\PagoTarjeta;
 use App\Models\PagoTransferencia;
@@ -151,6 +152,9 @@ class FormPago extends Component
             $this->tarjetasT = Plan::all();
             $this->tiposFactura = TipoFactura::all();
             $this->proveedores = Proveedor::all();
+            $this->cliente = $this->orden->clientes->id;
+            
+
         }
     }
 
@@ -159,12 +163,14 @@ class FormPago extends Component
         $this->modal = false;
     }
 
-    public function updatedMedioPago(){
-$this->reset(
-    'iva',
-    'total',
-    'checkIva'
-);    }
+    public function updatedMedioPago()
+    {
+        $this->reset(
+            'iva',
+            'total',
+            'checkIva'
+        );
+    }
 
     #[On('formPago')]
     public function genPago($tipo)
@@ -199,7 +205,7 @@ $this->reset(
             $this->montoInt = floatval($this->montoAPagar / 100) * floatval($this->interes);
             $this->montoAPagar = $this->montoAPagar + $this->montoInt;
 
-            $this->reset('checkIva','iva');
+            $this->reset('checkIva', 'iva');
         }
     }
 
@@ -465,6 +471,13 @@ $this->reset(
                         'estado' => '40',
 
                     ]);
+
+                    PagoCtacte::create([
+                        'cliente_id' => $this->cliente,
+                        'pago_id' => $p->id,
+                        'total' =>  $this->montoAPagar * (-1),
+                        'estado' => 'debe',
+                    ]);
                 }
 
 
@@ -724,7 +737,6 @@ $this->reset(
             $this->validate([
                 'planSelected' => 'required'
             ]);
-
         }
         if ($this->checkIva) {
 

@@ -310,6 +310,20 @@ return [
         ],
 
         [
+            'text' => 'Turnos',
+            'url'  => 'turnos',
+            'icon' => 'fa fa-calendar-alt',
+            'can' => 'caja',
+
+        ],
+        [
+            'text' => 'Presupuestos',
+            'url'  => 'presupuesto',
+            'icon' => 'fas fa-money-check-alt',
+            'can' => 'caja',
+
+        ],
+        [
             'text' => 'Stock',
             'url'  => 'stock',
             'icon' => 'fa fa-list',
@@ -324,25 +338,11 @@ return [
 
         ],
         [
-            'text' => 'Presupuestos',
-            'url'  => 'presupuesto',
-            'icon' => 'fas fa-money-check-alt',
-            'can' => 'caja',
-
+            'text' => 'Cuenta Corriente',
+            'url'  => 'pagos-cta',
+            'icon' => 'fa fa-list',
         ],
-        // [
-        //     'text' => 'Ordenes',
-        //     'url'  => 'ordenes',
-        //     'icon' => 'fa fa-list',
-        // ],
 
-        [
-            'text' => 'Turnos',
-            'url'  => 'turnos',
-            'icon' => 'fa fa-calendar-alt',
-            'can' => 'caja',
-
-        ],
         [
             'text' => 'Pedidos Proveedores',
             'url'  => 'pedidos',

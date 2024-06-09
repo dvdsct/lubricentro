@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Caja;
-use App\Models\PagoTransferencia;
+use App\Models\Descuentos;
 use Illuminate\Http\Request;
 
-class PagoTransferenciaController extends Controller
+class DescuentosController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -35,22 +34,15 @@ class PagoTransferenciaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Descuentos $descuentos)
     {
-        $pagos = Caja::where('caja_id', $id)->get();
-
-        return view(
-            'Lubricentro.Ventas.Transferencias.index',
-            [
-                'pagos' => $pagos
-            ]
-        );
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(PagoTransferencia $pagoTransferencia)
+    public function edit(Descuentos $descuentos)
     {
         //
     }
@@ -58,7 +50,7 @@ class PagoTransferenciaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PagoTransferencia $pagoTransferencia)
+    public function update(Request $request, Descuentos $descuentos)
     {
         //
     }
@@ -66,7 +58,7 @@ class PagoTransferenciaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PagoTransferencia $pagoTransferencia)
+    public function destroy(Descuentos $descuentos)
     {
         //
     }

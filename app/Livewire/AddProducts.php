@@ -34,7 +34,8 @@ class AddProducts extends Component
     public $cantidad;
     public $precio;
     public $subtotal;
-
+    private $descontar;
+    private $descuento;
 
     public $query = '';
 
@@ -42,6 +43,8 @@ class AddProducts extends Component
     {
         $this->resetPage();
     }
+
+
 
 
     public function addCantidad($id)
@@ -96,31 +99,64 @@ class AddProducts extends Component
     public function addedProduct($p)
     {
 
-
         $this->producto = Producto::find($p);
         $stock = Stock::where('producto_id', $this->producto->id)->first();
 
-        if ($stock->cantidad == 0) {
+        if ($this->producto->categotia_producto_id == '1') {
+            $this->descontar = true;
+
+            $total = $this->orden->items->sum('subtotal');
+            $this->descuento = floatval($total/100) * floatval($this->producto->porcentaje) * (-1);
+
+                $this->modalProdOff();
+
+                $i = Item::create([
+                    'producto_id' => $this->producto->id,
+                    'precio' => $this->producto->porcentaje,
+                    'cantidad' => '1',
+                    'subtotal' =>$this->descuento,
+                    'estado' => '2',
+                ]);
+
+                ItemsXOrden::create([
+                    'item_id' => $i->id,
+                    'orden_id' => $this->orden->id,
+                    'estado' => '1',
+
+                ]);
+    
+                $stock->update([
+                    'cantidad' => $stock->cantidad - 1
+                ]);
 
 
-           return  $this->dispatch('nonstock');
+
 
         } else {
 
-            $this->modalProdOff();
 
-            $i = Item::create([
-                'producto_id' => $this->producto->id,
-                'precio' => $this->producto->precio_venta,
-                'estado' => '1',
-            ]);
 
-            ItemsXOrden::create([
-                'item_id' => $i->id,
-                'orden_id' => $this->orden->id,
-                'estado' => '1',
+            if ($stock->cantidad == 0) {
 
-            ]);
+
+                return  $this->dispatch('nonstock');
+            } else {
+
+                $this->modalProdOff();
+
+                $i = Item::create([
+                    'producto_id' => $this->producto->id,
+                    'precio' => $this->producto->precio_venta,
+                    'estado' => '1',
+                ]);
+
+                ItemsXOrden::create([
+                    'item_id' => $i->id,
+                    'orden_id' => $this->orden->id,
+                    'estado' => '1',
+
+                ]);
+            }
         }
 
 
@@ -138,11 +174,12 @@ class AddProducts extends Component
 
 
 
-    public function codeBar(){
+    public function codeBar()
+    {
 
 
-        if(strlen($this->codigoBarras) == 13){
-            $producto = Producto::where('codigo_de_barras',$this->codigoBarras)->get();
+        if (strlen($this->codigoBarras) == 13) {
+            $producto = Producto::where('codigo_de_barras', $this->codigoBarras)->get();
 
             $producto_id = $producto->first()->id;
             $precio_venta = $producto->first()->precio_venta;
@@ -159,15 +196,14 @@ class AddProducts extends Component
                 'estado' => '1',
 
             ]);
-        }else{
+        } else {
             $producto = Producto::find($this->codigoBarras);
             $stock = Stock::where('producto_id', $producto->id)->first();
 
             if ($stock->cantidad == 0) {
 
 
-               return  $this->dispatch('nonstock');
-
+                return  $this->dispatch('nonstock');
             }
 
             $producto_id = $producto->first()->id;
@@ -185,12 +221,7 @@ class AddProducts extends Component
 
             ]);
             $this->reset('codigoBarras');
-
         }
-
-
-
-
     }
 
     public function render()
@@ -199,14 +230,14 @@ class AddProducts extends Component
         $this->servicios = Servicio::all();
 
 
-        $this->total = $this->orden->items->sum('subtotal');
+        $this->total = $this->orden->items->sum('subtotal') - $this->descuento;
 
-        return view('livewire.add-products',[
+        return view('livewire.add-products', [
             'stock' => Stock::select('stocks.*', 'productos.descripcion as descripcion', 'productos.codigo', 'productos.precio_venta')
-            ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')
-            ->where('descripcion', 'like', '%' . $this->query . '%')
-            ->orWhere('productos.codigo', 'like', '%' . $this->query . '%')
-            ->paginate(10)
+                ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')
+                ->where('descripcion', 'like', '%' . $this->query . '%')
+                ->orWhere('productos.codigo', 'like', '%' . $this->query . '%')
+                ->paginate(10)
         ]);
     }
 }

@@ -14,6 +14,8 @@ class SubcategoriaSeed extends Seeder
     public function run(): void
     {
         $subcategoria=[
+            ['Monto',1],
+            ['Porcentaje',1],
             ['De aire',1],
             ['De Combustible',1],
             ['De Habitaculo',1],

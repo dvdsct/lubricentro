@@ -24,9 +24,9 @@ return new class extends Migration
             ->on('pagos')
             ->onDelete('cascade');
 
-            $table->date('vencimiento');
-            $table->string('subtotal');
-            $table->string('total');
+            $table->date('vencimiento')->nullable();
+            $table->string('subtotal')->nullable();
+            $table->string('total')->nullable();
             $table->string('nro_cupon')->nullable();
             $table->string('estado');
             $table->softDeletes();
