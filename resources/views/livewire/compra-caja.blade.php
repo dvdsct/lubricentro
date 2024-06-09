@@ -7,7 +7,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-info">
-                    <h5 class="modal-title" id="supplierOrderModalLabel"> <strong> EXTRACCION DE CAJA </strong> </h5>
+                    <h5 class="modal-title" id="supplierOrderModalLabel"> <strong> EXTRACCION/INGRESO DE CAJA </strong> </h5>
                     <button type="button" class="close" wire:click='$dispatch("modal-compra")'>
                         <span aria-hidden="true">×</span>
                     </button>
