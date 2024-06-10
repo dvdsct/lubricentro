@@ -38,6 +38,7 @@ class CompraCaja extends Component
     #[Validate('required', message: 'Debe indicar el concepto!')]
     public $concepto;
 
+
     public $caja;
 
     // Formulario Compra
@@ -49,6 +50,7 @@ class CompraCaja extends Component
     public $tipoMov = false;
     public $in = false;
     public $out = false;
+    #[Validate('required', message: 'Debe indicar el tipo de movimiento!')]
     public $inOut;
 
 
@@ -82,10 +84,12 @@ class CompraCaja extends Component
             $this->tipoMov = false;
             $this->in = true;
             $this->out = false;
+            $this->inOut = 'in'; // Añade esto
         } else {
             $this->tipoMov = true;
             $this->in = false;
             $this->out = true;
+            $this->inOut = 'out'; // Añade esto
         }
     }
 
@@ -134,7 +138,7 @@ class CompraCaja extends Component
         ]);
 
         $this->modalCompraOn();
-        $this->reset('montoAPagar', 'concepto', 'in', 'out', 'tipoMov');
+        $this->reset('montoAPagar', 'concepto', 'in', 'out', 'tipoMov' , 'inOut');
 
         $this->dispatch('pago-added')->To(ViewCaja::class);
     }

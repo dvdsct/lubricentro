@@ -2,48 +2,55 @@
 
 @section('title', 'Facturacion - Rocket')
 
-@section('content_header')
-    <h1>
-        <strong>
-            Cuenta Corriente
+@php
+\Carbon\Carbon::setLocale('es');
+@endphp
 
-        </strong>
-    </h1>
+@section('content_header')
+<h1>
+    <strong>
+        DETALLE CUENTA
+    </strong>
+</h1>
 
 @stop
 
 @section('content')
 
-    @livewire('datos-personales', ['orden' => '1', 'persona' => $cliente])
+@livewire('datos-personales', ['orden' => '1', 'persona' => $cliente])
 
-    <table class="table">
+<div class="card">
+    <table class="table table-striped">
         <thead>
             <th>Pago ID</th>
-            <th>Fecha</th>
-            <th>total</th>
-            <th>estado</th>
+            <th>FECHA TRANSACCION</th>
+            <th>CONCEPTO</th>
+            <th>TOTAL</th>
+            <th>ESTADO</th>
             <th></th>
         </thead>
         <tbody>
             @foreach ($pagos as $pago)
-                <tr>
-                    <td>{{ $pago->id }}</td>
-                    <td>{{ $pago->total }}</td>
-                    <td>{{ $pago->estado }}</td>
-                    <td><button>pagar</button></td>
-                </tr>
+            <tr>
+                <td>{{ $pago->id }}</td>
+                <td>{{ $pago->created_at->translatedFormat('j \d\e F \d\e\l Y') }}</td>
+                <td>{{ $pago->concepto}}</td>
+                <td>${{ $pago->total }}</td>
+                <td>{{ $pago->estado }}</td>
+                <td><button class="btn btn-danger btn-sm">Cobrar</button></td>
+            </tr>
             @endforeach
         </tbody>
     </table>
-
+</div>
 @stop
 
 @section('css')
-    <link rel="stylesheet" href="/css/admin_custom.css">
+<link rel="stylesheet" href="/css/admin_custom.css">
 @stop
 
 @section('js')
-    <script>
-        console.log('Hi!');
-    </script>
+<script>
+    console.log('Hi!');
+</script>
 @stop

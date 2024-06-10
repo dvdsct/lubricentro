@@ -29,9 +29,9 @@
         <div class="col-12 col-sm-6 col-md-3" style="cursor: pointer;"
             wire:click="$dispatchTo('compra-caja', 'modal-compra')">
             <div class="mb-3 info-box">
-                <span class="info-box-icon bg-purple elevation-1"><i class="fas fa-share"></i></span>
+                <span class="info-box-icon bg-purple elevation-1"><i class="fas fa-cash-register"></i></span>
                 <div class="info-box-content">
-                    <h5> <strong> <span class="info-box-text">REALIZAR <br> EXTRACCION</span> </strong> </h5>
+                    <h5> <strong> <span class="info-box-text">INGRESO/ <br> EXTRACCION</span> </strong> </h5>
                 </div>
             </div>
         </div>
