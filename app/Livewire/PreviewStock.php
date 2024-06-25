@@ -15,7 +15,7 @@ class PreviewStock extends Component
 
     public $cantidad;
     public $query = '';
- 
+
     public function search()
     {
         $this->resetPage();
@@ -55,21 +55,10 @@ class PreviewStock extends Component
             [
                 'stock' => Stock::select(
                     'stocks.*',
-                    'productos.categoria_productos_id',
-                    'productos.proveedor_id',
                     'productos.codigo',
-                    'proveedors.id as proveedor_id',
-                    'proveedors.perfil_id',
-                    'perfils.id as perfil_id',
-                    'personas.id as persona_id',
-                    'personas.nombre',
-                    'personas.DNI',
                     'productos.descripcion as descripcion'
                 )
                     ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')
-                    ->leftJoin('proveedors', 'productos.proveedor_id', '=', 'proveedors.id')
-                    ->leftJoin('perfils', 'proveedors.perfil_id', '=', 'perfils.id')
-                    ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
 
 
                     ->where('descripcion', 'like', '%' . $this->query . '%')
