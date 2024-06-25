@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Caja;
 use App\Models\Orden;
 use App\Models\PedidoProveedor;
 use App\Models\Presupuesto;
@@ -49,6 +50,101 @@ class PDFController extends Controller
 
         return $pdf->stream('orden_' . $orden->id . '.pdf');
     }
+
+
+    // Caja
+    public function cierreCaja(string $id){
+
+        $caja = Caja::find($id);
+        $fechaApertura = $caja->created_at;
+        $fechaCierre = $caja->updated_at;
+        $turno = $caja->turno;
+        $montoInicial = $caja->monto_inicial;
+        $rendicion = $caja->rendicion;
+
+        // Efectivo
+        $pagosEfectivo = $caja->pagos->filter(function ($pago) {
+            return $pago->medio_pago_id == 2 && $pago->in_out != 'out';
+        })->sum('total');
+        // Transferencias
+        $pagosTrans = $caja->pagos->filter(function ($pago) {
+            return $pago->medio_pago_id == 5 && $pago->in_out != 'out';
+        })->sum('total');
+        // Tarjetas
+        $pagosTarjeta = $caja->pagos->filter(function ($pago) {
+            return $pago->medio_pago_id == 1 && $pago->in_out != 'out';
+        })->sum('total');
+        // Cuenta Corriente
+        $pagosCtaCte = $caja->pagos->filter(function ($pago) {
+            return $pago->medio_pago_id == 4 && $pago->in_out != 'out';
+        })->sum('total');
+        // Cuenta Cheques
+        $pagosCheques = $caja->pagos->filter(function ($pago) {
+            return $pago->medio_pago_id == 3 && $pago->in_out != 'out';
+        })->sum('total');
+
+        // Gatos
+        $gastosEfectivo = $caja->pagos->filter(function ($pago) {
+            return $pago->estado == 200;
+        })->sum('total');
+
+
+        $gastos = $caja->pagos->filter(function ($pago) {
+            return $pago->in_out != 'in';
+        })->sum('total') * (-1);
+        $ingresos = $caja->pagos->filter(function ($pago) {
+            return $pago->in_out != 'out';
+        })->sum('total') + $rendicion;
+
+
+
+
+        // Balance
+        $totalv = $caja->pagos->sum('total') + $montoInicial;
+        
+
+        $totalEfectivo = $totalv - $pagosCheques - $pagosCtaCte - $pagosTarjeta - $pagosTrans ;
+
+        
+        $cajero = $caja->cajeros->perfiles->personas->nombre;
+
+
+        $pdf = PDF::loadView('pdf.pdf-cierre-caja', [
+            'turno' => $turno,
+            'pagosEfectivo' => $pagosEfectivo,
+            'gastosEfectivo' => $gastosEfectivo,
+            'pagosTrans' => $pagosTrans,
+            'pagosTarjeta' => $pagosTarjeta,
+            'pagosCtaCte' => $pagosCtaCte,
+            'pagosCheques' => $pagosCheques,
+            'totalv' => $totalv,
+            'cajero' => $cajero,
+            'fechaCierre' => $fechaCierre,
+            'montoInicial' => $montoInicial,
+            'gastos' => $gastos,
+            'ingresos' => $ingresos,
+            'totalEfectivo' => $totalEfectivo,
+            'rendicion' => $rendicion,
+            'fechaApertura' => $fechaApertura
+           
+        ]);
+
+        return $pdf->stream('caja_' . $caja->id . '.pdf');
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     // PEDIDO

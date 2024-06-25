@@ -57,6 +57,7 @@ Route::middleware([
     Route::get('/pdf/{orden}', 'App\Http\Controllers\PDFController@generatePDF')->name('pdf.orden');
     Route::get('/pdfpedido/{pedido}', 'App\Http\Controllers\PDFController@generatePedido')->name('pdf.pedido');
     Route::get('/pdfpres/{presupuesto}', 'App\Http\Controllers\PDFController@presupuesto')->name('pdf.presupuesto');
+    Route::get('/pdfcaja/{caja}', 'App\Http\Controllers\PDFController@cierreCaja')->name('pdf.caja');
 
     Route::get('register', function () {
         return view('Lubricentro.Turnos.index');
