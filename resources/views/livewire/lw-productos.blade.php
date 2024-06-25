@@ -39,9 +39,9 @@
                     <td>{{ $p->categoria_producto_id }}</td>     <!-- COLOCAR LA CATEGORIA DEL PRODUCTO -->
                     <td>{{ $p->codigo_de_barras}}</td>
                     @if ($p->categoria_producto_id)
-                        
+
                     @endif
-                    <td> $ {{ number_format($p->precio_venta ?? 0, 2) }}</td>
+                    <td> $ {{$p->precio_venta }}</td>
                     <td> ${{ number_format($p->costo  ?? 0, 2) }}</td>
                     <td>{{ $p->nombre }}</td>
                     <td class="text-right project-actions">
@@ -59,8 +59,8 @@
                 @endforeach
             </tbody>
         </table>
+
+
     </div>
-    <div style="max-width: 500px">
-       {{$productos->links()}}
-    </div>
+
 </div>

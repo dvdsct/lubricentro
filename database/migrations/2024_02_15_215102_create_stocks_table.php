@@ -25,7 +25,7 @@ return new class extends Migration
                 ->on('sucursals')
                 ->onDelete('cascade');
 
-            $table->integer('cantidad')->nullable();
+            $table->string('cantidad')->nullable();
             $table->string('unidad')->nullable();
             $table->integer('ideal')->nullable();
             $table->integer('escaso')->nullable();
