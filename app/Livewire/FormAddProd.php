@@ -62,7 +62,9 @@ class FormAddProd extends Component
         } else {
             $this->formDes = false;
             $this->formProd = true;
+            $this->subcategorias = SubcategoriaProducto::where('estado','2')->get();
         }
+        $this->reset('subcategoria');
     }
 
     public function selSubTipo()

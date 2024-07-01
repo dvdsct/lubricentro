@@ -17,7 +17,7 @@
                     <div class="m-3">
 
                         <div class="form-group text-center">
-                            <h4>{{ $producto->descripcion ?? '' }}</h4>
+                            <h4 style="font-style: italic;"> {{ $producto->descripcion ?? '' }}</h4>
                         </div>
 
                         <div class="row pt-4">
@@ -34,7 +34,7 @@
                         @if ($formDes)
                         <div class="row pt-4">
                             <div class="col-md">
-                                <select class="form-control" aria-label="Default select example" wire:model='subcategoria' wire:change='selSubTipo'>
+                                <select class="form-control" aria-label="Default select example" wire:model.live='subcategoria' wire:change='selSubTipo'>
                                     <option selected>Subcategoria</option>
                                     @foreach ($subcategorias as $sub)
                                     <option value="{{ $sub[0] }}">
@@ -51,7 +51,7 @@
 
                         <div class="row pt-4">
                             <div class="col-md">
-                                <select class="form-control" aria-label="Default select example" wire:model='subcategoria'>
+                                <select class="form-control" aria-label="Default select example" wire:model.live='subcategoria'>
                                     <option selected>Subcategoria</option>
                                     @foreach ($subcategorias as $sub)
                                     <option value="{{ $sub->id }}">
@@ -84,7 +84,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">$</span>
                                     </div>
-                                    <input type="text" class="form-control" wire:model.live='costo' placeholder="Precio de costo">
+                                    <input type="text" class="form-control" wire:model.live='costo' placeholder="Costo proveedor">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -93,9 +93,6 @@
                                         <span class="input-group-text">$</span>
                                     </div>
                                     <input type="text" class="form-control" wire:model.live='precioVenta' placeholder="Precio de venta">
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">.00</span>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -121,9 +118,6 @@
                                         <span class="input-group-text">$</span>
                                     </div>
                                     <input type="text" class="form-control" wire:model='monto' placeholder="Monto">
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">.00</span>
-                                    </div>
                                 </div>
                             </div>
                             @endif
@@ -134,13 +128,21 @@
 
                         {{-- Codigo de barra y Stock --}}
                         <div class="row pt-4">
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" wire:model='cod_barra' placeholder="Codigo de barras" />
+                            <div class="col-md-5">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control" wire:model='cod_barra' placeholder="Codigo de barras" />
+                                </div>
                             </div>
 
+                            <div class="col-md-4 pt-2 pr-1">
+                                <label>Stock Actual: {{$stock}} +</label>
+                            </div>
 
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" wire:model='stock' placeholder="Stock inicial" />
+                            <div class="col-md-3 pl-0">
+                                <input type="text" class="form-control" wire:model='stock' placeholder="Sumar Stock" />
                             </div>
                         </div>
 
