@@ -77,6 +77,8 @@
 
     @can('adminCajas')
 
+    @livewire('indicadores-ventas')
+
     <div class="row">
         <div class="col-12">
             <div class="card">
