@@ -174,6 +174,7 @@ return [
         App\Providers\JetstreamServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
 
+
     ])->toArray(),
 
     /*

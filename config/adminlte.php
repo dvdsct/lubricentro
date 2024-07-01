@@ -307,6 +307,8 @@ return [
             'url'  => 'venta',
             'icon' => 'fa fa-file-invoice-dollar',
             'can' => 'caja',
+            'can' => 'stock',
+
         ],
 
         [
@@ -334,13 +336,15 @@ return [
             'text' => 'Productos',
             'url'  => 'productos',
             'icon' => 'fas fa-shopping-cart',
-            'can' => 'caja',
+            'can' => 'stock',
 
         ],
         [
             'text' => 'Cuenta Corriente',
             'url'  => 'pagos-cta',
             'icon' => 'fa fa-list',
+            'can' => 'stock',
+
         ],
 
         [

@@ -54,7 +54,7 @@ class LwProductos extends Component
             ->select('producto_x_proveedors.*', 'productos.*', 'proveedors.tipo', 'proveedors.cuit', 'perfils.persona_id', 'personas.nombre')
             ->where('descripcion','like','%'.$this->query .'%')
             ->orWhere('codigo','like','%'.$this->query .'%')
-            ->paginate(10)
+            ->paginate(20)
 
             // 'productos' => Producto::where('descripcion','like','%'.$this->query .'%')
             // ->orWhere('codigo','like','%'.$this->query .'%')
