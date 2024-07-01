@@ -18,6 +18,7 @@ class ListaCajas extends Component
     public $montoInicial;
     public $modalAbrirCaja;
     public $sucursal;
+    public $query= '';
 
     public function mount()
     {
