@@ -52,9 +52,10 @@ class AddProducts extends Component
         $item = Item::find($id);
         $p = Producto::find($item->producto_id);
         $stock = Stock::where('producto_id', $p->id)->first();
-
+        
         // dd($stock);
         $precio = $p->precio_venta;
+        // dd($precio);
 
 
         if (
@@ -63,7 +64,7 @@ class AddProducts extends Component
         ) {
             $item->update([
                 'cantidad' => $this->cantidad,
-                'subtotal' => $precio *  $this->cantidad,
+                'subtotal' => floatval($precio) *  $this->cantidad,
                 'estado' => '2',
 
             ]);
