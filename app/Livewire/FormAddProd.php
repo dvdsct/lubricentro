@@ -115,12 +115,13 @@ class FormAddProd extends Component
 
     public function saveproduct()
     {
-
-
+        
         if ($this->categoria == 1) {
-
+            
             $p = Producto::firstOrCreate([
                 'descripcion' => $this->descripcion,
+                'categoria_producto_id' => $this->categoria,
+                'subcategoria_producto_id' => $this->subcategoria,
                 'codigo_de_barras' => $this->cod_barra,
                 'codigo' => $this->codigo,
             ]);
@@ -147,8 +148,11 @@ class FormAddProd extends Component
                 'producto_id' => $p->id
             ]);
         } else {
+            
             $p = Producto::firstOrCreate([
                 'descripcion' => $this->descripcion,
+                'categoria_producto_id' => $this->categoria,
+                'subcategoria_producto_id' => $this->subcategoria,
                 'codigo_de_barras' => $this->cod_barra,
                 'codigo' => $this->codigo,
             ]);

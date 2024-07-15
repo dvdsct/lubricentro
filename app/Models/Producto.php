@@ -15,7 +15,7 @@ class Producto extends Model
         'codigo',
         'subcategoria_producto_id',
         'precio_venta',
-        'categcategoria_producto_idoria',
+        'categoria_producto_id',
         'precio_presupuesto',
         'monto',
         'porcentaje',
