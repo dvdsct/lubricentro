@@ -107,7 +107,7 @@ class AddProductPresupuesto extends Component
                 $item->update([
                     'cantidad' => $this->cantidad,
                     'precio_venta' => $p->precio_venta,
-                    'subtotal' => $p->precio_venta *  $this->cantidad,
+                    'subtotal' => floatval($p->precio_venta) *  floatval($this->cantidad),
                     'estado' => '2',
 
                 ]);

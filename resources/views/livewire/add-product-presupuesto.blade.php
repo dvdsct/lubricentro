@@ -60,7 +60,7 @@
 
                                     <td>
                               
-                                        $ {{ number_format($producto->precio ?? 0, 2) }}
+                                        $ {{ number_format(floatval($producto->precio) ?? 0, 2) }}
 
                                     </td>
                                     <td>
