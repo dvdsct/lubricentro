@@ -210,6 +210,10 @@ class AddProductPresupuesto extends Component
     {
 
         $item = PresupuestoItem::find($id);
+
+
+
+        
         $item->delete();
         $this->reset('editPrecio');
     }

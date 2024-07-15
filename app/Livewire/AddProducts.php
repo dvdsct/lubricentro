@@ -194,6 +194,13 @@ class AddProducts extends Component
     {
 
         $item = Item::find($id);
+        $stock = Stock::where('producto_id', $this->item->producto_id)->first();
+
+        $cantidad = $stock->cantidad + $item->cantidad;
+        $stock->update([
+            'cantidad' => $cantidad
+        ]);
+
         $item->delete();
     }
 
