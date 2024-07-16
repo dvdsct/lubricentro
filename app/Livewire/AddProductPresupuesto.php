@@ -31,6 +31,7 @@ class AddProductPresupuesto extends Component
     public $precioPres;
     public $editPrecio = false;
     public $items;
+    private $descontar;
     public $query = '';
 
     public function search()
@@ -84,7 +85,7 @@ class AddProductPresupuesto extends Component
 
         if ($this->presupuesto->estado == '1') {
 
-            if($this->editPrecio){
+            if ($this->editPrecio) {
 
                 $p->update([
                     'precio_presupuesto' => $this->precioPres
@@ -97,13 +98,12 @@ class AddProductPresupuesto extends Component
                     'estado' => '2',
 
                 ]);
-
-            }else{
+            } else {
 
                 $p->update([
                     'precio_presupuesto' => $p->precio_venta
                 ]);
-                
+
                 $item->update([
                     'cantidad' => $this->cantidad,
                     'precio_venta' => $p->precio_venta,
@@ -112,20 +112,19 @@ class AddProductPresupuesto extends Component
 
                 ]);
             }
-
-
         }
-        $this->reset('cantidad', 'precio','editPrecio');
+        $this->reset('cantidad', 'precio', 'editPrecio');
         $this->modalProductos = false;
         $this->dispatch('suma-items');
     }
     // _________________________________________
 
-    public function codeBar(){
+    public function codeBar()
+    {
 
 
-        if(strlen($this->codigoBarras) == 13){
-            $producto = Producto::where('codigo_de_barras',$this->codigoBarras)->get();
+        if (strlen($this->codigoBarras) == 13) {
+            $producto = Producto::where('codigo_de_barras', $this->codigoBarras)->get();
 
             $producto_id = $producto->first()->id;
             $precio_venta = $producto->first()->precio_venta;
@@ -142,7 +141,7 @@ class AddProductPresupuesto extends Component
                 'estado' => '1',
 
             ]);
-        }else{
+        } else {
 
             $producto = Producto::find($this->codigoBarras);
 
@@ -161,33 +160,81 @@ class AddProductPresupuesto extends Component
                 'estado' => '1',
 
             ]);
-
         }
-
-
-
-
     }
 
     // Agrega un producto al presupuesto
     public function addedProduct($p)
     {
-
         $this->producto = Producto::find($p);
+
+        if ($this->producto->categoria_producto_id == '1') {
+            $this->descontar = true;
+
+            if ($this->producto->subcategoria_producto_id == '1') {
+
+
+
+
+
+                $i = PresupuestoItem::create([
+                    'producto_id' => $this->producto->id,
+                    'precio' => $this->producto->porcentaje,
+                    'cantidad' => '1',
+                    'subtotal' => $this->producto->monto * (-1),
+                    'estado' => '2',
+                ]);
+
+                ItemsXPresupuesto::create([
+                    'presupuesto_item_id' => $i->id,
+                    'presupuesto_id' => $this->presupuesto->id,
+                    'estado' => '1',
+
+                ]);
+            } else {
+
+                $total = $this->presupuesto->itemspres->sum('subtotal');
+                $descuento = floatval($total / 100) * floatval($this->producto->porcentaje) * (-1);
+
+                // $this->modalProdOff();
+
+                $i = PresupuestoItem::create([
+                    'producto_id' => $this->producto->id,
+                    'precio' => $this->producto->porcentaje,
+                    'cantidad' => '1',
+                    'subtotal' => $descuento,
+                    'estado' => '2',
+                ]);
+
+                ItemsXPresupuesto::create([
+                    'presupuesto_item_id' => $i->id,
+                    'presupuesto_id' => $this->presupuesto->id,
+                    'estado' => '1',
+
+                ]);
+            }
+        } else {
+
+            $i = PresupuestoItem::create([
+                'producto_id' => $this->producto->id,
+                'precio' => $this->producto->precio_venta,
+                'estado' => '1',
+            ]);
+
+            ItemsXPresupuesto::create([
+                'presupuesto_id' => $this->presupuesto->id,
+                'presupuesto_item_id' => $i->id,
+                'estado' => '1',
+
+            ]);
+        }
+
+        if($this->descontar){
+            
+        }
+
+
         $this->modalProdOn();
-
-        $i = PresupuestoItem::create([
-            'producto_id' => $this->producto->id,
-            'precio' => $this->producto->precio_venta,
-            'estado' => '1',
-        ]);
-
-        ItemsXPresupuesto::create([
-            'presupuesto_id' => $this->presupuesto->id,
-            'presupuesto_item_id' => $i->id,
-            'estado' => '1',
-
-        ]);
     }
     // ______________________________________________________
 
@@ -213,14 +260,14 @@ class AddProductPresupuesto extends Component
 
 
 
-        
+
         $item->delete();
         $this->reset('editPrecio');
     }
     // _________________________________________________________
 
 
-    
+
 
     public function render()
     {
