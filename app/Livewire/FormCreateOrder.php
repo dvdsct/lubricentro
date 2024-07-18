@@ -269,13 +269,13 @@ class FormCreateOrder extends Component
     public function addTurno()
     {
 
-
         if (is_object($this->vehiculo)) {
-
+            
             $this->vehiculo = $this->vehiculo->id;
         }
         if ($this->btnLav == true) {
-
+            
+            
 
             $this->orden = Orden::create([
 
@@ -300,6 +300,8 @@ class FormCreateOrder extends Component
                 'estado' => '1'
             ]);
         }
+
+        $this->vehiculo = Vehiculo::find($this->vehiculo);
 
 
         // __________________________________________________________
@@ -396,7 +398,8 @@ class FormCreateOrder extends Component
     {
 
         $this->presupuesto = Presupuesto::find($id);
-        $this->formperson == false;
+        $this->formperson =false;
+        $this->selecedtVehiculo= false;
 
         $this->cliente = $this->presupuesto->clientes;
 
