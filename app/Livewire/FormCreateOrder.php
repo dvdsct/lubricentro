@@ -319,7 +319,7 @@ class FormCreateOrder extends Component
                 $this->producto = Producto::find($p);
 
                 $stock = Stock::where('producto_id', $this->producto->id)->first();
-                $pst = $this->producto->precio_venta * floatval($i->cantidad);
+                $pst = floatval($this->producto->precio_venta) * floatval($i->cantidad);
 
                 if ($stock->cantidad == 0) {
                     // dd('aqui');
