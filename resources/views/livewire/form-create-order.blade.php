@@ -268,7 +268,7 @@
 
                                     <div class="row px-3">
                                         <h2> <span class="font-italic float-right badge bg-secondary">
-                                                {{ $vehiculo->modelos->marcas->descripcion }}
+                                                <!-- {{ $vehiculo->modelos->marcas->descripcion }} -->
                                                 {{ $vehiculo->modelos->descripcion . ' - ' . $vehiculo->dominio }}
                                                 <!-- VARIABLES PARA MOSTRAR VECHICULO Y DOMINIO --></span> </h2>
 
