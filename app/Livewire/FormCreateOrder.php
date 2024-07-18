@@ -306,12 +306,7 @@ class FormCreateOrder extends Component
         //____________________ PRESUPUESTO___________________________
         // __________________________________________________________
         if ($this->presupuesto != null) {
-            $this->orden->update([
-                'estado' => '555'
-            ]);
-            $this->presupuesto->update([
-                'estado' => '4'
-            ]);
+
             foreach ($this->presupuesto->itemspres as $i) {
 
 
@@ -346,6 +341,12 @@ class FormCreateOrder extends Component
                     ]);
                 }
             }
+            $this->orden->update([
+                'estado' => '1'
+            ]);
+            $this->presupuesto->update([
+                'estado' => '4'
+            ]);
         }
         // END PRESUPUESTO
 
