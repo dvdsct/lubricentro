@@ -93,7 +93,7 @@
                                 <td>{{ $p->facturas->pagos->first()->medios->descripcion ?? $p->facturas->pagos->first()->tipos->descripcion }}
                                 </td>
                                 <td>{{ $p->facturas->pagos->first()->concepto }}</td>
-                                <td>$ {{ $p->facturas->total }}</td>
+                                <td>$ {{ $p->total }}</td>
                             </tr>
                         @endforeach
                     </tbody>

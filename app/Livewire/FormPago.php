@@ -564,7 +564,7 @@ class FormPago extends Component
                         'concepto' =>  $this->concepto,
                         'iva' => $this->iva,
 
-                        'total' => $this->montoAPagar,
+                        'total' => $this->total,
                         'estado' => '20',
 
                     ]);
@@ -614,7 +614,7 @@ class FormPago extends Component
                         'iva' => $this->iva,
 
 
-                        'total' => $this->montoAPagar,
+                        'total' => $this->total,
                         'estado' => '10',
 
                     ]);
@@ -632,7 +632,7 @@ class FormPago extends Component
                         'pago_id' => $p->id,
                         'caja_id' => $this->caja->id,
                         'subtotal' => $this->montoAPagar,
-                        'total' => $this->montoAPagar,
+                        'total' => $this->total,
                         'nro_cupon' => $this->codeOp,
                         'estado' => '1',
 
@@ -673,7 +673,7 @@ class FormPago extends Component
 
                         'concepto' =>  $this->concepto,
 
-                        'total' => $this->montoAPagar,
+                        'total' => $this->total,
                         'estado' => '90',
 
                     ]);
