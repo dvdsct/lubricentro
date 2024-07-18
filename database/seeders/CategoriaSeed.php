@@ -17,8 +17,7 @@ class CategoriaSeed extends Seeder
            ['Descuento', 1],
            ['Lavadero', 1],
            ['Lubricentro',1],
-           ['Aceites',1],
-           ['Filtros',1]
+    
        ];
 
       foreach ($categorias as $cat){

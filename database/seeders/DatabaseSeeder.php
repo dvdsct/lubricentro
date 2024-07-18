@@ -20,7 +20,6 @@ class DatabaseSeeder extends Seeder
         $this->call(PagosSeeder::class);
         $this->call(TipoPedidoSeeder::class);
         // $this->call(ProductoSeed::class);
-        $this->call(ProdSeed::class);
         $this->call(CategoriaSeed::class);
         $this->call(SubcategoriaSeed::class);
         $this->call(TipoFacturaSeed::class);
@@ -31,6 +30,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ColoresSeeder::class);
         $this->call(TarjetaSeeder::class);
         $this->call(BancoSeeder::class);
+        $this->call(ProdSeed::class);
     }
 
 }

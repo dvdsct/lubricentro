@@ -10,4 +10,10 @@ class CategoriaProducto extends Model
 {
     use SoftDeletes;
     use HasFactory;
+
+    public function productos(){
+
+        return $this->belongsTo(Producto::class,'categoria_producto_id');
+    }
+
 }

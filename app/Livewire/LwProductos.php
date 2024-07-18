@@ -14,7 +14,7 @@ class LwProductos extends Component
     public $head = ['descripcion', 'costo'];
     public $list;
     public $producto;
-    public $query ='';
+    public $query = '';
 
     // public function mount(){
 
@@ -22,7 +22,8 @@ class LwProductos extends Component
 
     // }
 
-    public function search(){
+    public function search()
+    {
         $this->resetPage();
     }
 
@@ -45,16 +46,36 @@ class LwProductos extends Component
 
     public function render()
     {
-        return view('livewire.lw-productos',[
+        return view('livewire.lw-productos', [
 
             'productos' => ProductoXProveedor::leftJoin('productos', 'producto_x_proveedors.producto_id', '=', 'productos.id')
-            ->leftJoin('proveedors', 'producto_x_proveedors.proveedor_id', '=', 'proveedors.id')
-            ->leftJoin('perfils', 'proveedors.perfil_id', '=', 'perfils.id')
-            ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
-            ->select('producto_x_proveedors.*', 'productos.*', 'proveedors.tipo', 'proveedors.cuit', 'perfils.persona_id', 'personas.nombre')
-            ->where('descripcion','like','%'.$this->query .'%')
-            ->orWhere('codigo','like','%'.$this->query .'%')
-            ->paginate(20)
+                ->leftJoin('proveedors', 'producto_x_proveedors.proveedor_id', '=', 'proveedors.id')
+                ->leftJoin('perfils', 'proveedors.perfil_id', '=', 'perfils.id')
+                ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
+                ->leftJoin('categoria_productos', 'productos.categoria_producto_id', '=', 'categoria_productos.id')
+                ->leftJoin('subcategoria_productos', 'productos.subcategoria_producto_id', '=', 'subcategoria_productos.id')
+                ->select(
+                    'producto_x_proveedors.*',
+                    'productos.*',
+                    'proveedors.tipo',
+                    'proveedors.cuit',
+                    'perfils.persona_id',
+                    'personas.nombre',
+                    'categoria_productos.descripcion as categoria_nombre', // Asegúrate de que 'nombre' es el campo correcto en 'categoria_productos'
+                    'subcategoria_productos.descripcion as subcategoria_nombre' // Asegúrate de que 'nombre' es el campo correcto en 'categoria_productos'
+                )
+                ->where('productos.descripcion', 'like', '%' . $this->query . '%')
+                ->orWhere('codigo', 'like', '%' . $this->query . '%')
+                ->paginate(20)
+
+            // 'productos' => ProductoXProveedor::leftJoin('productos', 'producto_x_proveedors.producto_id', '=', 'productos.id')
+            // ->leftJoin('proveedors', 'producto_x_proveedors.proveedor_id', '=', 'proveedors.id')
+            // ->leftJoin('perfils', 'proveedors.perfil_id', '=', 'perfils.id')
+            // ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
+            // ->select('producto_x_proveedors.*', 'productos.*', 'proveedors.tipo', 'proveedors.cuit', 'perfils.persona_id', 'personas.nombre')
+            // ->where('descripcion','like','%'.$this->query .'%')
+            // ->orWhere('codigo','like','%'.$this->query .'%')
+            // ->paginate(20)
 
             // 'productos' => Producto::where('descripcion','like','%'.$this->query .'%')
             // ->orWhere('codigo','like','%'.$this->query .'%')

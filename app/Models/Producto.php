@@ -47,7 +47,11 @@ class Producto extends Model
         return $this->belongsToMany(Proveedor::class,'producto_x_proveedors');
     }
 
+    public function categorias()
+    {
 
+        return $this->hasMany(CategoriaProducto::class);
+    }
 
 
 }

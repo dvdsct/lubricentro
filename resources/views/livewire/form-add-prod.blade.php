@@ -17,11 +17,11 @@
 
                         <div class="m-3">
 
-                            <div class="form-group text-center">
+                            <div class="text-center form-group">
                                 <h4>{{ $producto->descripcion ?? '' }}</h4>
                             </div>
 
-                            <div class="row pt-4">
+                            <div class="pt-4 row">
                                 <div class="col">
                                     <select class="form-control" aria-label="Default select example"
                                         wire:model='categoria' wire:change='selTipo'>
@@ -33,8 +33,9 @@
                                     </select>
                                 </div>
                             </div>
+                                
                             @if ($formDes)
-                                <div class="row pt-4">
+                                <div class="pt-4 row">
                                     <div class="col-md">
                                         <select class="form-control" aria-label="Default select example"
                                             wire:model='subcategoria' wire:change='selSubTipo'>
@@ -50,9 +51,11 @@
                                 </div>
 
                             @endif
+                      
+
                             @if ($formProd)
 
-                                <div class="row pt-4">
+                                <div class="pt-4 row">
                                     <div class="col-md">
                                         <select class="form-control" aria-label="Default select example"
                                             wire:model='subcategoria'>
@@ -70,7 +73,7 @@
 
 
                             {{-- Descripcion y Codigo --}}
-                            <div class="row pt-4">
+                            <div class="pt-4 row">
                                 <div class="col-md-8">
                                     <input type="text" class="form-control" wire:model='descripcion'
                                         placeholder="Producto" />
@@ -84,7 +87,7 @@
 
                             @if ($formProd)
                                 {{-- Costo y Precio de venta --}}
-                                <div class="row pt-4">
+                                <div class="pt-4 row">
                                     <div class="col-md-6">
                                         <div class="input-group">
                                             <div class="input-group-prepend">
@@ -111,10 +114,13 @@
                                     </div>
                                 </div>
                             @endif
-
+                            
+                            @can('stock')
+                                
+                     
                             @if ($formDes)
                                 {{-- Porcentaje o Monto --}}
-                                <div class="row pt-4">
+                                <div class="pt-4 row">
                                     @if ($tipoDes)
                                         <div class="col-md">
                                             <div class="input-group">
@@ -146,7 +152,7 @@
 
 
                             {{-- Codigo de barra y Stock --}}
-                            <div class="row pt-4">
+                            <div class="pt-4 row">
                                 <div class="col-md-6">
                                     <input type="text" class="form-control" wire:model='cod_barra'
                                         placeholder="Codigo de barras" />
@@ -158,11 +164,12 @@
                                         placeholder="Stock inicial" />
                                 </div>
                             </div>
+                            @endcan
 
 
                             @if ($formProd)
                                 {{-- Proveedor --}}
-                                <div class="row pt-4">
+                                <div class="pt-4 row">
                                     <div class="col">
                                         <select class="form-control" aria-label="Default select example"
                                             wire:model='proveedor'>
@@ -193,4 +200,16 @@
 
         </div>
     @endif
+
+    @script
+    <script>
+        $wire.on('nonDesc', (event) => {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "No tienes autorizacion para crear descuentos",
+            });
+        });
+    </script>
+@endscript
 </div>

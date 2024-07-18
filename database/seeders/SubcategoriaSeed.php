@@ -16,10 +16,11 @@ class SubcategoriaSeed extends Seeder
         $subcategoria=[
             ['Monto',1],
             ['Porcentaje',1],
-            ['De aire',1],
-            ['De Combustible',1],
-            ['De Habitaculo',1],
-            ['De Aceite',1]
+            ['Filtros de aire',1],
+            ['Filtros de Combustible',1],
+            ['Filtros de Habitaculo',1],
+            ['Filtros de Aceite',1],
+            ['Fluidos',1]
         ];
 
 
