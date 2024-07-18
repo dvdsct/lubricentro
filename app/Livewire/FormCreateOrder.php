@@ -344,7 +344,7 @@ class FormCreateOrder extends Component
                 }
             }
             $this->orden->update([
-                'estado' => '1'
+                'estado' => '555'
             ]);
             $this->presupuesto->update([
                 'estado' => '4'
