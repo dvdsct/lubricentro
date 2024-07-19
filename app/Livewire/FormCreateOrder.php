@@ -320,6 +320,9 @@ class FormCreateOrder extends Component
 
                 if ($stock->cantidad == 0) {
                     // dd('aqui');
+                    $this->orden->update([
+                        'estado' => '555'
+                    ]);
                     return  $this->dispatch('nonstock');
                 } else {
 
