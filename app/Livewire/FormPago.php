@@ -120,7 +120,9 @@ class FormPago extends Component
             $this->tiposPago = TipoPago::all();
             $this->tarjetasT = Plan::all();
             $this->tiposFactura = TipoFactura::all();
-            $this->mediosPago = MedioPago::where('descripcion', 'Efectivo')->get();
+            $this->mediosPago = MedioPago::where('descripcion', 'Efectivo')
+            ->orWhere('descripcion', 'Cuenta Corriente')
+            ->get();
             $this->clientes = Cliente::where('lista_precios', '3')->get();
         }
         if (get_class($orden->getModel()) == "App\Models\Orden") {
