@@ -99,6 +99,7 @@ class CompraCaja extends Component
 
             $this->montoAPagar  = $this->montoAPagar * (-1);
             $this->inOut = 'out';
+
         } else {
 
             $this->inOut = 'in';
@@ -120,7 +121,7 @@ class CompraCaja extends Component
             'medio_pago_id' => '2',
             'tipo_pago_id' => $this->tipoPago,
             'concepto' => $this->concepto,
-            'efectivo' => 0,
+            'efectivo' => $this->montoAPagar,
             'total' => $this->montoAPagar,
             'estado' => '200',
 
