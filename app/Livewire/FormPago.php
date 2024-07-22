@@ -330,7 +330,7 @@ class FormPago extends Component
                     'proveedor_id' => $this->proveedor,
                     'medio_pago_id' => $this->medioPago,
                     'tipo_pago_id' => $this->tipoPago,
-                    'efectivo' => $this->efectivo,
+                    'efectivo' =>$this->montoAPagar ,
                     'concepto' => 'proveedor',
 
                     'total' => $this->montoAPagar,
