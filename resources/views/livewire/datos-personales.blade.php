@@ -48,12 +48,13 @@
                             {{ \Carbon\Carbon::parse($persona->perfiles->personas->fecha_nac)->translatedFormat('j \\d\\e F', 'es') }}
                         </h6>
                     </div>
-
+                    @can('stock')
                     <div class="col-md-3 d-flex flex-column" style="display: flex; justify-content: flex-end; align-items: flex-end;">
                         <a href="" class="nav-link" style="display: flex; justify-content: flex-end;" data-toggle="modal" data-target="#modal-datos-pac"  wire:click='$dispatch("modal-datosPac")'>
                             <i class="fas fa-edit"></i> EDITAR
                         </a>
                     </div>
+                    @endcan
                 </div>
             </div>
         </div>
