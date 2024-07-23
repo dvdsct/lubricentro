@@ -31,7 +31,7 @@ class PDFController extends Controller
         $contador = 0;
         $items = $orden->items;
         $fecha = $orden->horario;
-        if(is_null($orden->vehiculos) ||$orden->vehiculos->isEmpty()){
+        if(is_null($orden->vehiculos) ){
 
             $vehiculo = '';
         }else{
