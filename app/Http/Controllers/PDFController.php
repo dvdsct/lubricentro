@@ -30,7 +30,8 @@ class PDFController extends Controller
         }
         $contador = 0;
         $items = $orden->items;
-        $fecha = $orden->horario;
+        $horario = $orden->horario;
+        $fecha = $orden->fecha_turno;
         if(is_null($orden->vehiculos) ){
 
             $vehiculo = '';
@@ -49,6 +50,7 @@ class PDFController extends Controller
             'vehiculo' => $vehiculo,
             'orden' => $orden,
             'fecha' => $fecha,
+            'horario' => $horario,
             'encargado' => $encargado,
             'vendedor' => $vendedor,
             'total' => $total

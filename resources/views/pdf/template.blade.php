@@ -37,7 +37,7 @@
                 </td>
 
                 <td style="border: 1px solid black;">
-                    <p><strong>Fecha y Hora:</strong> {{ $fecha }}</p>
+                    <p><strong>Fecha y Hora:</strong> {{ $fecha }} {{$horario}}</p>
                 </td>
             </tr>
 
@@ -72,10 +72,11 @@
                 <tr>
                     <td style="border: 1px solid black;">{{ $index + 1 }}</td>
                     <td style="border: 1px solid black;">{{ $item['cantidad'] }}</td>
-                    <td style="border: 1px solid black;">{{ $item->productos->codigo }}</td>
+                    <td style="border: 1px solid black;">{{ $item->productos->descripcion .'- '. $item->productos->codigo }}</td>
                     <td style="border: 1px solid black;">$ {{ $item->subtotal }}</td>
                 </tr>
                 @endforeach
+
             </tbody>
         </table>
 
@@ -84,6 +85,18 @@
         </div>
     </div>
 
+    <br>
+    <br>
+    <div>
+        <div style="display: inline-block;">
+            <p style="">Observaciones</p>
+            <p>________________________________________________________________________________________</p>
+            <p>________________________________________________________________________________________</p>
+            <p>________________________________________________________________________________________</p>
+            <p>________________________________________________________________________________________</p>
+            <p>________________________________________________________________________________________</p>
+        </div>
+    </div>
     <br>
     <br>
     <div>
