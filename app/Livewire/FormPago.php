@@ -177,6 +177,7 @@ class FormPago extends Component
     #[On('formPago')]
     public function genPago($tipo)
     {
+
         if ($tipo == 'orden') {
             if ($this->orden->estado != 100) {
                 $this->modal = true;

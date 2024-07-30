@@ -343,7 +343,7 @@ return [
             'text' => 'Cuenta Corriente',
             'url'  => 'pagos-cta',
             'icon' => 'fa fa-list',
-            'can' => 'stock',
+            'can' => 'caja',
 
         ],
 

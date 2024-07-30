@@ -47,4 +47,10 @@ class Pago extends Model
         return $this->belongsToMany(Caja::class,'pagos_x_cajas');
     }
 
+    public function pagosCta()
+    {
+
+        return $this->hasMany(PagoCtacte::class);
+    }
+
 }

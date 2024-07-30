@@ -27,4 +27,11 @@ class PagoCtacte extends Model
         return $this->belongsTo(Cliente::class,'cliente_id');
     }
 
+    public function pagos()
+    {
+
+        return $this->belongsTo(Pago::class,'pago_id');
+    }
+
+
 }
