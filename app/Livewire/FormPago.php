@@ -120,7 +120,9 @@ class FormPago extends Component
             $this->tiposPago = TipoPago::all();
             $this->tarjetasT = Plan::all();
             $this->tiposFactura = TipoFactura::all();
-            $this->mediosPago = MedioPago::where('descripcion', 'Efectivo')->get();
+            $this->mediosPago = MedioPago::where('descripcion', 'Efectivo')
+            ->orWhere('descripcion', 'Cuenta Corriente')
+            ->get();
             $this->clientes = Cliente::where('lista_precios', '3')->get();
         }
         if (get_class($orden->getModel()) == "App\Models\Orden") {
@@ -328,7 +330,7 @@ class FormPago extends Component
                     'proveedor_id' => $this->proveedor,
                     'medio_pago_id' => $this->medioPago,
                     'tipo_pago_id' => $this->tipoPago,
-                    'efectivo' => $this->efectivo,
+                    'efectivo' =>$this->montoAPagar ,
                     'concepto' => 'proveedor',
 
                     'total' => $this->montoAPagar,
@@ -564,7 +566,7 @@ class FormPago extends Component
                         'concepto' =>  $this->concepto,
                         'iva' => $this->iva,
 
-                        'total' => $this->montoAPagar,
+                        'total' => $this->total,
                         'estado' => '20',
 
                     ]);
@@ -608,13 +610,13 @@ class FormPago extends Component
                         'cliente_id' => $this->cliente,
                         'medio_pago_id' => $this->medioPago,
                         'tipo_pago_id' => $this->tipoPago,
-                        'efectivo' => $this->efectivo,
+                        'efectivo' => 0,
                         'concepto' =>  $this->concepto,
                         'code_op' => $this->cupon,
                         'iva' => $this->iva,
 
 
-                        'total' => $this->montoAPagar,
+                        'total' => $this->total,
                         'estado' => '10',
 
                     ]);
@@ -632,7 +634,7 @@ class FormPago extends Component
                         'pago_id' => $p->id,
                         'caja_id' => $this->caja->id,
                         'subtotal' => $this->montoAPagar,
-                        'total' => $this->montoAPagar,
+                        'total' => $this->total,
                         'nro_cupon' => $this->codeOp,
                         'estado' => '1',
 
@@ -667,13 +669,13 @@ class FormPago extends Component
                         'cliente_id' => $this->cliente,
                         'medio_pago_id' => $this->medioPago,
                         'tipo_pago_id' => $this->tipoPago,
-                        'efectivo' => $this->efectivo,
+                        'efectivo' =>0,
                         'code_op' => $this->cupon,
                         'iva' => $this->iva,
 
                         'concepto' =>  $this->concepto,
 
-                        'total' => $this->montoAPagar,
+                        'total' => $this->total,
                         'estado' => '90',
 
                     ]);

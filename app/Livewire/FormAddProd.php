@@ -8,6 +8,7 @@ use App\Models\ProductoXProveedor;
 use App\Models\Proveedor;
 use App\Models\Stock;
 use App\Models\SubcategoriaProducto;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -27,7 +28,7 @@ class FormAddProd extends Component
     public $proveedores;
     public $proveedor = '1';
     public $modalProductos = false;
-    public $formProd;
+    public $formProd = true;
     public $formDes;
     public $tipoDes;
     public $monto;
@@ -46,19 +47,25 @@ class FormAddProd extends Component
     public function selTipo()
     {
 
+
         if ($this->categoria == 1) {
+            if (Auth::user()->hasRole('admin')) {
 
-            $this->formDes = true;
-            $this->formProd = false;
+                $this->formDes = true;
+                $this->formProd = false;
 
 
-            $this->descripcion = 'Descuento';
-            $this->codigo = $this->porcentaje;
+                $this->descripcion = 'Descuento';
+                $this->codigo = $this->porcentaje;
 
-            $this->subcategorias = [
-                ['1', 'Monto'],
-                ['2', 'Porcentaje']
-            ];
+                $this->subcategorias = [
+                    ['1', 'Monto'],
+                    ['2', 'Porcentaje']
+                ];
+            } else {
+                $this->reset('categoria');
+                return  $this->dispatch('nonDesc');
+            }
         } else {
             $this->formDes = false;
             $this->formProd = true;
@@ -97,6 +104,8 @@ class FormAddProd extends Component
         $this->producto = Producto::find($id);
         $sp = Stock::where('producto_id', $id)->get();
         $this->descripcion =  $this->producto->descripcion;
+        $this->categoria =  $this->producto->categoria_producto_id;
+        $this->subcategoria =  $this->producto->subcategoria_producto_id;
         $this->cod_barra =  $this->producto->codigo_de_barras;
         $this->costo =  $this->producto->costo;
         $this->codigo =  $this->producto->codigo;
@@ -118,11 +127,12 @@ class FormAddProd extends Component
     public function saveproduct()
     {
 
-
         if ($this->categoria == 1) {
 
             $p = Producto::firstOrCreate([
                 'descripcion' => $this->descripcion,
+                'categoria_producto_id' => $this->categoria,
+                'subcategoria_producto_id' => $this->subcategoria,
                 'codigo_de_barras' => $this->cod_barra,
                 'codigo' => $this->codigo,
             ]);
@@ -149,8 +159,11 @@ class FormAddProd extends Component
                 'producto_id' => $p->id
             ]);
         } else {
+
             $p = Producto::firstOrCreate([
                 'descripcion' => $this->descripcion,
+                'categoria_producto_id' => $this->categoria,
+                'subcategoria_producto_id' => $this->subcategoria,
                 'codigo_de_barras' => $this->cod_barra,
                 'codigo' => $this->codigo,
             ]);

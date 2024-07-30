@@ -245,14 +245,21 @@
         <div class="mb-3 bg-light P-2" style="text-align: right; border: 1px solid grey; border-radius: 2%;">
             <div class="row">
                 <div class="col-md-8">
-                    <h6> Total Producto o Servicio </h6>
+                    <h6 class="mt-2"> Total Producto o Servicio </h6>
+                    <h6  class="mt-2"><input type="checkbox" id="iva"
+                                wire:model.live='checkIva' wire:click='setIva'>
+                            Iva 21%</h6>
                     <h4 for="monto" class="form-label"><strong> Total a pagar</strong></h4>
+                    <h4 for="vuelto" class="form-label"><strong> Su vuelto</strong></h4>
                 </div>
 
                 <div class="col-md-4">
-                    <h6>{{ $montoAPagar }}</h6>
-                    <h4 for="monto" class="form-label"><strong> ${{ $total }}</strong></h4>
-                    <h4 for="vuelto" class="form-label"><strong> ${{ $vuelto }} </strong></h4>
+                    <h6 class="pr-2 mt-2">{{ $montoAPagar }}</h6>
+
+
+                    <label for="iva">{{ $iva }}</label>
+                    <h4 for="monto" class="form-label pr-2"><strong> ${{ $total }}</strong></h4>
+                    <h4 for="vuelto" class="form-label pr-2"><strong> ${{ $vuelto }} </strong></h4>
                 </div>
 
             </div>

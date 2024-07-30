@@ -173,7 +173,7 @@ class ViewCaja extends Component
         // Balance
         $this->totalv = $this->caja->pagos->sum('total') + $this->montoInicial;
 
-        $this->totalEfectivo = $this->totalv - $this->pagosCheques - $this->pagosCtaCte - $this->pagosTarjeta - $this->pagosTrans ;
+        $this->totalEfectivo = $this->caja->pagos->sum('efectivo') + $this->montoInicial ;
 
         $this->balance = '';
 

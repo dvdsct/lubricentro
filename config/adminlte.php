@@ -336,7 +336,7 @@ return [
             'text' => 'Productos',
             'url'  => 'productos',
             'icon' => 'fas fa-shopping-cart',
-            'can' => 'stock',
+            // 'can' => 'stock',
 
         ],
         [

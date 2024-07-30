@@ -30,8 +30,15 @@ class PDFController extends Controller
         }
         $contador = 0;
         $items = $orden->items;
-        $fecha = $orden->horario;
-        $vehiculo = $orden->vehiculos->modelos->descripcion . ' ' . $orden->vehiculos->descripcion . ' ' . $orden->vehiculos->año;
+        $horario = $orden->horario;
+        $fecha = $orden->fecha_turno;
+        if(is_null($orden->vehiculos) ){
+
+            $vehiculo = '';
+        }else{
+            $vehiculo = $orden->vehiculos->modelos->descripcion . ' ' . $orden->vehiculos->descripcion . ' ' . $orden->vehiculos->año ?? '';
+
+        }
 
         $encargado = $orden->clientes->perfiles->personas;
         $vendedor = Auth::user();
@@ -43,6 +50,7 @@ class PDFController extends Controller
             'vehiculo' => $vehiculo,
             'orden' => $orden,
             'fecha' => $fecha,
+            'horario' => $horario,
             'encargado' => $encargado,
             'vendedor' => $vendedor,
             'total' => $total

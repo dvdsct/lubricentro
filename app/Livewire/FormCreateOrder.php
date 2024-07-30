@@ -269,13 +269,13 @@ class FormCreateOrder extends Component
     public function addTurno()
     {
 
-
         if (is_object($this->vehiculo)) {
-
+            
             $this->vehiculo = $this->vehiculo->id;
         }
         if ($this->btnLav == true) {
-
+            
+            
 
             $this->orden = Orden::create([
 
@@ -301,17 +301,14 @@ class FormCreateOrder extends Component
             ]);
         }
 
+        $this->vehiculo = Vehiculo::find($this->vehiculo);
+
 
         // __________________________________________________________
         //____________________ PRESUPUESTO___________________________
         // __________________________________________________________
         if ($this->presupuesto != null) {
-            $this->orden->update([
-                'estado' => '555'
-            ]);
-            $this->presupuesto->update([
-                'estado' => '4'
-            ]);
+
             foreach ($this->presupuesto->itemspres as $i) {
 
 
@@ -323,6 +320,9 @@ class FormCreateOrder extends Component
 
                 if ($stock->cantidad == 0) {
                     // dd('aqui');
+                    $this->orden->update([
+                        'estado' => '555'
+                    ]);
                     return  $this->dispatch('nonstock');
                 } else {
 
@@ -346,6 +346,12 @@ class FormCreateOrder extends Component
                     ]);
                 }
             }
+            $this->orden->update([
+                'estado' => '1'
+            ]);
+            $this->presupuesto->update([
+                'estado' => '4'
+            ]);
         }
         // END PRESUPUESTO
 
@@ -395,7 +401,8 @@ class FormCreateOrder extends Component
     {
 
         $this->presupuesto = Presupuesto::find($id);
-        $this->formperson == false;
+        $this->formperson =false;
+        $this->selecedtVehiculo= false;
 
         $this->cliente = $this->presupuesto->clientes;
 

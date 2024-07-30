@@ -55,6 +55,7 @@ class AddProducts extends Component
 
         // dd($stock);
         $precio = $p->precio_venta;
+        // dd($precio);
 
 
         if (
@@ -63,7 +64,7 @@ class AddProducts extends Component
         ) {
             $item->update([
                 'cantidad' => $this->cantidad,
-                'subtotal' => $precio *  $this->cantidad,
+                'subtotal' => floatval($precio) *  $this->cantidad,
                 'estado' => '2',
 
             ]);
@@ -102,45 +103,69 @@ class AddProducts extends Component
         $this->producto = Producto::find($p);
         $stock = Stock::where('producto_id', $this->producto->id)->first();
 
-        if ($this->producto->categotia_producto_id == '1') {
-            $this->descontar = true;
-
-            $total = $this->orden->items->sum('subtotal');
-            $this->descuento = floatval($total/100) * floatval($this->producto->porcentaje) * (-1);
-
-                $this->modalProdOff();
-
-                $i = Item::create([
-                    'producto_id' => $this->producto->id,
-                    'precio' => $this->producto->porcentaje,
-                    'cantidad' => '1',
-                    'subtotal' =>$this->descuento,
-                    'estado' => '2',
-                ]);
-
-                ItemsXOrden::create([
-                    'item_id' => $i->id,
-                    'orden_id' => $this->orden->id,
-                    'estado' => '1',
-
-                ]);
-    
-                $stock->update([
-                    'cantidad' => $stock->cantidad - 1
-                ]);
+        if ($stock->cantidad == 0) {
 
 
-
-
+            return  $this->dispatch('nonstock');
         } else {
 
+            if ($this->producto->categoria_producto_id == '1') {
+                $this->descontar = true;
+
+                if ($this->producto->subcategoria_producto_id == '1') {
 
 
-            if ($stock->cantidad == 0) {
+                    $this->modalProdOff();
 
+                    $i = Item::create([
+                        'producto_id' => $this->producto->id,
+                        'precio' => $this->producto->porcentaje,
+                        'cantidad' => '1',
+                        'subtotal' => $this->producto->monto * (-1),
+                        'estado' => '2',
+                    ]);
 
-                return  $this->dispatch('nonstock');
+                    ItemsXOrden::create([
+                        'item_id' => $i->id,
+                        'orden_id' => $this->orden->id,
+                        'estado' => '1',
+
+                    ]);
+
+                    $stock->update([
+                        'cantidad' => $stock->cantidad - 1
+                    ]);
+                } else {
+
+                    $total = $this->orden->items->sum('subtotal');
+                    $this->descuento = floatval($total / 100) * floatval($this->producto->porcentaje) * (-1);
+
+                    $this->modalProdOff();
+
+                    $i = Item::create([
+                        'producto_id' => $this->producto->id,
+                        'precio' => $this->producto->porcentaje,
+                        'cantidad' => '1',
+                        'subtotal' => $this->descuento,
+                        'estado' => '2',
+                    ]);
+
+                    ItemsXOrden::create([
+                        'item_id' => $i->id,
+                        'orden_id' => $this->orden->id,
+                        'estado' => '1',
+
+                    ]);
+
+                    $stock->update([
+                        'cantidad' => $stock->cantidad - 1
+                    ]);
+                }
             } else {
+
+
+
+
 
                 $this->modalProdOff();
 
@@ -169,6 +194,13 @@ class AddProducts extends Component
     {
 
         $item = Item::find($id);
+        $stock = Stock::where('producto_id', $item->producto_id)->first();
+
+        $cantidad = $stock->cantidad + $item->cantidad;
+        $stock->update([
+            'cantidad' => $cantidad
+        ]);
+
         $item->delete();
     }
 
