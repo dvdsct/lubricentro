@@ -189,7 +189,7 @@
                         @endif
                         @if ($formProd)
 
-                        <div class="row pt-4">
+                        <div class="pt-4 row">
                             <div class="col-md">
                                 <select class="form-control" aria-label="Default select example" wire:model.live='subcategoria'>
                                     <option selected>Subcategoria</option>
@@ -206,7 +206,7 @@
 
 
                         {{-- Descripcion y Codigo --}}
-                        <div class="row pt-4">
+                        <div class="pt-4 row">
                             <div class="col-md-8">
                                 <input type="text" class="form-control" wire:model='descripcion' placeholder="Producto" />
                             </div>
@@ -218,7 +218,7 @@
 
                         @if ($formProd)
                         {{-- Costo y Precio de venta --}}
-                        <div class="row pt-4">
+                        <div class="pt-4 row">
                             <div class="col-md-6">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -240,7 +240,7 @@
 
                         @if ($formDes)
                         {{-- Porcentaje o Monto --}}
-                        <div class="row pt-4">
+                        <div class="pt-4 row">
                             @if ($tipoDes)
                             <div class="col-md">
                                 <div class="input-group">
@@ -267,7 +267,7 @@
 
 
                         {{-- Codigo de barra y Stock --}}
-                        <div class="row pt-4">
+                        <div class="pt-4 row">
                             <div class="col-md-5">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -277,11 +277,11 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4 pt-2 pr-1">
+                            <div class="pt-2 pr-1 col-md-4">
                                 <label>Stock Actual: {{$stock}} +</label>
                             </div>
 
-                            <div class="col-md-3 pl-0">
+                            <div class="pl-0 col-md-3">
                                 <input type="text" class="form-control" wire:model='stock' placeholder="Sumar Stock" />
                             </div>
                         </div>
@@ -289,7 +289,7 @@
 
                         @if ($formProd)
                         {{-- Proveedor --}}
-                        <div class="row pt-4">
+                        <div class="pt-4 row">
                             <div class="col">
                                 <select class="form-control" aria-label="Default select example" wire:model='proveedor'>
                                     @foreach ($proveedores as $pro)
@@ -319,9 +319,6 @@
 
     </div>
     @endif
-<<<<<<< HEAD
-</div>
-=======
 
     @script
     <script>
@@ -335,4 +332,3 @@
     </script>
 @endscript
 </div>
->>>>>>> main
