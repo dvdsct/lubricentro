@@ -563,7 +563,7 @@ class FormPago extends Component
                         'cliente_id' => $this->cliente,
                         'medio_pago_id' => $this->medioPago,
                         'tipo_pago_id' => $this->tipoPago,
-                        'efectivo' => $this->efectivo,
+                        'efectivo' => $this->total,
                         'concepto' =>  $this->concepto,
                         'iva' => $this->iva,
 

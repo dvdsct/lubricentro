@@ -64,7 +64,7 @@ class AddProducts extends Component
         ) {
             $item->update([
                 'cantidad' => $this->cantidad,
-                'subtotal' => floatval($precio) *  $this->cantidad,
+                'subtotal' => floatval($precio) *  floatval($this->cantidad),
                 'estado' => '2',
 
             ]);
