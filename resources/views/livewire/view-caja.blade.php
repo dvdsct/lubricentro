@@ -81,19 +81,17 @@
                         </tr>
                         @foreach ($pagos as $p)
                             @if ($p->facturas->pagos->first()->estado != '400')
+                                {{-- $p->facturas->orden_id --}}
+
                                 <tr>
-
-
                                     <td>{{ $p->facturas->created_at->format('H:i') }} Hs.</td>
                                     <td>
                                         @if ($p->in_out == 'in')
                                             @if ($p->facturas->pagos->first()->concepto == 'Lubricentro' || $p->facturas->pagos->first()->concepto == 'Lavadero')
                                                 <a href="{{ route('ordenes.show', $p->facturas->orden_id) ?? '' }}">
-                                                    <span class="badge badge-success">Ingreso</span>
-                                                </a>
-                                            @else
-                                                <span class="badge badge-success">Ingreso</span>
                                             @endif
+
+                                            <span class="badge badge-success">Ingreso</span>
                                         @elseif($p->in_out == 'out')
                                             <span class="badge badge-danger">Egreso</span>
                                         @endif
@@ -102,6 +100,8 @@
                                     </td>
                                     <td>{{ $p->facturas->pagos->first()->concepto }}</td>
                                     <td>$ {{ $p->total }}</td>
+
+
                                 </tr>
                             @endif
                         @endforeach
