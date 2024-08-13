@@ -80,30 +80,30 @@
                             <td> ${{ $montoInicial }}</td>
                         </tr>
                         @foreach ($pagos as $p)
-                            <tr>
-                              
+                            @if ($p->facturas->pagos->first()->estado != '400')
+                                <tr>
+
 
                                     <td>{{ $p->facturas->created_at->format('H:i') }} Hs.</td>
                                     <td>
                                         @if ($p->in_out == 'in')
-                                        @if($p->facturas->pagos->first()->concepto == 'Lubricentro' || $p->facturas->pagos->first()->concepto == 'Lavadero')
-                                        <a href="{{route('ordenes.show',$p->facturas->orden_id) ?? ''}}">
-                                            <span class="badge badge-success">Ingreso</span>
-                                        </a>
-                                        @else
-                                        <span class="badge badge-success">Ingreso</span>
-                                        @endif
-
+                                            @if ($p->facturas->pagos->first()->concepto == 'Lubricentro' || $p->facturas->pagos->first()->concepto == 'Lavadero')
+                                                <a href="{{ route('ordenes.show', $p->facturas->orden_id) ?? '' }}">
+                                                    <span class="badge badge-success">Ingreso</span>
+                                                </a>
+                                            @else
+                                                <span class="badge badge-success">Ingreso</span>
+                                            @endif
                                         @elseif($p->in_out == 'out')
-                                        <span class="badge badge-danger">Egreso</span>
-                                        @else
+                                            <span class="badge badge-danger">Egreso</span>
                                         @endif
                                     </td>
                                     <td>{{ $p->facturas->pagos->first()->medios->descripcion ?? $p->facturas->pagos->first()->tipos->descripcion }}
                                     </td>
                                     <td>{{ $p->facturas->pagos->first()->concepto }}</td>
                                     <td>$ {{ $p->total }}</td>
-                            </tr>
+                                </tr>
+                            @endif
                         @endforeach
                     </tbody>
                 </table>
