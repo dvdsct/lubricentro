@@ -19,8 +19,9 @@
         @livewire('about-vehicle',['orden' => $orden])
         @endif
         @livewire('final-order',['orden' => $orden])
+        @can('caja')
         @livewire('form-pago',['orden' => $orden])
-
+        @endcan
     </div>
 </div>
 <div class="row">
