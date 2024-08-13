@@ -22,7 +22,7 @@ class RolesSeeder extends Seeder
         $admin = Role::create(['name'=>'admin']);
         $user = Role::create(['name'=>'user']);
         $cajero = Role::create(['name'=>'cajero']);
-        $operador = Role::create(['name'=>'operador']);
+        $vendedor = Role::create(['name'=>'vendedor']);
 
 
         $read = Permission::create(['name'=>'read']);
@@ -37,6 +37,7 @@ class RolesSeeder extends Seeder
         $stock = Permission::create(['name'=>'stock']);
 
         $caja->assignRole($cajero);
+        $caja->assignRole($vendedor);
         $adminCajas->assignRole($admin);
         $recibirPedido->assignRole($cajero);
         $hacerPedido->assignRole($cajero);

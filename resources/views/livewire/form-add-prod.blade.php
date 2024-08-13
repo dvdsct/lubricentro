@@ -125,7 +125,7 @@
                         @endif
 
 
-
+                        @can('stock')
                         {{-- Codigo de barra y Stock --}}
                         <div class="pt-4 row">
                             <div class="col-md-5">
@@ -145,6 +145,7 @@
                                 <input type="text" class="form-control" wire:model='stock' placeholder="Sumar Stock" />
                             </div>
                         </div>
+                        @endcan
 
 
                         @if ($formProd)

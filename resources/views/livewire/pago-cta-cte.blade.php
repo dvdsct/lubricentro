@@ -6,7 +6,7 @@
         <td>{{ $pago->concepto }}</td>
         <td>${{ $pago->total }}</td>
         <td>{{ $pago->estado }}</td>
-        <td><button class="btn btn-danger btn-sm" 
+        <td><button class="btn" 
             wire:click='$dispatch("pagar")'
             >Cobrar</button>
         </td>

@@ -40,6 +40,7 @@ class UserSeeder extends Seeder
             'fecha_nac' => '27/10/05',
             'estado' => '1',
         ]);
+
         Persona::create([
             'nombre' => 'Walter',
             'apellido' => 'Aguirre Pranzoni',
@@ -69,7 +70,13 @@ class UserSeeder extends Seeder
             'fecha_nac' => '1/12/05',
             'estado' => '1',
         ]);
-
+        Persona::create([
+            'nombre' => 'Vendedor',
+            'apellido' => 'Vendedor',
+            'DNI' => '33520739',
+            'fecha_nac' => '27/10/05',
+            'estado' => '1',
+        ]);
 
 
 
@@ -93,6 +100,12 @@ class UserSeeder extends Seeder
             'password' => bcrypt('Cajero@159')
         ])->assignRole('cajero');
 
+        User::create([
+            'name' => 'Vendedor',
+            'email' => 'vendedor@test.com',
+            'password' => bcrypt('Cajero@159')
+        ])->assignRole('vendedor');
+
 
         Perfil::create([
             'persona_id' => '1',
@@ -112,16 +125,19 @@ class UserSeeder extends Seeder
         Perfil::create([
             'persona_id' => '5',
         ]);
+        Perfil::create([
+            'persona_id' => '6',
+        ]);
 
 
 
 
-        // Empleado::create([
-        //     'perfil_id' => '1',
-        //     'puesto' => '1',
-        //     'estado' => '1',
+        Empleado::create([
+            'perfil_id' => '6',
+            'puesto' => 'Vendedor',
+            'estado' => '1',
 
-        // ]);
+        ]);
 
         Cliente::create([
             'perfil_id' => '4',
