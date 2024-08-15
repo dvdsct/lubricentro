@@ -6,6 +6,7 @@ use App\Models\Caja;
 use App\Models\Orden;
 use App\Models\PedidoProveedor;
 use App\Models\Presupuesto;
+use App\Models\Stock;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 
@@ -215,6 +216,22 @@ class PDFController extends Controller
         ]);
 
         return $pdf->stream('presupuesto_' . $orden->id . '.pdf');
+    }
+
+
+
+
+
+
+    // PDF PLANILLA ACTUAL STOCK
+
+    public function pdfStock(){
+
+        $stockActual = Stock::all();
+
+        return view('pdf.stock',[
+            'stockActual' => $stockActual
+        ]);
     }
 }
 

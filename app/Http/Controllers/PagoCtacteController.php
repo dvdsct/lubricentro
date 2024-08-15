@@ -46,6 +46,7 @@ class PagoCtacteController extends Controller
     {
         $cliente = Cliente::find($id);
         $pagos = PagoCtacte::where('cliente_id',$cliente->id)->get();
+        
 
 
         return view('Lubricentro.Ventas.CtaCte.show',[

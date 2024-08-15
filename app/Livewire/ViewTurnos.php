@@ -20,16 +20,46 @@ class ViewTurnos extends Component
     public $vehiculo;
     public $orden;
     public $des;
+    public $reprogramar =false;
 
     public function mount()
     {
         $this->fecha = Carbon::now()->format('Y-m-d');
+        $this->reprogramar = false;
     }
 
     public function openModal()
     {
 
         $this->dispatch('modal-order')->to(FormCreateOrder::class);
+    }
+
+
+    public function reprTurn($id){
+
+        $turno = Orden::find($id);
+
+        $this->des = 'disabled';
+
+
+        if($this->reprogramar){
+            $this->reprogramar = false;
+        }else{
+            $this->reprogramar = true;  
+
+        }
+
+    }
+
+
+    
+    public function reproTurno(){
+        $turno = Orden::where('orden_id', $this->orden->id)->get();
+        $turno->update([
+            'horario' => $this->fecha,
+            'fecha_turno' => $this->horario
+
+        ]);
     }
 
 
@@ -46,16 +76,6 @@ class ViewTurnos extends Component
     {
             $this->fecha = Carbon::parse($this->fecha)->subDay()->format('Y-m-d');
 
-    }
-
-    #[On('repro-turn')]
-    public function reproTurn(){
-        $turno = Orden::where('orden_id', $this->orden->id)->get();
-        $turno->update([
-
-            'estado' => '600'
-
-        ]);
     }
 
 

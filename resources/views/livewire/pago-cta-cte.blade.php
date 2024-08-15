@@ -1,4 +1,4 @@
-<div>
+<div wire:key='$pago->id'>
     <tr>
         <td>{{ $pago->id }}
 
@@ -14,6 +14,5 @@
 
     </tr>
 
-    {{-- @livewire('form-pago', ['orden' => $orden]) --}}
 
 </div>
