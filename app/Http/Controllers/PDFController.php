@@ -230,10 +230,15 @@ class PDFController extends Controller
         $fecha = Carbon::now();
         $stockActual = Stock::all();
 
-        return view('pdf.stock',[
+
+
+        $pdf = PDF::loadView('pdf.stock', [
             'stockActual' => $stockActual,
             'fecha' => $fecha
         ]);
+
+        return $pdf->stream('stock'. $fecha);
+
     }
 }
 
