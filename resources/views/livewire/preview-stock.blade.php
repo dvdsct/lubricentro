@@ -4,7 +4,7 @@
         <div class="card-header">
             <div class="card-tools">
                 <div class="input-group" style="width: 300px;">
-                    <input type="text" wire:model='query' wire:keydown='search' class="form-control float-right" placeholder="Buscar producto">
+                    <input type="text" wire:model='query' wire:keydown='search' class="float-right form-control" placeholder="Buscar producto">
                     <div class="input-group-append">
                         <button class="btn btn-default">
                             <i class="fas fa-search"></i>
@@ -13,7 +13,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-body p-0">
+        <div class="p-0 card-body">
             <table class="table ">
                 <thead>
                     <tr>
@@ -54,5 +54,15 @@
         </div>
 
     </div>
-
+    <a href="{{ route('pdf.stock') }}" target="_blank">
+        <div class="small-box bg-warning" style="cursor: pointer;">
+            <div class="inner">
+                <h3 class="m-0">Imprimir</h3>
+                <p>Planilla Sotck</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-print"></i>
+            </div>
+        </div>
+    </a>
 </div>
