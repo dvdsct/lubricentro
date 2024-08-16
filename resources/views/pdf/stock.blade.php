@@ -70,6 +70,7 @@
                 <th>Codigo Rocket</th>
                 <th>Producto</th>
                 <th>Cantidad</th>
+                <th>Precio Costo</th>
                 <th>Precio Vta</th>
                 <th>Stock</th>
             </tr>
@@ -80,8 +81,8 @@
                 <td>{{$item->productos->id}}</td>
                 <td>{{$item->productos->descripcion}} {{$item->productos->codigo}}</td>
                 <td>{{ $item->cantidad }}</td>
+                <td>  {{ $item->productos->costo }}</td>
                 <td>${{$item->productos->precio_venta}}</td>
-                <td>  {{ $item->productos->stocks->sum('cantidad') }}</td>
             </tr>
             @endforeach
         </tbody>
