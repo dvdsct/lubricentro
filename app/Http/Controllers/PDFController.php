@@ -7,6 +7,7 @@ use App\Models\Orden;
 use App\Models\PedidoProveedor;
 use App\Models\Presupuesto;
 use App\Models\Stock;
+use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 
@@ -226,11 +227,12 @@ class PDFController extends Controller
     // PDF PLANILLA ACTUAL STOCK
 
     public function pdfStock(){
-
+        $fecha = Carbon::now();
         $stockActual = Stock::all();
 
         return view('pdf.stock',[
-            'stockActual' => $stockActual
+            'stockActual' => $stockActual,
+            'fecha' => $fecha
         ]);
     }
 }
