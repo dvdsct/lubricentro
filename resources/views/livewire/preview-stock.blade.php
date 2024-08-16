@@ -2,6 +2,17 @@
     <h3> <strong> STOCK </strong> </h3>
     <div class="card">
         <div class="card-header">
+            <a href="{{ route('pdf.stock') }}" target="_blank">
+                <div class="small-box bg-warning" style="cursor: pointer;">
+                    <div class="inner">
+                        <h3 class="m-0">Imprimir</h3>
+                        <p>Planilla Sotck</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-print"></i>
+                    </div>
+                </div>
+            </a>
             <div class="card-tools">
                 <div class="input-group" style="width: 300px;">
                     <input type="text" wire:model='query' wire:keydown='search' class="float-right form-control" placeholder="Buscar producto">
@@ -54,15 +65,5 @@
         </div>
 
     </div>
-    <a href="{{ route('pdf.stock') }}" target="_blank">
-        <div class="small-box bg-warning" style="cursor: pointer;">
-            <div class="inner">
-                <h3 class="m-0">Imprimir</h3>
-                <p>Planilla Sotck</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-print"></i>
-            </div>
-        </div>
-    </a>
+
 </div>
