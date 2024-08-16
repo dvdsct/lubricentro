@@ -72,7 +72,6 @@
                 <th>Cantidad</th>
                 <th>Precio Costo</th>
                 <th>Precio Vta</th>
-                <th>Stock</th>
             </tr>
         </thead>
         <tbody>
