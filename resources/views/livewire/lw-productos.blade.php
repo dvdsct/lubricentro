@@ -41,7 +41,7 @@
                     <td>{{ $p->categoria_nombre }}</td> <!-- COLOCAR LA CATEGORIA DEL PRODUCTO -->
                     <td>{{ $p->subcategoria_nombre }}</td> <!-- COLOCAR LA CATEGORIA DEL PRODUCTO -->
 
-                    <td> ${{ number_format($p->costo ?? 0, 2) }}</td>
+                    <td> ${{ number_format(floatval($p->costo) ?? 0, 2) }}</td>
                     <td> $ {{$p->precio_venta }}</td>
                     <td>{{ $p->nombre }}</td>
                     <td class="text-right project-actions">
