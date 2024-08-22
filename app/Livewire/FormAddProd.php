@@ -39,7 +39,12 @@ class FormAddProd extends Component
     {
         $this->proveedores = Proveedor::all();
         $this->categorias = CategoriaProducto::all();
-        $this->subcategorias = SubcategoriaProducto::all();
+        if (Auth::user()->hasRole('admin')) {
+            $this->subcategorias = SubcategoriaProducto::all();
+        }else{
+            $this->subcategorias = SubcategoriaProducto::where('estado','2')->get();
+
+        }
     }
 
 
@@ -131,8 +136,6 @@ class FormAddProd extends Component
 
             $p = Producto::firstOrCreate([
                 'descripcion' => $this->descripcion,
-                'categoria_producto_id' => $this->categoria,
-                'subcategoria_producto_id' => $this->subcategoria,
                 'codigo_de_barras' => $this->cod_barra,
                 'codigo' => $this->codigo,
             ]);
@@ -140,6 +143,9 @@ class FormAddProd extends Component
             $p->update([
                 'monto' => $this->monto,
                 'porcentaje' => $this->porcentaje,
+                
+                'categoria_producto_id' => $this->categoria,
+                'subcategoria_producto_id' => $this->subcategoria,
             ]);
 
             $s = Stock::firstOrCreate([
@@ -162,8 +168,7 @@ class FormAddProd extends Component
 
             $p = Producto::firstOrCreate([
                 'descripcion' => $this->descripcion,
-                'categoria_producto_id' => $this->categoria,
-                'subcategoria_producto_id' => $this->subcategoria,
+          
                 'codigo_de_barras' => $this->cod_barra,
                 'codigo' => $this->codigo,
             ]);
@@ -171,6 +176,8 @@ class FormAddProd extends Component
             $p->update([
                 'costo' => $this->costo,
                 'precio_venta' => $this->precioVenta,
+                'categoria_producto_id' => $this->categoria,
+                'subcategoria_producto_id' => $this->subcategoria,
             ]);
 
             $s = Stock::firstOrCreate([
