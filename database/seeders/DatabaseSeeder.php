@@ -30,7 +30,8 @@ class DatabaseSeeder extends Seeder
         $this->call(ColoresSeeder::class);
         $this->call(TarjetaSeeder::class);
         $this->call(BancoSeeder::class);
-        $this->call(ProdSeed::class);
+        // $this->call(ProdSeed::class);
+        $this->call(CargaSeeder::class);
     }
 
 }
