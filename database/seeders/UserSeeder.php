@@ -160,5 +160,44 @@ class UserSeeder extends Seeder
             'tipo' => 'Mayorista',
             'estado' => '',
         ]);
+
+        // Usuario encargado de Caja adicional
+        $cajaUser = User::firstOrCreate(
+            ['email' => 'caja@test.com'],
+            [
+                'name' => 'Encargado Caja',
+                'password' => bcrypt('Caja@159'),
+            ]
+        );
+        if (!$cajaUser->hasRole('cajero')) {
+            $cajaUser->assignRole('cajero');
+        }
+
+        $cajaPersona = Persona::firstOrCreate(
+            ['DNI' => '12345678'],
+            [
+                'nombre' => 'Encargado',
+                'apellido' => 'Caja',
+                'fecha_nac' => '1990-01-01',
+                'estado' => '1',
+            ]
+        );
+
+        $cajaPerfil = Perfil::firstOrCreate(
+            ['persona_id' => $cajaPersona->id],
+            ['user_id' => $cajaUser->id]
+        );
+        if (empty($cajaPerfil->user_id)) {
+            $cajaPerfil->user_id = $cajaUser->id;
+            $cajaPerfil->save();
+        }
+
+        $cajero = new Cajero();
+        $cajero->perfil_id = $cajaPerfil->id;
+        $cajero->sucursal_id = 1;
+        // Evitar duplicado si ya existe
+        if (!Cajero::where('perfil_id', $cajaPerfil->id)->exists()) {
+            $cajero->save();
+        }
     }
 }
