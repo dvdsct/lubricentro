@@ -1,7 +1,7 @@
 <div>
     @if ($modal == true)
     <div class="modal fade show" id="modal-default" style="display: block; background-color: rgba(0, 0, 0, 0.5);" aria-modal="true" role="dialog">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header bg-info">
                     <h4 class="modal-title"> <strong> ORDEN</strong> </h4>
@@ -11,7 +11,7 @@
                 </div>
 
                 <!-- SI EL CLIENTE NO EXISTE - CREAR NUEVO CLIENTE -->
-                <div class="modal-body">
+                <div class="modal-body" style="max-height: 75vh; overflow-y: auto;">
                     <!-- FECHA Y HORA DEL TURNO -->
                     <div class="row  d-flex justify-content-between">
                         <h4 class="pl-2"> <strong> FECHA Y HORA </strong> </h4>
@@ -74,6 +74,9 @@
                                     {{ $c->perfiles->personas->nombre }}
                                     {{ $c->perfiles->personas->apellido }} - DNI:
                                     {{ $c->perfiles->personas->DNI }}
+                                    @if($c->perfiles->personas->numero_telefono)
+                                        - Tel: {{ $c->perfiles->personas->numero_telefono }}
+                                    @endif
                                 </option>
                                 @endforeach ...
                             </select>
@@ -90,8 +93,17 @@
                     @else
                     <!-- MUESTRA NOMBRE APELLIDO Y DNI DEL CLIENTE SELECCIONADO -->
                     <div class="row px-3">
-                        <h2> <span class="font-italic float-right badge bg-secondary"> {{ $nombre }}
-                                {{ $apellido }} - {{ $dni }} </span> </h2>
+                        <h2>
+                            <span class="font-italic float-right badge bg-secondary">
+                                {{ $nombre }} {{ $apellido }}
+                                @if($dni)
+                                    - {{ $dni }}
+                                @endif
+                                @if($numero_telefono)
+                                    - Tel: {{ $numero_telefono }}
+                                @endif
+                            </span>
+                        </h2>
 
                         <!-- BOTON ELIMINAR CLIENTE SELECCIONADO -->
                         <div class="col-1 pl-2">
@@ -143,6 +155,18 @@
                                 <input type="number" {{ $act }} class="form-control" id="inputCliente" wire:model='dni'>
                                 <div style="color: red; font-weight: 800;">
                                     @error('dni')
+                                    {{ $message }}
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="inputTelefono" class="col-form-label">Teléfono</label>
+                                <input type="text" {{ $act }} class="form-control" id="inputTelefono" wire:model='numero_telefono' placeholder="Solo números">
+                                <div style="color: red; font-weight: 800;">
+                                    @error('numero_telefono')
                                     {{ $message }}
                                     @enderror
                                 </div>

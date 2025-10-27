@@ -17,35 +17,44 @@
             <div class="card-body py-1 px-3" style="display: block;">
                 <div class="row p-2">
                     <div class="col-md-2 d-flex flex-column">
-                        <h6><strong>DNI: </strong>{{ $persona->perfiles->personas->DNI }}</h6>
+                        <h6><strong>DNI: </strong>{{ $persona->perfiles->personas->DNI ?? '-' }}</h6>
                         <h6>
                             <strong>EDAD: </strong>
-                            {{ \Carbon\Carbon::parse($persona->perfiles->personas->fecha_nac)->age }} años
+                            @if($persona->perfiles->personas->fecha_nac)
+                                {{ \Carbon\Carbon::parse($persona->perfiles->personas->fecha_nac)->age }} años
+                            @else
+                                -
+                            @endif
                         </h6>
                     </div>
 
                     <div class="col-md-3 d-flex flex-column">
                         <h6>
                             <strong>EMAIL: </strong>
-                            {{ $persona->perfiles->first()->personas->correos->first()->direccion ?? '' }}
+                            {{ optional(optional(optional($persona->perfiles->first())->personas)->correos->first())->direccion ?? '-' }}
                         </h6>
 
 
                         <h6>
                             <strong>TELEFONO: </strong>
-                            {{-- {{ optional($persona->perfiles->personas->telefonos)->first()->numero ?? '-' }} --}}
+                            {{ $persona->perfiles->personas->numero_telefono ?? '-' }}
                         </h6>
                     </div>
 
                     <div class="col-md-4 d-flex flex-column">
                         <h6>
                             <strong>DOMICILIO: </strong>
-                            {{-- {{ $persona->perfiles->personas->direcciones->first()->barrio ?? '-' }} --}}
+                            {{-- Si deseas mostrar un domicilio específico, reemplaza este texto por el campo correcto --}}
+                            {{ '-' }}
                         </h6>
 
                         <h6>
                             <strong>CUMPLEAÑOS: </strong>
-                            {{ \Carbon\Carbon::parse($persona->perfiles->personas->fecha_nac)->translatedFormat('j \\d\\e F', 'es') }}
+                            @if($persona->perfiles->personas->fecha_nac)
+                                {{ \Carbon\Carbon::parse($persona->perfiles->personas->fecha_nac)->translatedFormat('j \\d\\e F', 'es') }}
+                            @else
+                                {{ '-' }}
+                            @endif
                         </h6>
                     </div>
             

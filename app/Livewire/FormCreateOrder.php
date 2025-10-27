@@ -67,8 +67,11 @@ class FormCreateOrder extends Component
     #[Validate('required', message: 'Debe ingresar el Apellido!', translate: false)]
     public $apellido;
     public $fecha_nac;
-    #[Validate('required', message: 'Debe ingresar el DNI!', translate: false)]
+    // DNI ahora es opcional
     public $dni;
+    // Nuevo campo: número de teléfono, solo números
+    #[Validate('nullable|regex:/^\\d+$/', message: 'El número de teléfono debe contener solo dígitos.', translate: false)]
+    public $numero_telefono;
 
     //Select formperson==TRUE
     public $tiposVehiculo;
@@ -162,6 +165,7 @@ class FormCreateOrder extends Component
         $this->apellido = $this->cliente->perfiles->personas->apellido ?? '';
         $this->dni = $this->cliente->perfiles->personas->DNI ?? '';
         $this->fecha_nac = $this->cliente->perfiles->personas->fecha_nac ?? '';
+        $this->numero_telefono = $this->cliente->perfiles->personas->numero_telefono ?? '';
     }
 
     public function addClient()
@@ -176,6 +180,7 @@ class FormCreateOrder extends Component
                 'nombre' => $this->nombre,
                 'apellido' => $this->apellido,
                 'DNI' => $this->dni,
+                'numero_telefono' => $this->numero_telefono,
                 'fecha_nac' => $this->fecha_nac,
                 'estado' => 1
             ]);
@@ -373,7 +378,7 @@ class FormCreateOrder extends Component
         } else {
             if ($this->cliente != null) {
 
-                $this->reset('cliente', 'nombre', 'apellido', 'dni', 'fecha_nac');
+                $this->reset('cliente', 'nombre', 'apellido', 'dni', 'fecha_nac', 'numero_telefono');
                 $this->formperson = false;
             } else {
                 $this->formperson = true;
@@ -423,6 +428,7 @@ class FormCreateOrder extends Component
             'apellido',
             'dni',
             'fecha_nac',
+            'numero_telefono',
             'cliente',
             'vehiculo',
             'servicio',
