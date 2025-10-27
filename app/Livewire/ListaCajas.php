@@ -22,7 +22,11 @@ class ListaCajas extends Component
 
     public function mount()
     {
-        if (Auth::user()->hasRole(['cajero'])) {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        if (Auth::check() && Auth::user()->hasRole(['cajero'])) {
 
             $this->caja = Caja::where('estado', '200')->get();
             $this->perfil = Perfil::where('user_id', Auth::user()->id)->get();
@@ -38,7 +42,7 @@ class ListaCajas extends Component
                 }
             }
         }
-        if (Auth::user()->hasRole(['admin'])) {
+        if (Auth::check() && Auth::user()->hasRole(['admin'])) {
             $this->cajas = Caja::all();
         }
     }
@@ -66,7 +70,7 @@ class ListaCajas extends Component
             $this->cajero = $this->perfil->first()->cajeros->first();
             // dd($this->cajero);
 
-            if (Auth::user()->hasRole(['cajero'])) {
+            if (Auth::check() && Auth::user()->hasRole(['cajero'])) {
                 $this->caja =  Caja::firstOrCreate([
                     'cajero_id' => $this->cajero->id,
                     'estado' => '100',
