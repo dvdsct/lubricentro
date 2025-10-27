@@ -15,6 +15,7 @@ class PreviewStock extends Component
 
     public $cantidad;
     public $query = '';
+    protected $paginationTheme = 'bootstrap';
 
     public function search()
     {

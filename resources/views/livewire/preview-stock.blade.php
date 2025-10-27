@@ -63,6 +63,9 @@
                 </tbody>
             </table>
         </div>
+        <div class="card-footer clearfix">
+            {{ $stock->links() }}
+        </div>
 
     </div>
 
