@@ -64,8 +64,9 @@
                 @endforeach
             </tbody>
         </table>
-
-
+        <div class="card-footer d-flex justify-content-end">
+            {{ $productos->links() }}
+        </div>
     </div>
 
 

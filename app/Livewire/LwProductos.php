@@ -11,6 +11,7 @@ use Livewire\WithPagination;
 class LwProductos extends Component
 {
     use WithPagination;
+    protected string $paginationTheme = 'bootstrap';
     public $head = ['descripcion', 'costo'];
     public $list;
     public $producto;
