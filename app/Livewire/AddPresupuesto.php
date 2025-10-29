@@ -41,6 +41,9 @@ class AddPresupuesto extends Component
     public $apellido;
     public $fecha_nac;
     public $dni;
+    // Nuevo: número de teléfono (solo dígitos, opcional)
+    #[Validate('nullable|regex:/^\\d+$/', message: 'El número de teléfono debe contener solo dígitos.', translate: false)]
+    public $numero_telefono;
 
 
     // del cliente
@@ -61,6 +64,7 @@ class AddPresupuesto extends Component
         $this->apellido = $this->cliente->perfiles->personas->apellido ?? '';
         $this->dni = $this->cliente->perfiles->personas->DNI ?? '';
         $this->fecha_nac = $this->cliente->perfiles->personas->fecha_nac ?? '';
+        $this->numero_telefono = $this->cliente->perfiles->personas->numero_telefono ?? '';
     }
 
 
@@ -72,7 +76,7 @@ class AddPresupuesto extends Component
         } else {
             if ($this->cliente != null) {
 
-                $this->reset('cliente', 'nombre', 'apellido', 'dni', 'fecha_nac');
+                $this->reset('cliente', 'nombre', 'apellido', 'dni', 'fecha_nac', 'numero_telefono');
                 $this->formperson = false;
             } else {
                 $this->formperson = true;
@@ -92,6 +96,7 @@ class AddPresupuesto extends Component
                 'nombre' => $this->nombre,
                 'apellido' => $this->apellido,
                 'DNI' => $this->dni,
+                'numero_telefono' => $this->numero_telefono,
                 'fecha_nac' => $this->fecha_nac,
                 'estado' => 1
             ]);

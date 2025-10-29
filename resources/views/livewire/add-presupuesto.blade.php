@@ -28,8 +28,12 @@
                                 <option value="{{ $c->id }}">
                                     {{ $c->id }}
                                     {{ $c->perfiles->personas->nombre }}
-                                    {{ $c->perfiles->personas->apellido }} - DNI:
-                                    {{ $c->perfiles->personas->DNI }}
+                                    {{ $c->perfiles->personas->apellido }}
+                                    @if($c->perfiles->personas->DNI)
+                                        - DNI: {{ $c->perfiles->personas->DNI }}
+                                    @elseif($c->perfiles->personas->numero_telefono)
+                                        - Tel: {{ $c->perfiles->personas->numero_telefono }}
+                                    @endif
                                 </option>
                                 @endforeach ...
                             </select>
@@ -46,8 +50,16 @@
                     @else
                     <!-- MUESTRA NOMBRE APELLIDO Y DNI DEL CLIENTE SELECCIONADO -->
                     <div class="px-3 row">
-                        <h2> <span class="float-right font-italic badge bg-secondary"> {{ $nombre }}
-                                {{ $apellido }} - {{ $dni }} </span> </h2>
+                        <h2>
+                            <span class="float-right font-italic badge bg-secondary">
+                                {{ $nombre }} {{ $apellido }}
+                                @if($dni)
+                                    - DNI: {{ $dni }}
+                                @elseif($numero_telefono)
+                                    - Tel: {{ $numero_telefono }}
+                                @endif
+                            </span>
+                        </h2>
 
                         <!-- BOTON ELIMINAR CLIENTE SELECCIONADO -->
                         <div class="pl-2 col-1">
@@ -109,6 +121,17 @@
                             <div class="form-group">
                                 <label for="inputCliente" class="col-form-label">Fecha de Nac.</label>
                                 <input type="date" class="form-control" id="inputCliente" wire:model='fecha_nac'>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="inputTelefono" class="col-form-label">Teléfono</label>
+                                <input type="text" class="form-control" id="inputTelefono" wire:model='numero_telefono' wire:keydown.enter='addClient' placeholder="Solo números">
+                                <div style="color: red; font-weight: 800;">
+                                    @error('numero_telefono')
+                                    {{ $message }}
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                         <div class="pt-2 col-md-12">
