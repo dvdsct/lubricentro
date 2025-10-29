@@ -5,6 +5,9 @@
         @if ($orden->estado == 100)
             <div class="card-header bg-danger">
                 <h5 class="m-0"> <strong> PAGADO </strong> </h5>
+            @elseif ($orden->estado == 10)
+            <div class="card-header bg-warning">
+                <h5 class="m-0"> <strong> PENDIENTE A SER COBRADO </strong> </h5>
             @else
                 <div class="card-header" style="display: flex; justify-content: space-between;">
 

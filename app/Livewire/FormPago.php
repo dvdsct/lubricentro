@@ -155,6 +155,7 @@ class FormPago extends Component
             $this->tiposFactura = TipoFactura::all();
             $this->proveedores = Proveedor::all();
             $this->cliente = $this->orden->clientes->id;
+            $this->clientes = Cliente::where('lista_precios', '3')->get();
             
 
         }
@@ -453,6 +454,7 @@ class FormPago extends Component
                         'estado' => '40'
                     ]);
 
+                    // Crear un Pago de Cuenta Corriente sin asociarlo a Caja
                     $p = Pago::create([
                         'in_out' => 'in',
                         'factura_id' => $f->id,
@@ -462,19 +464,13 @@ class FormPago extends Component
                         'efectivo' => 0,
                         'concepto' =>  $this->concepto,
                         'iva' => $this->iva,
-
                         'total' => $this->montoAPagar,
                         'estado' => '40',
-
                     ]);
 
-                    PagosXCaja::create([
-                        'pago_id' => $p->id,
-                        'caja_id' => $this->caja->id,
-                        'estado' => '40',
+                    // NO crear PagosXCaja aquí para no impactar Caja
 
-                    ]);
-
+                    // Registrar la deuda en Cuenta Corriente apuntando al Pago creado
                     PagoCtacte::create([
                         'cliente_id' => $this->cliente,
                         'pago_id' => $p->id,
@@ -704,8 +700,9 @@ class FormPago extends Component
 
 
 
+            // Estado de la orden: 10 = Cuenta Corriente pendiente, 100 = pagado
             $this->orden->update([
-                'estado' => '100'
+                'estado' => $this->medioPago == 4 ? '10' : '100'
             ]);
 
             $this->closeModal();

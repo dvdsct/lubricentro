@@ -51,11 +51,14 @@
                                     <span class="text-danger"> **Selecione un medio de pago</span>
                                 @enderror
                             </div>
-    @endif
 
+                            @if ($medioPago == 4)
+                                <div class="alert alert-warning" role="alert">
+                                    <strong>Cuenta Corriente seleccionada:</strong> no se registra ingreso en Caja ahora. Se genera una deuda en la Cuenta Corriente del cliente para cobrarla luego desde la sección "Cuenta Corriente".
+                                </div>
+                            @endif
 
-    @if ($tipoPago == 1)
-        <div class="mb-3">
+                            @endif
             <label for="tipo_pago" class="form-label">Cliente</label>
             <select wire:model.live="cliente" id="tipo_pago" class="form-control">
                 <option selected>Seleccionar cliente</option>
@@ -66,7 +69,6 @@
                 @endforeach
             </select>
         </div>
-    @endif
 
 
     @if ($tipoPago == 3)
