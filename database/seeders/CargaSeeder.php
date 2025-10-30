@@ -16,7 +16,7 @@ class CargaSeeder extends Seeder
      */
     public function run(): void
     {
-        $csvPath = base_path('public/seeder-source/carga.csv');
+        $csvPath = base_path('public/seeder-source/carga29102025.csv');
 
         if (!file_exists($csvPath)) {
             $this->command?->error("CSV no encontrado: {$csvPath}");
