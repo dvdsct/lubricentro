@@ -6,7 +6,7 @@
         Carbon\Carbon::setLocale('es');
     @endphp
     <div class="row">
-        @if ($presupuestos != null)
+        @if ($presupuestos != null && $presupuestos->count())
             <div class="col-12">
                 <div class="card">
                     <div class="card-header" style="display: flex; justify-content: space-between;">
@@ -23,6 +23,9 @@
                                     <i class="fas fa-search"></i>
                                 </button>
                             </div>
+                    <div class="card-footer clearfix">
+                        {{ $presupuestos->links() }}
+                    </div>
                         </div>
                     </div>
                     <div class="card-body table-responsive p-0">

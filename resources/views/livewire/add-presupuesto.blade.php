@@ -4,9 +4,9 @@
     <!-- MODAL PARA REALIZAR UN NUEVO PRESUPUESTO -->
 
     <div class="modal fade show" id="modal-default" style="display: block; background-color: rgba(0, 0, 0, 0.5);" role="dialog">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
-                <div class="modal-header bg-info">
+                <div class="modal-header bg-info" style="position: sticky; top: 0; z-index: 2;">
                     <h5 class="modal-title" id="supplierOrderModalLabel"> <strong> GENERAR NUEVO PRESUPUESTO </strong>
                     </h5>
                     <button type="button" class="close" wire:click='modalOnOff'>
@@ -14,7 +14,7 @@
                     </button>
 
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
                     @if ($formperson == false)
                     <div class="pt-2 row d-flex justify-content-between">
                         <h4 class="pl-2"> <strong> CLIENTE </strong> </h4>
@@ -71,6 +71,114 @@
                         </div>
                     </div>
 
+                    @endif
+                    @endif
+
+                    @if ($formperson == false && $cliente != null)
+                    <!-- SECCION VEHICULO (selección/alta) -->
+                    <div class="pt-3 row d-flex justify-content-between align-items-center">
+                        <div class="col-md-4">
+                            <h4 class="mb-0"> <strong> VEHÍCULO </strong> </h4>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="input-group">
+                                <select class="form-control" wire:model="vehiculo" wire:change="selectVehiculo">
+                                    <option value="">Seleccionar vehículo existente</option>
+                                    @foreach($vehiculos as $v)
+                                        <option value="{{ $v->id }}">
+                                            {{ optional(optional($v->modelos)->marcas)->descripcion ?? '-' }}
+                                            {{ $v->modelos->descripcion ?? '' }}
+                                            @if($v->dominio) - {{ $v->dominio }} @endif
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-right">
+                            <button class="btn btn-sm btn-success" wire:click="setFormVehiculo" title="Vehículo">
+                                <i class="fas fa-car"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    @if($selecedtVehiculo)
+                        <div class="px-3 pt-2">
+                            <span class="badge bg-success">
+                                Vehículo seleccionado
+                            </span>
+                        </div>
+                    @endif
+
+                    @if ($formVehiculo)
+                    <div class="px-3 row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-form-label">Tipo de vehículo</label>
+                                <select class="form-control" wire:model="tipo" wire:change="upMarcas">
+                                    <option value="">Seleccionar</option>
+                                    @foreach($tiposVehiculo as $t)
+                                        <option value="{{ $t->id }}">{{ $t->descripcion }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-form-label">Marca</label>
+                                <select class="form-control" wire:model="marca" wire:change="upModelos">
+                                    <option value="">Seleccionar</option>
+                                    @foreach($marcas as $m)
+                                        <option value="{{ $m->id }}">{{ $m->descripcion }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-form-label">Modelo</label>
+                                <select class="form-control" wire:model="modelo">
+                                    <option value="">Seleccionar</option>
+                                    @foreach($modelos as $mo)
+                                        <option value="{{ $mo->id }}">{{ $mo->descripcion }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-form-label">Dominio</label>
+                                <input type="text" class="form-control" wire:model="dominio">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-form-label">Color</label>
+                                <select class="form-control" wire:model="color">
+                                    <option value="">Seleccionar</option>
+                                    @foreach($colores as $c)
+                                        <option value="{{ $c->descripcion }}">{{ $c->descripcion }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-form-label">Versión</label>
+                                <input type="text" class="form-control" wire:model="version">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-form-label">Año</label>
+                                <input type="number" class="form-control" wire:model="año">
+                            </div>
+                        </div>
+
+                        <div class="col-12 pt-2 d-flex justify-content-end">
+                            <button class="btn btn-success" wire:click="addVehicle">Guardar vehículo</button>
+                        </div>
+                    </div>
                     @endif
                     @endif
 
@@ -144,7 +252,7 @@
                     @endif
 
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer" style="position: sticky; bottom: 0; z-index: 2; background: #fff;">
                     <button type="submit" class="btn btn-primary" form="supplierOrderForm" wire:click="continueForm"><strong> Continuar </strong> <i class="fas fa-arrow-right"></i>
 </button>
                 </div>

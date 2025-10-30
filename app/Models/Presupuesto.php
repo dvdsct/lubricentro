@@ -9,7 +9,7 @@ class Presupuesto extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['estado','cliente_id'];
+    protected $fillable = ['estado','cliente_id','vehiculo_id'];
 
 
     public function itemspres(){

@@ -4,18 +4,27 @@ namespace App\Livewire;
 
 use App\Models\Presupuesto;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class ListPresupuesto extends Component
 {
-    public $presupuestos;
+    use WithPagination;
+
+    protected $paginationTheme = 'bootstrap';
+    public $perPage = 10;
 
     public function mount(){
-        $this->presupuestos = Presupuesto::all()->sortByDesc('estado');
+        // no-op: evitar almacenar paginadores en propiedades públicas
     }
-    
+
     public function render()
     {
-        $this->presupuestos = Presupuesto::all();
-        return view('livewire.list-presupuesto');
+        $presupuestos = Presupuesto::with(['clientes.perfiles.personas', 'itemspres'])
+            ->orderBy('created_at','desc')
+            ->paginate($this->perPage);
+
+        return view('livewire.list-presupuesto', [
+            'presupuestos' => $presupuestos
+        ]);
     }
 }
