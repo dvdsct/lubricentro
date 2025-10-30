@@ -8,8 +8,7 @@
 
 @section('content')
 
-
-{{$proveedores}}
+    @livewire('proveedores')
 
 
 @stop

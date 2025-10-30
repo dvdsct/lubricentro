@@ -355,6 +355,13 @@ return [
 
         ],
         [
+            'text' => 'Proveedores',
+            'url'  => 'proveedores',
+            'icon' => 'fa fa-warehouse',
+            'can'  => 'adminCajas',
+
+        ],
+        [
             'text' => 'Tarjetas',
             'url'  => 'tarjetas',
             'icon' => 'far fa-credit-card',

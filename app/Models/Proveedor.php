@@ -9,6 +9,18 @@ class Proveedor extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'perfil_id',
+        'tipo',
+        'cuit',
+        'nombre_fantasia',
+        'direccion',
+        'rubro',
+        'telefono',
+        'email',
+        'estado',
+    ];
+
 
     public function perfiles()
     {
