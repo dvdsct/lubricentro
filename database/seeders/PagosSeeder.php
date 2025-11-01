@@ -15,7 +15,7 @@ class PagosSeeder extends Seeder
     public function run(): void
     {
         $tipos =['Parcial','Total', 'Preventa','Diferido'];
-        $medios = ['Tarjeta Credito','Efectivo','Cheque','Cuenta Corriente','Transferencia'];
+        $medios = ['Tarjeta Credito','Efectivo','Cheque','Cuenta Corriente','Transferencia','Tarjeta Debito'];
 
 
         foreach($tipos as $t){

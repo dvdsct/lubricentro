@@ -7,6 +7,7 @@ use App\Models\ItemsXOrden;
 use App\Models\Producto;
 use App\Models\Servicio;
 use App\Models\Stock;
+use App\Models\Factura;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -261,8 +262,13 @@ class AddProducts extends Component
         $this->productos = Stock::all();
         $this->servicios = Servicio::all();
 
-
-        $this->total = $this->orden->items->sum('subtotal') - $this->descuento;
+        // Mostrar total de factura si la orden está pagada
+        if ($this->orden && $this->orden->estado == 100) {
+            $factura = Factura::where('orden_id', $this->orden->id)->latest()->first();
+            $this->total = $factura?->total ?? $this->orden->items->sum('subtotal');
+        } else {
+            $this->total = $this->orden->items->sum('subtotal') - $this->descuento;
+        }
 
         return view('livewire.add-products', [
             'stock' => Stock::select('stocks.*', 'productos.descripcion as descripcion', 'productos.codigo', 'productos.precio_venta')

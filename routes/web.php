@@ -15,6 +15,7 @@ use App\Http\Controllers\PresupuestoController;
 use App\Http\Controllers\ProveedoresController;
 use App\Http\Controllers\TarjetaController;
 use App\Models\PagoCtacte;
+use App\Livewire\DescuentosCrud;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,8 +61,13 @@ Route::middleware([
     Route::get('/pdfcaja/{caja}', 'App\Http\Controllers\PDFController@cierreCaja')->name('pdf.caja');
     Route::get('/pdf-stock', 'App\Http\Controllers\PDFController@pdfStock')->name('pdf.stock');
 
+    // Admin-only: Descuentos management (use 'can' middleware to avoid missing 'role' alias)
+    Route::get('/descuentos', DescuentosCrud::class)
+        ->name('descuentos.index')
+        ->middleware('can:adminCajas');
+
     Route::get('register', function () {
         return view('Lubricentro.Turnos.index');
-         });
+    });
 
 });

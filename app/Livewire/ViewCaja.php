@@ -63,9 +63,10 @@ class ViewCaja extends Component
         $this->pagosTrans = $this->caja->pagos->filter(function ($pago) {
             return $pago->medio_pago_id == 5 && $pago->in_out != 'out';
         });
-        // Tarjetas
-        $this->pagosTarjeta = $this->caja->pagos->filter(function ($pago) {
-            return $pago->medio_pago_id == 1 && $pago->in_out != 'out';
+        // Tarjetas (Crédito + Débito)
+        $debitoId = \App\Models\MedioPago::where('descripcion', 'Tarjeta Debito')->value('id');
+        $this->pagosTarjeta = $this->caja->pagos->filter(function ($pago) use ($debitoId) {
+            return in_array($pago->medio_pago_id, [1, $debitoId]) && $pago->in_out != 'out';
         });
         // Cuenta Corriente
         $this->pagosCtaCte = $this->caja->pagos->filter(function ($pago) {
@@ -144,9 +145,10 @@ class ViewCaja extends Component
         $this->pagosTrans = $this->caja->pagos->filter(function ($pago) {
             return $pago->medio_pago_id == 5 && $pago->in_out != 'out';
         })->sum('total');
-        // Tarjetas
-        $this->pagosTarjeta = $this->caja->pagos->filter(function ($pago) {
-            return $pago->medio_pago_id == 1 && $pago->in_out != 'out';
+        // Tarjetas (Crédito + Débito)
+        $debitoId = \App\Models\MedioPago::where('descripcion', 'Tarjeta Debito')->value('id');
+        $this->pagosTarjeta = $this->caja->pagos->filter(function ($pago) use ($debitoId) {
+            return in_array($pago->medio_pago_id, [1, $debitoId]) && $pago->in_out != 'out';
         })->sum('total');
         // Cuenta Corriente
         $this->pagosCtaCte = $this->caja->pagos->filter(function ($pago) {

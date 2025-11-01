@@ -7,6 +7,8 @@ use App\Models\Caja;
 use App\Models\Cheque;
 use App\Models\Cliente;
 use App\Models\Factura;
+use App\Models\Descuentos;
+use App\Models\DescuentoXFactura;
 use App\Models\MedioPago;
 use App\Models\Orden;
 use App\Models\Pago;
@@ -58,9 +60,17 @@ class FormPago extends Component
 
     public $montoConInt;
     public $medioPago;
+    public $debitoId; // MedioPago id for Tarjeta Debito
+    public $debitoCupon;
+    public $debitoLote;
+    public $debitoAutorizacion;
     public $banco;
     public $bancos;
     public $caja;
+    // Descuentos administrados
+    public $descuentos;
+    public $descuentoId = '';
+    public $discountAmount = 0;
 
     // Formulario Compra
     public $pedido;
@@ -113,6 +123,62 @@ class FormPago extends Component
                         ->where('estado', '200')
                         ->first();
                 }
+
+                // ______________________________________________________________________________
+                // ------------------------------------------------------------------------------
+                //                                 Pago Total Tarjeta Débito  Estado = 12
+                // ------------------------------------------------------------------------------
+                if ($this->debitoId && (string)$this->medioPago === (string)$this->debitoId) {
+                    // Validación de campos de débito
+                    $this->validate([
+                        'debitoCupon' => 'required',
+                        'debitoLote' => 'required',
+                        'debitoAutorizacion' => 'required',
+                    ]);
+
+                    $f =  Factura::create([
+                        'orden_id' => $this->orden->id,
+                        'tipo_factura_id' => $this->tipoFactura,
+                        'total' => $this->total,
+                        'iva' => $this->iva,
+                        'estado' => '12'
+                    ]);
+                    if ($this->descuentoId && $this->discountAmount > 0) {
+                        DescuentoXFactura::create([
+                            'factura_id' => $f->id,
+                            'user_id' => Auth::id(),
+                            'monto' => $this->discountAmount,
+                            'estado' => '1',
+                        ]);
+                    }
+                    if ($this->descuentoId && $this->discountAmount > 0) {
+                        DescuentoXFactura::create([
+                            'factura_id' => $f->id,
+                            'user_id' => Auth::id(),
+                            'monto' => $this->discountAmount,
+                            'estado' => '1',
+                        ]);
+                    }
+
+                    $p = Pago::create([
+                        'in_out' => 'in',
+                        'factura_id' => $f->id,
+                        'cliente_id' => $this->cliente,
+                        'medio_pago_id' => $this->medioPago,
+                        'tipo_pago_id' => $this->tipoPago,
+                        'efectivo' => 0,
+                        'concepto' =>  $this->concepto,
+                        'code_op' => 'CUPON:' . $this->debitoCupon . '; LOTE:' . $this->debitoLote . '; AUT:' . $this->debitoAutorizacion,
+                        'iva' => $this->iva,
+                        'total' => $this->total,
+                        'estado' => '12',
+                    ]);
+                    PagosXCaja::create([
+                        'pago_id' => $p->id,
+                        'caja_id' => $this->caja->id,
+                        'estado' => '12',
+                    ]);
+                }
             }
 
 
@@ -124,6 +190,8 @@ class FormPago extends Component
             ->orWhere('descripcion', 'Cuenta Corriente')
             ->get();
             $this->clientes = Cliente::where('lista_precios', '3')->get();
+            // Cargar descuentos habilitados (porcentaje)
+            $this->descuentos = Descuentos::whereNotNull('porcentaje')->where('estado','1')->get();
         }
         if (get_class($orden->getModel()) == "App\Models\Orden") {
             $this->orden = $orden;
@@ -149,13 +217,22 @@ class FormPago extends Component
             }
 
 
+            // Asegurar que exista el medio 'Tarjeta Debito'
+            $debitoMedio = MedioPago::firstOrCreate([
+                'descripcion' => 'Tarjeta Debito'
+            ], [
+                'estado' => '1'
+            ]);
             $this->mediosPago = MedioPago::all();
+            $this->debitoId = $debitoMedio->id;
             $this->tiposPago = TipoPago::all();
             $this->tarjetasT = Plan::all();
             $this->tiposFactura = TipoFactura::all();
             $this->proveedores = Proveedor::all();
             $this->cliente = $this->orden->clientes->id;
             $this->clientes = Cliente::where('lista_precios', '3')->get();
+            // Cargar descuentos habilitados (porcentaje)
+            $this->descuentos = Descuentos::whereNotNull('porcentaje')->where('estado','1')->get();
             
 
         }
@@ -173,6 +250,9 @@ class FormPago extends Component
             'total',
             'checkIva'
         );
+        if ($this->debitoId && (string)$this->medioPago === (string)$this->debitoId) {
+            $this->reset('debitoCupon','debitoLote','debitoAutorizacion');
+        }
     }
 
     #[On('formPago')]
@@ -448,11 +528,19 @@ class FormPago extends Component
                         'orden_id' => $this->orden->id,
 
                         'tipo_factura_id' => $this->tipoFactura,
-                        'total' => $this->montoAPagar,
+                        'total' => $this->total,
                         'iva' => $this->iva,
 
                         'estado' => '40'
                     ]);
+                    if ($this->descuentoId && $this->discountAmount > 0) {
+                        DescuentoXFactura::create([
+                            'factura_id' => $f->id,
+                            'user_id' => Auth::id(),
+                            'monto' => $this->discountAmount,
+                            'estado' => '1',
+                        ]);
+                    }
 
                     // Crear un Pago de Cuenta Corriente sin asociarlo a Caja
                     $p = Pago::create([
@@ -474,7 +562,7 @@ class FormPago extends Component
                     PagoCtacte::create([
                         'cliente_id' => $this->cliente,
                         'pago_id' => $p->id,
-                        'total' =>  $this->montoAPagar * (-1),
+                        'total' =>  $this->total * (-1),
                         'estado' => 'debe',
                     ]);
                 }
@@ -490,7 +578,7 @@ class FormPago extends Component
                         'orden_id' => $this->orden->id,
 
                         'tipo_factura_id' => $this->tipoFactura,
-                        'total' => $this->montoAPagar,
+                        'total' => $this->total,
                         'iva' => $this->iva,
 
                         'estado' => '30'
@@ -507,7 +595,7 @@ class FormPago extends Component
 
                         'concepto' =>  $this->concepto,
 
-                        'total' => $this->montoAPagar,
+                        'total' => $this->total,
                         'estado' => '30',
 
                     ]);
@@ -547,11 +635,19 @@ class FormPago extends Component
                         'orden_id' => $this->orden->id,
 
                         'tipo_factura_id' => $this->tipoFactura,
-                        'total' => $this->montoAPagar,
+                        'total' => $this->total,
                         'iva' => $this->iva,
 
                         'estado' => '20'
                     ]);
+                    if ($this->descuentoId && $this->discountAmount > 0) {
+                        DescuentoXFactura::create([
+                            'factura_id' => $f->id,
+                            'user_id' => Auth::id(),
+                            'monto' => $this->discountAmount,
+                            'estado' => '1',
+                        ]);
+                    }
 
                     $p = Pago::create([
                         'in_out' => 'in',
@@ -580,7 +676,47 @@ class FormPago extends Component
 
                 // ______________________________________________________________________________
                 // ------------------------------------------------------------------------------
-                //                                 Pago Total Tarjeta  Estado = 10
+                //                                 Pago Total Tarjeta Débito  Estado = 12
+                // ------------------------------------------------------------------------------
+                if ($this->debitoId && (string)$this->medioPago === (string)$this->debitoId) {
+
+                    $this->validate([
+                        'debitoCupon' => 'required',
+                        'debitoLote' => 'required',
+                        'debitoAutorizacion' => 'required',
+                    ]);
+
+                    $f =  Factura::create([
+                        'orden_id' => $this->orden->id,
+                        'tipo_factura_id' => $this->tipoFactura,
+                        'total' => $this->total,
+                        'iva' => $this->iva,
+                        'estado' => '12'
+                    ]);
+
+                    $p = Pago::create([
+                        'in_out' => 'in',
+                        'factura_id' => $f->id,
+                        'cliente_id' => $this->cliente,
+                        'medio_pago_id' => $this->medioPago,
+                        'tipo_pago_id' => $this->tipoPago,
+                        'efectivo' => 0,
+                        'concepto' =>  $this->concepto,
+                        'code_op' => 'CUPON:' . $this->debitoCupon . '; LOTE:' . $this->debitoLote . '; AUT:' . $this->debitoAutorizacion,
+                        'iva' => $this->iva,
+                        'total' => $this->total,
+                        'estado' => '12',
+                    ]);
+                    PagosXCaja::create([
+                        'pago_id' => $p->id,
+                        'caja_id' => $this->caja->id,
+                        'estado' => '12',
+                    ]);
+                }
+
+                // ______________________________________________________________________________
+                // ------------------------------------------------------------------------------
+                //                                 Pago Total Tarjeta Crédito  Estado = 10
                 // ------------------------------------------------------------------------------
                 if ($this->medioPago == 1) {
 
@@ -592,13 +728,21 @@ class FormPago extends Component
                         'orden_id' => $this->orden->id,
 
                         'tipo_factura_id' => $this->tipoFactura,
-                        'total' => $this->montoAPagar,
+                        'total' => $this->total,
                         'subtotal' => $this->montoAPagar - $this->montoConInt,
                         'intereses' => $this->montoInt,
                         'descuentos' => '',
                         'iva' => $this->iva,
                         'estado' => '10'
                     ]);
+                    if ($this->descuentoId && $this->discountAmount > 0) {
+                        DescuentoXFactura::create([
+                            'factura_id' => $f->id,
+                            'user_id' => Auth::id(),
+                            'monto' => $this->discountAmount,
+                            'estado' => '1',
+                        ]);
+                    }
 
 
                     $p = Pago::create([
@@ -653,11 +797,19 @@ class FormPago extends Component
                         'orden_id' => $this->orden->id,
 
                         'tipo_factura_id' => $this->tipoFactura,
-                        'total' => $this->montoAPagar,
+                        'total' => $this->total,
                         'iva' => $this->iva,
 
                         'estado' => '90'
                     ]);
+                    if ($this->descuentoId && $this->discountAmount > 0) {
+                        DescuentoXFactura::create([
+                            'factura_id' => $f->id,
+                            'user_id' => Auth::id(),
+                            'monto' => $this->discountAmount,
+                            'estado' => '1',
+                        ]);
+                    }
 
 
                     $p = Pago::create([
@@ -761,15 +913,38 @@ class FormPago extends Component
 
     public function render()
     {
-        $this->total = $this->montoAPagar + $this->iva;
-
-        $this->vuelto = floatval($this->efectivo) - floatval($this->total);
-
-        if ($this->vuelto < 0) {
-            $this->vuelto = 0;
-        } else {
-            $this->vuelto = floatval($this->efectivo) - floatval($this->total);
+        // Subtotal original de items
+        $itemsSubtotal = 0;
+        if ($this->pagoDe === 'orden' && $this->orden) {
+            $itemsSubtotal = $this->orden->items->sum('subtotal');
+        } elseif ($this->pagoDe === 'pedido' && $this->pedido) {
+            $itemsSubtotal = $this->pedido->items->sum('subtotal');
         }
+        // Mostrar siempre el subtotal base
+        $this->montoAPagar = $itemsSubtotal;
+
+        // Calcular descuento administrado (porcentaje) sobre subtotal base
+        $this->discountAmount = 0;
+        if ($this->descuentoId) {
+            $d = Descuentos::find($this->descuentoId);
+            if ($d && $d->porcentaje !== null && $d->porcentaje !== '') {
+                $this->discountAmount = (floatval($itemsSubtotal) * floatval($d->porcentaje)) / 100.0;
+            }
+        }
+
+        $baseAfterDiscount = max(0, floatval($itemsSubtotal) - floatval($this->discountAmount));
+
+        // Interés de tarjeta crédito calculado sobre base descontada
+        $interesPct = floatval($this->interes ?: 0);
+        $this->montoInt = 0;
+        if ($this->medioPago == 1 && $interesPct > 0) {
+            $this->montoInt = ($baseAfterDiscount * $interesPct) / 100.0;
+        }
+
+        $this->total = $baseAfterDiscount + $this->montoInt + floatval($this->iva);
+
+        $this->vuelto = max(0, floatval($this->efectivo) - floatval($this->total));
+
         return view('livewire.form-pago');
     }
 }

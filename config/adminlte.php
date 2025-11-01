@@ -369,6 +369,13 @@ return [
 
         ],
 
+        [
+            'text' => 'Descuentos',
+            'url'  => 'descuentos',
+            'icon' => 'fas fa-percent',
+            'can'  => 'adminCajas',
+        ],
+
     ],
 
     /*

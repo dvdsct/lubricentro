@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Descuentos extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'descripcion',
+        'porcentaje',
+        'monto',
+        'codigo',
+        'estado',
+    ];
 }

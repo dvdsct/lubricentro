@@ -9,6 +9,11 @@ class MedioPago extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'descripcion',
+        'estado',
+    ];
+
     
     public function pagos()
     {

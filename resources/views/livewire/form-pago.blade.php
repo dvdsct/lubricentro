@@ -4,7 +4,7 @@
 
         <div class="modal fade show" id="modal-lg" style="display: block; background-color: rgba(0, 0, 0, 0.5);"
             aria-modal="true" role="dialog">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header bg-info">
                         <h4 class="modal-title"> <strong> PAGAR FACTURA </strong> </h4>
@@ -12,7 +12,7 @@
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body" style="max-height: calc(100vh - 200px); overflow-y: auto;">
                         <div>
                             <div class="row">
                                 <div class="col-md-6">
@@ -57,6 +57,37 @@
                                     <strong>Cuenta Corriente seleccionada:</strong> no se registra ingreso en Caja ahora. Se genera una deuda en la Cuenta Corriente del cliente para cobrarla luego desde la sección "Cuenta Corriente".
                                 </div>
                             @endif
+
+                            @if ($debitoId && (string)$medioPago === (string)$debitoId)
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label for="debitoCupon" class="form-label">N° de cupón</label>
+                                        <input type="text" id="debitoCupon" class="form-control" wire:model.live="debitoCupon">
+                                        @error('debitoCupon')<span class="text-danger">Campo requerido</span>@enderror
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="debitoLote" class="form-label">N° de lote</label>
+                                        <input type="text" id="debitoLote" class="form-control" wire:model.live="debitoLote">
+                                        @error('debitoLote')<span class="text-danger">Campo requerido</span>@enderror
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="debitoAutorizacion" class="form-label">N° de autorización</label>
+                                        <input type="text" id="debitoAutorizacion" class="form-control" wire:model.live="debitoAutorizacion">
+                                        @error('debitoAutorizacion')<span class="text-danger">Campo requerido</span>@enderror
+                                    </div>
+                                </div>
+                            @endif
+
+                            <!-- DESCUENTO (selector administrado) -->
+                            <div class="mb-3">
+                                <label for="descuentoId" class="form-label">Descuento</label>
+                                <select id="descuentoId" class="form-control" wire:model.live="descuentoId">
+                                    <option value="">Sin descuento</option>
+                                    @foreach($descuentos as $d)
+                                        <option value="{{ $d->id }}">{{ $d->descripcion }} ({{ $d->porcentaje }}%)</option>
+                                    @endforeach
+                                </select>
+                            </div>
 
                             @endif
             <label for="tipo_pago" class="form-label">Cliente</label>
@@ -170,8 +201,7 @@
 
                 <div class="col-md-4">
                     <h6 class="pr-2 mt-2">{{ $montoAPagar }}</h6>
-
-
+                    <h6 class="pr-2">Descuento: ${{ $discountAmount }}</h6>
                     <label for="iva">{{ $iva }}</label>
                     <h4 for="monto" class="form-label pr-2"><strong> ${{ $total }}</strong></h4>
                     <h4 for="vuelto" class="form-label pr-2"><strong> ${{ $vuelto }} </strong></h4>
@@ -222,11 +252,9 @@
                 <div class="col-md-4">
                     <h6>{{ $total }}</h6>
                     <h6>$ {{ $montoInt }}</h6>
+                    <h6>Descuento: ${{ $discountAmount }}</h6>
                     <label for="iva">{{ $iva }}</label>
-
                     <h4 for="monto" class="form-label pr-2"><strong> ${{ $total }}</strong></h4>
-                    </strong>
-                    </h4>
                 </div>
             </div>
         </div>
