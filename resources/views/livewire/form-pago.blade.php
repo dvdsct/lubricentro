@@ -59,6 +59,9 @@
                             @endif
 
                             @if ($debitoId && (string)$medioPago === (string)$debitoId)
+                                <div class="alert alert-info" role="alert">
+                                    <strong>Tarjeta Débito seleccionada:</strong> se aplica un recargo del 5% sobre el monto luego de aplicar descuentos.
+                                </div>
                                 <div class="row">
                                     <div class="col-md-4 mb-3">
                                         <label for="debitoCupon" class="form-label">N° de cupón</label>
