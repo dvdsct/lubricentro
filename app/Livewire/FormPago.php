@@ -136,10 +136,17 @@ class FormPago extends Component
                         'debitoAutorizacion' => 'required',
                     ]);
 
+                    // Calcular subtotal con descuento y recargo débito para registrar en factura
+                    $itemsSubtotal = $this->orden->items->sum('subtotal');
+                    $baseAfterDiscount = max(0, floatval($itemsSubtotal) - floatval($this->discountAmount));
+                    $debitSurcharge = ($baseAfterDiscount * 5) / 100.0;
+
                     $f =  Factura::create([
                         'orden_id' => $this->orden->id,
                         'tipo_factura_id' => $this->tipoFactura,
                         'total' => $this->total,
+                        'subtotal' => $baseAfterDiscount,
+                        'intereses' => $debitSurcharge,
                         'iva' => $this->iva,
                         'estado' => '12'
                     ]);
@@ -941,7 +948,13 @@ class FormPago extends Component
             $this->montoInt = ($baseAfterDiscount * $interesPct) / 100.0;
         }
 
-        $this->total = $baseAfterDiscount + $this->montoInt + floatval($this->iva);
+        // Recargo para Tarjeta Débito: 5% sobre base descontada
+        $debitSurcharge = 0;
+        if ($this->debitoId && (string)$this->medioPago === (string)$this->debitoId) {
+            $debitSurcharge = ($baseAfterDiscount * 5) / 100.0;
+        }
+
+        $this->total = $baseAfterDiscount + $this->montoInt + $debitSurcharge + floatval($this->iva);
 
         $this->vuelto = max(0, floatval($this->efectivo) - floatval($this->total));
 
