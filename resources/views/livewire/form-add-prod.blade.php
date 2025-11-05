@@ -180,7 +180,6 @@
 
     </div>
     @endif
-</div>
 
     @script
     <script>

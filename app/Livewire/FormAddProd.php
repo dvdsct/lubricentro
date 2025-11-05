@@ -95,7 +95,25 @@ class FormAddProd extends Component
         if ($this->modalProductos) {
 
             $this->modalProductos = false;
-            $this->reset('descripcion', 'codigo', 'stock', 'costo', 'cod_barra', 'producto');
+            // Limpiar TODOS los campos del formulario al cerrar
+            $this->reset(
+                'producto',
+                'descripcion',
+                'cod_barra',
+                'costo',
+                'codigo',
+                'stock',
+                'precioVenta',
+                'subcategoria',
+                'categoria',
+                'porcentaje',
+                'monto',
+                'formDes',
+                'tipoDes'
+            );
+            // Volver a valores por defecto
+            $this->formProd = true;
+            $this->proveedor = '1';
         } else {
 
             $this->modalProductos = true;
@@ -197,12 +215,31 @@ class FormAddProd extends Component
             ]);
         }
 
+        // Limpiar formulario tras crear el producto
+        $this->resetErrorBag();
+        $this->resetValidation();
+        $this->reset(
+            'producto',
+            'descripcion',
+            'cod_barra',
+            'costo',
+            'codigo',
+            'stock',
+            'precioVenta',
+            'subcategoria',
+            'categoria',
+            'porcentaje',
+            'monto',
+            'formDes',
+            'tipoDes'
+        );
+        $this->formProd = true;
+        $this->proveedor = '1';
+        // Opcional: mantener modal abierto para seguir cargando
+        $this->modalProductos = true;
 
-
-
-
-        $this->modalProductosOn();
-        $this->dispatch('added')->to(LwProductos::class);
+        // Notificar al frontend que se creó el producto
+        $this->dispatch('producto-agregado');
     }
 
 

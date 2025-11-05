@@ -21,21 +21,31 @@
                 </td>
 
                 <td class="logo" style="border: 1px solid black; display:flex; justify-content:center;">
-                        <img src="{{ asset('img/logo.png') }}" alt="Logo Rocket" style="width: 200px;"> 
+                    @if(!empty($logo))
+                        <img src="data:image/png;base64,{{ $logo }}" alt="Logo Rocket" style="width: 200px;"/>
+                    @else
+                        <img src="{{ public_path('img/logo.png') }}" alt="Logo Rocket" style="width: 200px;"/>
+                    @endif
                 </td>
             </tr>
 
             <tr>
                 <td style="border: 1px solid black;">
-                    <p><strong>Cliente: {{ $cliente }} </strong> </p> <!-- AGREGAR NOMBRE Y APELLIDO DE CLIENTE  -->
+                    <p><strong>Cliente:</strong> {{ $cliente }}</p>
+                    @if(!empty($telefono))
+                        <p><strong>Tel:</strong> {{ $telefono }}</p>
+                    @endif
                 </td>
 
                 <td style="border: 1px solid black;">
-                    <p> <strong>Vendedor: {{ $vendedor }} </strong> </p> <!-- AGREGAR CAJERO  -->
+                    <p><strong>Vendedor:</strong> {{ $vendedor }}</p>
+                    @if(!empty($vehiculo))
+                        <p><strong>Vehículo:</strong> {{ $vehiculo }}</p>
+                    @endif
                 </td>
 
                 <td style="border: 1px solid black;">
-                    <p><strong>Fecha de emision:</strong> {{ $fecha }}</p>
+                    <p><strong>Fecha de emisión:</strong> {{ $fecha }}</p>
                 </td>
             </tr>
         </table>

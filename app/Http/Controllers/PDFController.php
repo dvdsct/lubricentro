@@ -194,7 +194,11 @@ class PDFController extends Controller
 
     public function presupuesto(string $id)
     {
-        $orden = Presupuesto::find($id);
+        $orden = Presupuesto::with([
+            'itemspres.productos',
+            'clientes.perfiles.personas',
+            'vehiculos.modelos.marcas'
+        ])->find($id);
 
         if (!$orden) {
             abort(404); // Orden no encontrada
@@ -202,10 +206,41 @@ class PDFController extends Controller
 
         $items = $orden->itemspres;
         $total = $orden->itemspres->sum('subtotal');
-        // dd($items);
         $fecha = $orden->created_at;
         $cliente = $orden->clientes->perfiles->personas->apellido .' '. $orden->clientes->perfiles->personas->nombre;
+        $telefono = $orden->clientes->perfiles->personas->numero_telefono ?? '';
         $vendedor = Auth::user()->name;
+
+        // Armar descripción de vehículo si existe
+        $vehiculo = '';
+        if ($orden->vehiculos) {
+            $modelo = optional($orden->vehiculos->modelos)->descripcion;
+            $marca = optional(optional($orden->vehiculos->modelos)->marcas)->descripcion;
+            $anio = $orden->vehiculos->año ?? '';
+            $dominio = $orden->vehiculos->dominio ?? '';
+            $colorVal = $orden->vehiculos->color ?? '';
+            $colorName = $colorVal;
+            if ($colorVal) {
+                if (is_numeric($colorVal)) {
+                    $c = \App\Models\Colores::find($colorVal);
+                    $colorName = $c->descripcion ?? $colorVal;
+                } elseif (substr($colorVal, 0, 1) === '#') {
+                    $c = \App\Models\Colores::where('hexadecimal', $colorVal)->first();
+                    $colorName = $c->descripcion ?? $colorVal;
+                }
+            }
+            $vehiculo = trim(($marca ? ($marca.' ') : '').($modelo ?? ''));
+            if ($anio) { $vehiculo .= ' '.$anio; }
+            if ($dominio) { $vehiculo .= ' - '.$dominio; }
+            if ($colorName) { $vehiculo .= ' - '.$colorName; }
+        }
+
+        // Logo como base64 para evitar accesos remotos en DomPDF
+        $logo = null;
+        $logoPath = public_path('img/logo.png');
+        if (is_file($logoPath)) {
+            $logo = base64_encode(file_get_contents($logoPath));
+        }
 
         $pdf = PDF::loadView('pdf.template_presupuesto', [
             'orden' => $orden,
@@ -213,7 +248,10 @@ class PDFController extends Controller
             'fecha' => $fecha,
             'total' => $total,
             'cliente' => $cliente,
-            'vendedor' => $vendedor
+            'telefono' => $telefono,
+            'vendedor' => $vendedor,
+            'vehiculo' => $vehiculo,
+            'logo' => $logo
         ]);
 
         return $pdf->stream('presupuesto_' . $orden->id . '.pdf');
