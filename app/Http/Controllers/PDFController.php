@@ -16,9 +16,21 @@ use Illuminate\Support\Facades\Auth;
 
 class PDFController extends Controller
 {
+    /**
+     * Genera una orden de trabajo en formato estándar
+     */
     public function generatePdf(string $id)
     {
-        $orden = Orden::find($id);
+        // Aumentar el tiempo de ejecución y memoria
+        set_time_limit(300); // 5 minutos
+        ini_set('memory_limit', '256M');
+        
+        // Cargar la orden con relaciones necesarias usando eager loading
+        $orden = Orden::with([
+            'items.productos',
+            'clientes.perfiles.personas',
+            'vehiculos.modelos.marcas'
+        ])->find($id);
 
         if (!$orden) {
             abort(404); // Orden no encontrada
@@ -31,22 +43,34 @@ class PDFController extends Controller
 
         }
         $contador = 0;
+        // Obtener datos optimizados
         $items = $orden->items;
         $horario = $orden->horario;
         $fecha = $orden->fecha_turno;
-        if(is_null($orden->vehiculos) ){
-
-            $vehiculo = '';
-        }else{
-            $vehiculo = $orden->vehiculos->modelos->descripcion . ' ' . $orden->vehiculos->descripcion . ' ' . $orden->vehiculos->año ?? '';
-
+        
+        // Manejo seguro de relaciones
+        $vehiculo = '';
+        if ($orden->vehiculos && $orden->vehiculos->modelos) {
+            $marca = $orden->vehiculos->modelos->marcas->descripcion ?? '';
+            $modelo = $orden->vehiculos->modelos->descripcion ?? '';
+            $anio = $orden->vehiculos->año ?? '';
+            $vehiculo = trim("$marca $modelo $anio");
         }
 
-        $encargado = $orden->clientes->perfiles->personas;
+        // Obtener datos del encargado de forma segura
+        $encargado = optional(optional($orden->clientes)->perfiles)->personas;
         $vendedor = Auth::user();
         $total = $items->sum('subtotal');
 
-        $pdf = PDF::loadView('pdf.template', [
+        // Cargar el logo como base64 para evitar problemas de carga
+        $logoPath = public_path('img/logo.png');
+        $logo = null;
+        if (file_exists($logoPath)) {
+            $logo = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+        }
+
+        // Pasar solo los datos necesarios a la vista
+        $data = [
             'items' => $items,
             'sector' => $sector,
             'vehiculo' => $vehiculo,
@@ -55,10 +79,70 @@ class PDFController extends Controller
             'horario' => $horario,
             'encargado' => $encargado,
             'vendedor' => $vendedor,
-            'total' => $total
-        ]);
+            'total' => $total,
+            'logo' => $logo // Pasar el logo como base64
+        ];
+
+        // Configurar opciones de DomPDF como array
+        $options = [
+            'isRemoteEnabled' => true,
+            'isHtml5ParserEnabled' => true,
+            'isPhpEnabled' => true,
+            'defaultFont' => 'Arial',
+            'fontDir' => storage_path('fonts/'),
+            'fontCache' => storage_path('fonts/'),
+            'tempDir' => storage_path('app/temp/'),
+            'chroot' => realpath(base_path()),
+            'isRemoteEnabled' => true,
+            'isHtml5ParserEnabled' => true,
+            'isPhpEnabled' => true
+        ];
+        
+        $pdf = PDF::setOptions($options)
+                 ->loadView('pdf.template', $data);
 
         return $pdf->stream('orden_' . $orden->id . '.pdf');
+    }
+
+    /**
+     * Genera una orden de trabajo limpia (formato para imprimir y rellenar a mano)
+     */
+    public function generateOrdenLimpia()
+    {
+        // Configuración básica
+        set_time_limit(300);
+        ini_set('memory_limit', '256M');
+        
+        // Obtener la fecha actual
+        $fecha = now()->format('d/m/Y');
+        
+        // Cargar el logo como base64
+        $logoPath = public_path('img/logo.png');
+        $logo = null;
+        if (file_exists($logoPath)) {
+            $logo = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+        }
+
+        // Configuración de opciones para DomPDF
+        $options = [
+            'isRemoteEnabled' => true,
+            'isHtml5ParserEnabled' => true,
+            'isPhpEnabled' => true,
+            'defaultFont' => 'Arial',
+            'fontDir' => storage_path('fonts/'),
+            'fontCache' => storage_path('fonts/'),
+            'tempDir' => storage_path('app/temp/'),
+            'chroot' => realpath(base_path()),
+        ];
+        
+        // Generar el PDF
+        $pdf = PDF::setOptions($options)
+                 ->loadView('pdf.orden_limpia', [
+                     'fecha' => $fecha,
+                     'logo' => $logo
+                 ]);
+
+        return $pdf->stream('orden_trabajo_limpia_' . date('Y-m-d') . '.pdf');
     }
 
 

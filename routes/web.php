@@ -32,6 +32,8 @@ Route::get('/', function () {
     return redirect('venta');
 });
 
+// Ruta para la orden limpia (accesible sin autenticación)
+Route::get('/pdf/orden-limpia', 'App\Http\Controllers\PDFController@generateOrdenLimpia')->name('pdf.orden.limpia');
 
 Route::middleware([
     'auth:sanctum',

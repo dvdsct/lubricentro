@@ -20,16 +20,29 @@
         @endif
     </div>
 
-    <div class="row" style="display: flex; justify-content: end;">
-        <div class="col-lg-8">
-            <a href="{{ route('pdf.orden', $orden->id) }}" target="_blank">
-                <div class="small-box bg-warning" style="cursor: pointer;">
-                    <div class="inner">
-                        <h3 class="m-0">Imprimir</h3>
-                        <p>Orden de trabajo</p>
+    <div class="row" style="display: flex; justify-content: end; margin: 15px 0;">
+        <div class="col-lg-4" style="padding: 0 5px;">
+            <a href="{{ route('pdf.orden', $orden->id) }}" target="_blank" class="text-decoration-none">
+                <div class="small-box bg-warning" style="cursor: pointer; height: 100%;">
+                    <div class="inner" style="padding: 15px 10px;">
+                        <h4 style="margin: 0 0 5px 0; font-size: 1.2rem;">Imprimir</h4>
+                        <p style="margin: 0; font-size: 0.9rem;">Orden de trabajo</p>
                     </div>
-                    <div class="icon">
+                    <div class="icon" style="font-size: 2.5rem;">
                         <i class="fas fa-print"></i>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-4" style="padding: 0 5px;">
+            <a href="{{ route('pdf.orden.limpia') }}" target="_blank" class="text-decoration-none">
+                <div class="small-box bg-info" style="cursor: pointer; height: 100%;">
+                    <div class="inner" style="padding: 15px 10px;">
+                        <h4 style="margin: 0 0 5px 0; font-size: 1.2rem;">Imprimir</h4>
+                        <p style="margin: 0; font-size: 0.9rem;">Orden Limpia</p>
+                    </div>
+                    <div class="icon" style="font-size: 2.5rem;">
+                        <i class="fas fa-file-alt"></i>
                     </div>
                 </div>
             </a>
