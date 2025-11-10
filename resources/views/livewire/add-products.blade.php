@@ -21,6 +21,51 @@
                                 <i class="fas fa-barcode"></i>
                             </span>
                         </div>
+    @if($showHistory)
+    <div class="modal fade show" style="display:block; background-color: rgba(0,0,0,.5);" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-secondary">
+                    <h5 class="modal-title">Historial de stock @if($historyProductoDesc) - {{ $historyProductoDesc }} @endif</h5>
+                    <button type="button" class="close" aria-label="Close" wire:click="closeHistory">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-sm table-striped">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Delta</th>
+                                <th>Anterior</th>
+                                <th>Nuevo</th>
+                                <th>Motivo</th>
+                                <th>Ref</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($historyMovements as $m)
+                                <tr>
+                                    <td>{{ \Carbon\Carbon::parse($m['created_at'])->format('d/m/Y H:i') }}</td>
+                                    <td>{{ $m['delta'] }}</td>
+                                    <td>{{ $m['cantidad_anterior'] }}</td>
+                                    <td>{{ $m['cantidad_nueva'] }}</td>
+                                    <td>{{ $m['motivo'] ?? '-' }}</td>
+                                    <td>{{ ($m['referencia_type'] ?? '-') }} {{ ($m['referencia_id'] ?? '') }}</td>
+                                </tr>
+                            @empty
+                                <tr><td colspan="6" class="text-center">Sin movimientos</td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" wire:click="closeHistory">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
                         <input type="text" id="codigoBarrasInput" class="form-control"
                             placeholder="Buscar producto por codigo" wire:model='codigoBarras'
                             wire:keydown.enter='codeBar'>
@@ -73,6 +118,9 @@
                         </td>
                         @if ($orden->estado == 100)
                             <td class="text-right project-actions">
+                                <a class="btn btn-info btn-sm" wire:click='openHistory({{ $i->productos->id }})' title="Historial de stock">
+                                    <i class="fas fa-history"></i>
+                                </a>
                             @else
                             <td class="pl-0 text-right project-actions">
                                 {{-- <a class="btn btn-info btn-sm" wire:click='editProd({{ $i->id }})'>
@@ -80,6 +128,9 @@
                                 </i>
 
                                 </a> --}}
+                                <a class="btn btn-info btn-sm" wire:click='openHistory({{ $i->productos->id }})' title="Historial de stock">
+                                    <i class="fas fa-history"></i>
+                                </a>
                                 <a class="btn btn-danger btn-sm" wire:click='delProd({{ $i->id }})'
                                     wire:confirm="Si borras este articulo tendras que volver a agregarlo">
                                     <i class="fas fa-trash">

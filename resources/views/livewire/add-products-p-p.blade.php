@@ -58,26 +58,33 @@
 
                             @if ($i->estado == 2)
                             {{-- Si el producto es estado 2 aun no se a recibido --}}
-                            <td class="text-right project-actions" style="width: 200px;">
-                                <a class="btn btn-info btn-sm" wire:click='editProd({{ $i->id }})'>
+                            <td class="text-right project-actions" style="width: 240px;">
+                                <a class="btn btn-secondary btn-sm" wire:click='editProd({{ $i->id }})'>
                                     <i class="fas fa-pencil-alt">
                                     </i>
                                     Editar
+                                </a>
+                                <a class="btn btn-info btn-sm" wire:click='openHistory({{ $i->producto_id }})' title="Historial de stock">
+                                    <i class="fas fa-history"></i>
                                 </a>
                                 <a class="btn btn-danger btn-sm" wire:click='delProd({{ $i->id }})' wire:confirm="Si borras este articulo tendras que volver a agregarlo, estas seguro?">
                                     <i class="fas fa-trash">
                                     </i>
                                     Eliminar
                                 </a>
-                                @else
-                            <td class="text-right project-actions" style="width: 150px;">
+                            </td>
+                            @else
+                            <td class="text-right project-actions" style="width: 200px;">
+                                <a class="btn btn-info btn-sm" wire:click='openHistory({{ $i->producto_id }})' title="Historial de stock">
+                                    <i class="fas fa-history"></i>
+                                </a>
                                 <a class="btn btn-danger btn-sm" wire:click='delProd({{ $i->id }})' wire:confirm="Si borras este articulo tendras que volver a agregarlo, estas seguro">
                                     <i class="fas fa-trash">
                                     </i>
                                     Eliminar
                                 </a>
-                                @endif
                             </td>
+                            @endif
                         </tr>
                         @endforeach
 

@@ -40,6 +40,10 @@ class AddProducts extends Component
 
     public $query = '';
 
+    public $showHistory = false;
+    public $historyMovements = [];
+    public $historyProductoDesc;
+
     public function search()
     {
         $this->resetPage();
@@ -54,33 +58,39 @@ class AddProducts extends Component
         $p = Producto::find($item->producto_id);
         $stock = Stock::where('producto_id', $p->id)->first();
 
-        // dd($stock);
         $precio = $p->precio_venta;
-        // dd($precio);
 
-
-        if (
-            $stock->cantidad >=
-            $this->cantidad and  $this->cantidad != 0
-        ) {
-            $item->update([
-                'cantidad' => $this->cantidad,
-                'subtotal' => floatval($precio) *  floatval($this->cantidad),
-                'estado' => '2',
-
-            ]);
-
-            $stock->update([
-                'cantidad' => $stock->cantidad - $this->cantidad
-            ]);
-
-            $this->reset('cantidad');
-        } else {
-
-            // dd('no hay stock');
-            return  $this->dispatch('nonstock');
+        // Validación básica
+        if ($this->cantidad === null || $this->cantidad <= 0) {
+            return $this->dispatch('nonstock');
         }
 
+        // Calcular delta si el item ya tenía cantidad cargada
+        $prevCantidad = intval($item->cantidad ?? 0);
+        $newCantidad = intval($this->cantidad);
+        $delta = $newCantidad - $prevCantidad; // puede ser +, 0, o negativo
+
+        // Chequear stock solo cuando el delta requiere más unidades
+        if ($delta > 0 && $stock->cantidad < $delta) {
+            return $this->dispatch('nonstock');
+        }
+
+        // Actualizar de forma atómica
+        \DB::transaction(function () use ($item, $precio, $newCantidad, $delta, $stock) {
+            $item->update([
+                'cantidad' => $newCantidad,
+                'subtotal' => floatval($precio) *  floatval($newCantidad),
+                'estado' => '2',
+            ]);
+
+            if ($delta !== 0) {
+                $stock->update([
+                    'cantidad' => $stock->cantidad - $delta,
+                ]);
+            }
+        });
+
+        $this->reset('cantidad');
         $this->dispatch('suma-items');
     }
 
@@ -105,8 +115,6 @@ class AddProducts extends Component
         $stock = Stock::where('producto_id', $this->producto->id)->first();
 
         if ($stock->cantidad == 0) {
-
-
             return  $this->dispatch('nonstock');
         } else {
 
@@ -209,49 +217,37 @@ class AddProducts extends Component
 
     public function codeBar()
     {
-
-
-        if (strlen($this->codigoBarras) == 13) {
-            $producto = Producto::where('codigo_de_barras', $this->codigoBarras)->get();
-
-            $producto_id = $producto->first()->id;
-            $precio_venta = $producto->first()->precio_venta;
-
-            $i = Item::create([
-                'producto_id' => $producto_id,
-                'precio' => $precio_venta,
-                'estado' => '1',
-            ]);
-
-            ItemsXOrden::create([
-                'item_id' => $i->id,
-                'orden_id' => $this->orden->id,
-                'estado' => '1',
-
-            ]);
-        } else {
-            $producto = Producto::find($this->codigoBarras);
+        if (strlen((string)$this->codigoBarras) == 13) {
+            $producto = Producto::where('codigo_de_barras', $this->codigoBarras)->first();
+            if (!$producto) return $this->dispatch('nonstock');
             $stock = Stock::where('producto_id', $producto->id)->first();
+            if (!$stock || $stock->cantidad <= 0) return $this->dispatch('nonstock');
 
-            if ($stock->cantidad == 0) {
-
-
-                return  $this->dispatch('nonstock');
-            }
-
-            $producto_id = $producto->first()->id;
-            $precio_venta = $producto->first()->precio_venta;
             $i = Item::create([
                 'producto_id' => $producto->id,
                 'precio' => $producto->precio_venta,
                 'estado' => '1',
             ]);
-
             ItemsXOrden::create([
                 'item_id' => $i->id,
                 'orden_id' => $this->orden->id,
                 'estado' => '1',
+            ]);
+        } else {
+            $producto = Producto::find($this->codigoBarras);
+            if (!$producto) return $this->dispatch('nonstock');
+            $stock = Stock::where('producto_id', $producto->id)->first();
+            if (!$stock || $stock->cantidad <= 0) return  $this->dispatch('nonstock');
 
+            $i = Item::create([
+                'producto_id' => $producto->id,
+                'precio' => $producto->precio_venta,
+                'estado' => '1',
+            ]);
+            ItemsXOrden::create([
+                'item_id' => $i->id,
+                'orden_id' => $this->orden->id,
+                'estado' => '1',
             ]);
             $this->reset('codigoBarras');
         }
@@ -273,9 +269,31 @@ class AddProducts extends Component
         return view('livewire.add-products', [
             'stock' => Stock::select('stocks.*', 'productos.descripcion as descripcion', 'productos.codigo', 'productos.precio_venta')
                 ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')
-                ->where('descripcion', 'like', '%' . $this->query . '%')
-                ->orWhere('productos.codigo', 'like', '%' . $this->query . '%')
+                ->where(function($q){
+                    $q->where('productos.descripcion', 'like', '%' . $this->query . '%')
+                      ->orWhere('productos.codigo', 'like', '%' . $this->query . '%');
+                })
+                ->groupBy('stocks.id','stocks.cantidad','stocks.estado','stocks.sucursal_id','stocks.producto_id','stocks.stock_id','productos.descripcion','productos.codigo','productos.precio_venta')
                 ->get()
         ]);
+    }
+
+    public function openHistory($productoId)
+    {
+        $p = Producto::find($productoId);
+        $this->historyProductoDesc = $p?->descripcion;
+        $this->historyMovements = \App\Models\StockMovement::where('producto_id', $productoId)
+            ->orderByDesc('created_at')
+            ->limit(100)
+            ->get()
+            ->toArray();
+        $this->showHistory = true;
+    }
+
+    public function closeHistory()
+    {
+        $this->showHistory = false;
+        $this->historyMovements = [];
+        $this->historyProductoDesc = null;
     }
 }

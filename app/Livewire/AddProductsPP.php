@@ -42,6 +42,10 @@ class AddProductsPP extends Component
 
     public $query = '';
 
+    public $showHistory = false;
+    public $historyMovements = [];
+    public $historyProductoDesc;
+
 
     public function mount($pedido, $proveedor)
     {
@@ -49,6 +53,25 @@ class AddProductsPP extends Component
         $this->proveedor = $proveedor;
         $this->total = $this->pedido->items->sum('subtotal');
 
+    }
+
+    public function openHistory($productoId)
+    {
+        $p = \App\Models\Producto::find($productoId);
+        $this->historyProductoDesc = $p?->descripcion;
+        $this->historyMovements = \App\Models\StockMovement::where('producto_id', $productoId)
+            ->orderByDesc('created_at')
+            ->limit(100)
+            ->get()
+            ->toArray();
+        $this->showHistory = true;
+    }
+
+    public function closeHistory()
+    {
+        $this->showHistory = false;
+        $this->historyMovements = [];
+        $this->historyProductoDesc = null;
     }
 
     public function search()
@@ -63,28 +86,23 @@ class AddProductsPP extends Component
     #[On('pedido-recibido')]
     public function recibirPedido()
     {
+        $sucursalId = 1;
+        $service = app(\App\Services\StockService::class);
 
         foreach ($this->pedido->items as $i) {
-
             $p = Producto::find($i->producto_id);
-            $n_costo = $p->costo + (($p->costo/100) * 60);
+            if (!$p) { continue; }
 
+            // Recalcular precio de venta (mantengo lógica existente)
+            $n_costo = $p->costo + (($p->costo/100) * 60);
             $p->update([
                 'precio_venta' => $n_costo,
                 'precio_presupuesto' => $n_costo,
             ]);
 
-            $stock = Stock::firstOrCreate(
-                [
-                    'sucursal_id' => '1',
-                    'producto_id' => $p->id,
-                    'estado' => '1',
-                ]
-            );
-
-            $stock->update([
-                'cantidad' => $stock->cantidad + $i->cantidad
-            ]);
+            // Asegurar fila de stock y ajustar de forma atómica
+            $service->ensureStockRecord($sucursalId, $p->id);
+            $service->adjustStock($sucursalId, $p->id, intval($i->cantidad));
         }
 
 

@@ -92,7 +92,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">$</span>
                                     </div>
-                                    <input type="text" class="form-control" wire:model.live='precioVenta' placeholder="Precio de venta">
+                                    <input type="text" class="form-control" wire:model='precioVenta' placeholder="Precio de venta">
                                 </div>
                             </div>
                         </div>

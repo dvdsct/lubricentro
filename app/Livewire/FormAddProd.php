@@ -34,6 +34,14 @@ class FormAddProd extends Component
     public $monto;
     public $porcentaje;
 
+    // Corrección de stock en modal
+    public $stockActual;
+    public $stockMode = 'ajustar'; // ajustar | fijar
+    public $stockDelta;
+    public $stockFinal;
+    public $stockPreview;
+    public $stockMotivo;
+
 
     public function mount()
     {
@@ -43,9 +51,71 @@ class FormAddProd extends Component
             $this->subcategorias = SubcategoriaProducto::all();
         }else{
             $this->subcategorias = SubcategoriaProducto::where('estado','2')->get();
-
         }
     }
+
+    public function updatedStockDelta()
+    {
+        if ($this->stockMode === 'ajustar') {
+            $base = intval($this->stockActual ?? 0);
+            $delta = intval($this->stockDelta ?? 0);
+            $this->stockPreview = $base + $delta;
+        }
+    }
+
+    public function updatedStockFinal()
+    {
+        if ($this->stockMode === 'fijar') {
+            $this->stockPreview = intval($this->stockFinal ?? 0);
+        }
+    }
+
+    public function applyStockCorrection()
+    {
+        $sucursalId = 1;
+        $this->validate([
+            'stockMode' => 'required|in:ajustar,fijar',
+        ]);
+
+        $delta = 0;
+        if ($this->stockMode === 'ajustar') {
+            $this->validate([
+                'stockDelta' => 'required|integer|not_in:0',
+            ]);
+            $delta = intval($this->stockDelta);
+        } else {
+            $this->validate([
+                'stockFinal' => 'required|integer|min:0',
+            ]);
+            $base = intval($this->stockActual ?? 0);
+            $delta = intval($this->stockFinal) - $base;
+        }
+
+        if (!$this->producto) {
+            return; // solo corrección cuando existe producto
+        }
+
+        $service = app(\App\Services\StockService::class);
+        $service->ensureStockRecord($sucursalId, $this->producto->id);
+        $row = $service->adjustStock(
+            $sucursalId,
+            $this->producto->id,
+            $delta,
+            [
+                'motivo' => $this->stockMotivo ?: 'Corrección manual en modal de producto',
+                'referencia_type' => 'Producto',
+                'referencia_id' => $this->producto->id,
+            ]
+        );
+
+        // Refrescar valores en UI
+        $this->stockActual = intval($row->cantidad);
+        $this->stock = $this->stockActual;
+        $this->stockPreview = $this->stockActual;
+        $this->reset('stockDelta','stockFinal','stockMotivo');
+        $this->dispatch('stock-corrected');
+    }
+
 
 
     // Formulario Producto o descuento
@@ -132,7 +202,11 @@ class FormAddProd extends Component
         $this->cod_barra =  $this->producto->codigo_de_barras;
         $this->costo =  $this->producto->costo;
         $this->codigo =  $this->producto->codigo;
+        $this->precioVenta = $this->producto->precio_venta;
         $this->stock =  $sp->first()->cantidad;
+        $this->stockActual = $this->stock;
+        $this->stockPreview = $this->stockActual;
+        $this->reset('stockDelta','stockFinal','stockMotivo');
 
         $this->modalProductosOn();
     }
@@ -149,9 +223,16 @@ class FormAddProd extends Component
 
     public function saveproduct()
     {
+        $this->validate([
+            'descripcion' => 'required|string|min:2',
+            'categoria' => 'required',
+            'subcategoria' => 'required',
+            'stock' => 'nullable|numeric|min:0',
+            'costo' => 'nullable|numeric|min:0',
+            'precioVenta' => 'nullable|numeric|min:0',
+        ]);
 
         if ($this->categoria == 1) {
-
             $p = Producto::firstOrCreate([
                 'descripcion' => $this->descripcion,
                 'codigo_de_barras' => $this->cod_barra,
@@ -161,32 +242,24 @@ class FormAddProd extends Component
             $p->update([
                 'monto' => $this->monto,
                 'porcentaje' => $this->porcentaje,
-                
                 'categoria_producto_id' => $this->categoria,
                 'subcategoria_producto_id' => $this->subcategoria,
             ]);
 
-            $s = Stock::firstOrCreate([
-                'sucursal_id' => '1',
-                'producto_id' => $p->id,
-                'estado' => '1'
-            ]);
-            $ns = $s->cantidad + $this->stock;
-
-            $s->update([
-                'cantidad' => $ns,
-
-            ]);
+            $sucursalId = 1;
+            $service = app(\App\Services\StockService::class);
+            $service->ensureStockRecord($sucursalId, $p->id);
+            if (!empty($this->stock) && intval($this->stock) > 0) {
+                $service->adjustStock($sucursalId, $p->id, intval($this->stock));
+            }
 
             ProductoXProveedor::firstOrCreate([
                 'proveedor_id' => $this->proveedor,
                 'producto_id' => $p->id
             ]);
         } else {
-
             $p = Producto::firstOrCreate([
                 'descripcion' => $this->descripcion,
-          
                 'codigo_de_barras' => $this->cod_barra,
                 'codigo' => $this->codigo,
             ]);
@@ -198,17 +271,12 @@ class FormAddProd extends Component
                 'subcategoria_producto_id' => $this->subcategoria,
             ]);
 
-            $s = Stock::firstOrCreate([
-                'sucursal_id' => '1',
-                'producto_id' => $p->id,
-                'estado' => '1'
-            ]);
-            $ns = $s->cantidad + $this->stock;
-
-            $s->update([
-                'cantidad' => $ns,
-
-            ]);
+            $sucursalId = 1;
+            $service = app(\App\Services\StockService::class);
+            $service->ensureStockRecord($sucursalId, $p->id);
+            if (!empty($this->stock) && intval($this->stock) > 0) {
+                $service->adjustStock($sucursalId, $p->id, intval($this->stock));
+            }
             ProductoXProveedor::firstOrCreate([
                 'proveedor_id' => $this->proveedor,
                 'producto_id' => $p->id
