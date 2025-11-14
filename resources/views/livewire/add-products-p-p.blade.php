@@ -1,5 +1,11 @@
 <div>
     <div class="card">
+        @if (session()->has('success'))
+            <div class="alert alert-success m-3">{{ session('success') }}</div>
+        @endif
+        @if (session()->has('error'))
+            <div class="alert alert-danger m-3">{{ session('error') }}</div>
+        @endif
         @if ($pedido->estado == 100)
         <div class="card-header bg-danger">Recibido
             @else
@@ -21,6 +27,11 @@
                             <th style="width: 100px">Cantidad</th>
                             <th style="width: 250px">Precio unitario de compra</th>
                             <th style="width: 40px">Subtotal</th>
+                            <th style="width: 110px">Pedida</th>
+                            <th style="width: 110px">Recibida</th>
+                            <th style="width: 110px">Pendiente</th>
+                            <th style="width: 220px">Recibir ahora</th>
+                            <th style="width: 120px">Estado ítem</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,6 +67,33 @@
 
 
 
+                            @php
+                                $ppi = $ppiByProduct->get($i->producto_id);
+                                $pedida = $ppi->cantidad_pedida ?? 0;
+                                $recibida = $ppi->cantidad_recibida ?? 0;
+                                $pendiente = max(0, intval($pedida) - intval($recibida));
+                            @endphp
+
+                            <td>{{ $pedida }}</td>
+                            <td>{{ $recibida }}</td>
+                            <td>{{ $pendiente }}</td>
+
+                            <td>
+                                @if ($pendiente > 0)
+                                    <div class="input-group">
+                                        <input type="number" min="1" class="form-control" style="max-width: 100px;"
+                                               wire:model.defer='receiveQty.{{ $i->producto_id }}' placeholder="Cant.">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" wire:click='recibirItem({{ $i->producto_id }})'>
+                                                Recibir
+                                            </button>
+                                        </div>
+                                    </div>
+                                @else
+                                    <span class="badge bg-success">Completado</span>
+                                @endif
+                            </td>
+
                             @if ($i->estado == 2)
                             {{-- Si el producto es estado 2 aun no se a recibido --}}
                             <td class="text-right project-actions" style="width: 240px;">
@@ -85,6 +123,19 @@
                                 </a>
                             </td>
                             @endif
+
+                            <td>
+                                @php
+                                    $est = $ppiByProduct->get($i->producto_id)->estado_item ?? 'pendiente';
+                                @endphp
+                                @if ($est === 'recibido_total')
+                                    <span class="badge bg-success">Recibido</span>
+                                @elseif ($est === 'recibido_parcial')
+                                    <span class="badge bg-warning">Parcial</span>
+                                @else
+                                    <span class="badge bg-secondary">Pendiente</span>
+                                @endif
+                            </td>
                         </tr>
                         @endforeach
 
@@ -101,7 +152,21 @@
         </div>
 
 
-            <div class="row" style="display: flex; justify-content: end;">
+            <div class="row" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="col-md-3">
+                <span>Estado del pedido:
+                    @if ($pedido->estado === 'cerrado')
+                        <span class="badge bg-secondary">Cerrado</span>
+                    @elseif ($pedido->estado === 'recibido_total')
+                        <span class="badge bg-success">Recibido</span>
+                    @elseif ($pedido->estado === 'recibido_parcial')
+                        <span class="badge bg-warning">Parcial</span>
+                    @else
+                        <span class="badge bg-info">Enviado</span>
+                    @endif
+                </span>
+            </div>
+            <div class="col-md-9" style="display:flex; justify-content: end;">
             <!-- BOTON DE RECIBIR PEDIDO DE PROVEEDOR -->
             <div class="col-md-3">
                 <div class="small-box bg-primary" style="cursor: pointer;" wire:click='$dispatchTo("form-pago","formPago",{ tipo: "proveedor" })'>
@@ -113,6 +178,40 @@
                         <i class="fas fa-check-circle"></i>
                     </div>
                 </div>
+            </div>
+
+            @php
+                $allDone = true;
+                foreach ($ppiByProduct as $ppi) {
+                    $ped = intval($ppi->cantidad_pedida ?? 0);
+                    $rec = intval($ppi->cantidad_recibida ?? 0);
+                    if ($rec < $ped) { $allDone = false; break; }
+                }
+            @endphp
+
+            <!-- BOTON DE CERRAR PEDIDO -->
+            <div class="col-md-3">
+                @if ($allDone && $pedido->estado !== 'cerrado')
+                <div class="small-box bg-success" style="cursor: pointer;" wire:click='closePedido'>
+                    <div class="inner">
+                        <h3 class="m-0">Cerrar Pedido</h3>
+                        <p> Sin pendientes</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                </div>
+                @elseif($pedido->estado === 'cerrado')
+                    <div class="small-box bg-secondary">
+                        <div class="inner">
+                            <h3 class="m-0">Pedido cerrado</h3>
+                            <p> Ya no se puede modificar</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                    </div>
+                @endif
             </div>
 
             <!-- BOTON DE IMPRIMIR PEDIDO A PROVEEDOR -->
@@ -129,6 +228,7 @@
                         </div>
                     </a>
                 </div>
+            </div>
             </div>
 
 
@@ -148,13 +248,18 @@
                     </div>
                     <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
                         <!-- BUSCADOR DE PRODUCTOS  -->
-                        <div class="pb-2 input-group" style="width: 300px;">
+                        <div class="pb-2 input-group" style="width: 420px;">
                             <input type="text" wire:model='query' wire:keydown='search' class="float-right form-control" placeholder="Buscar">
                             <div class="input-group-append">
                                 <button type="submit" class="btn btn-default">
                                     <i class="fas fa-search"></i>
                                 </button>
                             </div>
+                            <select class="form-control ml-2" style="max-width: 100px;" wire:model='perPage'>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
                         </div>
                         <table class="table table-bordered table-hover">
                             <thead>

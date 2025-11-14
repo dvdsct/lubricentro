@@ -6,28 +6,24 @@
         Carbon\Carbon::setLocale('es');
     @endphp
     <div class="row">
-        @if ($presupuestos != null && $presupuestos->count())
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header" style="display: flex; justify-content: space-between;">
-                        <button class="btn btn-success" wire:click='$dispatchTo("add-presupuesto", "addPresupuesto")'>
-                            <i class="fas fa-plus-circle"></i> Crear nuevo
-                        </button>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header" style="display: flex; justify-content: space-between;">
+                    <button class="btn btn-success" wire:click='$dispatchTo("add-presupuesto", "addPresupuesto")'>
+                        <i class="fas fa-plus-circle"></i> Crear nuevo
+                    </button>
 
-
-                        <div class="input-group" style="width: 300px; margin-left: auto;">
-                            <input type="text" name="table_search" class="form-control"
-                                placeholder="Buscar presupuesto">
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-default">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                    <div class="card-footer clearfix">
-                        {{ $presupuestos->links() }}
-                    </div>
+                    <div class="input-group" style="width: 300px; margin-left: auto;">
+                        <input type="text" name="table_search" class="form-control"
+                            placeholder="Buscar presupuesto">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-default">
+                                <i class="fas fa-search"></i>
+                            </button>
                         </div>
                     </div>
+                </div>
+                @if ($presupuestos != null && $presupuestos->count())
                     <div class="card-body table-responsive p-0">
                         <table class="table table-hover text-nowrap">
                             <thead>
@@ -70,13 +66,15 @@
                             </tbody>
                         </table>
                     </div>
-
-                </div>
-
+                    <div class="card-footer clearfix">
+                        {{ $presupuestos->links() }}
+                    </div>
+                @else
+                    <div class="card-body">
+                        <h3>NO HAY PRESUPUESTOS</h3>
+                    </div>
+                @endif
             </div>
-        @else
-            <h3>NO HAY PRESUPUESTOS</h3>
-
-        @endif
+        </div>
     </div>
 </div>

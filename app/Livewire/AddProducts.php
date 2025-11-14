@@ -273,7 +273,7 @@ class AddProducts extends Component
                     $q->where('productos.descripcion', 'like', '%' . $this->query . '%')
                       ->orWhere('productos.codigo', 'like', '%' . $this->query . '%');
                 })
-                ->groupBy('stocks.id','stocks.cantidad','stocks.estado','stocks.sucursal_id','stocks.producto_id','stocks.stock_id','productos.descripcion','productos.codigo','productos.precio_venta')
+                ->groupBy('stocks.id','stocks.cantidad','stocks.estado','stocks.sucursal_id','stocks.producto_id','productos.descripcion','productos.codigo','productos.precio_venta')
                 ->get()
         ]);
     }
