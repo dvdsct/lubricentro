@@ -267,13 +267,22 @@ class AddProducts extends Component
         }
 
         return view('livewire.add-products', [
-            'stock' => Stock::select('stocks.*', 'productos.descripcion as descripcion', 'productos.codigo', 'productos.precio_venta')
+            'stock' => Stock::select([
+                    'stocks.id', 'stocks.cantidad', 'stocks.estado', 'stocks.sucursal_id',
+                    'stocks.producto_id', 'stocks.unidad', 'stocks.created_at', 'stocks.updated_at',
+                    'productos.descripcion', 'productos.codigo', 'productos.precio_venta', 'productos.costo'
+                ])
                 ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')
-                ->where(function($q){
-                    $q->where('productos.descripcion', 'like', '%' . $this->query . '%')
-                      ->orWhere('productos.codigo', 'like', '%' . $this->query . '%');
+                ->where(function($q) {
+                    $query = '%' . $this->query . '%';
+                    $q->where('productos.descripcion', 'like', $query)
+                      ->orWhere('productos.codigo', 'like', $query);
                 })
-                ->groupBy('stocks.id','stocks.cantidad','stocks.estado','stocks.sucursal_id','stocks.producto_id','productos.descripcion','productos.codigo','productos.precio_venta')
+                ->groupBy([
+                    'stocks.id', 'stocks.cantidad', 'stocks.estado', 'stocks.sucursal_id',
+                    'stocks.producto_id', 'stocks.unidad', 'stocks.created_at', 'stocks.updated_at',
+                    'productos.descripcion', 'productos.codigo', 'productos.precio_venta', 'productos.costo'
+                ])
                 ->get()
         ]);
     }
