@@ -419,15 +419,28 @@ class AddProductsPP extends Component
         // refrescar mapping para usar en la vista
         $this->refreshPpiMap();
 
+        // Construir la consulta de stock con todas las columnas necesarias en el GROUP BY
+        $stockQuery = Stock::select([
+                'stocks.id', 'stocks.cantidad', 'stocks.estado', 'stocks.sucursal_id', 
+                'stocks.producto_id', 'stocks.unidad', 'stocks.created_at', 'stocks.updated_at',
+                'productos.descripcion', 'productos.codigo', 'productos.costo', 'productos.precio_venta'
+            ])
+            ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')
+            ->where(function($q) {
+                $query = '%' . $this->query . '%';
+                $q->where('productos.descripcion', 'like', $query)
+                  ->orWhere('productos.codigo', 'like', $query);
+            })
+            ->groupBy([
+                'stocks.id', 'stocks.cantidad', 'stocks.estado', 'stocks.sucursal_id',
+                'stocks.producto_id', 'stocks.unidad', 'stocks.created_at', 'stocks.updated_at',
+                'productos.descripcion', 'productos.codigo', 'productos.costo', 'productos.precio_venta'
+            ])
+            ->orderBy('productos.descripcion')
+            ->paginate($this->perPage);
+
         return view('livewire.add-products-p-p', [
-            'stock' => Stock::select('stocks.*', 'productos.descripcion as descripcion', 'productos.codigo', 'productos.costo')
-                ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id')
-                ->where(function($q){
-                    $q->where('productos.descripcion', 'like', '%' . $this->query . '%')
-                      ->orWhere('productos.codigo', 'like', '%' . $this->query . '%');
-                })
-                ->paginate($this->perPage),
-            // también pasamos la colección para acceso directo si se prefiere
+            'stock' => $stockQuery,
             'ppiByProduct' => \App\Models\PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)->get()->keyBy('producto_id'),
         ]);
     }
