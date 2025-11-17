@@ -33,6 +33,7 @@ class FormAddProd extends Component
     public $tipoDes;
     public $monto;
     public $porcentaje;
+    public $es_provisional = false;
 
     // Corrección de stock en modal
     public $stockActual;
@@ -227,66 +228,47 @@ class FormAddProd extends Component
             'descripcion' => 'required|string|min:2',
             'categoria' => 'required',
             'subcategoria' => 'required',
-            'stock' => 'nullable|numeric|min:0',
-            'costo' => 'nullable|numeric|min:0',
-            'precioVenta' => 'nullable|numeric|min:0',
+            'codigo' => 'required|unique:productos,codigo,' . ($this->producto->id ?? ''),
+            'precioVenta' => 'required|numeric|min:0',
+            'costo' => 'required|numeric|min:0',
         ]);
 
-        if ($this->categoria == 1) {
-            $p = Producto::firstOrCreate([
-                'descripcion' => $this->descripcion,
-                'codigo_de_barras' => $this->cod_barra,
-                'codigo' => $this->codigo,
-            ]);
+        $data = [
+            'descripcion' => $this->descripcion,
+            'codigo' => $this->codigo,
+            'costo' => $this->costo,
+            'precio_venta' => $this->precioVenta,
+            'stock' => $this->stock ?? 0,
+            'codigo_de_barras' => $this->cod_barra,
+            'subcategoria_producto_id' => $this->subcategoria,
+            'categoria_producto_id' => $this->categoria,
+            'es_provisional' => !auth()->user()->hasRole('admin') ? true : $this->es_provisional,
+        ];
 
-            $p->update([
-                'monto' => $this->monto,
-                'porcentaje' => $this->porcentaje,
-                'categoria_producto_id' => $this->categoria,
-                'subcategoria_producto_id' => $this->subcategoria,
-            ]);
-
-            $sucursalId = 1;
-            $service = app(\App\Services\StockService::class);
-            $service->ensureStockRecord($sucursalId, $p->id);
-            if (!empty($this->stock) && intval($this->stock) > 0) {
-                $service->adjustStock($sucursalId, $p->id, intval($this->stock));
-            }
-
-            ProductoXProveedor::firstOrCreate([
-                'proveedor_id' => $this->proveedor,
-                'producto_id' => $p->id
-            ]);
+        if ($this->producto) {
+            // Actualizar producto existente
+            $this->producto->update($data);
+            $producto = $this->producto;
         } else {
-            $p = Producto::firstOrCreate([
-                'descripcion' => $this->descripcion,
-                'codigo_de_barras' => $this->cod_barra,
-                'codigo' => $this->codigo,
-            ]);
-
-            $p->update([
-                'costo' => $this->costo,
-                'precio_venta' => $this->precioVenta,
-                'categoria_producto_id' => $this->categoria,
-                'subcategoria_producto_id' => $this->subcategoria,
-            ]);
-
-            $sucursalId = 1;
-            $service = app(\App\Services\StockService::class);
-            $service->ensureStockRecord($sucursalId, $p->id);
-            if (!empty($this->stock) && intval($this->stock) > 0) {
-                $service->adjustStock($sucursalId, $p->id, intval($this->stock));
+            // Crear nuevo producto
+            $producto = Producto::create($data);
+            
+            // Si el usuario no es admin, el producto es provisional
+            if (!auth()->user()->hasRole('admin')) {
+                session()->flash('message', 'Producto provisional creado. Será revisado por un administrador.');
             }
-            ProductoXProveedor::firstOrCreate([
-                'proveedor_id' => $this->proveedor,
-                'producto_id' => $p->id
-            ]);
         }
 
-        // Limpiar formulario tras crear el producto
+        // Asociar con el proveedor
+        ProductoXProveedor::firstOrCreate([
+            'proveedor_id' => $this->proveedor,
+            'producto_id' => $producto->id
+        ]);
+
+        // Limpiar formulario
         $this->resetErrorBag();
         $this->resetValidation();
-        $this->reset(
+        $this->reset([
             'producto',
             'descripcion',
             'cod_barra',
@@ -299,14 +281,17 @@ class FormAddProd extends Component
             'porcentaje',
             'monto',
             'formDes',
-            'tipoDes'
-        );
+            'tipoDes',
+            'es_provisional'
+        ]);
+        
         $this->formProd = true;
         $this->proveedor = '1';
-        // Opcional: mantener modal abierto para seguir cargando
-        $this->modalProductos = true;
+        
+        // Cerrar modal
+        $this->modalProductos = false;
 
-        // Notificar al frontend que se creó el producto
+        // Notificar al frontend que se creó/actualizó el producto
         $this->dispatch('producto-agregado');
     }
 

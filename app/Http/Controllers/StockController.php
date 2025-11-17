@@ -49,9 +49,19 @@ class StockController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $stock = Stock::findOrFail($id);
+        
+        // Verificar si el producto es provisional
+        if ($stock->producto && $stock->producto->es_provisional) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se puede actualizar el stock de un producto provisional.'
+            ], 403);
+        }
+        
+        // Resto de la lógica de actualización...
     }
 
     /**

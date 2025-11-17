@@ -19,9 +19,21 @@ class Producto extends Model
         'precio_presupuesto',
         'monto',
         'porcentaje',
-        'codigo_de_barras'
-
+        'codigo_de_barras',
+        'es_provisional'
     ];
+
+    protected $casts = [
+        'es_provisional' => 'boolean'
+    ];
+
+    /**
+     * Scope para filtrar productos provisionales
+     */
+    public function scopeProvisional($query, $provisional = true)
+    {
+        return $query->where('es_provisional', $provisional);
+    }
 
 
 

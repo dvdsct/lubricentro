@@ -12,7 +12,7 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
 
                     <div class="m-3">
 
@@ -163,13 +163,34 @@
                         </div>
                         @endif
 
+                        @if ($formProd)
+                        <!-- Sección de producto provisional -->
+                        <div class="pt-4">
+                            @if(auth()->user()->hasRole('admin'))
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="es_provisional" wire:model="es_provisional">
+                                    <label class="form-check-label" for="es_provisional">
+                                        Marcar como producto provisional
+                                    </label>
+                                    <small class="form-text text-muted">
+                                        Los productos provisionales no afectan al stock y son visibles solo para administradores.
+                                    </small>
+                                </div>
+                            @else
+                                <div class="alert alert-info py-2">
+                                    <i class="fas fa-info-circle"></i> Este producto será marcado como provisional.
+                                </div>
+                                <input type="hidden" wire:model="es_provisional" value="1">
+                            @endif
+                        </div>
+                        @endif
 
+                        <!-- Espacio adicional para asegurar que el botón sea accesible -->
+                        <div class="pt-4 pb-4"></div>
 
                     </div>
-
-
                 </div>
-                <div class="modal-footer justify-content-between">
+                <div class="modal-footer justify-content-between sticky-bottom bg-white pt-2 pb-2" style="box-shadow: 0 -2px 10px rgba(0,0,0,0.1);">
                     <button type="button" class="btn btn-default" wire:click='modalProductosOn'>Cerrar</button>
                     <button type="button" class="btn btn-primary" wire:click='saveproduct'>Guardar</button>
                 </div>

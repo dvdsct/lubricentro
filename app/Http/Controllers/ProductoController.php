@@ -31,7 +31,31 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = auth()->user();
+        
+        // Validar los datos
+        $data = $request->validate([
+            'descripcion' => 'required|string|max:255',
+            'codigo' => 'required|string|unique:productos,codigo',
+            'precio_venta' => 'required|numeric|min:0',
+            'costo' => 'required|numeric|min:0',
+            'stock' => 'sometimes|numeric|min:0',
+            'codigo_de_barras' => 'nullable|string|unique:productos,codigo_de_barras',
+        ]);
+
+        // Si el usuario no es administrador, marcar como producto provisional
+        if (!$user->hasRole('admin')) {
+            $data['es_provisional'] = true;
+            $data['stock'] = 0; // No permitir stock inicial para productos provisionales
+        }
+
+        $producto = Producto::create($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => $user->hasRole('admin') ? 'Producto creado correctamente' : 'Producto provisional creado. Será revisado por un administrador.',
+            'producto' => $producto
+        ]);
     }
 
     /**
