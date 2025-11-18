@@ -238,61 +238,91 @@ class FormAddProd extends Component
             'codigo' => $this->codigo,
             'costo' => $this->costo,
             'precio_venta' => $this->precioVenta,
-            'stock' => $this->stock ?? 0,
             'codigo_de_barras' => $this->cod_barra,
             'subcategoria_producto_id' => $this->subcategoria,
             'categoria_producto_id' => $this->categoria,
-            'es_provisional' => !auth()->user()->hasRole('admin') ? true : $this->es_provisional,
         ];
 
-        if ($this->producto) {
-            // Actualizar producto existente
-            $this->producto->update($data);
-            $producto = $this->producto;
+        // Set provisional status
+        if (auth()->user()->hasRole('admin')) {
+            $data['es_provisional'] = $this->es_provisional ?? false;
         } else {
-            // Crear nuevo producto
-            $producto = Producto::create($data);
-            
-            // Si el usuario no es admin, el producto es provisional
-            if (!auth()->user()->hasRole('admin')) {
-                session()->flash('message', 'Producto provisional creado. Será revisado por un administrador.');
-            }
+            // For non-admin users, always set as provisional
+            $data['es_provisional'] = true;
         }
 
-        // Asociar con el proveedor
-        ProductoXProveedor::firstOrCreate([
-            'proveedor_id' => $this->proveedor,
-            'producto_id' => $producto->id
-        ]);
+        \DB::beginTransaction();
+        try {
+            if ($this->producto) {
+                // Update existing product
+                $this->producto->update($data);
+                $producto = $this->producto;
+                
+                // Update stock if admin and stock is provided
+                if (auth()->user()->hasRole('admin') && isset($this->stock)) {
+                    $stock = $producto->stocks()->firstOrNew(['sucursal_id' => 1]);
+                    $stock->cantidad = $this->stock;
+                    $stock->save();
+                }
+            } else {
+                // Create new product
+                $producto = Producto::create($data);
+                
+                // Create stock record for the product
+                if (auth()->user()->hasRole('admin')) {
+                    $stockQty = $this->stock ?? 0;
+                } else {
+                    // Non-admin users can only create products with 0 stock
+                    $stockQty = 0;
+                    session()->flash('message', 'Producto provisional creado. Será revisado por un administrador.');
+                }
+                
+                // Create initial stock record
+                $producto->stocks()->create([
+                    'cantidad' => $stockQty,
+                    'sucursal_id' => 1, // Default branch ID
+                    'estado' => 1 // Assuming 1 means active
+                ]);
+            }
 
-        // Limpiar formulario
-        $this->resetErrorBag();
-        $this->resetValidation();
-        $this->reset([
-            'producto',
-            'descripcion',
-            'cod_barra',
-            'costo',
-            'codigo',
-            'stock',
-            'precioVenta',
-            'subcategoria',
-            'categoria',
-            'porcentaje',
-            'monto',
-            'formDes',
-            'tipoDes',
-            'es_provisional'
-        ]);
-        
-        $this->formProd = true;
-        $this->proveedor = '1';
-        
-        // Cerrar modal
-        $this->modalProductos = false;
+            // Associate with provider
+            ProductoXProveedor::firstOrCreate([
+                'proveedor_id' => $this->proveedor,
+                'producto_id' => $producto->id
+            ]);
 
-        // Notificar al frontend que se creó/actualizó el producto
-        $this->dispatch('producto-agregado');
+            \DB::commit();
+
+            // Clear form
+            $this->resetErrorBag();
+            $this->resetValidation();
+            $this->reset([
+                'producto',
+                'descripcion',
+                'cod_barra',
+                'costo',
+                'codigo',
+                'stock',
+                'precioVenta',
+                'subcategoria',
+                'categoria',
+                'porcentaje',
+                'monto',
+                'formDes',
+                'tipoDes',
+                'es_provisional'
+            ]);
+            
+            $this->formProd = true;
+            $this->proveedor = '1';
+            $this->modalProductos = false;
+
+            $this->dispatch('producto-agregado');
+
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            session()->flash('error', 'Error al guardar el producto: ' . $e->getMessage());
+        }
     }
 
 

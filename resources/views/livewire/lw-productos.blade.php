@@ -37,7 +37,12 @@
 
                 <tr>
                     <td>{{ $p->id }}</td>
-                    <td>{{ $p->codigo }} {{ $p->descripcion }} </td>
+                    <td>
+                        {{ $p->codigo }} {{ $p->descripcion }}
+                        @if(!empty($p->es_provisional) && $p->es_provisional)
+                            <span class="badge badge-warning ml-1">Provisional</span>
+                        @endif
+                    </td>
                     <td>{{ $p->categoria_nombre }}</td> <!-- COLOCAR LA CATEGORIA DEL PRODUCTO -->
                     <td>{{ $p->subcategoria_nombre }}</td> <!-- COLOCAR LA CATEGORIA DEL PRODUCTO -->
 

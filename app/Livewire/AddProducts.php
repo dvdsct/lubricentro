@@ -70,20 +70,21 @@ class AddProducts extends Component
         $newCantidad = intval($this->cantidad);
         $delta = $newCantidad - $prevCantidad; // puede ser +, 0, o negativo
 
-        // Chequear stock solo cuando el delta requiere más unidades
-        if ($delta > 0 && $stock->cantidad < $delta) {
+        // Chequear stock solo cuando el delta requiere más unidades y el producto NO es provisional
+        if ($delta > 0 && !$p->es_provisional && $stock->cantidad < $delta) {
             return $this->dispatch('nonstock');
         }
 
         // Actualizar de forma atómica
-        \DB::transaction(function () use ($item, $precio, $newCantidad, $delta, $stock) {
+        \DB::transaction(function () use ($item, $precio, $newCantidad, $delta, $stock, $p) {
             $item->update([
                 'cantidad' => $newCantidad,
                 'subtotal' => floatval($precio) *  floatval($newCantidad),
                 'estado' => '2',
             ]);
 
-            if ($delta !== 0) {
+            // Actualizar stock solo si el producto NO es provisional
+            if ($delta !== 0 && !$p->es_provisional) {
                 $stock->update([
                     'cantidad' => $stock->cantidad - $delta,
                 ]);
@@ -114,7 +115,8 @@ class AddProducts extends Component
         $this->producto = Producto::find($p);
         $stock = Stock::where('producto_id', $this->producto->id)->first();
 
-        if ($stock->cantidad == 0) {
+        // Si no hay stock, permitir si el producto es provisional
+        if ($stock->cantidad == 0 && !$this->producto->es_provisional) {
             return  $this->dispatch('nonstock');
         } else {
 
@@ -141,9 +143,12 @@ class AddProducts extends Component
 
                     ]);
 
-                    $stock->update([
-                        'cantidad' => $stock->cantidad - 1
-                    ]);
+                    // Descontar stock solo si NO es provisional
+                    if (!$this->producto->es_provisional) {
+                        $stock->update([
+                            'cantidad' => $stock->cantidad - 1
+                        ]);
+                    }
                 } else {
 
                     $total = $this->orden->items->sum('subtotal');
@@ -166,9 +171,11 @@ class AddProducts extends Component
 
                     ]);
 
-                    $stock->update([
-                        'cantidad' => $stock->cantidad - 1
-                    ]);
+                    if (!$this->producto->es_provisional) {
+                        $stock->update([
+                            'cantidad' => $stock->cantidad - 1
+                        ]);
+                    }
                 }
             } else {
 
@@ -221,7 +228,8 @@ class AddProducts extends Component
             $producto = Producto::where('codigo_de_barras', $this->codigoBarras)->first();
             if (!$producto) return $this->dispatch('nonstock');
             $stock = Stock::where('producto_id', $producto->id)->first();
-            if (!$stock || $stock->cantidad <= 0) return $this->dispatch('nonstock');
+            // Permitir si es provisional aunque no tenga stock
+            if (!$stock || ($stock->cantidad <= 0 && !$producto->es_provisional)) return $this->dispatch('nonstock');
 
             $i = Item::create([
                 'producto_id' => $producto->id,
@@ -237,7 +245,7 @@ class AddProducts extends Component
             $producto = Producto::find($this->codigoBarras);
             if (!$producto) return $this->dispatch('nonstock');
             $stock = Stock::where('producto_id', $producto->id)->first();
-            if (!$stock || $stock->cantidad <= 0) return  $this->dispatch('nonstock');
+            if (!$stock || ($stock->cantidad <= 0 && !$producto->es_provisional)) return  $this->dispatch('nonstock');
 
             $i = Item::create([
                 'producto_id' => $producto->id,

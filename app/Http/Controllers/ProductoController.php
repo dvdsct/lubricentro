@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
+use App\Models\Stock;
 use Illuminate\Http\Request;
 
 class ProductoController extends Controller
@@ -32,9 +33,9 @@ class ProductoController extends Controller
     public function store(Request $request)
     {
         $user = auth()->user();
-        
-        // Validar los datos
-        $data = $request->validate([
+
+        // Validar datos (permitimos 'stock' en request pero NO es columna de productos)
+        $validated = $request->validate([
             'descripcion' => 'required|string|max:255',
             'codigo' => 'required|string|unique:productos,codigo',
             'precio_venta' => 'required|numeric|min:0',
@@ -43,13 +44,33 @@ class ProductoController extends Controller
             'codigo_de_barras' => 'nullable|string|unique:productos,codigo_de_barras',
         ]);
 
-        // Si el usuario no es administrador, marcar como producto provisional
-        if (!$user->hasRole('admin')) {
-            $data['es_provisional'] = true;
-            $data['stock'] = 0; // No permitir stock inicial para productos provisionales
-        }
+        // Armar payload para productos sin 'stock'
+        $productoData = [
+            'descripcion' => $validated['descripcion'],
+            'codigo' => $validated['codigo'],
+            'precio_venta' => $validated['precio_venta'],
+            'costo' => $validated['costo'],
+            'codigo_de_barras' => $validated['codigo_de_barras'] ?? null,
+        ];
 
-        $producto = Producto::create($data);
+        // Provisionalidad por rol
+        $productoData['es_provisional'] = $user->hasRole('admin') ? false : true;
+
+        // Crear producto
+        $producto = Producto::create($productoData);
+
+        // Crear/Ajustar stock en tabla 'stocks'
+        $stockQty = $user->hasRole('admin') ? intval($request->input('stock', 0)) : 0;
+        Stock::updateOrCreate(
+            [
+                'producto_id' => $producto->id,
+                'sucursal_id' => 1,
+            ],
+            [
+                'cantidad' => $stockQty,
+                'estado' => '1',
+            ]
+        );
 
         return response()->json([
             'success' => true,

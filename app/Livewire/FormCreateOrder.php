@@ -323,7 +323,8 @@ class FormCreateOrder extends Component
                 $stock = Stock::where('producto_id', $this->producto->id)->first();
                 $pst = floatval($this->producto->precio_venta) * floatval($i->cantidad);
 
-                if ($stock->cantidad == 0) {
+                // Permitir si es provisional aunque no tenga stock
+                if ((!$stock || $stock->cantidad == 0) && !$this->producto->es_provisional) {
                     // dd('aqui');
                     $this->orden->update([
                         'estado' => '555'
@@ -346,9 +347,12 @@ class FormCreateOrder extends Component
 
                     ]);
 
-                    $stock->update([
-                        'cantidad' => $stock->cantidad - $i->cantidad
-                    ]);
+                    // Descontar stock solo si el producto NO es provisional y existe registro de stock
+                    if ($stock && !$this->producto->es_provisional) {
+                        $stock->update([
+                            'cantidad' => $stock->cantidad - $i->cantidad
+                        ]);
+                    }
                 }
             }
             $this->orden->update([

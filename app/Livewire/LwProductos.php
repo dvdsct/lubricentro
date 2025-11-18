@@ -28,6 +28,13 @@ class LwProductos extends Component
         $this->resetPage();
     }
 
+    #[On('producto-agregado')]
+    public function onProductoAgregado()
+    {
+        // Refrescar la paginación para que aparezca el nuevo registro
+        $this->resetPage();
+    }
+
     // #[On('added')]
     // public function oo()
     // {
@@ -65,8 +72,11 @@ class LwProductos extends Component
                     'categoria_productos.descripcion as categoria_nombre', // Asegúrate de que 'nombre' es el campo correcto en 'categoria_productos'
                     'subcategoria_productos.descripcion as subcategoria_nombre' // Asegúrate de que 'nombre' es el campo correcto en 'categoria_productos'
                 )
-                ->where('productos.descripcion', 'like', '%' . $this->query . '%')
-                ->orWhere('codigo', 'like', '%' . $this->query . '%')
+                ->where(function($q){
+                    $q->where('productos.descripcion', 'like', '%' . $this->query . '%')
+                      ->orWhere('productos.codigo', 'like', '%' . $this->query . '%');
+                })
+                ->orderBy('productos.created_at','desc')
                 ->paginate(20)
 
             // 'productos' => ProductoXProveedor::leftJoin('productos', 'producto_x_proveedors.producto_id', '=', 'productos.id')
