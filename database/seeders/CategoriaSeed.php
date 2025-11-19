@@ -17,6 +17,10 @@ class CategoriaSeed extends Seeder
            ['Descuento', 1],
            ['Lavadero', 1],
            ['Lubricentro',1],
+           ['repuestos', 1],
+           ['productos', 1],
+           ['servicios', 1],
+           ['mano de obra', 1],
     
        ];
 
