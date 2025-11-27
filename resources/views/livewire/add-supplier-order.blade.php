@@ -12,7 +12,7 @@
                 <div class="modal-body">
 
 
-                    <form wire:submit.prevent="continueForm">
+                    <form id="supplierOrderForm" wire:submit.prevent="continueForm">
                         <div class="mb-3">
                             <select id="provider" class="form-control" wire:model="proveedor">
                                 <option value="">Seleccionar proveedor</option>
@@ -45,7 +45,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" wire:click="modalOff">Cancelar</button>
-                    <button type="submit" class="btn btn-success" form="supplierOrderForm" wire:click="continueForm">Continuar</button>
+                    <button type="submit" class="btn btn.success" form="supplierOrderForm">Continuar</button>
                 </div>
             </div>
         </div>

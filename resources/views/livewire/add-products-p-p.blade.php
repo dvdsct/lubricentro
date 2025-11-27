@@ -6,27 +6,38 @@
         @if (session()->has('error'))
             <div class="alert alert-danger m-3">{{ session('error') }}</div>
         @endif
-        @if ($pedido->estado == 100)
-        <div class="card-header bg-danger">Recibido
-            @else
-            <div class="card-header">
-
-                <button type="button" class="btn btn-success" wire:click='modalProdOn'>
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <div>
+                <button type="button" class="btn btn-success px-4" wire:click='modalProdOn' style="min-width: 190px;"
+                        @if($pedido->estado === 'cerrado' || $pedido->estado === 'recibido_total') disabled @endif>
                     <i class="fas fa-plus-circle"></i> Agregar Item
                 </button>
+            </div>
+            <div>
+                @if($pedido->estado === 'cerrado')
+                    <span class="badge bg-danger">Cerrado</span>
+                @elseif($pedido->estado === 'recibido_total')
+                    <span class="badge bg-success">Recibido</span>
+                @elseif($pedido->estado === 'recibido_parcial')
+                    <span class="badge bg-warning">Recibido Parcial</span>
+                @elseif($pedido->estado === 'enviado')
+                    <span class="badge bg-info">Enviado</span>
+                @else
+                    <span class="badge bg-secondary">Pendiente</span>
                 @endif
             </div>
+        </div>
             <!-- TABLA ITEMS CARGADOS  -->
             <div class="card-body">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
 
-                            <th style="width: 100px">Codigo</th>
+                            <th style="width: 120px">Código</th>
                             <th>Producto</th>
-                            <th style="width: 100px">Cantidad</th>
+                            <th style="width: 120px">Cantidad</th>
                             <th style="width: 250px">Precio unitario de compra</th>
-                            <th style="width: 40px">Subtotal</th>
+                            <th style="width: 120px">Subtotal</th>
                             <th style="width: 110px">Pedida</th>
                             <th style="width: 110px">Recibida</th>
                             <th style="width: 110px">Pendiente</th>
@@ -37,20 +48,20 @@
                     <tbody>
                         @foreach ($pedido->items as $i)
                         <tr>
-                            <td>{{ $i->id }}</td>
-                            <td>{{ $i->productos->descripcion . ' - ' . $i->productos->codigo }}</td>
+                            <td>{{ $i->productos->codigo }}</td>
+                            <td>{{ $i->productos->descripcion }}</td>
 
                             @if ($i->estado == 1)
-                            <td><input type="text" class="form-control" style="width: 145px;" placeholder="Ingresar cantidad" wire:model='cantidad' wire:keydown.enter='addCantidad({{ $i->id }})'>
+                            <td>
+                                <input type="number" min="1" class="form-control" style="width: 145px;" placeholder="Ingresar cantidad"
+                                       wire:model='cantidad' wire:keydown.enter='addCantidad({{ $i->id }})'>
                                 @error('cantidad')
                                 {{ $message }}
                                 @enderror
                             </td>
 
-                            <td><input type="text" class="form-control" placeholder="Ingresar costo" wire:model='precio' wire:keydown.enter='addCantidad({{ $i->id }})'>
-                                @error('precio')
-                                {{ $message }}
-                                @enderror
+                            <td>
+                                $ {{ number_format((float)($i->precio ?? $i->productos->costo ?? 0), 2, '.', ',') }}
                             </td>
                             <td></td>
                             @else
@@ -58,10 +69,10 @@
                                 {{ $i->cantidad }}
                             </td>
                             <td>
-                                $ {{ $i->precio }}
+                                $ {{ number_format((float)($i->precio ?? 0), 2, '.', ',') }}
                             </td>
                             <td>
-                                $ {{ $i->subtotal }}
+                                $ {{ number_format((float)($i->subtotal ?? 0), 2, '.', ',') }}
                             </td>
                             @endif
 
@@ -79,12 +90,13 @@
                             <td>{{ $pendiente }}</td>
 
                             <td>
-                                @if ($pendiente > 0)
+                                @php $pedidoCerrado = in_array($pedido->estado, ['cerrado','recibido_total']); @endphp
+                                @if ($pendiente > 0 && !$pedidoCerrado)
                                     <div class="input-group">
                                         <input type="number" min="1" class="form-control" style="max-width: 100px;"
                                                wire:model.defer='receiveQty.{{ $i->producto_id }}' placeholder="Cant.">
                                         <div class="input-group-append">
-                                            <button class="btn btn-primary" wire:click='recibirItem({{ $i->producto_id }})'>
+                                            <button class="btn btn-primary px-3" style="min-width: 120px;" wire:click='recibirItem({{ $i->producto_id }})'>
                                                 Recibir
                                             </button>
                                         </div>
@@ -95,32 +107,35 @@
                             </td>
 
                             @if ($i->estado == 2)
-                            {{-- Si el producto es estado 2 aun no se a recibido --}}
+                            {{-- Ítem confirmado (estado=2): permitir reabrir solo si el pedido no está cerrado/recibido y no hubo recepción --}}
                             <td class="text-right project-actions" style="width: 240px;">
+                                @php
+                                    $ppi = $ppiByProduct->get($i->producto_id);
+                                    $yaRecibio = intval($ppi->cantidad_recibida ?? 0) > 0;
+                                    $pedidoCerrado = in_array($pedido->estado, ['cerrado','recibido_total']);
+                                @endphp
+                                @if(!$pedidoCerrado && !$yaRecibio)
                                 <a class="btn btn-secondary btn-sm" wire:click='editProd({{ $i->id }})'>
-                                    <i class="fas fa-pencil-alt">
-                                    </i>
+                                    <i class="fas fa-pencil-alt"></i>
                                     Editar
                                 </a>
-                                <a class="btn btn-info btn-sm" wire:click='openHistory({{ $i->producto_id }})' title="Historial de stock">
-                                    <i class="fas fa-history"></i>
-                                </a>
+                                @endif
+                                @if(!$pedidoCerrado && !$yaRecibio)
                                 <a class="btn btn-danger btn-sm" wire:click='delProd({{ $i->id }})' wire:confirm="Si borras este articulo tendras que volver a agregarlo, estas seguro?">
-                                    <i class="fas fa-trash">
-                                    </i>
+                                    <i class="fas fa-trash"></i>
                                     Eliminar
                                 </a>
+                                @endif
                             </td>
                             @else
                             <td class="text-right project-actions" style="width: 200px;">
-                                <a class="btn btn-info btn-sm" wire:click='openHistory({{ $i->producto_id }})' title="Historial de stock">
-                                    <i class="fas fa-history"></i>
-                                </a>
+                                @php $pedidoCerrado = in_array($pedido->estado, ['cerrado','recibido_total']); @endphp
+                                @if(!$pedidoCerrado)
                                 <a class="btn btn-danger btn-sm" wire:click='delProd({{ $i->id }})' wire:confirm="Si borras este articulo tendras que volver a agregarlo, estas seguro">
-                                    <i class="fas fa-trash">
-                                    </i>
+                                    <i class="fas fa-trash"></i>
                                     Eliminar
                                 </a>
+                                @endif
                             </td>
                             @endif
 
@@ -171,8 +186,8 @@
             <div class="col-md-3">
                 <div class="small-box bg-primary" style="cursor: pointer;" wire:click='$dispatchTo("form-pago","formPago",{ tipo: "proveedor" })'>
                     <div class="inner">
-                        <h3 class="m-0">Recibir Pedido</h3>
-                        <p> Todo lo detallado llegó</p>
+                        <h3 class="m-0" style="font-size: 0.9rem;">Recibir Pedido</h3>
+                        <p style="font-size: 0.75rem;"> Todo lo detallado llegó</p>
                     </div>
                     <div class="icon">
                         <i class="fas fa-check-circle"></i>

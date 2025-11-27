@@ -17,8 +17,10 @@
                     <h1 style="font-family: Arial, Helvetica, sans-serif;">Pedido a proveedor N° 000- {{ $orden->id }}</h1> <!-- AGREGAR ID DE PEDIDO PROVEEDOR -->
                 </td>
 
-                <td class="logo" style="border: 1px solid black; display:flex; justify-content:center;">
-                       <img src="{{ asset('img/logo.png') }}" alt="Logo Rocket" style="width: 200px;">
+                <td class="logo" style="border: 1px solid black; text-align:center;">
+                       @if(!empty($logo))
+                           <img src="data:image/png;base64,{{ $logo }}" alt="Logo" style="width: 180px;"/>
+                       @endif
                 </td>
             </tr>
 
@@ -54,10 +56,10 @@
                     @foreach ($items as $item)
                     <tr>
                         <td style="border: 1px solid black;">{{ $item['id'] }}</td>
-                        <td style="border: 1px solid black;">{{ $item->productos->codigo }}</td>
+                        <td style="border: 1px solid black;">{{ $item['codigo'] }}</td>
                         <td style="border: 1px solid black;">{{ $item['cantidad'] }}</td>
-                        <td style="border: 1px solid black;">$ {{$item->precio}}</td>
-                        <td style="border: 1px solid black;">{{ $item->subtotal }}</td>
+                        <td style="border: 1px solid black;">$ {{ number_format((float)($item['precio'] ?? 0), 2, '.', ',') }}</td>
+                        <td style="border: 1px solid black;">$ {{ number_format((float)($item['subtotal'] ?? 0), 2, '.', ',') }}</td>
                     </tr>
                     @endforeach
                 </tbody>

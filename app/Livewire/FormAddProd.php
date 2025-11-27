@@ -50,8 +50,9 @@ class FormAddProd extends Component
         $this->categorias = CategoriaProducto::all();
         if (Auth::user()->hasRole('admin')) {
             $this->subcategorias = SubcategoriaProducto::all();
-        }else{
-            $this->subcategorias = SubcategoriaProducto::where('estado','2')->get();
+        } else {
+            // Mostrar subcategorías activas también para no-admin
+            $this->subcategorias = SubcategoriaProducto::where('estado','1')->get();
         }
     }
 
@@ -213,9 +214,12 @@ class FormAddProd extends Component
     }
 
 
-    public function updatingCosto($costo)
+    public function updatedCosto($costo)
     {
-        $this->precioVenta = floatval($costo) + (floatval($costo) / 100) * 60;
+        $c = floatval($costo);
+        if ($c >= 0) {
+            $this->precioVenta = $c + ($c * 0.80);
+        }
     }
     public function updatingPrecioVenta($precio)
     {
@@ -224,6 +228,11 @@ class FormAddProd extends Component
 
     public function saveproduct()
     {
+        // Si el usuario ingresó costo pero dejó vacío el precio de venta, calcularlo automáticamente (costo + 80%)
+        if ((is_null($this->precioVenta) || $this->precioVenta === '') && is_numeric($this->costo)) {
+            $c = floatval($this->costo);
+            $this->precioVenta = $c + ($c * 0.80);
+        }
         $this->validate([
             'descripcion' => 'required|string|min:2',
             'categoria' => 'required',

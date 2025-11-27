@@ -244,28 +244,65 @@ class PDFController extends Controller
     // PEDIDO
     public function generatePedido(string $id)
     {
-        $orden = PedidoProveedor::find($id);
+        set_time_limit(300);
+        ini_set('memory_limit', '256M');
+
+        $orden = PedidoProveedor::with([
+            'items.productos:id,descripcion,codigo,costo,precio_venta',
+            'proveedores.perfiles.personas',
+            'tipos'
+        ])->find($id);
 
         if (!$orden) {
             abort(404); // Pedido no encontrada
         }
 
         $items = $orden->items;
-        $total = $orden->items->sum('subtotal');
+        $total = $items->sum('subtotal');
         $fecha = $orden->created_at;
+        $fechaStr = \Carbon\Carbon::parse($fecha)->format('d/m/Y H:i');
         $encargado = $orden->proveedores->perfiles->personas;
         $vendedor = Auth::user();
         $categoria = $orden->tipos->descripcion;
 
-        $pdf = PDF::loadView('pdf.template_prov', [
+        $logo = null;
+        $logoPath = public_path('img/logo.png');
+        if (is_file($logoPath)) {
+            $logo = base64_encode(file_get_contents($logoPath));
+        }
+
+        // Construir filas livianas para la vista (solo escalares)
+        $rows = $items->map(function ($it) {
+            return [
+                'id' => $it->id,
+                'codigo' => optional($it->productos)->codigo,
+                'cantidad' => $it->cantidad,
+                'precio' => $it->precio,
+                'subtotal' => $it->subtotal,
+            ];
+        })->values()->all();
+
+        $pdf = PDF::setOptions([
+                'isRemoteEnabled' => true,
+                'isHtml5ParserEnabled' => true,
+                'isPhpEnabled' => true,
+                'defaultFont' => 'Arial',
+                'fontDir' => storage_path('fonts/'),
+                'fontCache' => storage_path('fonts/'),
+                'tempDir' => storage_path('app/temp/'),
+                'chroot' => realpath(base_path()),
+            ])
+            ->loadView('pdf.template_prov', [
             'orden' => $orden,
-            'items' => $items,
-            'fecha' => $fecha,
+            'items' => $rows,
+            'fecha' => $fechaStr,
             'categoria' => $categoria,
             'total' => $total,
             'encargado' => $encargado,
-            'vendedor' => $vendedor
-        ]);
+            'vendedor' => $vendedor,
+            'logo' => $logo,
+        ])
+        ->setPaper('a4', 'portrait');
 
         return $pdf->stream('pedido_' . $orden->id . '.pdf');
     }
@@ -349,14 +386,22 @@ class PDFController extends Controller
     // PDF PLANILLA ACTUAL STOCK
 
     public function pdfStock(){
+        // Optimizar ejecución y memoria
+        set_time_limit(180);
+        ini_set('memory_limit', '256M');
+
         $fecha = Carbon::now();
-        $stockActual = Stock::all();
+        $fechaStr = $fecha->locale('es')->isoFormat('D [de] MMMM [de] YYYY');
 
-
+        // Evitar N+1 y reducir columnas: cargar solo lo necesario
+        $stockActual = Stock::with(['productos:id,descripcion,codigo,costo,precio_venta'])
+            ->select(['id','cantidad','producto_id'])
+            ->orderBy('producto_id')
+            ->get();
 
         $pdf = PDF::loadView('pdf.stock', [
             'stockActual' => $stockActual,
-            'fecha' => $fecha
+            'fecha_str' => $fechaStr,
         ]);
 
         return $pdf->stream('stock'. $fecha);

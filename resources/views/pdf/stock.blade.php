@@ -62,7 +62,7 @@
 
 
     
-    <h1 style="font-family: Arial, Helvetica, sans-serif;">Stock Actual de Productos - {{ Carbon\Carbon::parse($fecha)->locale('es')->isoFormat('D [de] MMMM [de] YYYY') }}
+    <h1 style="font-family: Arial, Helvetica, sans-serif;">Stock Actual de Productos - {{ $fecha_str }}
     </h1>
     <table>
         <thead>

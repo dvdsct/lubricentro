@@ -14,6 +14,10 @@
                 </div>
                 <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
 
+                    @if(session()->has('error'))
+                        <div class="alert alert-danger">{{ session('error') }}</div>
+                    @endif
+
                     <div class="m-3">
 
                         <div class="text-center form-group">
@@ -29,12 +33,15 @@
                                     </option>
                                     @endforeach
                                 </select>
+                                @error('categoria')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                         </div>
                         @if ($formDes)
                         <div class="pt-4 row">
                             <div class="col-md">
-                                <select class="form-control" aria-label="Default select example" wire:model.live='subcategoria' wire:change='selSubTipo'>
+                                <select class="form-control" aria-label="Default select example" wire:model='subcategoria' wire:change='selSubTipo'>
                                     <option selected>Subcategoria</option>
                                     @foreach ($subcategorias as $sub)
                                     <option value="{{ $sub[0] }}">
@@ -42,6 +49,9 @@
                                     </option>
                                     @endforeach
                                 </select>
+                                @error('subcategoria')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
 
                         </div>
@@ -51,7 +61,7 @@
 
                         <div class="pt-4 row">
                             <div class="col-md">
-                                <select class="form-control" aria-label="Default select example" wire:model.live='subcategoria'>
+                                <select class="form-control" aria-label="Default select example" wire:model='subcategoria'>
                                     <option selected>Subcategoria</option>
                                     @foreach ($subcategorias as $sub)
                                     <option value="{{ $sub->id }}">
@@ -59,6 +69,9 @@
                                     </option>
                                     @endforeach
                                 </select>
+                                @error('subcategoria')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
 
                         </div>
@@ -69,10 +82,16 @@
                         <div class="pt-4 row">
                             <div class="col-md-8">
                                 <input type="text" class="form-control" wire:model='descripcion' placeholder="Producto" />
+                                @error('descripcion')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
 
                             <div class="col-md-4">
                                 <input type="text" class="form-control" wire:model='codigo' placeholder="Codigo" />
+                                @error('codigo')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
                             </div>
                         </div>
 
@@ -84,7 +103,10 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">$</span>
                                     </div>
-                                    <input type="text" class="form-control" wire:model.live='costo' placeholder="Costo proveedor">
+                                    <input type="number" step="0.01" class="form-control" wire:model.live='costo' placeholder="Costo proveedor">
+                                    @error('costo')
+                                    <small class="text-danger">{{ $message }}</small>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -92,7 +114,10 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">$</span>
                                     </div>
-                                    <input type="text" class="form-control" wire:model='precioVenta' placeholder="Precio de venta">
+                                    <input type="number" step="0.01" class="form-control" wire:model='precioVenta' placeholder="Precio de venta">
+                                    @error('precioVenta')
+                                    <small class="text-danger">{{ $message }}</small>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
@@ -192,7 +217,10 @@
                 </div>
                 <div class="modal-footer justify-content-between sticky-bottom bg-white pt-2 pb-2" style="box-shadow: 0 -2px 10px rgba(0,0,0,0.1);">
                     <button type="button" class="btn btn-default" wire:click='modalProductosOn'>Cerrar</button>
-                    <button type="button" class="btn btn-primary" wire:click='saveproduct'>Guardar</button>
+                    <button type="button" class="btn btn-primary" wire:click='saveproduct' wire:loading.attr="disabled" wire:target="saveproduct">
+                        <span wire:loading.remove wire:target="saveproduct">Guardar</span>
+                        <span wire:loading wire:target="saveproduct"><i class="fas fa-spinner fa-spin"></i> Guardando...</span>
+                    </button>
                 </div>
                 </form>
             </div>

@@ -30,7 +30,7 @@ class AddSupplierOrder extends Component
 
     public function mount()
     {
-        $this->proveedores = Proveedor::all();
+        $this->proveedores = Proveedor::with('perfiles.personas')->get();
         $this->tiposPedidos = TipoPedido::all();
     }
 

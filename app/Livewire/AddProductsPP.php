@@ -36,7 +36,6 @@ class AddProductsPP extends Component
     // Item
     #[Validate('required', message: 'ingrese una cantidad')]
     public $cantidad;
-    #[Validate('required', message: 'ingrese el precio de costo')]
     public $precio;
     public $subtotal;
 
@@ -214,48 +213,41 @@ class AddProductsPP extends Component
         $item = PedItem::find($id);
         $p = Producto::find($item->producto_id);
 
-        // dd($stock);
-        $p->update([
-            'costo' => $this->precio
+        // Precio unitario de compra es de solo lectura: usar el precio definido al crear el ítem
+        $precioUnit = $item->precio ?? ($p->costo ?? 0);
+
+        // Confirmar el ítem siempre: cantidad, precio, subtotal y bloquear edición (estado=2)
+        $item->update([
+            'cantidad' => $this->cantidad,
+            'precio' => $precioUnit,
+            'subtotal' => $precioUnit *  $this->cantidad,
+            'estado' => '2',
         ]);
-        // $precio = $this->precio;
 
-        if ($this->pedido->estado == '2') {
+        // Sincronizar nuevo esquema de ítems del pedido
+        $ppi = PedidoProveedorItem::firstOrCreate([
+            'pedido_proveedor_id' => $this->pedido->id,
+            'producto_id' => $p->id,
+        ], [
+            'cantidad_pedida' => 0,
+            'cantidad_recibida' => 0,
+            'costo_unitario' => 0,
+            'subtotal' => 0,
+            'estado_item' => 'pendiente',
+        ]);
 
-            $item->update([
-                'cantidad' => $this->cantidad,
-                'precio' => $this->precio,
-                'subtotal' => $this->precio *  $this->cantidad,
-                'estado' => '2',
+        $nuevoSubtotal = floatval($precioUnit) * floatval($this->cantidad);
+        $ppi->update([
+            'cantidad_pedida' => intval($this->cantidad),
+            'costo_unitario' => floatval($precioUnit),
+            'subtotal' => $nuevoSubtotal,
+        ]);
 
-            ]);
+        // limpiar inputs
+        $this->reset('cantidad');
 
-            // Sincronizar nuevo esquema de ítems del pedido
-            $ppi = PedidoProveedorItem::firstOrCreate([
-                'pedido_proveedor_id' => $this->pedido->id,
-                'producto_id' => $p->id,
-            ], [
-                'cantidad_pedida' => 0,
-                'cantidad_recibida' => 0,
-                'costo_unitario' => 0,
-                'subtotal' => 0,
-                'estado_item' => 'pendiente',
-            ]);
-
-            $nuevoSubtotal = floatval($this->precio) * floatval($this->cantidad);
-            $ppi->update([
-                'cantidad_pedida' => intval($this->cantidad),
-                'costo_unitario' => floatval($this->precio),
-                'subtotal' => $nuevoSubtotal,
-            ]);
-
-
-
-
-
-            $this->reset('cantidad', 'precio');
-        }
-
+        // Recalcular estado general del pedido después de confirmar ítem
+        $this->updatePedidoEstado();
         $this->dispatch('suma-items');
 
     }
@@ -357,22 +349,26 @@ class AddProductsPP extends Component
 
     protected function updatePedidoEstado(): void
     {
-        // Calcula estado en base a los ítems del nuevo esquema
+        // Calcula estado del pedido en base a los ítems del nuevo esquema
         $ppis = PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)->get();
         if ($ppis->isEmpty()) {
-            // sin ítems: mantener estado actual
+            // sin ítems confirmados
+            $this->pedido->update(['estado' => 'pendiente']);
             return;
         }
 
         $total = $ppis->count();
         $completos = $ppis->where('estado_item', 'recibido_total')->count();
-        $recibidos = $ppis->whereIn('estado_item', ['recibido_total', 'recibido_parcial'])->count();
+        $parciales = $ppis->where('estado_item', 'recibido_parcial')->count();
+        $conCantidad = $ppis->filter(fn($r) => intval($r->cantidad_pedida) > 0)->count();
 
-        $nuevoEstado = 'enviado';
-        if ($completos === $total) {
+        $nuevoEstado = 'pendiente';
+        if ($completos === $total && $total > 0) {
             $nuevoEstado = 'recibido_total';
-        } elseif ($recibidos > 0) {
+        } elseif ($parciales > 0 || ($conCantidad > 0 && ($completos + $parciales) > 0)) {
             $nuevoEstado = 'recibido_parcial';
+        } elseif ($conCantidad > 0) {
+            $nuevoEstado = 'enviado';
         }
 
         $this->pedido->update([
@@ -409,7 +405,8 @@ class AddProductsPP extends Component
     protected function refreshPpiMap(): void
     {
         $ppis = PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)->get();
-        $this->ppiByProduct = $ppis->keyBy('producto_id')->toArray();
+        // Mantener como Collection para usar ->get() en Blade
+        $this->ppiByProduct = $ppis->keyBy('producto_id');
     }
 
     public function render()
@@ -441,7 +438,6 @@ class AddProductsPP extends Component
 
         return view('livewire.add-products-p-p', [
             'stock' => $stockQuery,
-            'ppiByProduct' => \App\Models\PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)->get()->keyBy('producto_id'),
         ]);
     }
 }
