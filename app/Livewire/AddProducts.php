@@ -8,6 +8,7 @@ use App\Models\Producto;
 use App\Models\Servicio;
 use App\Models\Stock;
 use App\Models\Factura;
+use App\Services\StockService;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -56,7 +57,7 @@ class AddProducts extends Component
     {
         $item = Item::find($id);
         $p = Producto::find($item->producto_id);
-        $stock = Stock::where('producto_id', $p->id)->first();
+        $stockService = app(StockService::class);
 
         $precio = $p->precio_venta;
 
@@ -71,12 +72,16 @@ class AddProducts extends Component
         $delta = $newCantidad - $prevCantidad; // puede ser +, 0, o negativo
 
         // Chequear stock solo cuando el delta requiere más unidades y el producto NO es provisional
-        if ($delta > 0 && !$p->es_provisional && $stock->cantidad < $delta) {
-            return $this->dispatch('nonstock');
+        if ($delta > 0 && !$p->es_provisional) {
+            $sucursalId = 1; // Usar sucursal por defecto
+            $availableStock = $stockService->getAvailableStock($sucursalId, $p->id);
+            if ($availableStock < $delta) {
+                return $this->dispatch('nonstock');
+            }
         }
 
         // Actualizar de forma atómica
-        \DB::transaction(function () use ($item, $precio, $newCantidad, $delta, $stock, $p) {
+        \DB::transaction(function () use ($item, $precio, $newCantidad, $delta, $p, $stockService) {
             $item->update([
                 'cantidad' => $newCantidad,
                 'subtotal' => floatval($precio) *  floatval($newCantidad),
@@ -85,8 +90,11 @@ class AddProducts extends Component
 
             // Actualizar stock solo si el producto NO es provisional
             if ($delta !== 0 && !$p->es_provisional) {
-                $stock->update([
-                    'cantidad' => $stock->cantidad - $delta,
+                $sucursalId = 1; // Usar sucursal por defecto
+                $stockService->adjustStock($sucursalId, $p->id, -$delta, [
+                    'motivo' => 'Modificación de cantidad en orden',
+                    'referencia_type' => 'Item',
+                    'referencia_id' => $item->id,
                 ]);
             }
         });
@@ -113,11 +121,15 @@ class AddProducts extends Component
     {
 
         $this->producto = Producto::find($p);
-        $stock = Stock::where('producto_id', $this->producto->id)->first();
+        $stockService = app(StockService::class);
 
         // Si no hay stock, permitir si el producto es provisional
-        if ($stock->cantidad == 0 && !$this->producto->es_provisional) {
-            return  $this->dispatch('nonstock');
+        if (!$this->producto->es_provisional) {
+            $sucursalId = 1; // Usar sucursal por defecto
+            $availableStock = $stockService->getAvailableStock($sucursalId, $this->producto->id);
+            if ($availableStock <= 0) {
+                return  $this->dispatch('nonstock');
+            }
         } else {
 
             if ($this->producto->categoria_producto_id == '1') {
@@ -145,8 +157,11 @@ class AddProducts extends Component
 
                     // Descontar stock solo si NO es provisional
                     if (!$this->producto->es_provisional) {
-                        $stock->update([
-                            'cantidad' => $stock->cantidad - 1
+                        $sucursalId = 1; // Usar sucursal por defecto
+                        $stockService->adjustStock($sucursalId, $this->producto->id, -1, [
+                            'motivo' => 'Agregado producto descuento a orden',
+                            'referencia_type' => 'Item',
+                            'referencia_id' => $i->id,
                         ]);
                     }
                 } else {
@@ -172,8 +187,11 @@ class AddProducts extends Component
                     ]);
 
                     if (!$this->producto->es_provisional) {
-                        $stock->update([
-                            'cantidad' => $stock->cantidad - 1
+                        $sucursalId = 1; // Usar sucursal por defecto
+                        $stockService->adjustStock($sucursalId, $this->producto->id, -1, [
+                            'motivo' => 'Agregado producto descuento porcentual a orden',
+                            'referencia_type' => 'Item',
+                            'referencia_id' => $i->id,
                         ]);
                     }
                 }
@@ -208,14 +226,21 @@ class AddProducts extends Component
     #[On('delete')]
     public function delProd(string $id)
     {
-
         $item = Item::find($id);
-        $stock = Stock::where('producto_id', $item->producto_id)->first();
+        $producto = Producto::find($item->producto_id);
 
-        $cantidad = $stock->cantidad + $item->cantidad;
-        $stock->update([
-            'cantidad' => $cantidad
-        ]);
+        // Solo devolver stock si NO es provisional
+        if (!$producto->es_provisional) {
+            $sucursalId = 1; // Usar sucursal por defecto
+            $stockService = app(StockService::class);
+
+            // Devolver stock (delta positivo)
+            $stockService->adjustStock($sucursalId, $producto->id, $item->cantidad, [
+                'motivo' => 'Eliminación de producto de orden',
+                'referencia_type' => 'Item',
+                'referencia_id' => $item->id,
+            ]);
+        }
 
         $item->delete();
     }

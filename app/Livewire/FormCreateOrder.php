@@ -20,6 +20,7 @@ use App\Models\Servicio;
 use App\Models\Stock;
 use App\Models\Vehiculo;
 use App\Models\VehiculosXCliente;
+use App\Services\StockService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
@@ -319,40 +320,44 @@ class FormCreateOrder extends Component
 
                 $p = $i->producto_id;
                 $this->producto = Producto::find($p);
+                $stockService = app(StockService::class);
 
-                $stock = Stock::where('producto_id', $this->producto->id)->first();
                 $pst = floatval($this->producto->precio_venta) * floatval($i->cantidad);
 
                 // Permitir si es provisional aunque no tenga stock
-                if ((!$stock || $stock->cantidad == 0) && !$this->producto->es_provisional) {
-                    // dd('aqui');
-                    $this->orden->update([
-                        'estado' => '555'
-                    ]);
-                    return  $this->dispatch('nonstock');
-                } else {
-
-                    $iO = Item::create([
-                        'producto_id' => $this->producto->id,
-                        'precio' => $i->precio_venta,
-                        'cantidad' => $i->cantidad,
-                        'subtotal' => $pst,
-                        'estado' => '2',
-                    ]);
-
-                    ItemsXOrden::create([
-                        'item_id' => $iO->id,
-                        'orden_id' => $this->orden->id,
-                        'estado' => '1',
-
-                    ]);
-
-                    // Descontar stock solo si el producto NO es provisional y existe registro de stock
-                    if ($stock && !$this->producto->es_provisional) {
-                        $stock->update([
-                            'cantidad' => $stock->cantidad - $i->cantidad
+                if (!$this->producto->es_provisional) {
+                    $sucursalId = 1; // Usar sucursal por defecto
+                    $availableStock = $stockService->getAvailableStock($sucursalId, $this->producto->id);
+                    if ($availableStock < $i->cantidad) {
+                        $this->orden->update([
+                            'estado' => '555'
                         ]);
+                        return  $this->dispatch('nonstock');
                     }
+                }
+
+                $iO = Item::create([
+                    'producto_id' => $this->producto->id,
+                    'precio' => $i->precio_venta,
+                    'cantidad' => $i->cantidad,
+                    'subtotal' => $pst,
+                    'estado' => '2',
+                ]);
+
+                ItemsXOrden::create([
+                    'item_id' => $iO->id,
+                    'orden_id' => $this->orden->id,
+                    'estado' => '1',
+                ]);
+
+                // Descontar stock solo si el producto NO es provisional
+                if (!$this->producto->es_provisional) {
+                    $sucursalId = 1; // Usar sucursal por defecto
+                    $stockService->adjustStock($sucursalId, $this->producto->id, -$i->cantidad, [
+                        'motivo' => 'Creación de orden desde presupuesto',
+                        'referencia_type' => 'Orden',
+                        'referencia_id' => $this->orden->id,
+                    ]);
                 }
             }
             $this->orden->update([
