@@ -119,107 +119,75 @@ class AddProducts extends Component
 
     public function addedProduct($p)
     {
-
+        \Log::info('Livewire AddProducts::addedProduct called', ['param' => $p]);
         $this->producto = Producto::find($p);
         $stockService = app(StockService::class);
 
-        // Si no hay stock, permitir si el producto es provisional
-        if (!$this->producto->es_provisional) {
-            $sucursalId = 1; // Usar sucursal por defecto
-            $availableStock = $stockService->getAvailableStock($sucursalId, $this->producto->id);
-            if ($availableStock <= 0) {
-                return  $this->dispatch('nonstock');
-            }
-        } else {
+        if (!$this->producto) {
+            return;
+        }
 
-            if ($this->producto->categoria_producto_id == '1') {
-                $this->descontar = true;
-
-                if ($this->producto->subcategoria_producto_id == '1') {
-
-
-                    $this->modalProdOff();
-
-                    $i = Item::create([
-                        'producto_id' => $this->producto->id,
-                        'precio' => $this->producto->porcentaje,
-                        'cantidad' => '1',
-                        'subtotal' => $this->producto->monto * (-1),
-                        'estado' => '2',
-                    ]);
-
-                    ItemsXOrden::create([
-                        'item_id' => $i->id,
-                        'orden_id' => $this->orden->id,
-                        'estado' => '1',
-
-                    ]);
-
-                    // Descontar stock solo si NO es provisional
-                    if (!$this->producto->es_provisional) {
-                        $sucursalId = 1; // Usar sucursal por defecto
-                        $stockService->adjustStock($sucursalId, $this->producto->id, -1, [
-                            'motivo' => 'Agregado producto descuento a orden',
-                            'referencia_type' => 'Item',
-                            'referencia_id' => $i->id,
-                        ]);
-                    }
-                } else {
-
-                    $total = $this->orden->items->sum('subtotal');
-                    $this->descuento = floatval($total / 100) * floatval($this->producto->porcentaje) * (-1);
-
-                    $this->modalProdOff();
-
-                    $i = Item::create([
-                        'producto_id' => $this->producto->id,
-                        'precio' => $this->producto->porcentaje,
-                        'cantidad' => '1',
-                        'subtotal' => $this->descuento,
-                        'estado' => '2',
-                    ]);
-
-                    ItemsXOrden::create([
-                        'item_id' => $i->id,
-                        'orden_id' => $this->orden->id,
-                        'estado' => '1',
-
-                    ]);
-
-                    if (!$this->producto->es_provisional) {
-                        $sucursalId = 1; // Usar sucursal por defecto
-                        $stockService->adjustStock($sucursalId, $this->producto->id, -1, [
-                            'motivo' => 'Agregado producto descuento porcentual a orden',
-                            'referencia_type' => 'Item',
-                            'referencia_id' => $i->id,
-                        ]);
-                    }
-                }
-            } else {
-
-
-
-
-
+        // Descuentos (categoria 1)
+        if ($this->producto->categoria_producto_id == '1') {
+            $this->descontar = true;
+            if ($this->producto->subcategoria_producto_id == '1') {
+                // Monto fijo negativo
                 $this->modalProdOff();
-
                 $i = Item::create([
                     'producto_id' => $this->producto->id,
-                    'precio' => $this->producto->precio_venta,
-                    'estado' => '1',
+                    'precio' => $this->producto->porcentaje,
+                    'cantidad' => '1',
+                    'subtotal' => $this->producto->monto * (-1),
+                    'estado' => '2',
                 ]);
-
                 ItemsXOrden::create([
                     'item_id' => $i->id,
                     'orden_id' => $this->orden->id,
                     'estado' => '1',
-
                 ]);
+                return;
+            } else {
+                // Porcentaje sobre total
+                $total = $this->orden->items->sum('subtotal');
+                $descuento = floatval($total / 100) * floatval($this->producto->porcentaje) * (-1);
+                $this->modalProdOff();
+                $i = Item::create([
+                    'producto_id' => $this->producto->id,
+                    'precio' => $this->producto->porcentaje,
+                    'cantidad' => '1',
+                    'subtotal' => $descuento,
+                    'estado' => '2',
+                ]);
+                ItemsXOrden::create([
+                    'item_id' => $i->id,
+                    'orden_id' => $this->orden->id,
+                    'estado' => '1',
+                ]);
+                return;
             }
         }
 
+        // Producto normal: si no es provisional, verificar stock disponible
+        if (!$this->producto->es_provisional) {
+            $sucursalId = 1;
+            $availableStock = $stockService->getAvailableStock($sucursalId, $this->producto->id);
+            if ($availableStock <= 0) {
+                return $this->dispatch('nonstock');
+            }
+        }
 
-        // dd($this->producto);
+        // Crear ítem para completar cantidad luego
+        $this->modalProdOff();
+        $i = Item::create([
+            'producto_id' => $this->producto->id,
+            'precio' => $this->producto->precio_venta,
+            'estado' => '1',
+        ]);
+        ItemsXOrden::create([
+            'item_id' => $i->id,
+            'orden_id' => $this->orden->id,
+            'estado' => '1',
+        ]);
     }
 
 
