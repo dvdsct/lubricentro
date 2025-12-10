@@ -193,8 +193,8 @@
                         </thead>
                         <tbody>
                             @foreach ($stock as $i)
-                                <tr wire:click='addedProduct({{ $i->id }})' wire:loading.attr="disabled">
-                                    <td style="cursor: pointer;">{{ $i->id }}</td>
+                                <tr wire:click='addedProduct({{ $i->producto_id }})' wire:loading.attr="disabled">
+                                    <td style="cursor: pointer;">{{ $i->producto_id }}</td>
                                     <td style="cursor: pointer;">{{ $i->descripcion }} - {{ $i->codigo }}</td>
                                     @if ($i->cantidad == 0)
                                         <td><span class="badge bg-danger">{{ $i->cantidad }}</span></td>
