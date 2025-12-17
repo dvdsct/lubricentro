@@ -93,6 +93,56 @@
                             </div>
 
                             @endif
+            
+            @if ($tipoPago == 2)
+            <div class="mb-3 p-2" style="border: 1px dashed #ccc; border-radius: 6px;">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="splitSecond" wire:model.live="splitSecond">
+                    <label class="form-check-label" for="splitSecond">
+                        Pagar con dos medios diferentes (un solo pago dividido)
+                    </label>
+                </div>
+
+                @if($splitSecond)
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <label for="medio_pago2" class="form-label">Segundo medio</label>
+                        <select class="form-control" id="medio_pago2" wire:model.live="medioPago2">
+                            <option selected>Seleccione el medio</option>
+                            @foreach ($mediosPago as $m)
+                                <option value="{{ $m->id }}">{{ $m->descripcion }}</option>
+                            @endforeach
+                        </select>
+                        @error('medioPago2')<span class="text-danger">* Seleccione el segundo medio</span>@enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="monto2" class="form-label">Monto del segundo medio</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">$</span>
+                            </div>
+                            <input type="number" step="0.01" class="form-control" id="monto2" wire:model.live="monto2">
+                        </div>
+                        @error('monto2')<span class="text-danger">{{ $message }}</span>@enderror
+                    </div>
+                </div>
+
+                @if (intval($medioPago2) === 5)
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <label for="codeOp2" class="form-label">N° operación transferencia (2)</label>
+                        <input type="text" id="codeOp2" class="form-control" wire:model.live="codeOp2">
+                        @error('codeOp2')<span class="text-danger">{{ $message }}</span>@enderror
+                    </div>
+                </div>
+                @endif
+
+                <div class="mt-2 small text-muted">
+                    El resto del total se imputará al primer medio seleccionado.
+                </div>
+                @endif
+            </div>
+            @endif
             <label for="tipo_pago" class="form-label">Cliente</label>
             <select wire:model.live="cliente" id="tipo_pago" class="form-control">
                 <option selected>Seleccionar cliente</option>

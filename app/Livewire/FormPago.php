@@ -94,6 +94,12 @@ class FormPago extends Component
 
     public $colorBoton = 'btn-secondary'; // Por defecto, el color del botón es secundario
 
+    // Pago dividido (dos métodos)
+    public $splitSecond = false;
+    public $medioPago2;
+    public $monto2;
+    public $codeOp2; // para transferencia 2
+
 
     public function mount($orden)
     {
@@ -259,6 +265,14 @@ class FormPago extends Component
         );
         if ($this->debitoId && (string)$this->medioPago === (string)$this->debitoId) {
             $this->reset('debitoCupon','debitoLote','debitoAutorizacion');
+        }
+    }
+
+    public function updatedSplitSecond()
+    {
+        // Limpiar campos secundarios al desactivar
+        if (!$this->splitSecond) {
+            $this->reset('medioPago2','monto2','codeOp2');
         }
     }
 
@@ -522,6 +536,113 @@ class FormPago extends Component
             // ------------------------------------------------------------------------------
             if ($this->tipoPago == 2) {
                 $this->montoAPagar = $this->orden->items->sum('subtotal');
+
+                // Pago total con dos métodos (split)
+                if ($this->splitSecond) {
+                    $this->validate([
+                        'medioPago' => 'required',
+                        'medioPago2' => 'required',
+                        'monto2' => 'required|numeric|min:0',
+                    ]);
+
+                    // Calcular monto del primer medio como total - monto2
+                    $itemsSubtotal = $this->orden->items->sum('subtotal');
+                    $baseAfterDiscount = max(0, floatval($itemsSubtotal) - floatval($this->discountAmount));
+                    $interesPct = floatval($this->interes ?: 0);
+                    $debitSurcharge = ($this->debitoId && (string)$this->medioPago === (string)$this->debitoId) ? ($baseAfterDiscount * 5) / 100.0 : 0;
+                    $montoIntCalc = ($this->medioPago == 1 && $interesPct > 0) ? ($baseAfterDiscount * $interesPct) / 100.0 : 0;
+                    $totalCalc = $baseAfterDiscount + $montoIntCalc + $debitSurcharge + floatval($this->iva);
+
+                    $m1 = max(0, floatval($totalCalc) - floatval($this->monto2));
+                    if (abs(($m1 + floatval($this->monto2)) - floatval($totalCalc)) > 0.01) {
+                        $this->addError('monto2', 'La suma de los montos no coincide con el total.');
+                        return;
+                    }
+
+                    // Crear factura (estado pagado genérico 100)
+                    $f =  Factura::create([
+                        'orden_id' => $this->orden->id,
+                        'tipo_factura_id' => $this->tipoFactura,
+                        'total' => $totalCalc,
+                        'iva' => $this->iva,
+                        'estado' => '100'
+                    ]);
+                    if ($this->descuentoId && $this->discountAmount > 0) {
+                        DescuentoXFactura::create([
+                            'factura_id' => $f->id,
+                            'user_id' => Auth::id(),
+                            'monto' => $this->discountAmount,
+                            'estado' => '1',
+                        ]);
+                    }
+
+                    // Determinar estados por medio de pago
+                    $estadoPorMedio = function($medioId) {
+                        // Mapeo conocido por IDs usados en el sistema
+                        if ($this->debitoId && (string)$medioId === (string)$this->debitoId) return '12'; // Débito
+                        switch (intval($medioId)) {
+                            case 1: return '10'; // Tarjeta crédito
+                            case 2: return '20'; // Efectivo
+                            case 3: return '30'; // Cheque
+                            case 4: return '40'; // Cuenta Corriente
+                            case 5: return '90'; // Transferencia
+                            default: return '100'; // Genérico
+                        }
+                    };
+
+                    $estado1 = $estadoPorMedio($this->medioPago);
+                    $estado2 = $estadoPorMedio($this->medioPago2);
+
+                    // Registrar primer pago
+                    $p1 = Pago::create([
+                        'in_out' => 'in',
+                        'factura_id' => $f->id,
+                        'cliente_id' => $this->cliente,
+                        'medio_pago_id' => $this->medioPago,
+                        'tipo_pago_id' => $this->tipoPago,
+                        'efectivo' => ($this->medioPago == 2 ? $m1 : 0),
+                        'concepto' =>  $this->concepto,
+                        'iva' => $this->iva,
+                        'total' => $m1,
+                        'estado' => $estado1,
+                    ]);
+                    PagosXCaja::create([
+                        'pago_id' => $p1->id,
+                        'caja_id' => $this->caja->id,
+                        'estado' => $estado1,
+                    ]);
+
+                    // Validaciones simples para transferencias en segundo medio
+                    if (intval($this->medioPago2) === 5 && empty($this->codeOp2)) {
+                        $this->addError('codeOp2', 'Ingrese el número de operación para la transferencia.');
+                        return;
+                    }
+
+                    // Registrar segundo pago
+                    $p2 = Pago::create([
+                        'in_out' => 'in',
+                        'factura_id' => $f->id,
+                        'cliente_id' => $this->cliente,
+                        'medio_pago_id' => $this->medioPago2,
+                        'tipo_pago_id' => $this->tipoPago,
+                        'efectivo' => (intval($this->medioPago2) === 2 ? floatval($this->monto2) : 0),
+                        'concepto' =>  $this->concepto,
+                        'code_op' => (intval($this->medioPago2) === 5 ? $this->codeOp2 : null),
+                        'iva' => $this->iva,
+                        'total' => floatval($this->monto2),
+                        'estado' => $estado2,
+                    ]);
+                    PagosXCaja::create([
+                        'pago_id' => $p2->id,
+                        'caja_id' => $this->caja->id,
+                        'estado' => $estado2,
+                    ]);
+
+                    // Cerrar orden como pagada
+                    $this->orden->update(['estado' => '100']);
+                    $this->closeModal();
+                    return redirect('ordenes/' . $this->orden->id);
+                }
 
                 // ------------------------------------------------------------------------------
                 // ------------------------------------------------------------------------------

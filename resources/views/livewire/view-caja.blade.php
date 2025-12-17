@@ -96,7 +96,7 @@
                                             <span class="badge badge-danger">Egreso</span>
                                         @endif
                                     </td>
-                                    <td>{{ $p->facturas->pagos->first()->medios->descripcion ?? $p->facturas->pagos->first()->tipos->descripcion }}
+                                    <td>{{ $p->medios->descripcion ?? $p->tipos->descripcion }}
                                     </td>
                                     <td>{{ $p->facturas->pagos->first()->concepto }}</td>
                                     <td>$ {{ $p->total }}</td>
