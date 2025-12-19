@@ -16,8 +16,21 @@ class StockMovement extends Model
         'cantidad_anterior',
         'cantidad_nueva',
         'motivo',
+        'operacion',
         'referencia_type',
         'referencia_id',
         'user_id',
+        'precio_unitario',
+        'monto_total',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function producto()
+    {
+        return $this->belongsTo(Producto::class, 'producto_id');
+    }
 }

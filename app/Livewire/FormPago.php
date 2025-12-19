@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Banco;
 use App\Models\Caja;
 use App\Models\Cheque;
+use App\Models\Producto;
 use App\Models\Cliente;
 use App\Models\Factura;
 use App\Models\Descuentos;
@@ -24,10 +25,12 @@ use App\Models\Proveedor;
 use App\Models\Tarjeta;
 use App\Models\TipoFactura;
 use App\Models\TipoPago;
+use App\Models\StockMovement;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
+use App\Services\StockService;
 
 class FormPago extends Component
 {
@@ -980,6 +983,11 @@ class FormPago extends Component
 
 
 
+            // Si el pago es total (no cuenta corriente), descontar stock ahora
+            if ($this->medioPago != 4) {
+                $this->deductStockIfNeeded();
+            }
+
             // Estado de la orden: 10 = Cuenta Corriente pendiente, 100 = pagado
             $this->orden->update([
                 'estado' => $this->medioPago == 4 ? '10' : '100'
@@ -1001,6 +1009,39 @@ class FormPago extends Component
 
 
         return redirect('ordenes/' . $this->orden->id);
+    }
+
+    /**
+     * Descuenta stock por los ítems de la orden sólo una vez al cobrarse totalmente.
+     */
+    protected function deductStockIfNeeded(): void
+    {
+        if (!$this->orden) return;
+        // Si ya existen movimientos de stock para esta orden con delta negativo, no repetir
+        $exists = StockMovement::where('referencia_type', 'Orden')
+            ->where('referencia_id', $this->orden->id)
+            ->where('delta', '<', 0)
+            ->exists();
+        if ($exists) return;
+
+        $stockService = app(StockService::class);
+        $sucursalId = ($this->orden->sucursal_id ?? 1);
+
+        foreach ($this->orden->items as $i) {
+            // Cargar producto y evitar descontar si es provisional
+            $producto = Producto::find($i->producto_id);
+            if (!$producto) continue;
+            if ($producto->es_provisional) continue;
+
+            $stockService->adjustStock($sucursalId, $producto->id, -abs(intval($i->cantidad)), [
+                'motivo' => 'Pago de orden',
+                'operacion' => 'Pago de orden',
+                'referencia_type' => 'Orden',
+                'referencia_id' => $this->orden->id,
+                'user_id' => Auth::id(),
+                'precio_unitario' => $i->precio ?? null,
+            ]);
+        }
     }
 
 

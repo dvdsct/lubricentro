@@ -145,10 +145,16 @@ class FormCreateOrder extends Component
 
         $this->marcas = MarcaVehiculo::where('tipo_vehiculo_id', $this->tipo)
             ->get();
+        $this->reset('marca', 'modelo');
+        $this->modelos = [];
     }
     public function upModelos()
     {
         // dd($this->marca . $this->tipo   );
+        if (empty($this->marca) || empty($this->tipo)) {
+            $this->modelos = [];
+            return;
+        }
         $this->modelos = ModeloVehiculo::where('marca_vehiculo_id', $this->marca)
             ->where('tipo_vehiculo_id', $this->tipo)
             ->get();
@@ -350,15 +356,8 @@ class FormCreateOrder extends Component
                     'estado' => '1',
                 ]);
 
-                // Descontar stock solo si el producto NO es provisional
-                if (!$this->producto->es_provisional) {
-                    $sucursalId = 1; // Usar sucursal por defecto
-                    $stockService->adjustStock($sucursalId, $this->producto->id, -$i->cantidad, [
-                        'motivo' => 'Creación de orden desde presupuesto',
-                        'referencia_type' => 'Orden',
-                        'referencia_id' => $this->orden->id,
-                    ]);
-                }
+                // No descontar stock al crear la orden desde presupuesto.
+                // El descuento se realizará al momento del pago total de la orden.
             }
             $this->orden->update([
                 'estado' => '1'

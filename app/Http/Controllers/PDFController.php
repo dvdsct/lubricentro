@@ -393,15 +393,24 @@ class PDFController extends Controller
         $fecha = Carbon::now();
         $fechaStr = $fecha->locale('es')->isoFormat('D [de] MMMM [de] YYYY');
 
+        // Filtro opcional por categoría (query param categoria_id)
+        $categoriaId = request('categoria_id');
+
         // Evitar N+1 y reducir columnas: cargar solo lo necesario
-        $stockActual = Stock::with(['productos:id,descripcion,codigo,costo,precio_venta'])
-            ->select(['id','cantidad','producto_id'])
-            ->orderBy('producto_id')
-            ->get();
+        $query = Stock::with(['productos:id,descripcion,codigo,costo,precio_venta,categoria_producto_id'])
+            ->select(['stocks.id','stocks.cantidad','stocks.producto_id'])
+            ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id');
+
+        if (!empty($categoriaId)) {
+            $query->where('productos.categoria_producto_id', $categoriaId);
+        }
+
+        $stockActual = $query->orderBy('stocks.producto_id')->get();
 
         $pdf = PDF::loadView('pdf.stock', [
             'stockActual' => $stockActual,
             'fecha_str' => $fechaStr,
+            'categoria' => $categoriaId,
         ]);
 
         return $pdf->stream('stock'. $fecha);

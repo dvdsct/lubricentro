@@ -7,6 +7,7 @@ use Livewire\Component;
 use App\Models\Producto;
 use Illuminate\Support\Carbon;
 use Livewire\Attributes\On;
+use App\Services\StockService;
 
 class ViewTurnos extends Component
 {
@@ -82,10 +83,26 @@ class ViewTurnos extends Component
     public function cancelTurn($orden){
         // dd($orden);
         $turno = Orden::find($orden);
-        $turno->update([
-            'estado' => '700'
 
-        ]);
+        \DB::transaction(function () use ($turno) {
+            foreach ($turno->items as $i) {
+                $p = Producto::find($i->producto_id);
+                if ($p && !$p->es_provisional) {
+                    $sucursalId = $turno->sucursal_id ?: 1;
+                    $service = app(StockService::class);
+                    $service->adjustStock($sucursalId, $p->id, $i->cantidad, [
+                        'motivo' => 'Cancelación de orden',
+                        'operacion' => 'Cancelación de orden',
+                        'referencia_type' => 'Orden',
+                        'referencia_id' => $turno->id,
+                    ]);
+                }
+            }
+
+            $turno->update([
+                'estado' => '700'
+            ]);
+        });
         $this->des = 'disabled';
 
 

@@ -68,9 +68,13 @@ class StockService
                 'cantidad_anterior' => $anterior,
                 'cantidad_nueva' => $nuevo,
                 'motivo' => $meta['motivo'] ?? null,
+                'operacion' => $meta['operacion'] ?? null,
                 'referencia_type' => $meta['referencia_type'] ?? null,
                 'referencia_id' => $meta['referencia_id'] ?? null,
                 'user_id' => $meta['user_id'] ?? (auth()->id() ?? null),
+                'precio_unitario' => $meta['precio_unitario'] ?? null,
+                // Guardamos monto total con el mismo signo que el delta para facilitar visual
+                'monto_total' => $meta['monto_total'] ?? (isset($meta['precio_unitario']) ? (intval($delta) * floatval($meta['precio_unitario'])) : null),
             ]);
             return $row;
         });

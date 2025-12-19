@@ -73,7 +73,7 @@
                                                 <a type="button" class="btn btn-info btn-sm"
                                                     href="{{ route('ordenes.show', $t->id) }}"><strong> IR </strong></a>
                                                 <button type="button" class="btn btn-danger btn-sm"
-                                                    wire:click="cancelTurn('{{ $t->id }}')"><i
+                                                    wire:click="$dispatch('confirm-cancel', { ordenId: {{ $t->id }} })"><i
                                                         class="fas fa-trash"></i></button>
                                             </div>
                                         @endif
@@ -140,7 +140,7 @@
                                                     href="{{ route('ordenes.show', $t->id) }}"><strong> IR
                                                     </strong></a>
                                                 <button type="button" class="btn btn-danger btn-sm"
-                                                    wire:click="cancelTurn('{{ $t->id }}')"><i
+                                                    wire:click="$dispatch('confirm-cancel', { ordenId: {{ $t->id }} })"><i
                                                         class="fas fa-trash"></i></button>
                                             </div>
                                         @endif
@@ -218,5 +218,23 @@
 
 
     @livewire('form-create-order', ['fecha' => $fecha])
+
+    <script>
+        window.addEventListener('confirm-cancel', (e) => {
+            const ordenId = e.detail?.ordenId;
+            Swal.fire({
+                title: '¿Cancelar orden?',
+                text: 'Se devolverá el stock de los ítems no provisionales y la orden quedará cancelada.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cancelar',
+                cancelButtonText: 'No, volver'
+            }).then((result) => {
+                if (result.isConfirmed && ordenId) {
+                    $wire.cancelTurn(ordenId);
+                }
+            });
+        });
+    </script>
 
 </div>

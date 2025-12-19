@@ -93,8 +93,10 @@ class AddProducts extends Component
                 $sucursalId = 1; // Usar sucursal por defecto
                 $stockService->adjustStock($sucursalId, $p->id, -$delta, [
                     'motivo' => 'Modificación de cantidad en orden',
+                    'operacion' => $delta > 0 ? 'Carga en orden' : 'Reducción en orden',
                     'referencia_type' => 'Item',
                     'referencia_id' => $item->id,
+                    'precio_unitario' => $precio,
                 ]);
             }
         });
@@ -207,6 +209,8 @@ class AddProducts extends Component
                 'motivo' => 'Eliminación de producto de orden',
                 'referencia_type' => 'Item',
                 'referencia_id' => $item->id,
+                'operacion' => 'Eliminación de ítem',
+                'precio_unitario' => $item->precio,
             ]);
         }
 
