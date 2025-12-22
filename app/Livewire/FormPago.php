@@ -103,6 +103,9 @@ class FormPago extends Component
     public $monto2;
     public $codeOp2; // para transferencia 2
 
+    // Evitar dobles envíos/duplicados
+    public $processing = false;
+
 
     public function mount($orden)
     {
@@ -284,7 +287,24 @@ class FormPago extends Component
     {
 
         if ($tipo == 'orden') {
-            if ($this->orden->estado != 100) {
+            // Validaciones previas: orden válida, no pagada, y con items
+        if (!$this->orden) {
+            $this->addError('orden', 'No hay una orden cargada para cobrar.');
+            $this->processing = false;
+            return;
+        }
+        if ($this->orden->estado == 100) {
+            $this->addError('orden', 'Esta orden ya fue pagada.');
+            $this->processing = false;
+            return;
+        }
+        if ($this->orden->items->isEmpty()) {
+            $this->addError('orden', 'La orden no tiene ítems para cobrar.');
+            $this->processing = false;
+            return;
+        }
+
+        if ($this->orden->estado != 100) {
                 $this->modal = true;
             }
         }
@@ -510,6 +530,11 @@ class FormPago extends Component
 
     public function pagarOrden()
     {
+        // Evitar doble ejecución en concurrencia o doble click
+        if ($this->processing) {
+            return;
+        }
+        $this->processing = true;
 
         $this->validate([
             'medioPago' => 'required'
@@ -1008,6 +1033,7 @@ class FormPago extends Component
         }
 
 
+        $this->processing = false;
         return redirect('ordenes/' . $this->orden->id);
     }
 

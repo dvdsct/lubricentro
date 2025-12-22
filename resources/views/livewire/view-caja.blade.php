@@ -7,7 +7,7 @@
                 <span class="info-box-icon"><i class="fa fa-calculator"></i></span>
                 <div class="info-box-content">
                     <h5> <strong> <span class="info-box-text">GASTOS</span> </strong> </h5>
-                    <h5> <strong> <span class="info-box-number">${{ $gastos }}</span> </strong></h5>
+                    <h5> <strong> <span class="info-box-number">${{ number_format((float)$gastos, 2, '.', '') }}</span> </strong></h5>
                 </div>
             </div>
         </div>
@@ -19,7 +19,7 @@
                 <span class="info-box-icon"><i class="fa fa-handshake"></i></span>
                 <div class="info-box-content">
                     <h5> <strong> <span class="info-box-text">VENTAS</span> </strong> </h5>
-                    <h5> <strong> <span class="info-box-number">${{ $venta }}</span> </strong></h5>
+                    <h5> <strong> <span class="info-box-number">${{ number_format((float)$venta, 2, '.', '') }}</span> </strong></h5>
                 </div>
             </div>
         </div>
@@ -77,7 +77,7 @@
                             <td> <span class="badge badge-primary"> Apertura</span> </td>
                             <td>Efectivo</td>
                             <td>Monto incial</td>
-                            <td> ${{ $montoInicial }}</td>
+                            <td> ${{ number_format((float)$montoInicial, 2, '.', '') }}</td>
                         </tr>
                         @foreach ($pagos as $p)
                             @if ($p->facturas->pagos->first()->estado != '400')
@@ -99,7 +99,7 @@
                                     <td>{{ $p->medios->descripcion ?? $p->tipos->descripcion }}
                                     </td>
                                     <td>{{ $p->facturas->pagos->first()->concepto }}</td>
-                                    <td>$ {{ $p->total }}</td>
+                                    <td>$ {{ number_format((float)$p->total, 2, '.', '') }}</td>
 
 
                                 </tr>
@@ -108,7 +108,7 @@
                     </tbody>
                 </table>
                 <div class="card-header d-flex justify-content-end">
-                    <h3><strong> SUBTOTAL ${{ $totalv }} </strong> </h3>
+                    <h3><strong> SUBTOTAL ${{ number_format((float)$totalv, 2, '.', '') }} </strong> </h3>
                 </div>
             </div>
         </div>
@@ -131,34 +131,34 @@
                     <tbody>
                         <tr>
                             <td><strong>SUBTOTAL</strong></td>
-                            <td class="mr-2 d-flex justify-content-end"> ${{ $totalv }}</td>
+                            <td class="mr-2 d-flex justify-content-end"> ${{ number_format((float)$totalv, 2, '.', '') }}</td>
                         </tr>
 
                         <tr>
                             <a class="aa" href="pagos-transferencia/{{ $caja->id }}">
                                 <td>Transferencias</td>
-                                <td class="mr-2 d-flex justify-content-end"> ${{ $pagosTrans }}</td>
+                                <td class="mr-2 d-flex justify-content-end"> ${{ number_format((float)$pagosTrans, 2, '.', '') }}</td>
                             </a>
                         </tr>
 
                         <tr>
                             <td>Tarjetas</td>
-                            <td class="mr-2 d-flex justify-content-end"> ${{ $pagosTarjeta }}</td>
+                            <td class="mr-2 d-flex justify-content-end"> ${{ number_format((float)$pagosTarjeta, 2, '.', '') }}</td>
                         </tr>
 
                         <tr>
                             <td>Cheques</td>
-                            <td class="mr-2 d-flex justify-content-end"> ${{ $pagosCheques }}</td>
+                            <td class="mr-2 d-flex justify-content-end"> ${{ number_format((float)$pagosCheques, 2, '.', '') }}</td>
 
                         </tr>
                         <tr>
                             <td>Cuenta Corriente</td>
-                            <td class="mr-2 d-flex justify-content-end"> ${{ $pagosCtaCte }}</td>
+                            <td class="mr-2 d-flex justify-content-end"> ${{ number_format((float)$pagosCtaCte, 2, '.', '') }}</td>
                         </tr>
                     </tbody>
                 </table>
                 <div class="card-header d-flex justify-content-end">
-                    <h3><strong> TOTAL ${{ $totalEfectivo }} </strong> </h3>
+                    <h3><strong> TOTAL ${{ number_format((float)$totalEfectivo, 2, '.', '') }} </strong> </h3>
                 </div>
             </div>
         </div>
@@ -173,7 +173,7 @@
                     @endcan>
                 <div class="inner">
                     <h3 class="m-0">Cerrar caja</h3>
-                    <p>Total del dia ${{ $totalEfectivo }}</p>
+                    <p>Total del dia ${{ number_format((float)$totalEfectivo, 2, '.', '') }}</p>
                 </div>
                 <div class="icon">
                     <i class="fas fa-cash-register"></i>
