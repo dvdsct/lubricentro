@@ -96,7 +96,8 @@ class ViewCaja extends Component
     #[On('pago-added')]
     public function pagos()
     {
-        $this->pagos = $this->caja->pagos;
+        // Ordenar movimientos desde el más nuevo al más viejo
+        $this->pagos = $this->caja->pagos()->orderByDesc('created_at')->get();
     }
 
     // _____________________________________________________________
@@ -128,7 +129,8 @@ class ViewCaja extends Component
 
     public function render()
     {
-        $this->pagos = $this->caja->pagos;
+        // Ordenar movimientos desde el más nuevo al más viejo
+        $this->pagos = $this->caja->pagos()->orderByDesc('created_at')->get();
         $this->venta = $this->caja->pagos->filter(function ($pago) {
             return $pago->in_out != 'out';
         })->sum('total');
