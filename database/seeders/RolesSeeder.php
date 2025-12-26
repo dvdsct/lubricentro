@@ -35,6 +35,7 @@ class RolesSeeder extends Seeder
         $caja = Permission::create(['name'=>'caja']);
         $adminCajas = Permission::create(['name'=>'adminCajas']);
         $stock = Permission::create(['name'=>'stock']);
+        $presupuestos = Permission::create(['name'=>'presupuestos']);
 
         $caja->assignRole($cajero);
         $caja->assignRole($vendedor);
@@ -44,6 +45,7 @@ class RolesSeeder extends Seeder
         $delPedido->assignRole($admin);
         // $caja->assignRole($admin);
         $stock->assignRole($admin);
+        $presupuestos->assignRole($admin);
         $read->assignRole($admin);
         $read->assignRole($user);
         $create->assignRole($user);

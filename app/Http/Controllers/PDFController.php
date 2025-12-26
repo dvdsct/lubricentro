@@ -7,6 +7,7 @@ use App\Models\Orden;
 use App\Models\PedidoProveedor;
 use App\Models\Presupuesto;
 use App\Models\Stock;
+use App\Models\CategoriaProducto;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
@@ -385,36 +386,55 @@ class PDFController extends Controller
 
     // PDF PLANILLA ACTUAL STOCK
 
-    public function pdfStock(){
-        // Optimizar ejecución y memoria
+    public function pdfStock()
+    {
+        // Robustez y performance
         set_time_limit(180);
         ini_set('memory_limit', '256M');
 
+        // Fecha legible en español
         $fecha = Carbon::now();
         $fechaStr = $fecha->locale('es')->isoFormat('D [de] MMMM [de] YYYY');
 
-        // Filtro opcional por categoría (query param categoria_id)
-        $categoriaId = request('categoria_id');
+        // Normalizar parámetro de categoría (GET)
+        $categoriaId = request()->query('categoria_id');
+        $categoriaId = is_numeric($categoriaId) ? intval($categoriaId) : null;
 
-        // Evitar N+1 y reducir columnas: cargar solo lo necesario
-        $query = Stock::with(['productos:id,descripcion,codigo,costo,precio_venta,categoria_producto_id'])
-            ->select(['stocks.id','stocks.cantidad','stocks.producto_id'])
-            ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id');
+        // Construcción de dataset: unimos productos para filtrar/ordenar y seleccionar columnas necesarias
+        $stockActual = Stock::query()
+            ->join('productos', 'stocks.producto_id', '=', 'productos.id')
+            ->when($categoriaId, function ($q) use ($categoriaId) {
+                $q->where('productos.categoria_producto_id', $categoriaId);
+            })
+            ->select([
+                'stocks.id',
+                'stocks.cantidad',
+                'stocks.producto_id',
+                'productos.descripcion as descripcion',
+                'productos.codigo as codigo',
+                'productos.precio_venta as precio_venta',
+                'productos.categoria_producto_id as categoria_producto_id',
+            ])
+            ->orderBy('productos.descripcion')
+            ->get();
 
-        if (!empty($categoriaId)) {
-            $query->where('productos.categoria_producto_id', $categoriaId);
+        // Resolver nombre de la categoría (opcional para encabezado en PDF)
+        $categoriaNombre = null;
+        if ($categoriaId) {
+            $categoria = CategoriaProducto::find($categoriaId);
+            $categoriaNombre = $categoria?->descripcion;
         }
 
-        $stockActual = $query->orderBy('stocks.producto_id')->get();
-
+        // Render del PDF
         $pdf = PDF::loadView('pdf.stock', [
             'stockActual' => $stockActual,
             'fecha_str' => $fechaStr,
-            'categoria' => $categoriaId,
+            'categoriaId' => $categoriaId,
+            'categoriaNombre' => $categoriaNombre,
         ]);
 
-        return $pdf->stream('stock'. $fecha);
-
+        $fileName = 'stock_' . $fecha->format('Ymd_His') . '.pdf';
+        return $pdf->stream($fileName);
     }
 }
 
