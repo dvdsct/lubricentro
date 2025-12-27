@@ -43,7 +43,8 @@ class ListaCajas extends Component
             }
         }
         if (Auth::check() && Auth::user()->hasRole(['admin'])) {
-            $this->cajas = Caja::all();
+            // Mostrar primero las cajas más nuevas
+            $this->cajas = Caja::orderByDesc('created_at')->get();
         }
     }
 
@@ -108,7 +109,8 @@ class ListaCajas extends Component
 
     public function render()
     {
-        $this->cajas = Caja::all();
+        // Listado descendente: más nuevas primero
+        $this->cajas = Caja::orderByDesc('created_at')->get();
 
         return view('livewire.lista-cajas');
     }
