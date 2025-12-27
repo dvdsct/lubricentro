@@ -9,7 +9,8 @@ class PresupuestoController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:presupuestos');
+        // Permitir acceso al rol admin o a quien tenga el permiso 'presupuestos'
+        $this->middleware('role_or_permission:admin|presupuestos');
     }
 
     /**

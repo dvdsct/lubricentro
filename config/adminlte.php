@@ -322,8 +322,7 @@ return [
             'text' => 'Presupuestos',
             'url'  => 'presupuesto',
             'icon' => 'fas fa-money-check-alt',
-            'can' => 'caja',
-
+            // Sin 'can': visible para todos; el acceso real lo controla el middleware
         ],
         [
             'text' => 'Stock',

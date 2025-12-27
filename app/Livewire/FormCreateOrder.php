@@ -100,9 +100,12 @@ class FormCreateOrder extends Component
         $this->fecha = $fecha;
         $this->fechaSelected = $fecha;
 
-        $perfil = Perfil::where('user_id', Auth::user()->id)->get();
-        $this->cajero = Cajero::where('perfil_id', $perfil->first()->id)->get();
-        $this->caja = Caja::where('cajero_id', $this->cajero->first()->id)->get();
+        // Perfil, cajero y caja pueden no existir (p.ej. admin sin cajero asignado)
+        $perfil = Perfil::where('user_id', Auth::user()->id)->first();
+        $this->cajero = $perfil ? Cajero::where('perfil_id', $perfil->id)->first() : null;
+        $this->caja = $this->cajero
+            ? Caja::where('cajero_id', $this->cajero->id)->get()
+            : collect();
 
 
 
@@ -289,23 +292,25 @@ class FormCreateOrder extends Component
             
             
 
+            $sucursalId = optional($this->caja->first())->sucursal_id ?? optional(Caja::first())->sucursal_id ?? 1;
             $this->orden = Orden::create([
 
                 'cliente_id' => $this->cliente->id,
                 'vehiculo_id' => $this->vehiculo,
-                'sucursal_id' => $this->caja->first()->sucursal_id,
+                'sucursal_id' => $sucursalId,
                 'motivo' => '1',
                 'horario' => $this->horario,
                 'fecha_turno' => $this->fecha,
                 'estado' => '1'
             ]);
         } else {
+            $sucursalId = optional($this->caja->first())->sucursal_id ?? optional(Caja::first())->sucursal_id ?? 1;
             $this->orden = Orden::create([
 
                 'cliente_id' => $this->cliente->id,
                 'vehiculo_id' => $this->vehiculo,
                 'motivo' => '2',
-                'sucursal_id' => $this->caja->first()->sucursal_id,
+                'sucursal_id' => $sucursalId,
 
                 'horario' => $this->horario,
                 'fecha_turno' => $this->fecha,
