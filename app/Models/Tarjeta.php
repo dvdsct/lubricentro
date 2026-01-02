@@ -9,9 +9,10 @@ class Tarjeta extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['estado', 'descuento','interes'];
+    protected $fillable = ['nombre_tarjeta','estado', 'descuento','interes'];
 
     public function planes(){
-        return $this->hasMany(Plan::class,'plan_id');
+        // Relación correcta: un Tarjeta tiene muchos Planes por tarjeta_id
+        return $this->hasMany(Plan::class,'tarjeta_id');
     }
 }

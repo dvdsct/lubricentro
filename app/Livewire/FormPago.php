@@ -325,13 +325,9 @@ class FormPago extends Component
         if ($this->plan) {
 
 
-            $this->montoAPagar = $this->orden->items->sum('subtotal');
-
+            // Base de cálculo permanece en render(); aquí solo seteamos el plan y el interés
             $this->interes = $this->plan->interes;
             $this->descuentoTarjeta = $this->plan->descuento;
-
-            $this->montoInt = floatval($this->montoAPagar / 100) * floatval($this->interes);
-            $this->montoAPagar = $this->montoAPagar + $this->montoInt;
 
             $this->reset('checkIva', 'iva');
         }
@@ -377,6 +373,16 @@ class FormPago extends Component
         $this->validate([
             'medioPago' => 'required'
         ]);
+        // Requerir plan cuando el medio es Tarjeta Crédito
+        if (intval($this->medioPago) === 1) {
+            $this->validate([
+                'planSelected' => 'required'
+            ]);
+            if (!$this->plan) {
+                $this->plan = Plan::find($this->planSelected);
+            }
+            $this->interes = optional($this->plan)->interes;
+        }
 
         $this->orden->update([
             'estado' => '555'
@@ -878,6 +884,9 @@ class FormPago extends Component
 
                     // dd();
 
+                    // Calcular base y subtotal sin mutar estados previos
+                    $itemsSubtotal = $this->orden->items->sum('subtotal');
+                    $baseAfterDiscount = max(0, floatval($itemsSubtotal) - floatval($this->discountAmount));
 
                     $f =  Factura::create([
 
@@ -885,7 +894,7 @@ class FormPago extends Component
 
                         'tipo_factura_id' => $this->tipoFactura,
                         'total' => $this->total,
-                        'subtotal' => $this->montoAPagar - $this->montoConInt,
+                        'subtotal' => $baseAfterDiscount,
                         'intereses' => $this->montoInt,
                         'descuentos' => '',
                         'iva' => $this->iva,

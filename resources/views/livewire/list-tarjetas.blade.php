@@ -74,7 +74,7 @@
                         </td>
                         <td class="project-actions text-right">
 
-                            <button class="btn btn-info btn-sm" wire:click='editTarjeta({{ $plan->id }})'>
+                            <button class="btn btn-info btn-sm" wire:click='editarPlan({{ $plan->id }})'>
                                 <i class="fas fa-pencil-alt">
                                 </i>
 
@@ -106,44 +106,50 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-info">
-                    <h4 class="modal-title"> <strong> AGREGAR NUEVA TARJETA </strong></h4>
+                    <h4 class="modal-title"> <strong> @if($editing) EDITAR PLAN DE TARJETA @else AGREGAR NUEVA TARJETA @endif </strong></h4>
                     <button type="button" class="close" wire:click="cerrarModal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="tarjeta">Tarjeta </label>
+                        <label for="tarjetaNombre">Tarjeta </label>
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="far fa-credit-card"></i></span>
                             </div>
-
-                            <input type="text" class="form-control" id="tarjeta">
+                            @if($editing)
+                                <input type="text" class="form-control" id="tarjetaNombre" value="{{ $tarjetaNombre }}" disabled>
+                            @else
+                                <input type="text" class="form-control" id="tarjetaNombre" wire:model.live="tarjetaNombre">
+                                @error('tarjetaNombre')<span class="text-danger">* {{ $message }}</span>@enderror
+                            @endif
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="tarjeta">Descuento </label>
+                                <label for="nuevoDescuento">Descuento </label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="tarjeta">
+                                    <input type="text" class="form-control" id="nuevoDescuento" wire:model.live="nuevoDescuento">
                                     <div class="input-group-append">
                                         <span class="input-group-text"><i class="fas fa-percent"></i></span>
                                     </div>
                                 </div>
+                                @error('nuevoDescuento')<span class="text-danger">* {{ $message }}</span>@enderror
                             </div>
                         </div>
 
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="tarjeta">Interes </label>
+                                <label for="nuevoInteres">Interés </label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="tarjeta">
+                                    <input type="text" class="form-control" id="nuevoInteres" wire:model.live="nuevoInteres">
                                     <div class="input-group-append">
                                         <span class="input-group-text"><i class="fas fa-percent"></i></span>
                                     </div>
                                 </div>
+                                @error('nuevoInteres')<span class="text-danger">* {{ $message }}</span>@enderror
                             </div>
                         </div>
                     </div>
@@ -151,15 +157,17 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="tarjeta">Plan </label>
-                                <input type="text" class="form-control" id="tarjeta">
+                                <label for="nuevoNombrePlan">Plan </label>
+                                <input type="text" class="form-control" id="nuevoNombrePlan" wire:model.live="nuevoNombrePlan">
+                                @error('nuevoNombrePlan')<span class="text-danger">* {{ $message }}</span>@enderror
                             </div>
                         </div>
 
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="tarjeta">Cuotas </label>
-                                <input type="text" class="form-control" id="tarjeta">
+                                <label for="nuevoCuotas">Cuotas / Descripción </label>
+                                <input type="text" class="form-control" id="nuevoCuotas" wire:model.live="nuevoCuotas">
+                                @error('nuevoCuotas')<span class="text-danger">* {{ $message }}</span>@enderror
                             </div>
                         </div>
                     </div>
@@ -167,7 +175,11 @@
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-danger" wire:click="cerrarModal">Cancelar</button>
-                    <button type="button" class="btn btn-success">Aceptar</button>
+                    @if($editing)
+                        <button type="button" class="btn btn-success" wire:click="guardarEdicion">Guardar</button>
+                    @else
+                        <button type="button" class="btn btn-success" wire:click="crearTarjetaPlan">Aceptar</button>
+                    @endif
                 </div>
             </div>
 
