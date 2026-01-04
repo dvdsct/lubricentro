@@ -109,7 +109,7 @@ class FormCreateOrder extends Component
 
 
 
-        $this->clientes = Cliente::all();
+        $this->loadClientes();
 
         $this->servicios = Servicio::all();
         $this->tiposVehiculo = TipoVehiculo::all();
@@ -139,6 +139,40 @@ class FormCreateOrder extends Component
     public function search()
     {
         $this->resetPage();
+    }
+
+    public function updatedQuery()
+    {
+        $this->loadClientes();
+    }
+
+    protected function loadClientes(): void
+    {
+        $q = trim((string)$this->query);
+        $this->clientes = Cliente::with(['perfiles.personas'])
+            ->when($q !== '', function ($builder) use ($q) {
+                $builder->whereHas('perfiles.personas', function ($sub) use ($q) {
+                    $sub->where('nombre', 'like', "%$q%")
+                        ->orWhere('apellido', 'like', "%$q%")
+                        ->orWhere('DNI', 'like', "%$q%");
+                });
+            })
+            ->orderByDesc('id')
+            ->limit(100)
+            ->get();
+    }
+
+    public function quickSelectClient(): void
+    {
+        if ($this->cliente) {
+            // Ya hay cliente seleccionado; actualizar datos
+            $this->upPerson();
+            return;
+        }
+        if ($this->clientes && method_exists($this->clientes, 'count') && $this->clientes->count() > 0) {
+            $this->cliente = $this->clientes->first()->id;
+            $this->upPerson();
+        }
     }
 
 

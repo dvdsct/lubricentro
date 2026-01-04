@@ -66,6 +66,10 @@
                     @if ($cliente == null)
                     <div class="row">
                         <div class="col-10 col-xs-10">
+                            <div class="mb-2 d-flex">
+                                <input type="text" class="form-control" placeholder="Buscar por nombre, apellido o DNI (Enter para seleccionar el primero)" wire:model.live="query" wire:keydown.enter="quickSelectClient">
+                                <button type="button" class="btn btn-outline-secondary ml-2" wire:click="quickSelectClient">Seleccionar</button>
+                            </div>
                             <select id="" wire:model.live='cliente' class="form-control" wire:change="upPerson" aria-label="Default select example">
                                 <option selected> Seleccionar cliente</option>
                                 @foreach ($clientes as $c)
