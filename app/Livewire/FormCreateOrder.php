@@ -149,13 +149,18 @@ class FormCreateOrder extends Component
     protected function loadClientes(): void
     {
         $q = trim((string)$this->query);
+        $terms = array_filter(preg_split('/\s+/', $q ?? ''), fn($t) => $t !== '');
         $this->clientes = Cliente::with(['perfiles.personas'])
-            ->when($q !== '', function ($builder) use ($q) {
-                $builder->whereHas('perfiles.personas', function ($sub) use ($q) {
-                    $sub->where('nombre', 'like', "%$q%")
-                        ->orWhere('apellido', 'like', "%$q%")
-                        ->orWhere('DNI', 'like', "%$q%");
-                });
+            ->when(!empty($terms), function ($builder) use ($terms) {
+                foreach ($terms as $t) {
+                    $builder->whereHas('perfiles.personas', function ($sub) use ($t) {
+                        $sub->where(function ($w) use ($t) {
+                            $w->where('nombre', 'like', "%$t%")
+                              ->orWhere('apellido', 'like', "%$t%")
+                              ->orWhere('DNI', 'like', "%$t%");
+                        });
+                    });
+                }
             })
             ->orderByDesc('id')
             ->limit(100)
