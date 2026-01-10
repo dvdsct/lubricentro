@@ -8,6 +8,7 @@ use App\Models\StockMovement;
 use App\Models\Producto;
 use Livewire\Component;
 use App\Models\CategoriaProducto;
+use App\Models\SubcategoriaProducto;
 
 class PreviewStock extends Component
 {
@@ -25,8 +26,9 @@ class PreviewStock extends Component
     public $historyMovements = [];
     public $historyProductoDesc;
 
-    // Filtro PDF
+    // Filtros
     public $categoriaId = '';
+    public $subcategoriaId = '';
 
     public function search()
     {
@@ -63,6 +65,7 @@ class PreviewStock extends Component
     public function render()
     {
         $categorias = CategoriaProducto::select('id','descripcion')->orderBy('descripcion')->get();
+        $subcategorias = SubcategoriaProducto::select('id','descripcion')->orderBy('descripcion')->get();
 
         return view(
             'livewire.preview-stock',
@@ -75,9 +78,9 @@ class PreviewStock extends Component
                     )
                         ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id');
 
-                    // Filtro por categoría si se selecciona
-                    if (!empty($this->categoriaId)) {
-                        $q->where('productos.categoria_producto_id', $this->categoriaId);
+                    // Filtro por subcategoría si se selecciona (requerido por el usuario)
+                    if (!empty($this->subcategoriaId)) {
+                        $q->where('productos.subcategoria_producto_id', $this->subcategoriaId);
                     }
 
                     // Filtro de búsqueda por texto (agrupado)
@@ -90,6 +93,7 @@ class PreviewStock extends Component
                     return $q->paginate(10);
                 })(),
                 'categorias' => $categorias,
+                'subcategorias' => $subcategorias,
             ]
         );
     }

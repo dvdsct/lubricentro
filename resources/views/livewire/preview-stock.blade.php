@@ -58,7 +58,7 @@
     <div class="card">
         <div class="card-header">
             <form action="{{ route('pdf.stock') }}" method="GET" target="_blank" class="d-inline w-100">
-                <input type="hidden" name="categoria_id" value="{{ $categoriaId }}">
+                <input type="hidden" name="subcategoria_id" value="{{ $subcategoriaId }}">
                 <button type="submit" class="small-box bg-warning border-0" style="cursor: pointer; display:block; width:100%;">
                     <div class="inner">
                         <h3 class="m-0">Imprimir</h3>
@@ -80,11 +80,11 @@
                 </div>
             </div>
             <div class="mt-2" style="max-width: 300px;">
-                <label for="categoriaId" class="mb-1">Filtrar para impresión por categoría</label>
-                <select id="categoriaId" class="form-control" wire:model="categoriaId">
-                    <option value="">Todas las categorías</option>
-                    @foreach($categorias as $c)
-                        <option value="{{ $c->id }}">{{ $c->descripcion }}</option>
+                <label for="subcategoriaId" class="mb-1">Filtrar por subcategoría</label>
+                <select id="subcategoriaId" class="form-control" wire:model="subcategoriaId">
+                    <option value="">Todas las subcategorías</option>
+                    @foreach($subcategorias as $s)
+                        <option value="{{ $s->id }}">{{ $s->descripcion }}</option>
                     @endforeach
                 </select>
             </div>
