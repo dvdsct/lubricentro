@@ -75,13 +75,10 @@
                                                 <button type="button" class="btn btn-danger btn-sm"
                                                     wire:click="$dispatch('confirm-cancel', { ordenId: {{ $t->id }} })"><i
                                                         class="fas fa-trash"></i></button>
+                                                <button type="button" class="btn btn-danger btn-sm"
+                                                    wire:click="reprTurn('{{ $t->id }}')"><i class="far fa-clock"></i></button>
                                             </div>
                                         @endif
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-danger btn-sm"
-                                            wire:click="reprTurn('{{ $t->id }}')"><i
-                                            class="far fa-clock"></i> </button>
-                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -142,13 +139,10 @@
                                                 <button type="button" class="btn btn-danger btn-sm"
                                                     wire:click="$dispatch('confirm-cancel', { ordenId: {{ $t->id }} })"><i
                                                         class="fas fa-trash"></i></button>
+                                                <button type="button" class="btn btn-danger btn-sm"
+                                                    wire:click="reprTurn('{{ $t->id }}')"><i class="far fa-clock"></i></button>
                                             </div>
                                         @endif
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-danger btn-sm"
-                                                wire:click="reprTurn('{{ $t->id }}')"><i
-                                                    class="far fa-clock"></i> </button>
-                                        </div>
 
                                     </td>
                                 </tr>

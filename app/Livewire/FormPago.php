@@ -27,6 +27,7 @@ use App\Models\TipoFactura;
 use App\Models\TipoPago;
 use App\Models\StockMovement;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
@@ -305,6 +306,13 @@ class FormPago extends Component
         }
 
         if ($this->orden->estado != 100) {
+
+            // Bloqueo pesimista para evitar doble cobro concurrente
+            $lockedOrden = \App\Models\Orden::where('id', $this->orden->id)->lockForUpdate()->first();
+            if ($lockedOrden && $lockedOrden->estado == 100) {
+                $this->processing = false;
+                return redirect('ordenes/' . $this->orden->id);
+            }
                 $this->modal = true;
             }
         }
@@ -881,71 +889,74 @@ class FormPago extends Component
                 //                                 Pago Total Tarjeta Crédito  Estado = 10
                 // ------------------------------------------------------------------------------
                 if ($this->medioPago == 1) {
-
-                    // dd();
-
-                    // Calcular base y subtotal sin mutar estados previos
-                    $itemsSubtotal = $this->orden->items->sum('subtotal');
-                    $baseAfterDiscount = max(0, floatval($itemsSubtotal) - floatval($this->discountAmount));
-
-                    $f =  Factura::create([
-
-                        'orden_id' => $this->orden->id,
-
-                        'tipo_factura_id' => $this->tipoFactura,
-                        'total' => $this->total,
-                        'subtotal' => $baseAfterDiscount,
-                        'intereses' => $this->montoInt,
-                        'descuentos' => '',
-                        'iva' => $this->iva,
-                        'estado' => '10'
-                    ]);
-                    if ($this->descuentoId && $this->discountAmount > 0) {
-                        DescuentoXFactura::create([
-                            'factura_id' => $f->id,
-                            'user_id' => Auth::id(),
-                            'monto' => $this->discountAmount,
-                            'estado' => '1',
-                        ]);
+                    // Evitar doble registro si ya existe un pago con tarjeta para esta orden
+                    $alreadyPaidCard = Pago::where('medio_pago_id', 1)
+                        ->whereHas('facturas', function ($q) {
+                            $q->where('orden_id', $this->orden->id);
+                        })
+                        ->exists();
+                    if ($alreadyPaidCard) {
+                        // Si ya estaba registrado, sólo asegurar estado y salir
+                        $this->orden->update(['estado' => '100']);
+                        $this->processing = false;
+                        $this->closeModal();
+                        return redirect('ordenes/' . $this->orden->id);
                     }
 
+                    DB::transaction(function () use (&$p) {
+                        // Calcular base y subtotal sin mutar estados previos
+                        $itemsSubtotal = $this->orden->items->sum('subtotal');
+                        $baseAfterDiscount = max(0, floatval($itemsSubtotal) - floatval($this->discountAmount));
 
-                    $p = Pago::create([
-                        'in_out' => 'in',
-                        'factura_id' => $f->id,
-                        'cliente_id' => $this->cliente,
-                        'medio_pago_id' => $this->medioPago,
-                        'tipo_pago_id' => $this->tipoPago,
-                        'efectivo' => 0,
-                        'concepto' =>  $this->concepto,
-                        'code_op' => $this->cupon,
-                        'iva' => $this->iva,
+                        $f =  Factura::create([
+                            'orden_id' => $this->orden->id,
+                            'tipo_factura_id' => $this->tipoFactura,
+                            'total' => $this->total,
+                            'subtotal' => $baseAfterDiscount,
+                            'intereses' => $this->montoInt,
+                            'descuentos' => '',
+                            'iva' => $this->iva,
+                            'estado' => '10'
+                        ]);
+                        if ($this->descuentoId && $this->discountAmount > 0) {
+                            DescuentoXFactura::create([
+                                'factura_id' => $f->id,
+                                'user_id' => Auth::id(),
+                                'monto' => $this->discountAmount,
+                                'estado' => '1',
+                            ]);
+                        }
 
+                        $p = Pago::create([
+                            'in_out' => 'in',
+                            'factura_id' => $f->id,
+                            'cliente_id' => $this->cliente,
+                            'medio_pago_id' => $this->medioPago,
+                            'tipo_pago_id' => $this->tipoPago,
+                            'efectivo' => 0,
+                            'concepto' =>  $this->concepto,
+                            'code_op' => $this->cupon,
+                            'iva' => $this->iva,
+                            'total' => $this->total,
+                            'estado' => '10',
+                        ]);
+                        PagosXCaja::create([
+                            'pago_id' => $p->id,
+                            'caja_id' => $this->caja->id,
+                            'estado' => '10',
+                        ]);
 
-                        'total' => $this->total,
-                        'estado' => '10',
-
-                    ]);
-                    PagosXCaja::create([
-                        'pago_id' => $p->id,
-                        'caja_id' => $this->caja->id,
-                        'estado' => '10',
-
-                    ]);
-
-                    PagoTarjeta::create([
-
-                        'plan_id' => $this->plan->id,
-                        'cliente_id' => $this->cliente,
-                        'pago_id' => $p->id,
-                        'caja_id' => $this->caja->id,
-                        'subtotal' => $this->montoAPagar,
-                        'total' => $this->total,
-                        'nro_cupon' => $this->codeOp,
-                        'estado' => '1',
-
-
-                    ]);
+                        PagoTarjeta::create([
+                            'plan_id' => $this->plan->id,
+                            'cliente_id' => $this->cliente,
+                            'pago_id' => $p->id,
+                            'caja_id' => $this->caja->id,
+                            'subtotal' => $this->montoAPagar,
+                            'total' => $this->total,
+                            'nro_cupon' => $this->codeOp,
+                            'estado' => '1',
+                        ]);
+                    });
                 }
 
 
