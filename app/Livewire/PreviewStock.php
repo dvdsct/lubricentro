@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Log;
 use App\Models\Stock;
 use App\Models\StockMovement;
 use App\Models\Producto;
@@ -29,6 +30,20 @@ class PreviewStock extends Component
     // Filtros
     public $categoriaId = '';
     public $subcategoriaId = '';
+
+    // Cuando se cambie el filtro de subcategoría, resetear la paginación
+    public function updatedSubcategoriaId($value)
+    {
+        $this->subcategoriaId = $value === '' ? '' : (int) $value;
+        $this->resetPage();
+    }
+
+    public function subcategoriaChanged($value)
+    {
+        $this->subcategoriaId = $value === '' ? '' : (int) $value;
+        Log::debug('PreviewStock subcategoriaChanged called', ['value' => $value, 'subcategoriaId' => $this->subcategoriaId]);
+        $this->resetPage();
+    }
 
     public function search()
     {
@@ -64,38 +79,40 @@ class PreviewStock extends Component
     // public $stock;
     public function render()
     {
+        // Log current filters for debugging
+        Log::debug('PreviewStock render filters', ['subcategoriaId' => $this->subcategoriaId, 'query' => $this->query]);
         $categorias = CategoriaProducto::select('id','descripcion')->orderBy('descripcion')->get();
         $subcategorias = SubcategoriaProducto::select('id','descripcion')->orderBy('descripcion')->get();
 
-        return view(
-            'livewire.preview-stock',
-            [
-                'stock' => (function() {
-                    $q = Stock::select(
-                        'stocks.*',
-                        'productos.codigo',
-                        'productos.descripcion as descripcion'
-                    )
-                        ->leftJoin('productos', 'stocks.producto_id', '=', 'productos.id');
+        // Construir la consulta usando relaciones para evitar inconsistencias
+        $stockQuery = Stock::with('productos')
+            ->when(!empty($this->subcategoriaId), function ($q) {
+                $subId = (int) $this->subcategoriaId;
+                $q->whereHas('productos', function ($qp) use ($subId) {
+                    $qp->where('subcategoria_producto_id', $subId);
+                });
+            })
+            ->when(trim($this->query) !== '', function ($q) {
+                $txt = '%' . $this->query . '%';
+                $q->whereHas('productos', function ($qp) use ($txt) {
+                    $qp->where('descripcion', 'like', $txt)
+                       ->orWhere('codigo', 'like', $txt);
+                });
+            });
 
-                    // Filtro por subcategoría si se selecciona (requerido por el usuario)
-                    if (!empty($this->subcategoriaId)) {
-                        $q->where('productos.subcategoria_producto_id', $this->subcategoriaId);
-                    }
+        // Log de debugging: mostrar SQL aproximado y bindings
+        try {
+            $toSql = $stockQuery->toBase()->toSql();
+            Log::debug('PreviewStock query', ['sql' => $toSql, 'subcategoriaId' => $this->subcategoriaId, 'query' => $this->query]);
+        } catch (\Exception $e) {
+            Log::debug('PreviewStock query build failed', ['message' => $e->getMessage()]);
+        }
 
-                    // Filtro de búsqueda por texto (agrupado)
-                    $queryTxt = '%' . $this->query . '%';
-                    $q->where(function($w) use ($queryTxt) {
-                        $w->where('productos.descripcion', 'like', $queryTxt)
-                          ->orWhere('productos.codigo', 'like', $queryTxt);
-                    });
-
-                    return $q->paginate(10);
-                })(),
-                'categorias' => $categorias,
-                'subcategorias' => $subcategorias,
-            ]
-        );
+        return view('livewire.preview-stock', [
+            'stock' => $stockQuery->paginate(10),
+            'categorias' => $categorias,
+            'subcategorias' => $subcategorias,
+        ]);
     }
 
     public function openHistory($stockId)

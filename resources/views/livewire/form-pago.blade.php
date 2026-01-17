@@ -352,8 +352,13 @@
 </div>
 
 <div class="modal-footer justify-content-between">
-    <button type="button" class="btn btn-default" wire:click='closeModal'>Cerrar</button>
-    <button type="button" class="btn btn-primary" wire:click='pagar'>Aceptar</button>
+    <button type="button" class="btn btn-default" wire:click='closeModal' wire:loading.attr="disabled" wire:target="pagar">Cerrar</button>
+    <button type="button" class="btn btn-primary" wire:click='pagar' wire:loading.attr="disabled" wire:target="pagar">
+        <span wire:loading.remove wire:target="pagar">Aceptar</span>
+        <span wire:loading wire:target="pagar">
+            <i class="fas fa-spinner fa-spin"></i> Procesando...
+        </span>
+    </button>
 </div>
 </div>
 </div>

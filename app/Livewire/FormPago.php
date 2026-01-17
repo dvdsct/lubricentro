@@ -102,10 +102,10 @@ class FormPago extends Component
     public $splitSecond = false;
     public $medioPago2;
     public $monto2;
-    public $codeOp2; // para transferencia 2
 
-    // Evitar dobles envíos/duplicados
+    // Evita doble envío en UI/servidor
     public $processing = false;
+    public $codeOp2; // para transferencia 2
 
 
     public function mount($orden)
@@ -743,6 +743,18 @@ class FormPago extends Component
                 //                                 Pago total Cheque  Estado = 30
                 // ------------------------------------------------------------------------------
                 if ($this->medioPago == 3) {
+                    // Idempotencia: evitar duplicado de CHEQUE para esta orden
+                    $alreadyPaid = Pago::where('medio_pago_id', 3)
+                        ->whereHas('facturas', function ($q) { $q->where('orden_id', $this->orden->id); })
+                        ->exists();
+                    if ($alreadyPaid) {
+                        // Ya existe, no crear otro movimiento
+                        $this->orden->update(['estado' => '100']);
+                        $this->processing = false;
+                        $this->closeModal();
+                        return redirect('ordenes/' . $this->orden->id);
+                    }
+
                     $f =  Factura::create([
 
                         'orden_id' => $this->orden->id,
@@ -797,6 +809,16 @@ class FormPago extends Component
                 //                                 Pago total Efectivo  Estado = 20
                 // ------------------------------------------------------------------------------
                 if ($this->medioPago == 2) {
+                    // Idempotencia: evitar duplicado de EFECTIVO para esta orden
+                    $alreadyPaid = Pago::where('medio_pago_id', 2)
+                        ->whereHas('facturas', function ($q) { $q->where('orden_id', $this->orden->id); })
+                        ->exists();
+                    if ($alreadyPaid) {
+                        $this->orden->update(['estado' => '100']);
+                        $this->processing = false;
+                        $this->closeModal();
+                        return redirect('ordenes/' . $this->orden->id);
+                    }
 
 
                     // dd();
@@ -968,6 +990,18 @@ class FormPago extends Component
                 //                                 Pago Total Transferencia  Estado = 90
                 // ------------------------------------------------------------------------------
                 if ($this->medioPago == 5) {
+                    // Idempotencia: evitar duplicado de TRANSFERENCIA para esta orden
+                    $alreadyPaid = Pago::where('medio_pago_id', 5)
+                        ->whereHas('facturas', function ($q) { $q->where('orden_id', $this->orden->id); })
+                        ->when(!empty($this->cupon), function($qq){ $qq->where('code_op', $this->cupon); })
+                        ->exists();
+                    if ($alreadyPaid) {
+                        $this->orden->update(['estado' => '100']);
+                        $this->processing = false;
+                        $this->closeModal();
+                        return redirect('ordenes/' . $this->orden->id);
+                    }
+
                     $f =  Factura::create([
 
                         'orden_id' => $this->orden->id,

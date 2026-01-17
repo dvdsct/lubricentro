@@ -396,15 +396,22 @@ class PDFController extends Controller
         $fecha = Carbon::now();
         $fechaStr = $fecha->locale('es')->isoFormat('D [de] MMMM [de] YYYY');
 
-        // Normalizar parámetro de categoría (GET)
+
+        // Normalizar parámetros (GET): categoría y subcategoría
         $categoriaId = request()->query('categoria_id');
         $categoriaId = is_numeric($categoriaId) ? intval($categoriaId) : null;
+
+        $subcategoriaId = request()->query('subcategoria_id');
+        $subcategoriaId = is_numeric($subcategoriaId) ? intval($subcategoriaId) : null;
 
         // Construcción de dataset: unimos productos para filtrar/ordenar y seleccionar columnas necesarias
         $stockActual = Stock::query()
             ->join('productos', 'stocks.producto_id', '=', 'productos.id')
             ->when($categoriaId, function ($q) use ($categoriaId) {
                 $q->where('productos.categoria_producto_id', $categoriaId);
+            })
+            ->when($subcategoriaId, function ($q) use ($subcategoriaId) {
+                $q->where('productos.subcategoria_producto_id', $subcategoriaId);
             })
             ->select([
                 'stocks.id',
@@ -414,15 +421,21 @@ class PDFController extends Controller
                 'productos.codigo as codigo',
                 'productos.precio_venta as precio_venta',
                 'productos.categoria_producto_id as categoria_producto_id',
+                'productos.subcategoria_producto_id as subcategoria_producto_id',
             ])
             ->orderBy('productos.descripcion')
             ->get();
 
-        // Resolver nombre de la categoría (opcional para encabezado en PDF)
+        // Resolver nombre de la categoría/subcategoría (opcional para encabezado en PDF)
         $categoriaNombre = null;
         if ($categoriaId) {
             $categoria = CategoriaProducto::find($categoriaId);
             $categoriaNombre = $categoria?->descripcion;
+        }
+        $subcategoriaNombre = null;
+        if ($subcategoriaId) {
+            $sub = \App\Models\SubcategoriaProducto::find($subcategoriaId);
+            $subcategoriaNombre = $sub?->descripcion;
         }
 
         // Render del PDF

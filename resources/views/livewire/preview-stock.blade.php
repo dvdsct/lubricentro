@@ -81,7 +81,7 @@
             </div>
             <div class="mt-2" style="max-width: 300px;">
                 <label for="subcategoriaId" class="mb-1">Filtrar por subcategoría</label>
-                <select id="subcategoriaId" class="form-control" wire:model="subcategoriaId">
+                <select id="subcategoriaId" class="form-control" wire:model="subcategoriaId" wire:change="subcategoriaChanged($event.target.value)">
                     <option value="">Todas las subcategorías</option>
                     @foreach($subcategorias as $s)
                         <option value="{{ $s->id }}">{{ $s->descripcion }}</option>
