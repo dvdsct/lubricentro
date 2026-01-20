@@ -13,15 +13,19 @@
                         <i class="fas fa-plus-circle"></i> Crear nuevo
                     </button>
 
-                    <div class="input-group" style="width: 300px; margin-left: auto;">
-                        <input type="text" name="table_search" class="form-control"
-                            placeholder="Buscar presupuesto">
+                    <form wire:submit.prevent="search" class="input-group" style="width: 480px; margin-left: auto;">
+                        <input type="text" name="table_search" class="form-control" wire:model.debounce.400ms="q"
+                            placeholder="Buscar por cliente (nombre, apellido o DNI) o patente">
                         <div class="input-group-append">
-                            <button type="submit" class="btn btn-default">
+                            <button type="submit" class="btn btn-default" title="Buscar">
                                 <i class="fas fa-search"></i>
                             </button>
+                            <button type="button" class="btn btn-outline-secondary" title="Limpiar"
+                                wire:click="clearSearch">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
-                    </div>
+                    </form>
                 </div>
                 @if ($presupuestos != null && $presupuestos->count())
                     <div class="card-body table-responsive p-0">
@@ -31,6 +35,7 @@
                                     <th>ID</th>
                                     <th>FECHA</th>
                                     <th>CLIENTE</th>
+                                    <th>PATENTE</th>
                                     <th>MONTO</th>
                                     <th>ESTADO</th>
                                     <th></th>
@@ -41,8 +46,8 @@
                                     <tr>
                                         <td>{{ $pre->id }}</td>
                                         <td>{{ Carbon\Carbon::parse($pre->created_at)->diffForHumans() }}</td>
-                                        <td>{{ $pre->clientes->perfiles->personas->nombre . ' ' . $pre->clientes->perfiles->personas->apellido }}
-                                        </td>
+                                        <td>{{ $pre->clientes->perfiles->personas->nombre . ' ' . $pre->clientes->perfiles->personas->apellido }}</td>
+                                        <td>{{ optional($pre->vehiculos)->dominio ?? '-' }}</td>
                                         <td> ${{ $pre->itemspres->isEmpty() ? '0.00' : $pre->itemspres->sum('subtotal') }}
                                         </td>
                                         <td>
