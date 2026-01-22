@@ -77,7 +77,9 @@
                             <td> <span class="badge badge-primary"> Apertura</span> </td>
                             <td>Efectivo</td>
                             <td>Monto incial</td>
-                            <td> ${{ number_format((float)$montoInicial, 2, '.', '') }}</td>
+                            <td>
+                                ${{ number_format((float)$montoInicial, 2, '.', '') }}
+                            </td>
                         </tr>
                         @foreach ($pagos as $p)
                             @if ($p->facturas->pagos->first()->estado != '400')
@@ -99,7 +101,14 @@
                                     <td>{{ $p->medios->descripcion ?? $p->tipos->descripcion }}
                                     </td>
                                     <td>{{ $p->facturas->pagos->first()->concepto }}</td>
-                                    <td>$ {{ number_format((float)$p->total, 2, '.', '') }}</td>
+                                    <td>
+                                        $ {{ number_format((float)$p->total, 2, '.', '') }}
+                                        @if(optional($p->facturas)->orden_id)
+                                            <a href="{{ route('ordenes.show', $p->facturas->orden_id) }}" class="btn btn-sm btn-primary ml-2" title="Ver orden">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </a>
+                                        @endif
+                                    </td>
 
 
                                 </tr>

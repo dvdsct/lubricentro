@@ -325,6 +325,12 @@ return [
             // Sin 'can': visible para todos; el acceso real lo controla el middleware
         ],
         [
+            'text' => 'Clientes',
+            'url'  => 'clientes',
+            'icon' => 'fas fa-users',
+            // Público: accesible para todos
+        ],
+        [
             'text' => 'Stock',
             'url'  => 'stock',
             'icon' => 'fa fa-list',
