@@ -40,7 +40,12 @@
                             <tbody>
                                 @foreach ($orders as $o)
                                     <tr>
-                                        <td>{{ $o->id }}</td>
+                                        <td>
+                                            {{ $o->id }}
+                                            <a href="{{ route('ordenes.show', $o->id) }}" class="btn btn-sm btn-primary ml-2" title="Ver orden">
+                                                <i class="fas fa-external-link-alt"></i>
+                                            </a>
+                                        </td>
                                         <td>
                                             {{ optional(optional($o->clientes)->perfiles)->personas->nombre }}
                                             {{ optional(optional($o->clientes)->perfiles)->personas->apellido }}
