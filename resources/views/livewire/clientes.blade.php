@@ -13,7 +13,8 @@
                                 <option value="dni">DNI</option>
                             </select>
                         </div>
-                        <input type="text" class="form-control" wire:model.debounce.400ms="q" placeholder="Buscar...">
+                        <input type="text" class="form-control" wire:model.debounce.400ms="q"
+                               placeholder="{{ $filterBy === 'patente' ? 'Buscar por patente' : ($filterBy === 'apellido' ? 'Buscar por apellido' : ($filterBy === 'dni' ? 'Buscar por DNI' : 'Buscar por patente, apellido o DNI')) }}">
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-primary" title="Buscar">
                                 <i class="fas fa-search"></i>
@@ -40,7 +41,14 @@
                                 @foreach ($orders as $o)
                                     <tr>
                                         <td>{{ $o->id }}</td>
-                                        <td>{{ optional(optional($o->clientes)->perfiles)->personas->nombre }} {{ optional(optional($o->clientes)->perfiles)->personas->apellido }}</td>
+                                        <td>
+                                            {{ optional(optional($o->clientes)->perfiles)->personas->nombre }}
+                                            {{ optional(optional($o->clientes)->perfiles)->personas->apellido }}
+                                            @php $dni = optional(optional($o->clientes)->perfiles)->personas->DNI ?? null; @endphp
+                                            @if($dni)
+                                                <span class="text-muted">(DNI: {{ $dni }})</span>
+                                            @endif
+                                        </td>
                                         <td>
                                             @php 
                                                 $veh = $o->vehiculos; 
