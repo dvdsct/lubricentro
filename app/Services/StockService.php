@@ -36,9 +36,10 @@ class StockService
 
     /**
      * Atomically adjust stock by a delta (can be positive or negative).
-     * Throws exception if result would be negative.
+     * Returns false if result would be negative (insufficient stock).
+     * Returns the Stock model on success.
      */
-    public function adjustStock(int $sucursalId, int $productoId, int $delta, array $meta = []): Stock
+    public function adjustStock(int $sucursalId, int $productoId, int $delta, array $meta = []): Stock|false
     {
         return DB::transaction(function () use ($sucursalId, $productoId, $delta, $meta) {
             $row = Stock::where('sucursal_id', $sucursalId)
@@ -54,7 +55,7 @@ class StockService
 
             $nuevo = intval($row->cantidad) + intval($delta);
             if ($nuevo < 0) {
-                throw new \RuntimeException('Stock insuficiente para realizar la operación');
+                return false;
             }
 
             $anterior = intval($row->cantidad);

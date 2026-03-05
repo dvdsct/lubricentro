@@ -98,12 +98,17 @@ class AddProductsPP extends Component
 
         // Impactar stock y actualizar item
         $service->ensureStockRecord($sucursalId, $productoId);
-        $service->adjustStock($sucursalId, $productoId, $toReceive, [
+        $result = $service->adjustStock($sucursalId, $productoId, $toReceive, [
             'motivo' => 'Ingreso por compra',
             'referencia_type' => 'PedidoProveedor',
             'referencia_id' => $this->pedido->id,
             'user_id' => auth()->id(),
         ]);
+
+        if ($result === false) {
+            session()->flash('error', 'No se pudo ajustar el stock. Stock insuficiente.');
+            return;
+        }
 
         $nuevoRecibido = intval($ppi->cantidad_recibida) + $toReceive;
         $estadoItem = ($nuevoRecibido >= intval($ppi->cantidad_pedida)) ? 'recibido_total' : 'recibido_parcial';
@@ -176,12 +181,17 @@ class AddProductsPP extends Component
 
             // Asegurar fila de stock y ajustar de forma atómica
             $service->ensureStockRecord($sucursalId, $p->id);
-            $service->adjustStock($sucursalId, $p->id, intval($i->cantidad), [
+            $result = $service->adjustStock($sucursalId, $p->id, intval($i->cantidad), [
                 'motivo' => 'Ingreso por compra',
                 'referencia_type' => 'PedidoProveedor',
                 'referencia_id' => $this->pedido->id,
                 'user_id' => auth()->id(),
             ]);
+
+            if ($result === false) {
+                session()->flash('error', 'No se pudo ajustar el stock para el producto: ' . $p->descripcion);
+                return;
+            }
 
             // Sincronizar nuevo esquema: marcar recibido_total para el item correspondiente
             $ppi = PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)

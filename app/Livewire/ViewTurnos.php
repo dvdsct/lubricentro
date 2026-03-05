@@ -90,12 +90,16 @@ class ViewTurnos extends Component
                 if ($p && !$p->es_provisional) {
                     $sucursalId = $turno->sucursal_id ?: 1;
                     $service = app(StockService::class);
-                    $service->adjustStock($sucursalId, $p->id, $i->cantidad, [
+                    $result = $service->adjustStock($sucursalId, $p->id, $i->cantidad, [
                         'motivo' => 'Cancelación de orden',
                         'operacion' => 'Cancelación de orden',
                         'referencia_type' => 'Orden',
                         'referencia_id' => $turno->id,
                     ]);
+                    if ($result === false) {
+                        $this->dispatch('nonstock');
+                        return;
+                    }
                 }
             }
 

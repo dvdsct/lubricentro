@@ -91,13 +91,16 @@ class AddProducts extends Component
             // Actualizar stock solo si el producto NO es provisional
             if ($delta !== 0 && !$p->es_provisional) {
                 $sucursalId = 1; // Usar sucursal por defecto
-                $stockService->adjustStock($sucursalId, $p->id, -$delta, [
+                $result = $stockService->adjustStock($sucursalId, $p->id, -$delta, [
                     'motivo' => 'Modificación de cantidad en orden',
                     'operacion' => $delta > 0 ? 'Carga en orden' : 'Reducción en orden',
                     'referencia_type' => 'Item',
                     'referencia_id' => $item->id,
                     'precio_unitario' => $precio,
                 ]);
+                if ($result === false) {
+                    return $this->dispatch('nonstock');
+                }
             }
         });
 

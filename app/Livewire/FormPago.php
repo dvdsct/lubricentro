@@ -1113,7 +1113,7 @@ class FormPago extends Component
             if (!$producto) continue;
             if ($producto->es_provisional) continue;
 
-            $stockService->adjustStock($sucursalId, $producto->id, -abs(intval($i->cantidad)), [
+            $result = $stockService->adjustStock($sucursalId, $producto->id, -abs(intval($i->cantidad)), [
                 'motivo' => 'Pago de orden',
                 'operacion' => 'Pago de orden',
                 'referencia_type' => 'Orden',
@@ -1121,6 +1121,10 @@ class FormPago extends Component
                 'user_id' => Auth::id(),
                 'precio_unitario' => $i->precio ?? null,
             ]);
+            if ($result === false) {
+                $this->dispatch('nonstock');
+                return;
+            }
         }
     }
 
