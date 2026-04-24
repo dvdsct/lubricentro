@@ -91,7 +91,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @forelse ($this->filteredClientes as $c)
+                                                @forelse ($this->filteredClientes->items() as $c)
                                                 <tr wire:click="selectCliente({{ $c->id }})"
                                                     style="cursor: pointer;"
                                                     class="client-search-row">
@@ -118,9 +118,23 @@
                                         </table>
                                     </div>
 
-                                    @if (!empty($searchCliente) && $this->filteredClientes->count() >= 30)
-                                    <div class="text-center py-2" style="background: #f8f9fa; border-top: 1px solid #dee2e6;">
-                                        <small class="text-muted">Mostrando los primeros 30 resultados. Refine su búsqueda para encontrar más.</small>
+                                    {{-- PAGINACIÓN --}}
+                                    @if ($this->filteredClientes->lastPage() > 1)
+                                    <div class="d-flex justify-content-between align-items-center px-3 py-2" style="background: #f8f9fa; border-top: 1px solid #dee2e6;">
+                                        <button class="btn btn-sm btn-outline-secondary"
+                                                wire:click="previousClientPage"
+                                                @if ($clientPage <= 1) disabled @endif>
+                                            <i class="fas fa-chevron-left mr-1"></i> Anterior
+                                        </button>
+                                        <small class="text-muted">
+                                            Página <strong>{{ $clientPage }}</strong> de <strong>{{ $this->filteredClientes->lastPage() }}</strong>
+                                            <span class="ml-2">({{ $this->filteredClientes->total() }} clientes)</span>
+                                        </small>
+                                        <button class="btn btn-sm btn-outline-secondary"
+                                                wire:click="nextClientPage"
+                                                @if ($clientPage >= $this->filteredClientes->lastPage()) disabled @endif>
+                                            Siguiente <i class="fas fa-chevron-right ml-1"></i>
+                                        </button>
                                     </div>
                                     @endif
                                 </div>

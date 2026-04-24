@@ -36,6 +36,7 @@ class AddPresupuesto extends Component
     // Client search modal
     public $showClientModal = false;
     public $searchCliente = '';
+    public $clientPage = 1;
 
     public $presupuesto;
 
@@ -79,6 +80,30 @@ class AddPresupuesto extends Component
         $this->showClientModal = !$this->showClientModal;
         if (!$this->showClientModal) {
             $this->searchCliente = '';
+            $this->clientPage = 1;
+        }
+    }
+
+    /**
+     * Reset page when search changes.
+     */
+    public function updatedSearchCliente()
+    {
+        $this->clientPage = 1;
+    }
+
+    public function previousClientPage()
+    {
+        if ($this->clientPage > 1) {
+            $this->clientPage--;
+        }
+    }
+
+    public function nextClientPage()
+    {
+        $paginator = $this->filteredClientes;
+        if ($this->clientPage < $paginator->lastPage()) {
+            $this->clientPage++;
         }
     }
 
@@ -87,25 +112,20 @@ class AddPresupuesto extends Component
      */
     public function getFilteredClientesProperty()
     {
-        if (empty($this->searchCliente)) {
-            return Cliente::with('perfiles.personas')
-                ->orderByDesc('id')
-                ->limit(20)
-                ->get();
-        }
+        $query = Cliente::with('perfiles.personas');
 
-        $search = $this->searchCliente;
-
-        return Cliente::with('perfiles.personas')
-            ->whereHas('perfiles.personas', function ($q) use ($search) {
+        if (!empty($this->searchCliente)) {
+            $search = $this->searchCliente;
+            $query->whereHas('perfiles.personas', function ($q) use ($search) {
                 $q->where('nombre', 'like', "%{$search}%")
                   ->orWhere('apellido', 'like', "%{$search}%")
                   ->orWhere('DNI', 'like', "%{$search}%")
                   ->orWhere('numero_telefono', 'like', "%{$search}%");
-            })
-            ->orderByDesc('id')
-            ->limit(30)
-            ->get();
+            });
+        }
+
+        return $query->orderByDesc('id')
+            ->paginate(30, ['*'], 'clientPage', $this->clientPage);
     }
 
     /**
@@ -117,6 +137,7 @@ class AddPresupuesto extends Component
         $this->upPerson();
         $this->showClientModal = false;
         $this->searchCliente = '';
+        $this->clientPage = 1;
     }
 
     public function upPerson()
