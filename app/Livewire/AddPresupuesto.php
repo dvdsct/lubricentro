@@ -30,9 +30,12 @@ Carbon::setLocale('es');
 
 class AddPresupuesto extends Component
 {
-    public $clientes;
     public $cliente;
     public $modal;
+
+    // Client search modal
+    public $showClientModal = false;
+    public $searchCliente = '';
 
     public $presupuesto;
 
@@ -61,12 +64,59 @@ class AddPresupuesto extends Component
 
     public function mount()
     {
-        $this->clientes = Cliente::all();
         // Vehículo: catálogos
         $this->tiposVehiculo = TipoVehiculo::all();
         $this->marcas = [];
         $this->modelos = [];
         $this->colores = Colores::all();
+    }
+
+    /**
+     * Toggle the client search modal.
+     */
+    public function toggleClientModal()
+    {
+        $this->showClientModal = !$this->showClientModal;
+        if (!$this->showClientModal) {
+            $this->searchCliente = '';
+        }
+    }
+
+    /**
+     * Return filtered clients based on search query.
+     */
+    public function getFilteredClientesProperty()
+    {
+        if (empty($this->searchCliente)) {
+            return Cliente::with('perfiles.personas')
+                ->orderByDesc('id')
+                ->limit(20)
+                ->get();
+        }
+
+        $search = $this->searchCliente;
+
+        return Cliente::with('perfiles.personas')
+            ->whereHas('perfiles.personas', function ($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%")
+                  ->orWhere('apellido', 'like', "%{$search}%")
+                  ->orWhere('DNI', 'like', "%{$search}%")
+                  ->orWhere('numero_telefono', 'like', "%{$search}%");
+            })
+            ->orderByDesc('id')
+            ->limit(30)
+            ->get();
+    }
+
+    /**
+     * Select a client from the search modal.
+     */
+    public function selectCliente($clienteId)
+    {
+        $this->cliente = $clienteId;
+        $this->upPerson();
+        $this->showClientModal = false;
+        $this->searchCliente = '';
     }
 
     public function upPerson()

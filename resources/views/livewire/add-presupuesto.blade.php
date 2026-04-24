@@ -22,21 +22,14 @@
                     @if ($cliente == null)
                     <div class="row">
                         <div class="col-10 col-xs-10">
-                            <select id="" wire:model.live='cliente' class="form-control" wire:change="upPerson" aria-label="Default select example">
-                                <option selected> Seleccionar cliente</option>
-                                @foreach ($clientes as $c)
-                                <option value="{{ $c->id }}">
-                                    {{ $c->id }}
-                                    {{ $c->perfiles->personas->nombre }}
-                                    {{ $c->perfiles->personas->apellido }}
-                                    @if($c->perfiles->personas->DNI)
-                                        - DNI: {{ $c->perfiles->personas->DNI }}
-                                    @elseif($c->perfiles->personas->numero_telefono)
-                                        - Tel: {{ $c->perfiles->personas->numero_telefono }}
-                                    @endif
-                                </option>
-                                @endforeach ...
-                            </select>
+                            <button type="button" class="btn btn-outline-secondary btn-block text-left d-flex align-items-center justify-content-between"
+                                    wire:click="toggleClientModal"
+                                    style="height: 38px; border: 1px solid #ced4da; background: #fff; border-radius: .25rem;">
+                                <span style="color: #6c757d;">
+                                    <i class="fas fa-search mr-2"></i> Buscar y seleccionar cliente...
+                                </span>
+                                <i class="fas fa-chevron-down" style="color: #6c757d;"></i>
+                            </button>
                         </div>
                         <!-- BOTON CREAR NUEVO CLIENTE  -->
                         <div class="col-2 col-xs-2">
@@ -47,6 +40,94 @@
                             </button>
                         </div>
                     </div>
+
+                    {{-- MODAL BUSCAR CLIENTE --}}
+                    @if ($showClientModal)
+                    <div class="modal fade show" style="display: block; background-color: rgba(0, 0, 0, 0.6); z-index: 1060;" role="dialog">
+                        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" style="z-index: 1070;">
+                            <div class="modal-content" style="border-radius: .5rem; overflow: hidden;">
+                                <div class="modal-header" style="background: linear-gradient(135deg, #1abc9c, #16a085); border: none;">
+                                    <h5 class="modal-title text-white"><i class="fas fa-users mr-2"></i> <strong>SELECCIONAR CLIENTE</strong></h5>
+                                    <button type="button" class="close text-white" wire:click="toggleClientModal" style="opacity: 1;">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body p-0">
+                                    {{-- BUSCADOR --}}
+                                    <div class="p-3" style="background: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" style="background: #fff; border-right: none;">
+                                                    <i class="fas fa-search text-muted"></i>
+                                                </span>
+                                            </div>
+                                            <input type="text"
+                                                   class="form-control"
+                                                   wire:model.live.debounce.300ms="searchCliente"
+                                                   placeholder="Buscar por nombre, apellido, DNI o teléfono..."
+                                                   autofocus
+                                                   style="border-left: none;">
+                                            @if ($searchCliente)
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" wire:click="$set('searchCliente', '')">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    {{-- LISTA DE CLIENTES --}}
+                                    <div style="max-height: 400px; overflow-y: auto;">
+                                        <table class="table table-hover table-sm mb-0">
+                                            <thead style="position: sticky; top: 0; background: #fff; z-index: 1;">
+                                                <tr>
+                                                    <th style="width: 50px;" class="text-center">#</th>
+                                                    <th>Nombre</th>
+                                                    <th>Apellido</th>
+                                                    <th>DNI</th>
+                                                    <th>Teléfono</th>
+                                                    <th style="width: 80px;" class="text-center">Acción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @forelse ($this->filteredClientes as $c)
+                                                <tr wire:click="selectCliente({{ $c->id }})"
+                                                    style="cursor: pointer;"
+                                                    class="client-search-row">
+                                                    <td class="text-center text-muted">{{ $c->id }}</td>
+                                                    <td><strong>{{ $c->perfiles->personas->nombre ?? '-' }}</strong></td>
+                                                    <td>{{ $c->perfiles->personas->apellido ?? '-' }}</td>
+                                                    <td>{{ $c->perfiles->personas->DNI ?? '-' }}</td>
+                                                    <td>{{ $c->perfiles->personas->numero_telefono ?? '-' }}</td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-sm btn-info" wire:click.stop="selectCliente({{ $c->id }})">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                @empty
+                                                <tr>
+                                                    <td colspan="6" class="text-center py-4 text-muted">
+                                                        <i class="fas fa-user-slash fa-2x mb-2 d-block"></i>
+                                                        No se encontraron clientes
+                                                    </td>
+                                                </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    @if (!empty($searchCliente) && $this->filteredClientes->count() >= 30)
+                                    <div class="text-center py-2" style="background: #f8f9fa; border-top: 1px solid #dee2e6;">
+                                        <small class="text-muted">Mostrando los primeros 30 resultados. Refine su búsqueda para encontrar más.</small>
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                     @else
                     <!-- MUESTRA NOMBRE APELLIDO Y DNI DEL CLIENTE SELECCIONADO -->
                     <div class="px-3 row">
