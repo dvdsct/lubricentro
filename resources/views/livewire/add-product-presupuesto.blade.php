@@ -163,7 +163,7 @@
                             <tbody>
 
                                 @foreach ($stock as $key => $s)
-                                <tr style="cursor: pointer;" id="{{ $s->id }}" wire:click='addedProduct({{ $s->id }})'>
+                                <tr style="cursor: pointer;" id="{{ $s->id }}" wire:click='addedProduct({{ $s->producto_id }})'>
                                     <td>{{ $s->id }}</td>
                                     <td>{{ $s->productos->descripcion }} -
                                         {{ $s->productos->codigo }}

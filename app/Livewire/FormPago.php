@@ -195,7 +195,7 @@ class FormPago extends Component
                     ]);
                     PagosXCaja::create([
                         'pago_id' => $p->id,
-                        'caja_id' => $this->caja->id,
+                        'caja_id' => $this->caja?->id,
                         'estado' => '12',
                     ]);
                 }
@@ -441,7 +441,7 @@ class FormPago extends Component
 
                 PagosXCaja::create([
                     'pago_id' => $p->id,
-                    'caja_id' => $this->caja->id,
+                    'caja_id' => $this->caja?->id,
                     'estado' => '400',
 
                 ]);
@@ -479,7 +479,7 @@ class FormPago extends Component
                 ]);
                 PagosXCaja::create([
                     'pago_id' => $p->id,
-                    'caja_id' => $this->caja->id,
+                    'caja_id' => $this->caja?->id,
                     'estado' => '200',
 
                 ]);
@@ -521,7 +521,7 @@ class FormPago extends Component
                 ]);
                 PagosXCaja::create([
                     'pago_id' => $p->id,
-                    'caja_id' => $this->caja->id,
+                    'caja_id' => $this->caja?->id,
                     'estado' => '101',
 
                 ]);
@@ -650,7 +650,7 @@ class FormPago extends Component
                     ]);
                     PagosXCaja::create([
                         'pago_id' => $p1->id,
-                        'caja_id' => $this->caja->id,
+                        'caja_id' => $this->caja?->id,
                         'estado' => $estado1,
                     ]);
 
@@ -676,7 +676,7 @@ class FormPago extends Component
                     ]);
                     PagosXCaja::create([
                         'pago_id' => $p2->id,
-                        'caja_id' => $this->caja->id,
+                        'caja_id' => $this->caja?->id,
                         'estado' => $estado2,
                     ]);
 
@@ -783,7 +783,7 @@ class FormPago extends Component
                     ]);
                     PagosXCaja::create([
                         'pago_id' => $p->id,
-                        'caja_id' => $this->caja->id,
+                        'caja_id' => $this->caja?->id,
                         'estado' => '30',
 
                     ]);
@@ -857,7 +857,7 @@ class FormPago extends Component
                     ]);
                     PagosXCaja::create([
                         'pago_id' => $p->id,
-                        'caja_id' => $this->caja->id,
+                        'caja_id' => $this->caja?->id,
                         'estado' => '20',
 
                     ]);
@@ -901,7 +901,7 @@ class FormPago extends Component
                     ]);
                     PagosXCaja::create([
                         'pago_id' => $p->id,
-                        'caja_id' => $this->caja->id,
+                        'caja_id' => $this->caja?->id,
                         'estado' => '12',
                     ]);
                 }
@@ -964,7 +964,7 @@ class FormPago extends Component
                         ]);
                         PagosXCaja::create([
                             'pago_id' => $p->id,
-                            'caja_id' => $this->caja->id,
+                            'caja_id' => $this->caja?->id,
                             'estado' => '10',
                         ]);
 
@@ -972,7 +972,7 @@ class FormPago extends Component
                             'plan_id' => $this->plan->id,
                             'cliente_id' => $this->cliente,
                             'pago_id' => $p->id,
-                            'caja_id' => $this->caja->id,
+                            'caja_id' => $this->caja?->id,
                             'subtotal' => $this->montoAPagar,
                             'total' => $this->total,
                             'nro_cupon' => $this->codeOp,
@@ -1040,7 +1040,7 @@ class FormPago extends Component
                     ]);
                     PagosXCaja::create([
                         'pago_id' => $p->id,
-                        'caja_id' => $this->caja->id,
+                        'caja_id' => $this->caja?->id,
                         'estado' => '90',
 
                     ]);
@@ -1049,7 +1049,7 @@ class FormPago extends Component
 
                         'cliente_id' => $this->cliente,
                         'pago_id' => $p->id,
-                        'caja_id' => $this->caja->id,
+                        'caja_id' => $this->caja?->id,
                         'subtotal' => $this->montoAPagar - $this->montoConInt,
                         'total' => $this->montoAPagar,
                         'nro_cupon' => $this->codeOp,

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Stock;
 
 class StockController extends Controller
 {
@@ -54,14 +55,37 @@ class StockController extends Controller
         $stock = Stock::findOrFail($id);
         
         // Verificar si el producto es provisional
-        if ($stock->producto && $stock->producto->es_provisional) {
+        if ($stock->productos && $stock->productos->es_provisional) {
             return response()->json([
                 'success' => false,
                 'message' => 'No se puede actualizar el stock de un producto provisional.'
             ], 403);
         }
         
-        // Resto de la lógica de actualización...
+        $request->validate([
+            'cantidad' => 'required|numeric|min:0',
+            'motivo' => 'nullable|string|max:255',
+        ]);
+
+        $newCantidad = floatval($request->input('cantidad'));
+        $oldCantidad = floatval($stock->cantidad);
+        $delta = $newCantidad - $oldCantidad;
+
+        if ($delta !== 0.0) {
+            $stockService = app(\App\Services\StockService::class);
+            $stockService->adjustStock($stock->sucursal_id ?: 1, $stock->producto_id, $delta, [
+                'motivo' => $request->input('motivo') ?: 'Actualización vía API/Controller',
+                'operacion' => 'Ajuste manual',
+                'referencia_type' => 'StockController',
+                'referencia_id' => $stock->id,
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Stock actualizado correctamente',
+            'cantidad' => $stock->fresh()->cantidad
+        ]);
     }
 
     /**

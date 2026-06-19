@@ -117,9 +117,22 @@
                         <td>{{ $p->unidad }}</td>
 
                         <td>
-                          
-                            {{ $p->cantidad }}
-
+                            @if ($p->estado == '2')
+                                <div class="input-group input-group-sm" style="width: 120px;">
+                                    <input type="number" step="0.001" class="form-control" 
+                                           wire:model="cantidad" 
+                                           wire:keydown.enter="addCantidad({{ $p->id }})">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-success" type="button" wire:click="addCantidad({{ $p->id }})">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            @else
+                                <span style="cursor: pointer;" class="badge badge-secondary p-2" wire:click="editPStock({{ $p->id }})" title="Editar stock">
+                                    {{ $p->cantidad }} <i class="fas fa-edit ml-1 text-xs"></i>
+                                </span>
+                            @endif
                         </td>
 
                         <td>

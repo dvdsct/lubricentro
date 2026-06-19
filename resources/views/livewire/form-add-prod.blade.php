@@ -153,7 +153,7 @@
                         @can('stock')
                         {{-- Codigo de barra y Stock --}}
                         <div class="pt-4 row">
-                            <div class="col-md-5">
+                            <div class="col-md-7">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-barcode"></i></span>
@@ -162,14 +162,89 @@
                                 </div>
                             </div>
 
-                            <div class="pt-2 pr-1 col-md-4">
-                                <label>Stock Actual: {{$stock}} +</label>
+                            @if (!$producto)
+                            <div class="col-md-5">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-boxes"></i></span>
+                                    </div>
+                                    <input type="number" class="form-control" wire:model='stock' placeholder="Stock Inicial" />
+                                </div>
                             </div>
+                            @endif
+                        </div>
 
-                            <div class="pl-0 col-md-3">
-                                <input type="text" class="form-control" wire:model='stock' placeholder="Sumar Stock" />
+                        @if ($producto)
+                        <!-- Panel de Corrección de Stock para producto existente -->
+                        <div class="card mt-3 bg-light border-warning shadow-sm">
+                            <div class="card-header bg-warning py-2 text-dark font-weight-bold">
+                                <i class="fas fa-tools mr-1"></i> Corrección de Stock
+                            </div>
+                            <div class="card-body py-3">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6 mb-2">
+                                        <div class="bg-white border rounded p-2 text-center shadow-xs">
+                                            <span class="d-block text-muted text-uppercase text-xs font-weight-bold">Stock Actual</span>
+                                            <h3 class="m-0 font-weight-bold text-primary">{{ $stockActual }}</h3>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <div class="form-group mb-0">
+                                            <label class="font-weight-bold mb-1 text-sm">Modo de ajuste</label>
+                                            <div class="d-flex justify-content-around">
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" wire:model.live="stockMode" id="modeAjustar" value="ajustar">
+                                                    <label class="form-check-label text-sm" for="modeAjustar">Sumar/Restar</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" wire:model.live="stockMode" id="modeFijar" value="fijar">
+                                                    <label class="form-check-label text-sm" for="modeFijar">Establecer Fijo</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-2">
+                                    @if ($stockMode === 'ajustar')
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label for="stockDelta" class="text-sm font-weight-bold">Ajustar cantidad (+ / -)</label>
+                                            <input type="number" id="stockDelta" class="form-control form-control-sm" wire:model.live="stockDelta" placeholder="Ej: 5 o -3">
+                                            @error('stockDelta') <small class="text-danger d-block">{{ $message }}</small> @enderror
+                                        </div>
+                                    </div>
+                                    @else
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label for="stockFinal" class="text-sm font-weight-bold">Nuevo stock total</label>
+                                            <input type="number" id="stockFinal" class="form-control form-control-sm" wire:model.live="stockFinal" placeholder="Ej: 20">
+                                            @error('stockFinal') <small class="text-danger d-block">{{ $message }}</small> @enderror
+                                        </div>
+                                    </div>
+                                    @endif
+
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label for="stockMotivo" class="text-sm font-weight-bold">Motivo del ajuste</label>
+                                            <input type="text" id="stockMotivo" class="form-control form-control-sm" wire:model="stockMotivo" placeholder="Ej: Ajuste manual">
+                                            @error('stockMotivo') <small class="text-danger d-block">{{ $message }}</small> @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @if (isset($stockPreview) && $stockPreview !== '')
+                                <div class="alert alert-warning py-1 px-3 mb-2 mt-2 text-center text-sm">
+                                    Stock final proyectado: <strong>{{ $stockPreview }}</strong>
+                                </div>
+                                @endif
+
+                                <button type="button" class="btn btn-warning btn-sm btn-block mt-3 font-weight-bold" wire:click="applyStockCorrection">
+                                    <i class="fas fa-check mr-1"></i> Aplicar Ajuste
+                                </button>
                             </div>
                         </div>
+                        @endif
                         @endcan
 
 

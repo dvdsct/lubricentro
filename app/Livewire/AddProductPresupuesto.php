@@ -121,29 +121,12 @@ class AddProductPresupuesto extends Component
 
     public function codeBar()
     {
-
-
         if (strlen($this->codigoBarras) == 13) {
-            $producto = Producto::where('codigo_de_barras', $this->codigoBarras)->get();
-
-            $producto_id = $producto->first()->id;
-            $precio_venta = $producto->first()->precio_venta;
-
-            $i = PresupuestoItem::create([
-                'producto_id' => $producto_id,
-                'precio' => $precio_venta,
-                'estado' => '1',
-            ]);
-
-            ItemsXPresupuesto::create([
-                'presupuesto_id' => $this->presupuesto->id,
-                'presupuesto_item_id' => $i->id,
-                'estado' => '1',
-
-            ]);
-        } else {
-
-            $producto = Producto::find($this->codigoBarras);
+            $producto = Producto::where('codigo_de_barras', $this->codigoBarras)->first();
+            if (!$producto) {
+                $this->addError('codigoBarras', 'Producto no encontrado.');
+                return;
+            }
 
             $producto_id = $producto->id;
             $precio_venta = $producto->precio_venta;
@@ -158,8 +141,30 @@ class AddProductPresupuesto extends Component
                 'presupuesto_id' => $this->presupuesto->id,
                 'presupuesto_item_id' => $i->id,
                 'estado' => '1',
-
             ]);
+            $this->reset('codigoBarras');
+        } else {
+            $producto = Producto::find($this->codigoBarras);
+            if (!$producto) {
+                $this->addError('codigoBarras', 'Producto no encontrado.');
+                return;
+            }
+
+            $producto_id = $producto->id;
+            $precio_venta = $producto->precio_venta;
+
+            $i = PresupuestoItem::create([
+                'producto_id' => $producto_id,
+                'precio' => $precio_venta,
+                'estado' => '1',
+            ]);
+
+            ItemsXPresupuesto::create([
+                'presupuesto_id' => $this->presupuesto->id,
+                'presupuesto_item_id' => $i->id,
+                'estado' => '1',
+            ]);
+            $this->reset('codigoBarras');
         }
     }
 

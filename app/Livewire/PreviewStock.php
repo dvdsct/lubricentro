@@ -53,15 +53,28 @@ class PreviewStock extends Component
     public function addCantidad($id)
     {
         $p = Stock::find($id);
-        $p->update(
-            [
-                'estado' => '1',
-                'cantidad' => $this->cantidad
-            ]
-        );
+        if (!$p) return;
 
-        // $this->render();
+        $newCantidad = floatval($this->cantidad);
+        $oldCantidad = floatval($p->cantidad);
+        $delta = $newCantidad - $oldCantidad;
 
+        if ($delta !== 0.0) {
+            $stockService = app(\App\Services\StockService::class);
+            $sucursalId = $p->sucursal_id ?: 1;
+            $stockService->adjustStock($sucursalId, $p->producto_id, $delta, [
+                'motivo' => 'Ajuste rápido en lista de stock',
+                'operacion' => 'Ajuste manual',
+                'referencia_type' => 'Stock',
+                'referencia_id' => $p->id,
+            ]);
+        }
+
+        $p->update([
+            'estado' => '1',
+        ]);
+
+        $this->reset('cantidad');
     }
     public function editPStock($id)
     {
