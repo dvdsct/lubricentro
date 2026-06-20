@@ -68,6 +68,7 @@ class ProductoController extends Controller
             ],
             [
                 'cantidad' => $stockQty,
+                'cantidad_num' => $stockQty,
                 'estado' => '1',
             ]
         );

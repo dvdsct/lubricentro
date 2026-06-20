@@ -24,7 +24,7 @@ class PreviewStock extends Component
 
     // Historial
     public $showHistory = false;
-    public $historyMovements = [];
+    public $historyProductId;
     public $historyProductoDesc;
 
     // Filtros
@@ -121,8 +121,18 @@ class PreviewStock extends Component
             Log::debug('PreviewStock query build failed', ['message' => $e->getMessage()]);
         }
 
+        $historyMovements = collect();
+        if ($this->showHistory && $this->historyProductId) {
+            $historyMovements = StockMovement::where('producto_id', $this->historyProductId)
+                ->orderByDesc('created_at')
+                ->orderByDesc('id')
+                ->with('user')
+                ->paginate(5, ['*'], 'historyPage');
+        }
+
         return view('livewire.preview-stock', [
             'stock' => $stockQuery->paginate(10),
+            'historyMovements' => $historyMovements,
             'categorias' => $categorias,
             'subcategorias' => $subcategorias,
         ]);
@@ -136,19 +146,16 @@ class PreviewStock extends Component
         $p = Producto::find($productoId);
         $this->historyProductoDesc = $p?->descripcion;
 
-        $this->historyMovements = StockMovement::where('producto_id', $productoId)
-            ->orderByDesc('created_at')
-            ->limit(100)
-            ->with('user')
-            ->get()
-            ->toArray();
+        $this->historyProductId = $productoId;
+        $this->resetPage('historyPage');
         $this->showHistory = true;
     }
 
     public function closeHistory()
     {
         $this->showHistory = false;
-        $this->historyMovements = [];
+        $this->historyProductId = null;
         $this->historyProductoDesc = null;
+        $this->resetPage('historyPage');
     }
 }

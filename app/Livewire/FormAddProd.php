@@ -289,6 +289,7 @@ class FormAddProd extends Component
                 // Create initial stock record
                 $producto->stocks()->create([
                     'cantidad' => $stockQty,
+                    'cantidad_num' => $stockQty,
                     'sucursal_id' => 1, // Default branch ID
                     'estado' => 1 // Assuming 1 means active
                 ]);

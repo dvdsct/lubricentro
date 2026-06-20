@@ -20,6 +20,7 @@ class StockService
             'estado' => '1',
         ], [
             'cantidad' => 0,
+            'cantidad_num' => 0,
         ]);
     }
 
@@ -39,7 +40,7 @@ class StockService
      * Returns false if result would be negative (insufficient stock).
      * Returns the Stock model on success.
      */
-    public function adjustStock(int $sucursalId, int $productoId, int $delta, array $meta = []): Stock|false
+    public function adjustStock(int $sucursalId, int $productoId, float|int $delta, array $meta = []): Stock|false
     {
         return DB::transaction(function () use ($sucursalId, $productoId, $delta, $meta) {
             $row = Stock::where('sucursal_id', $sucursalId)
@@ -53,19 +54,22 @@ class StockService
                 $row = Stock::where('id', $row->id)->lockForUpdate()->first();
             }
 
-            $nuevo = intval($row->cantidad) + intval($delta);
-            if ($nuevo < 0) {
+            $nuevo = floatval($row->cantidad) + floatval($delta);
+            if ($nuevo < 0.0) {
                 return false;
             }
 
-            $anterior = intval($row->cantidad);
-            $row->update(['cantidad' => $nuevo]);
+            $anterior = floatval($row->cantidad);
+            $row->update([
+                'cantidad' => $nuevo,
+                'cantidad_num' => $nuevo,
+            ]);
 
             // Registrar movimiento
             StockMovement::create([
                 'producto_id' => $productoId,
                 'sucursal_id' => $sucursalId,
-                'delta' => intval($delta),
+                'delta' => floatval($delta),
                 'cantidad_anterior' => $anterior,
                 'cantidad_nueva' => $nuevo,
                 'motivo' => $meta['motivo'] ?? null,
@@ -75,7 +79,7 @@ class StockService
                 'user_id' => $meta['user_id'] ?? (auth()->id() ?? null),
                 'precio_unitario' => $meta['precio_unitario'] ?? null,
                 // Guardamos monto total con el mismo signo que el delta para facilitar visual
-                'monto_total' => $meta['monto_total'] ?? (isset($meta['precio_unitario']) ? (intval($delta) * floatval($meta['precio_unitario'])) : null),
+                'monto_total' => $meta['monto_total'] ?? (isset($meta['precio_unitario']) ? (floatval($delta) * floatval($meta['precio_unitario'])) : null),
             ]);
             return $row;
         });

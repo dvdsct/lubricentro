@@ -47,6 +47,9 @@
                             @endforelse
                         </tbody>
                     </table>
+                    <div class="mt-3">
+                        {{ $historyMovements->links() }}
+                    </div>
                 </div>
                 <div class="modal-footer clearfix">
                     <button type="button" class="btn btn-default" wire:click="closeHistory">Cerrar</button>
@@ -103,13 +106,15 @@
                 </thead>
                 <tbody>
                     @foreach ($stock as $p)
-                    @if ($p->cantidad == 0)
-                    <tr style="background-color: #f8d7da;">
-                        @elseif ($p->cantidad < $p->ideal)
-                        <tr style="background-color: #fff3cd;">
-                        @else
-                    <tr class="">
-                        @endif
+                    @php
+                        $rowStyle = '';
+                        if ($p->cantidad == 0) {
+                            $rowStyle = 'background-color: #f8d7da;';
+                        } elseif ($p->cantidad < $p->ideal) {
+                            $rowStyle = 'background-color: #fff3cd;';
+                        }
+                    @endphp
+                    <tr style="{{ $rowStyle }}" wire:key="stock-row-{{ $p->id }}">
 
 
                         <td>{{ $p->id }}</td>
