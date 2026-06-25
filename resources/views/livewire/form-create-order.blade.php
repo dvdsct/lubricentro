@@ -280,8 +280,8 @@
 
                     <div class="row px-3">
                         <h2> <span class="font-italic float-right badge bg-secondary">
-                                {{ $vehiculo->modelos->marcas->descripcion }}
-                                {{ $vehiculo->modelos->descripcion . ' - ' . $vehiculo->dominio }}
+                                {{ optional(optional($vehiculo->modelos)->marcas)->descripcion }}
+                                {{ optional($vehiculo->modelos)->descripcion . ' - ' . $vehiculo->dominio }}
                                 <!-- VARIABLES PARA MOSTRAR VECHICULO Y DOMINIO --></span> </h2>
 
                         <!-- BOTON PARA ELIMINAR VEHICULO SELECCIONADO -->
@@ -299,9 +299,9 @@
                         <div class="col-md-10">
                             <select class="form-control" aria-label="Default select example" wire:model='vehiculo' wire:change='selectVehiculo'>
                                 <option selected>Seleccionar vehiculo</option>
-                                @foreach ($cliente->vehiculos as $vc)
+                                @foreach ($vehiculos as $vc)
                                 <option value="{{ $vc->id }}">
-                                    {{ $vc->modelos->descripcion . ' - ' . $vc->dominio }}
+                                    {{ optional($vc->modelos)->descripcion . ' - ' . $vc->dominio }}
                                 </option>
                                 @endforeach
                             </select>

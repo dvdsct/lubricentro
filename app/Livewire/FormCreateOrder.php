@@ -207,14 +207,20 @@ class FormCreateOrder extends Component
 
     public function upPerson()
     {
-        $this->cliente = Cliente::find($this->cliente);
-        // dd($this->cliente);
+        $clientId = is_object($this->cliente) ? $this->cliente->id : $this->cliente;
+        $clientModel = Cliente::with('vehiculos.modelos.marcas')->find($clientId);
 
-        $this->nombre = $this->cliente->perfiles->personas->nombre ?? '';
-        $this->apellido = $this->cliente->perfiles->personas->apellido ?? '';
-        $this->dni = $this->cliente->perfiles->personas->DNI ?? '';
-        $this->fecha_nac = $this->cliente->perfiles->personas->fecha_nac ?? '';
-        $this->numero_telefono = $this->cliente->perfiles->personas->numero_telefono ?? '';
+        if ($clientModel) {
+            $this->cliente = $clientModel->id;
+            $this->nombre = $clientModel->perfiles->personas->nombre ?? '';
+            $this->apellido = $clientModel->perfiles->personas->apellido ?? '';
+            $this->dni = $clientModel->perfiles->personas->DNI ?? '';
+            $this->fecha_nac = $clientModel->perfiles->personas->fecha_nac ?? '';
+            $this->numero_telefono = $clientModel->perfiles->personas->numero_telefono ?? '';
+            $this->vehiculos = $clientModel->vehiculos;
+        } else {
+            $this->vehiculos = [];
+        }
     }
 
     public function addClient()
@@ -238,9 +244,11 @@ class FormCreateOrder extends Component
                 'persona_id' => $persona->id
             ]);
 
-            $this->cliente = Cliente::create([
+            $newClient = Cliente::create([
                 'perfil_id' => $perfil->id,
             ]);
+            $this->cliente = $newClient->id;
+            $this->vehiculos = [];
             $this->formperson = false;
             $this->formVehiculo = true;
         } else {
@@ -298,10 +306,16 @@ class FormCreateOrder extends Component
             'estado' => 1
         ]);
 
+        $clientId = is_object($this->cliente) ? $this->cliente->id : $this->cliente;
         VehiculosXCliente::firstOrCreate([
-            'cliente_id' => $this->cliente->id,
+            'cliente_id' => $clientId,
             'vehiculo_id' => $this->vehiculo->id
         ]);
+
+        $clientModel = Cliente::with('vehiculos.modelos.marcas')->find($clientId);
+        if ($clientModel) {
+            $this->vehiculos = $clientModel->vehiculos;
+        }
 
         $this->vehiculo = $this->vehiculo->id;
         $this->formVehiculo = false;
@@ -322,7 +336,7 @@ class FormCreateOrder extends Component
 
     public function addTurno()
     {
-
+        $clientId = is_object($this->cliente) ? $this->cliente->id : $this->cliente;
         if (is_object($this->vehiculo)) {
             
             $this->vehiculo = $this->vehiculo->id;
@@ -334,7 +348,7 @@ class FormCreateOrder extends Component
             $sucursalId = optional($this->caja->first())->sucursal_id ?? optional(Caja::first())->sucursal_id ?? 1;
             $this->orden = Orden::create([
 
-                'cliente_id' => $this->cliente->id,
+                'cliente_id' => $clientId,
                 'vehiculo_id' => $this->vehiculo,
                 'sucursal_id' => $sucursalId,
                 'motivo' => '1',
@@ -346,7 +360,7 @@ class FormCreateOrder extends Component
             $sucursalId = optional($this->caja->first())->sucursal_id ?? optional(Caja::first())->sucursal_id ?? 1;
             $this->orden = Orden::create([
 
-                'cliente_id' => $this->cliente->id,
+                'cliente_id' => $clientId,
                 'vehiculo_id' => $this->vehiculo,
                 'motivo' => '2',
                 'sucursal_id' => $sucursalId,
@@ -431,6 +445,7 @@ class FormCreateOrder extends Component
             if ($this->cliente != null) {
 
                 $this->reset('cliente', 'nombre', 'apellido', 'dni', 'fecha_nac', 'numero_telefono');
+                $this->vehiculos = [];
                 $this->formperson = false;
             } else {
                 $this->formperson = true;
@@ -456,17 +471,33 @@ class FormCreateOrder extends Component
     #[On('presupuesto')]
     public function dePresupuesto($id)
     {
-
         $this->presupuesto = Presupuesto::find($id);
-        $this->formperson =false;
-        $this->selecedtVehiculo= false;
+        $this->formperson = false;
+        $this->formVehiculo = false;
 
-        $this->cliente = $this->presupuesto->clientes;
+        $clientModel = Cliente::with('vehiculos.modelos.marcas')->find($this->presupuesto->cliente_id);
 
-        $this->nombre = $this->cliente->perfiles->personas->nombre ?? '';
-        $this->apellido = $this->cliente->perfiles->personas->apellido ?? '';
-        $this->dni = $this->cliente->perfiles->personas->DNI ?? '';
-        $this->fecha_nac = $this->cliente->perfiles->personas->fecha_nac ?? '';
+        if ($clientModel) {
+            $this->cliente = $clientModel->id;
+            $this->nombre = $clientModel->perfiles->personas->nombre ?? '';
+            $this->apellido = $clientModel->perfiles->personas->apellido ?? '';
+            $this->dni = $clientModel->perfiles->personas->DNI ?? '';
+            $this->fecha_nac = $clientModel->perfiles->personas->fecha_nac ?? '';
+            $this->numero_telefono = $clientModel->perfiles->personas->numero_telefono ?? '';
+            $this->vehiculos = $clientModel->vehiculos;
+        } else {
+            $this->cliente = null;
+            $this->vehiculos = [];
+        }
+
+        if ($this->presupuesto && $this->presupuesto->vehiculo_id) {
+            $this->vehiculo = $this->presupuesto->vehiculo_id;
+            $this->selectVehiculo();
+        } else {
+            $this->vehiculo = null;
+            $this->selecedtVehiculo = false;
+        }
+
         $this->openModal();
     }
 
@@ -497,14 +528,13 @@ class FormCreateOrder extends Component
             's_btnLub',
             'btnLav',
             's_btnLav',
-
         );
+        $this->vehiculos = [];
         $this->modal = false;
         $this->formperson = false;
+        $this->formVehiculo = false;
         $this->fecha = $this->fechaSelected;
         $this->horario = Carbon::now()->format('H:i');
-
-        // $this->reset('nombre');
     }
 
 

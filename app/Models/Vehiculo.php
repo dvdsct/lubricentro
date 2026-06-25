@@ -44,7 +44,7 @@ class Vehiculo extends Model
 
     public function presupuestos()
     {
-        return $this->belongsTo(Presupuesto::class);
+        return $this->hasMany(Presupuesto::class, 'vehiculo_id');
     }
 
 

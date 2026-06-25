@@ -17,6 +17,8 @@ use App\Http\Controllers\TarjetaController;
 use App\Models\PagoCtacte;
 use App\Livewire\DescuentosCrud;
 use App\Livewire\Clientes;
+use App\Livewire\ClientProfile;
+use App\Livewire\VehicleProfile;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +37,8 @@ Route::get('/', function () {
 
 // Página pública de clientes (listado de órdenes con búsqueda por cliente/patente)
 Route::get('/clientes', Clientes::class)->name('clientes.index');
+Route::get('/clientes/{cliente}/perfil', ClientProfile::class)->name('clientes.perfil');
+Route::get('/vehiculos/{vehiculo}/perfil', VehicleProfile::class)->name('vehiculos.perfil');
 
 // Ruta para la orden limpia (accesible sin autenticación)
 Route::get('/pdf/orden-limpia', 'App\Http\Controllers\PDFController@generateOrdenLimpia')->name('pdf.orden.limpia');
