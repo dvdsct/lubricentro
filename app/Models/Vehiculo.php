@@ -37,9 +37,9 @@ class Vehiculo extends Model
     {
         return $this->belongsTo(ModeloVehiculo::class, 'modelo_vehiculo_id');
     }
-    public function ordenes()
+    public function ordens()
     {
-        return $this->belongsTo(Orden::class);
+        return $this->hasMany(Orden::class, 'vehiculo_id');
     }
 
     public function presupuestos()
