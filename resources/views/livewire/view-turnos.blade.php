@@ -1,4 +1,19 @@
-<div>
+<div x-data="{
+    confirmCancel(ordenId) {
+        Swal.fire({
+            title: '¿Cancelar orden?',
+            text: 'Se devolverá el stock de los ítems no provisionales y la orden quedará cancelada.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, cancelar',
+            cancelButtonText: 'No, volver'
+        }).then((result) => {
+            if (result.isConfirmed && ordenId) {
+                $wire.cancelTurn(ordenId);
+            }
+        });
+    }
+}" @confirm-cancel.window="confirmCancel($event.detail.ordenId)">
 
     <div class="row d-flex justify-content-between" style="padding-top: 20px;">
         <div class="col-md-3 d-flex align-items-center">
@@ -213,22 +228,6 @@
 
     @livewire('form-create-order', ['fecha' => $fecha])
 
-    <script>
-        window.addEventListener('confirm-cancel', (e) => {
-            const ordenId = e.detail?.ordenId;
-            Swal.fire({
-                title: '¿Cancelar orden?',
-                text: 'Se devolverá el stock de los ítems no provisionales y la orden quedará cancelada.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, cancelar',
-                cancelButtonText: 'No, volver'
-            }).then((result) => {
-                if (result.isConfirmed && ordenId) {
-                    $wire.cancelTurn(ordenId);
-                }
-            });
-        });
-    </script>
+
 
 </div>

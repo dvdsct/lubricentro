@@ -81,35 +81,40 @@ class ViewTurnos extends Component
 
 
     public function cancelTurn($orden){
-        // dd($orden);
         $turno = Orden::find($orden);
+        if (!$turno) {
+            return;
+        }
 
-        \DB::transaction(function () use ($turno) {
-            foreach ($turno->items as $i) {
-                $p = Producto::find($i->producto_id);
-                if ($p && !$p->es_provisional) {
-                    $sucursalId = $turno->sucursal_id ?: 1;
-                    $service = app(StockService::class);
-                    $result = $service->adjustStock($sucursalId, $p->id, $i->cantidad, [
-                        'motivo' => 'Cancelación de orden',
-                        'operacion' => 'Cancelación de orden',
-                        'referencia_type' => 'Orden',
-                        'referencia_id' => $turno->id,
-                    ]);
-                    if ($result === false) {
-                        $this->dispatch('nonstock');
-                        return;
+        try {
+            \DB::transaction(function () use ($turno) {
+                foreach ($turno->items as $i) {
+                    $p = Producto::find($i->producto_id);
+                    if ($p && !$p->es_provisional) {
+                        $sucursalId = $turno->sucursal_id ?: 1;
+                        $service = app(StockService::class);
+                        $result = $service->adjustStock($sucursalId, $p->id, $i->cantidad, [
+                            'motivo' => 'Cancelación de orden',
+                            'operacion' => 'Cancelación de orden',
+                            'referencia_type' => 'Orden',
+                            'referencia_id' => $turno->id,
+                        ]);
+                        if ($result === false) {
+                            throw new \Exception('Stock adjustment failed.');
+                        }
                     }
                 }
-            }
 
-            $turno->update([
-                'estado' => '700'
-            ]);
-        });
+                $turno->update([
+                    'estado' => '700'
+                ]);
+            });
+        } catch (\Exception $e) {
+            $this->dispatch('nonstock');
+            return;
+        }
+
         $this->des = 'disabled';
-
-
     }
 
 
