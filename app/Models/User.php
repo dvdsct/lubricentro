@@ -61,5 +61,11 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
-
+    /**
+     * Relación con asistencias.
+     */
+    public function asistencias()
+    {
+        return $this->hasMany(Asistencia::class);
+    }
 }

@@ -19,6 +19,7 @@ use App\Livewire\DescuentosCrud;
 use App\Livewire\Clientes;
 use App\Livewire\ClientProfile;
 use App\Livewire\VehicleProfile;
+use App\Http\Controllers\AsistenciaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,8 +77,43 @@ Route::middleware([
         ->name('descuentos.index')
         ->middleware('can:adminCajas');
 
-    Route::get('register', function () {
-        return view('Lubricentro.Turnos.index');
-    });
+    // Rutas protegidas de Asistencia para Empleados
+    Route::get('/asistencia/registrar', [AsistenciaController::class, 'registrar'])->name('asistencia.registrar');
+    Route::post('/asistencia/store', [AsistenciaController::class, 'store'])->name('asistencia.store');
+    Route::post('/asistencia/logout', [AsistenciaController::class, 'logout'])->name('asistencia.logout');
 
+    // Rutas protegidas de Asistencia para el Administrador
+    Route::get('/asistencia/control', [AsistenciaController::class, 'control'])
+        ->name('asistencia.control')
+        ->middleware('can:adminCajas');
+    Route::get('/asistencia/download-qr', [AsistenciaController::class, 'downloadQr'])
+        ->name('asistencia.download-qr')
+        ->middleware('can:adminCajas');
+    Route::get('/asistencia/empleado/{user}', [AsistenciaController::class, 'empleadoPerfil'])
+        ->name('asistencia.empleado-perfil')
+        ->middleware('can:adminCajas');
+});
+
+// Rutas públicas de Asistencia (acceso mediante escaneo de QR)
+Route::get('/asistencia/scan', [AsistenciaController::class, 'scan'])->name('asistencia.scan');
+Route::post('/asistencia/verify-pin', [AsistenciaController::class, 'verifyPin'])->name('asistencia.verify-pin');
+
+// Rutas públicas de Registro (protegidas por PIN)
+Route::get('/register/pin', [AsistenciaController::class, 'registerPin'])->name('register.pin');
+Route::post('/register/pin', [AsistenciaController::class, 'verifyRegisterPin'])->name('register.verify-pin');
+
+Route::get('/register', function () {
+    if (session('register_pin_verified') !== true) {
+        return redirect()->route('register.pin');
+    }
+    return app(\Laravel\Fortify\Http\Controllers\RegisteredUserController::class)->create(request());
+})->name('register');
+
+Route::post('/register', function (Illuminate\Http\Request $request) {
+    if (session('register_pin_verified') !== true) {
+        abort(403, 'Acceso no autorizado.');
+    }
+    $response = app(\Laravel\Fortify\Http\Controllers\RegisteredUserController::class)->store($request);
+    session()->forget('register_pin_verified');
+    return $response;
 });

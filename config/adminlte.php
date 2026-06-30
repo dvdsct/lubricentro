@@ -380,6 +380,12 @@ return [
             'icon' => 'fas fa-percent',
             'can'  => 'adminCajas',
         ],
+        [
+            'text' => 'Asistencia de Empleados',
+            'url'  => 'asistencia/control',
+            'icon' => 'fas fa-clock',
+            'can'  => 'adminCajas',
+        ],
 
     ],
 

@@ -22,6 +22,9 @@ class ViewTurnos extends Component
     public $orden;
     public $des;
     public $reprogramar =false;
+    public $vista = 'diario';
+    public $semanaLav = [];
+    public $semanaLub = [];
 
     public function mount()
     {
@@ -67,16 +70,21 @@ class ViewTurnos extends Component
     #[On('change-day')]
     public function change_day()
     {
-
+        if ($this->vista === 'semanal') {
+            $this->fecha = Carbon::parse($this->fecha)->addWeek()->format('Y-m-d');
+        } else {
             $this->fecha = Carbon::parse($this->fecha)->addDay()->format('Y-m-d');
-
+        }
     }
 
     #[On('change-yes')]
     public function change_yes()
     {
+        if ($this->vista === 'semanal') {
+            $this->fecha = Carbon::parse($this->fecha)->subWeek()->format('Y-m-d');
+        } else {
             $this->fecha = Carbon::parse($this->fecha)->subDay()->format('Y-m-d');
-
+        }
     }
 
 
@@ -121,41 +129,92 @@ class ViewTurnos extends Component
     #[On('added-turn')]
     public function render()
     {
-        $this->turnlav = Orden::select(
-            'ordens.*',
-            'clientes.id as cliente_id',
-            'perfils.id as perfil_id',
-            'personas.id as persona_id',
-            'personas.apellido',
-            'personas.DNI'
-        )
-            ->leftJoin('clientes', 'ordens.cliente_id', '=', 'clientes.id')
-            ->leftJoin('perfils', 'clientes.perfil_id', '=', 'perfils.id')
-            ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
-            ->whereColumn('perfils.id', 'clientes.perfil_id')
-            ->whereColumn('personas.id', 'perfils.persona_id')
-            ->whereDate('ordens.fecha_turno', $this->fecha)
-            ->where('motivo', '1')
-            ->where('ordens.estado', '!=', '555')
-            ->get();
+        $startOfWeek = Carbon::parse($this->fecha)->startOfWeek();
+        $endOfWeek = Carbon::parse($this->fecha)->endOfWeek();
+        $semanaRango = $startOfWeek->locale('es')->isoFormat('DD/MM') . ' al ' . $endOfWeek->locale('es')->isoFormat('DD/MM');
 
-        $this->turnlub = Orden::select(
-            'ordens.*',
-            'clientes.id as cliente_id',
-            'perfils.id as perfil_id',
-            'personas.id as persona_id',
-            'personas.apellido',
-            'personas.DNI'
-        )
-            ->leftJoin('clientes', 'ordens.cliente_id', '=', 'clientes.id')
-            ->leftJoin('perfils', 'clientes.perfil_id', '=', 'perfils.id')
-            ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
-            ->whereColumn('perfils.id', 'clientes.perfil_id')
-            ->whereColumn('personas.id', 'perfils.persona_id')
-            ->whereDate('ordens.fecha_turno', $this->fecha)
-            ->where('motivo', '2')
-            ->where('ordens.estado', '!=', '555')
-            ->get();
- return view('livewire.view-turnos');
+        if ($this->vista === 'semanal') {
+            // Obtener todos los turnos de la semana para Lavadero
+            $this->turnlav = Orden::select(
+                'ordens.*',
+                'clientes.id as cliente_id',
+                'perfils.id as perfil_id',
+                'personas.id as persona_id',
+                'personas.apellido',
+                'personas.DNI'
+            )
+                ->leftJoin('clientes', 'ordens.cliente_id', '=', 'clientes.id')
+                ->leftJoin('perfils', 'clientes.perfil_id', '=', 'perfils.id')
+                ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
+                ->whereColumn('perfils.id', 'clientes.perfil_id')
+                ->whereColumn('personas.id', 'perfils.persona_id')
+                ->whereBetween('ordens.fecha_turno', [$startOfWeek->copy()->startOfDay(), $endOfWeek->copy()->endOfDay()])
+                ->where('motivo', '1')
+                ->where('ordens.estado', '!=', '555')
+                ->orderBy('ordens.fecha_turno', 'asc')
+                ->orderBy('ordens.horario', 'asc')
+                ->get();
+
+            // Obtener todos los turnos de la semana para Lubricentro
+            $this->turnlub = Orden::select(
+                'ordens.*',
+                'clientes.id as cliente_id',
+                'perfils.id as perfil_id',
+                'personas.id as persona_id',
+                'personas.apellido',
+                'personas.DNI'
+            )
+                ->leftJoin('clientes', 'ordens.cliente_id', '=', 'clientes.id')
+                ->leftJoin('perfils', 'clientes.perfil_id', '=', 'perfils.id')
+                ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
+                ->whereColumn('perfils.id', 'clientes.perfil_id')
+                ->whereColumn('personas.id', 'perfils.persona_id')
+                ->whereBetween('ordens.fecha_turno', [$startOfWeek->copy()->startOfDay(), $endOfWeek->copy()->endOfDay()])
+                ->where('motivo', '2')
+                ->where('ordens.estado', '!=', '555')
+                ->orderBy('ordens.fecha_turno', 'asc')
+                ->orderBy('ordens.horario', 'asc')
+                ->get();
+        } else {
+            // Vista diaria original
+            $this->turnlav = Orden::select(
+                'ordens.*',
+                'clientes.id as cliente_id',
+                'perfils.id as perfil_id',
+                'personas.id as persona_id',
+                'personas.apellido',
+                'personas.DNI'
+            )
+                ->leftJoin('clientes', 'ordens.cliente_id', '=', 'clientes.id')
+                ->leftJoin('perfils', 'clientes.perfil_id', '=', 'perfils.id')
+                ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
+                ->whereColumn('perfils.id', 'clientes.perfil_id')
+                ->whereColumn('personas.id', 'perfils.persona_id')
+                ->whereDate('ordens.fecha_turno', $this->fecha)
+                ->where('motivo', '1')
+                ->where('ordens.estado', '!=', '555')
+                ->get();
+
+            $this->turnlub = Orden::select(
+                'ordens.*',
+                'clientes.id as cliente_id',
+                'perfils.id as perfil_id',
+                'personas.id as persona_id',
+                'personas.apellido',
+                'personas.DNI'
+            )
+                ->leftJoin('clientes', 'ordens.cliente_id', '=', 'clientes.id')
+                ->leftJoin('perfils', 'clientes.perfil_id', '=', 'perfils.id')
+                ->leftJoin('personas', 'perfils.persona_id', '=', 'personas.id')
+                ->whereColumn('perfils.id', 'clientes.perfil_id')
+                ->whereColumn('personas.id', 'perfils.persona_id')
+                ->whereDate('ordens.fecha_turno', $this->fecha)
+                ->where('motivo', '2')
+                ->where('ordens.estado', '!=', '555')
+                ->get();
+        }
+
+
+        return view('livewire.view-turnos', compact('semanaRango'));
     }
 }
