@@ -32,53 +32,27 @@
                         <table class="table table-hover text-nowrap">
                             <thead>
                                 <tr>
-                                    <th>Nro Orden</th>
                                     <th>Cliente</th>
-                                    <th>Vehículo</th>
-                                    <th>Patente</th>
+                                    <th>Acción</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($orders as $o)
                                     <tr>
                                         <td class="align-middle">
-                                            {{ $o->id }}
-                                            <a href="{{ route('ordenes.show', $o->id) }}" class="btn btn-xs btn-primary ml-2" title="Ver orden">
-                                                <i class="fas fa-external-link-alt"></i>
-                                            </a>
+                                            @php
+                                                $persona = optional(optional($o->clientes)->perfiles)->personas;
+                                                $nombre = $persona->nombre ?? '';
+                                                $apellido = $persona->apellido ?? '';
+                                            @endphp
+                                            {{ trim($nombre . ' ' . $apellido) ?: '-' }}
                                         </td>
                                         <td class="align-middle">
                                             @if ($o->cliente_id)
-                                                <a href="{{ route('clientes.perfil', $o->cliente_id) }}" class="btn btn-sm btn-link p-0 mr-1 text-primary" title="Ver perfil de cliente">
-                                                    <i class="fas fa-user-circle text-md"></i>
-                                                </a>
+                                                <a href="{{ route('clientes.perfil', $o->cliente_id) }}" class="btn btn-sm btn-primary">INFO</a>
+                                            @else
+                                                <button class="btn btn-sm btn-secondary" disabled>INFO</button>
                                             @endif
-                                            {{ optional(optional($o->clientes)->perfiles)->personas->nombre }}
-                                            {{ optional(optional($o->clientes)->perfiles)->personas->apellido }}
-                                            @php $dni = optional(optional($o->clientes)->perfiles)->personas->DNI ?? null; @endphp
-                                            @if($dni)
-                                                <span class="text-muted">(DNI: {{ $dni }})</span>
-                                            @endif
-                                        </td>
-                                        <td class="align-middle">
-                                            @if ($o->vehiculo_id)
-                                                <a href="{{ route('vehiculos.perfil', $o->vehiculo_id) }}" class="btn btn-sm btn-link p-0 mr-1 text-info" title="Ver perfil de vehículo">
-                                                    <i class="fas fa-car text-md"></i>
-                                                </a>
-                                            @endif
-                                            @php 
-                                                $veh = $o->vehiculos; 
-                                                $modelo = optional($veh)->modelos; 
-                                                $marca = optional($modelo)->marcas;
-                                            @endphp
-                                            {{ optional($marca)->descripcion ?? '' }}
-                                            {{ optional($modelo)->descripcion ?? '' }}
-                                            {{ optional($veh)->año ?? '' }}
-                                        </td>
-                                        <td class="align-middle">
-                                            <span class="badge bg-orange text-white">
-                                                {{ optional($o->vehiculos)->dominio ?? '-' }}
-                                            </span>
                                         </td>
                                     </tr>
                                 @endforeach

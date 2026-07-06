@@ -98,22 +98,23 @@ Route::middleware([
 Route::get('/asistencia/scan', [AsistenciaController::class, 'scan'])->name('asistencia.scan');
 Route::post('/asistencia/verify-pin', [AsistenciaController::class, 'verifyPin'])->name('asistencia.verify-pin');
 
-// Rutas públicas de Registro (protegidas por PIN)
-Route::get('/register/pin', [AsistenciaController::class, 'registerPin'])->name('register.pin');
-Route::post('/register/pin', [AsistenciaController::class, 'verifyRegisterPin'])->name('register.verify-pin');
+// Rutas públicas de Registro deshabilitadas.
+// El registro ya no está disponible; solo se permite login.
+// Route::get('/register/pin', [AsistenciaController::class, 'registerPin'])->name('register.pin');
+// Route::post('/register/pin', [AsistenciaController::class, 'verifyRegisterPin'])->name('register.verify-pin');
 
-Route::get('/register', function () {
-    if (session('register_pin_verified') !== true) {
-        return redirect()->route('register.pin');
-    }
-    return app(\Laravel\Fortify\Http\Controllers\RegisteredUserController::class)->create(request());
-})->name('register');
+// Route::get('/register', function () {
+//     if (session('register_pin_verified') !== true) {
+//         return redirect()->route('register.pin');
+//     }
+//     return app(\Laravel\Fortify\Http\Controllers\RegisteredUserController::class)->create(request());
+// })->name('register');
 
-Route::post('/register', function (Illuminate\Http\Request $request) {
-    if (session('register_pin_verified') !== true) {
-        abort(403, 'Acceso no autorizado.');
-    }
-    $response = app(\Laravel\Fortify\Http\Controllers\RegisteredUserController::class)->store($request);
-    session()->forget('register_pin_verified');
-    return $response;
-});
+// Route::post('/register', function (Illuminate\Http\Request $request) {
+//     if (session('register_pin_verified') !== true) {
+//         abort(403, 'Acceso no autorizado.');
+//     }
+//     $response = app(\Laravel\Fortify\Http\Controllers\RegisteredUserController::class)->store($request);
+//     session()->forget('register_pin_verified');
+//     return $response;
+// });
