@@ -1,19 +1,4 @@
-<div x-data="{
-    confirmCancel(ordenId) {
-        Swal.fire({
-            title: '¿Cancelar orden?',
-            text: 'Se devolverá el stock de los ítems no provisionales y la orden quedará cancelada.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, cancelar',
-            cancelButtonText: 'No, volver'
-        }).then((result) => {
-            if (result.isConfirmed && ordenId) {
-                $wire.cancelTurn(ordenId);
-            }
-        });
-    }
-}" @confirm-cancel.window="confirmCancel($event.detail.ordenId)">
+<div>
 
     <div class="row d-flex justify-content-between align-items-center" style="padding-top: 20px;">
         <div class="col-md-3 d-flex align-items-center">
@@ -112,8 +97,8 @@
                                                 <a type="button" class="btn btn-info btn-sm"
                                                     href="{{ route('ordenes.show', $t->id) }}"><strong> IR </strong></a>
                                                 <button type="button" class="btn btn-danger btn-sm"
-                                                    wire:click="$dispatch('confirm-cancel', { ordenId: {{ $t->id }} })"><i
-                                                        class="fas fa-trash"></i></button>
+                                                    wire:click="cancelTurn({{ $t->id }})"
+                                                    wire:confirm="¿Cancelar esta orden? Se devolverá el stock de los ítems no provisionales y la orden quedará cancelada."><i class="fas fa-trash"></i></button>
                                                 <button type="button" class="btn btn-danger btn-sm"
                                                     wire:click="reprTurn('{{ $t->id }}')"><i class="far fa-clock"></i></button>
                                             </div>
@@ -183,8 +168,8 @@
                                                 <a type="button" class="btn btn-info btn-sm"
                                                     href="{{ route('ordenes.show', $t->id) }}"><strong> IR </strong></a>
                                                 <button type="button" class="btn btn-danger btn-sm"
-                                                    wire:click="$dispatch('confirm-cancel', { ordenId: {{ $t->id }} })"><i
-                                                        class="fas fa-trash"></i></button>
+                                                    wire:click="cancelTurn({{ $t->id }})"
+                                                    wire:confirm="¿Cancelar esta orden? Se devolverá el stock de los ítems no provisionales y la orden quedará cancelada."><i class="fas fa-trash"></i></button>
                                                 <button type="button" class="btn btn-danger btn-sm"
                                                     wire:click="reprTurn('{{ $t->id }}')"><i class="far fa-clock"></i></button>
                                             </div>
@@ -259,7 +244,5 @@
 
 
     @livewire('form-create-order', ['fecha' => $fecha])
-
-
 
 </div>
