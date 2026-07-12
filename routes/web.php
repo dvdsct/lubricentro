@@ -81,10 +81,14 @@ Route::middleware([
     Route::get('/asistencia/registrar', [AsistenciaController::class, 'registrar'])->name('asistencia.registrar');
     Route::post('/asistencia/store', [AsistenciaController::class, 'store'])->name('asistencia.store');
     Route::post('/asistencia/logout', [AsistenciaController::class, 'logout'])->name('asistencia.logout');
+    Route::get('/mi-asistencia', [AsistenciaController::class, 'miHistorial'])->name('asistencia.mi-historial');
 
     // Rutas protegidas de Asistencia para el Administrador
     Route::get('/asistencia/control', [AsistenciaController::class, 'control'])
         ->name('asistencia.control')
+        ->middleware('can:adminCajas');
+    Route::get('/asistencia/empleados', [AsistenciaController::class, 'empleadosIndex'])
+        ->name('asistencia.empleados')
         ->middleware('can:adminCajas');
     Route::get('/asistencia/download-qr', [AsistenciaController::class, 'downloadQr'])
         ->name('asistencia.download-qr')

@@ -322,13 +322,13 @@ return [
             'text' => 'Presupuestos',
             'url'  => 'presupuesto',
             'icon' => 'fas fa-money-check-alt',
-            // Sin 'can': visible para todos; el acceso real lo controla el middleware
+            'can'  => 'ver-menu-general',
         ],
         [
             'text' => 'Clientes',
             'url'  => 'clientes',
             'icon' => 'fas fa-users',
-            // Público: accesible para todos
+            'can'  => 'ver-menu-general',
         ],
         [
             'text' => 'Stock',
@@ -341,8 +341,7 @@ return [
             'text' => 'Productos',
             'url'  => 'productos',
             'icon' => 'fas fa-shopping-cart',
-            // 'can' => 'stock',
-
+            'can'  => 'ver-menu-general',
         ],
         [
             'text' => 'Cuenta Corriente',
@@ -356,8 +355,7 @@ return [
             'text' => 'Pedidos Proveedores',
             'url'  => 'pedidos',
             'icon' => 'fa fa-truck',
-            // 'can' => 'stock',
-
+            'can'  => 'ver-menu-general',
         ],
         [
             'text' => 'Proveedores',
@@ -385,6 +383,18 @@ return [
             'url'  => 'asistencia/control',
             'icon' => 'fas fa-clock',
             'can'  => 'adminCajas',
+        ],
+        [
+            'text' => 'Empleados',
+            'url'  => 'asistencia/empleados',
+            'icon' => 'fas fa-users-cog',
+            'can'  => 'adminCajas',
+        ],
+        [
+            'text' => 'Mi Historial de Asistencia',
+            'url'  => 'mi-asistencia',
+            'icon' => 'fas fa-user-clock',
+            'can'  => 'ver-historial-personal',
         ],
 
     ],

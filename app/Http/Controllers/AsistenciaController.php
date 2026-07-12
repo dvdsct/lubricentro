@@ -181,6 +181,15 @@ class AsistenciaController extends Controller
     }
 
     /**
+     * Panel del administrador para listar todos los empleados.
+     */
+    public function empleadosIndex()
+    {
+        $users = User::with(['roles', 'ultimaAsistencia'])->paginate(15);
+        return view('asistencia.empleados', compact('users'));
+    }
+
+    /**
      * Muestra el perfil de asistencia del empleado con estadísticas de horas y el historial completo de turnos.
      */
     public function empleadoPerfil(User $user)
@@ -190,16 +199,21 @@ class AsistenciaController extends Controller
             ->get();
 
         $historial = [];
-        $totalHoursMonth = 0;
+        $totalHoursDay = 0;
         $totalHoursWeek = 0;
+        $totalHoursMonth = 0;
 
-        $startOfWeek = Carbon::now()->startOfWeek();
-        $startOfMonth = Carbon::now()->startOfMonth();
+        $startOfDay = Carbon::now()->setTimezone('America/Argentina/Buenos_Aires')->startOfDay();
+        $startOfWeek = Carbon::now()->setTimezone('America/Argentina/Buenos_Aires')->startOfWeek();
+        $startOfMonth = Carbon::now()->setTimezone('America/Argentina/Buenos_Aires')->startOfMonth();
 
         $count = count($records);
         for ($i = 0; $i < $count; $i++) {
             $current = $records[$i];
             
+            // Convert to timezone for correct comparison
+            $fechaHora = $current->fecha_hora->setTimezone('America/Argentina/Buenos_Aires');
+
             if ($current->tipo === 'entrada') {
                 $entrada = $current;
                 $salida = null;
@@ -213,10 +227,13 @@ class AsistenciaController extends Controller
                     $durationSeconds = $entrada->fecha_hora->diffInSeconds($salida->fecha_hora);
                     $hours = $durationSeconds / 3600;
                     
-                    if ($entrada->fecha_hora->greaterThanOrEqualTo($startOfWeek)) {
+                    if ($fechaHora->greaterThanOrEqualTo($startOfDay)) {
+                        $totalHoursDay += $hours;
+                    }
+                    if ($fechaHora->greaterThanOrEqualTo($startOfWeek)) {
                         $totalHoursWeek += $hours;
                     }
-                    if ($entrada->fecha_hora->greaterThanOrEqualTo($startOfMonth)) {
+                    if ($fechaHora->greaterThanOrEqualTo($startOfMonth)) {
                         $totalHoursMonth += $hours;
                     }
                     
@@ -249,10 +266,96 @@ class AsistenciaController extends Controller
 
         $historial = array_reverse($historial);
 
+        $diaFormateado = floor($totalHoursDay) . 'h ' . round(($totalHoursDay - floor($totalHoursDay)) * 60) . 'm';
         $semanaFormateada = floor($totalHoursWeek) . 'h ' . round(($totalHoursWeek - floor($totalHoursWeek)) * 60) . 'm';
         $mesFormateado = floor($totalHoursMonth) . 'h ' . round(($totalHoursMonth - floor($totalHoursMonth)) * 60) . 'm';
 
-        return view('asistencia.empleado', compact('user', 'historial', 'semanaFormateada', 'mesFormateado'));
+        return view('asistencia.empleado', compact('user', 'historial', 'diaFormateado', 'semanaFormateada', 'mesFormateado'));
+    }
+
+    /**
+     * Muestra el historial de asistencia del empleado autenticado con estadísticas diarias, semanales y mensuales.
+     */
+    public function miHistorial()
+    {
+        $user = Auth::user();
+        $records = Asistencia::where('user_id', $user->id)
+            ->orderBy('fecha_hora', 'asc')
+            ->get();
+
+        $historial = [];
+        $totalHoursDay = 0;
+        $totalHoursWeek = 0;
+        $totalHoursMonth = 0;
+
+        $startOfDay = Carbon::now()->setTimezone('America/Argentina/Buenos_Aires')->startOfDay();
+        $startOfWeek = Carbon::now()->setTimezone('America/Argentina/Buenos_Aires')->startOfWeek();
+        $startOfMonth = Carbon::now()->setTimezone('America/Argentina/Buenos_Aires')->startOfMonth();
+
+        $count = count($records);
+        for ($i = 0; $i < $count; $i++) {
+            $current = $records[$i];
+            
+            // Convert to timezone for correct comparison
+            $fechaHora = $current->fecha_hora->setTimezone('America/Argentina/Buenos_Aires');
+
+            if ($current->tipo === 'entrada') {
+                $entrada = $current;
+                $salida = null;
+                
+                if (isset($records[$i + 1]) && $records[$i + 1]->tipo === 'salida') {
+                    $salida = $records[$i + 1];
+                    $i++;
+                }
+                
+                if ($salida) {
+                    $durationSeconds = $entrada->fecha_hora->diffInSeconds($salida->fecha_hora);
+                    $hours = $durationSeconds / 3600;
+                    
+                    if ($fechaHora->greaterThanOrEqualTo($startOfDay)) {
+                        $totalHoursDay += $hours;
+                    }
+                    if ($fechaHora->greaterThanOrEqualTo($startOfWeek)) {
+                        $totalHoursWeek += $hours;
+                    }
+                    if ($fechaHora->greaterThanOrEqualTo($startOfMonth)) {
+                        $totalHoursMonth += $hours;
+                    }
+                    
+                    $mins = round(($durationSeconds % 3600) / 60);
+                    $hrs = floor($durationSeconds / 3600);
+                    
+                    if ($mins === 60) {
+                        $hrs += 1;
+                        $mins = 0;
+                    }
+                    
+                    $duracionFormateada = "{$hrs}h {$mins}m";
+                } else {
+                    $duracionFormateada = 'En curso / Pendiente';
+                }
+                
+                $historial[] = [
+                    'entrada' => $entrada,
+                    'salida' => $salida,
+                    'duracion' => $duracionFormateada,
+                ];
+            } else {
+                $historial[] = [
+                    'entrada' => null,
+                    'salida' => $current,
+                    'duracion' => 'Sin entrada registrada',
+                ];
+            }
+        }
+
+        $historial = array_reverse($historial);
+
+        $diaFormateado = floor($totalHoursDay) . 'h ' . round(($totalHoursDay - floor($totalHoursDay)) * 60) . 'm';
+        $semanaFormateada = floor($totalHoursWeek) . 'h ' . round(($totalHoursWeek - floor($totalHoursWeek)) * 60) . 'm';
+        $mesFormateado = floor($totalHoursMonth) . 'h ' . round(($totalHoursMonth - floor($totalHoursMonth)) * 60) . 'm';
+
+        return view('asistencia.mi-historial', compact('user', 'historial', 'diaFormateado', 'semanaFormateada', 'mesFormateado'));
     }
 
     /**

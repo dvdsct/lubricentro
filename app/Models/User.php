@@ -68,4 +68,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Asistencia::class);
     }
+
+    /**
+     * Relación con la última asistencia del usuario.
+     */
+    public function ultimaAsistencia()
+    {
+        return $this->hasOne(Asistencia::class)->latestOfMany();
+    }
 }

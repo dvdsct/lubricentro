@@ -1,17 +1,12 @@
 @extends('adminlte::page')
 
-@section('title', 'Perfil de Asistencia - ' . $user->name)
+@section('title', 'Mi Historial de Asistencia - ' . $user->name)
 
 @section('content_header')
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h1><strong>PERFIL DE ASISTENCIA</strong></h1>
-            <p class="text-muted mb-0">Detalles y estadísticas de ingreso/egreso para: <strong>{{ $user->name }}</strong></p>
-        </div>
-        <div>
-            <a href="{{ route('asistencia.empleados') }}" class="btn btn-outline-secondary font-weight-bold">
-                <i class="fas fa-arrow-left mr-1"></i> Volver a empleados
-            </a>
+            <h1><strong>MI HISTORIAL DE ASISTENCIA</strong></h1>
+            <p class="text-muted mb-0">Tus estadísticas de ingreso/egreso y horas trabajadas</p>
         </div>
     </div>
 @stop
@@ -24,7 +19,7 @@
             <div class="card-body box-profile">
                 <div class="text-center mb-3">
                     <div class="d-inline-flex justify-content-center align-items-center bg-primary rounded-circle shadow-sm" style="width: 80px; height: 80px;">
-                        <span class="text-white font-weight-bold text-2xl" style="font-size: 2.2rem;">
+                        <span class="text-white font-weight-bold" style="font-size: 2.2rem;">
                             {{ strtoupper(substr($user->name, 0, 1)) }}
                         </span>
                     </div>
@@ -33,16 +28,30 @@
                 <h3 class="profile-username text-center font-weight-bold text-dark mb-1">{{ $user->name }}</h3>
                 <p class="text-muted text-center text-sm mb-4">{{ $user->email }}</p>
 
-                <ul class="list-group list-group-unbordered mb-3">
+                <ul class="list-group list-group-unbordered mb-4">
                     <li class="list-group-item d-flex justify-content-between">
                         <b>Registros Totales</b> 
                         <span class="badge badge-secondary py-1 px-2 font-weight-bold">{{ count($historial) * 2 }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <b>Rol</b> 
+                        <span class="badge badge-info py-1 px-2 font-weight-bold">
+                            {{ ucwords($user->roles->first()?->name ?? 'Empleado') }}
+                        </span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between">
                         <b>Miembro desde</b> 
                         <span class="text-secondary font-mono">{{ $user->created_at->format('d/m/Y') }}</span>
                     </li>
                 </ul>
+
+                <!-- Botón de Cerrar Sesión en el Perfil -->
+                <form method="POST" action="{{ route('logout') }}" class="w-full">
+                    @csrf
+                    <button type="submit" class="btn btn-danger btn-block font-weight-bold shadow-sm">
+                        <i class="fas fa-sign-out-alt mr-1"></i> Cerrar Sesión
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -56,7 +65,7 @@
                     <span class="info-box-icon bg-warning elevation-1 text-white"><i class="fas fa-clock"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text text-xs uppercase font-weight-bold text-secondary">Horas de Hoy</span>
-                        <span class="info-box-number text-2xl font-mono text-dark">{{ $diaFormateado }}</span>
+                        <span class="info-box-number text-xl font-mono text-dark">{{ $diaFormateado }}</span>
                         <span class="progress-description text-xs text-muted">Jornada de hoy</span>
                     </div>
                 </div>
@@ -67,7 +76,7 @@
                     <span class="info-box-icon bg-info elevation-1"><i class="fas fa-calendar-week"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text text-xs uppercase font-weight-bold text-secondary">Horas esta Semana</span>
-                        <span class="info-box-number text-2xl font-mono text-dark">{{ $semanaFormateada }}</span>
+                        <span class="info-box-number text-xl font-mono text-dark">{{ $semanaFormateada }}</span>
                         <span class="progress-description text-xs text-muted">Desde el lunes actual</span>
                     </div>
                 </div>
@@ -78,8 +87,8 @@
                     <span class="info-box-icon bg-success elevation-1"><i class="fas fa-calendar-alt"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text text-xs uppercase font-weight-bold text-secondary">Horas este Mes</span>
-                        <span class="info-box-number text-2xl font-mono text-dark">{{ $mesFormateado }}</span>
-                        <span class="progress-description text-xs text-muted">Mes en curso ({{ now()->locale('es')->monthName }})</span>
+                        <span class="info-box-number text-xl font-mono text-dark">{{ $mesFormateado }}</span>
+                        <span class="progress-description text-xs text-muted">Mes en curso</span>
                     </div>
                 </div>
             </div>
@@ -88,7 +97,7 @@
         <!-- Tabla Histórica de Turnos -->
         <div class="card card-outline card-secondary shadow mt-2">
             <div class="card-header">
-                <h3 class="card-title font-weight-bold"><i class="fas fa-business-time mr-2 text-secondary"></i>Historial de Turnos y Horas Trabajadas</h3>
+                <h3 class="card-title font-weight-bold"><i class="fas fa-business-time mr-2 text-secondary"></i>Tu Historial de Fichajes</h3>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -161,7 +170,7 @@
                             @empty
                                 <tr>
                                     <td colspan="3" class="text-center py-4 text-muted font-weight-bold">
-                                        No hay registros de turnos de asistencia para este empleado.
+                                        No tienes registros de turnos de asistencia.
                                     </td>
                                 </tr>
                             @endforelse
