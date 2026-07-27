@@ -96,43 +96,62 @@ class ViewTurnos extends Component
 
         try {
             \DB::transaction(function () use ($turno) {
-                $itemIds = $turno->items->pluck('id')->toArray();
+                $sucursalId = $turno->sucursal_id ?: 1;
+                $service = app(StockService::class);
+                $itemsByProduct = $turno->items->groupBy('producto_id');
 
-                foreach ($turno->items as $i) {
-                    $p = Producto::find($i->producto_id);
-                    if ($p && !$p->es_provisional) {
-                        $sucursalId = $turno->sucursal_id ?: 1;
+                foreach ($itemsByProduct as $productoId => $items) {
+                    $p = Producto::find($productoId);
+                    if (!$p || $p->es_provisional) {
+                        continue;
+                    }
 
-                        // Consultar la cantidad de stock real que fue restada previamente para esta orden o sus ítems
-                        $descontado = \App\Models\StockMovement::where('producto_id', $p->id)
-                            ->where('sucursal_id', $sucursalId)
-                            ->where(function ($query) use ($turno, $itemIds) {
-                                $query->where(function ($q) use ($turno) {
-                                    $q->where('referencia_type', 'Orden')
-                                      ->where('referencia_id', $turno->id);
-                                })
-                                ->orWhere(function ($q) use ($itemIds) {
-                                    $q->where('referencia_type', 'Item')
-                                      ->whereIn('referencia_id', $itemIds);
-                                });
+                    $itemIds = $items->pluck('id')->toArray();
+
+                    // Consultar el delta neto real que fue restado previamente para esta orden o sus ítems
+                    $netDelta = \App\Models\StockMovement::where('producto_id', $p->id)
+                        ->where(function ($query) use ($turno, $itemIds) {
+                            $query->where(function ($q) use ($turno) {
+                                $q->where('referencia_type', 'Orden')
+                                  ->where('referencia_id', $turno->id);
                             })
-                            ->where('delta', '<', 0)
-                            ->sum('delta');
+                            ->orWhere(function ($q) use ($itemIds) {
+                                $q->where('referencia_type', 'Item')
+                                  ->whereIn('referencia_id', $itemIds);
+                            });
+                        })
+                        ->sum('delta');
 
-                        $cantidadADevolver = abs(floatval($descontado));
+                    $movementsExist = \App\Models\StockMovement::where('producto_id', $p->id)
+                        ->where(function ($query) use ($turno, $itemIds) {
+                            $query->where(function ($q) use ($turno) {
+                                $q->where('referencia_type', 'Orden')
+                                  ->where('referencia_id', $turno->id);
+                            })
+                            ->orWhere(function ($q) use ($itemIds) {
+                                $q->where('referencia_type', 'Item')
+                                  ->whereIn('referencia_id', $itemIds);
+                            });
+                        })
+                        ->exists();
 
-                        // Solo devolvemos si realmente hubo descuentos previos
-                        if ($cantidadADevolver > 0.0) {
-                            $service = app(StockService::class);
-                            $result = $service->adjustStock($sucursalId, $p->id, $cantidadADevolver, [
-                                'motivo' => 'Cancelación de orden',
-                                'operacion' => 'Cancelación de orden',
-                                'referencia_type' => 'Orden',
-                                'referencia_id' => $turno->id,
-                            ]);
-                            if ($result === false) {
-                                throw new \Exception('Stock adjustment failed.');
-                            }
+                    if ($movementsExist) {
+                        // Solo devolver si el neto acumulado es negativo (se restó más de lo que se devolvió)
+                        $cantidadADevolver = $netDelta < 0 ? abs(floatval($netDelta)) : 0.0;
+                    } else {
+                        // Si no hay registro explícito de movimientos, se devuelve la suma de cantidades de los ítems
+                        $cantidadADevolver = floatval($items->sum('cantidad'));
+                    }
+
+                    if ($cantidadADevolver > 0.0) {
+                        $result = $service->adjustStock($sucursalId, $p->id, $cantidadADevolver, [
+                            'motivo' => 'Cancelación de orden',
+                            'operacion' => 'Cancelación de orden',
+                            'referencia_type' => 'Orden',
+                            'referencia_id' => $turno->id,
+                        ]);
+                        if ($result === false) {
+                            throw new \Exception('Stock adjustment failed.');
                         }
                     }
                 }

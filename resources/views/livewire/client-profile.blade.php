@@ -1,6 +1,15 @@
 <div>
     <div class="row">
         <div class="col-12">
+            @if (session()->has('message'))
+                <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+                    <i class="fas fa-check-circle mr-1"></i> {{ session('message') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            @endif
+
             <a href="{{ route('clientes.index') }}" class="btn btn-outline-secondary mb-3">
                 <i class="fas fa-arrow-left mr-1"></i> Volver a Clientes
             </a>
@@ -34,6 +43,10 @@
                             </a>
                         </li>
                     </ul>
+
+                    <button wire:click="openEditModal" class="btn btn-primary btn-block">
+                        <i class="fas fa-user-edit mr-1"></i> Modificar Datos
+                    </button>
                 </div>
             </div>
         </div>
@@ -88,4 +101,73 @@
             </div>
         </div>
     </div>
+
+    <!-- MODAL MODIFICAR DATOS CLIENTE -->
+    @if ($showEditModal)
+        <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);" wire:keydown.escape="closeEditModal">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">
+                            <i class="fas fa-user-edit mr-2"></i>Modificar Datos del Cliente
+                        </h5>
+                        <button type="button" class="close text-white" wire:click="closeEditModal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form wire:submit.prevent="updateClient">
+                        <div class="modal-body">
+                            <div class="form-group mb-3">
+                                <label for="nombre" class="font-weight-bold">Nombre <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('nombre') is-invalid @enderror" id="nombre" wire:model="nombre" placeholder="Ingrese nombre">
+                                @error('nombre')
+                                    <span class="invalid-feedback">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="apellido" class="font-weight-bold">Apellido <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('apellido') is-invalid @enderror" id="apellido" wire:model="apellido" placeholder="Ingrese apellido">
+                                @error('apellido')
+                                    <span class="invalid-feedback">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="dni" class="font-weight-bold">DNI</label>
+                                <input type="text" class="form-control @error('dni') is-invalid @enderror" id="dni" wire:model="dni" placeholder="Ingrese DNI">
+                                @error('dni')
+                                    <span class="invalid-feedback">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="numero_telefono" class="font-weight-bold">Teléfono</label>
+                                <input type="text" class="form-control @error('numero_telefono') is-invalid @enderror" id="numero_telefono" wire:model="numero_telefono" placeholder="Ingrese teléfono">
+                                @error('numero_telefono')
+                                    <span class="invalid-feedback">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="fecha_nac" class="font-weight-bold">Fecha de Nacimiento</label>
+                                <input type="date" class="form-control @error('fecha_nac') is-invalid @enderror" id="fecha_nac" wire:model="fecha_nac">
+                                @error('fecha_nac')
+                                    <span class="invalid-feedback">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-secondary" wire:click="closeEditModal">
+                                <i class="fas fa-times mr-1"></i> Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save mr-1"></i> Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>

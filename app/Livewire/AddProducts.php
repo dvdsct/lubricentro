@@ -73,7 +73,7 @@ class AddProducts extends Component
 
         // Chequear stock solo cuando el delta requiere más unidades y el producto NO es provisional
         if ($delta > 0 && !$p->es_provisional) {
-            $sucursalId = 1; // Usar sucursal por defecto
+            $sucursalId = $this->orden->sucursal_id ?: 1;
             $availableStock = $stockService->getAvailableStock($sucursalId, $p->id);
             if ($availableStock < $delta) {
                 return $this->dispatch('nonstock');
@@ -90,7 +90,7 @@ class AddProducts extends Component
 
             // Actualizar stock solo si el producto NO es provisional
             if ($delta !== 0 && !$p->es_provisional) {
-                $sucursalId = 1; // Usar sucursal por defecto
+                $sucursalId = $this->orden->sucursal_id ?: 1;
                 $result = $stockService->adjustStock($sucursalId, $p->id, -$delta, [
                     'motivo' => 'Modificación de cantidad en orden',
                     'operacion' => $delta > 0 ? 'Carga en orden' : 'Reducción en orden',
@@ -174,7 +174,7 @@ class AddProducts extends Component
 
         // Producto normal: si no es provisional, verificar stock disponible
         if (!$this->producto->es_provisional) {
-            $sucursalId = 1;
+            $sucursalId = $this->orden->sucursal_id ?: 1;
             $availableStock = $stockService->getAvailableStock($sucursalId, $this->producto->id);
             if ($availableStock <= 0) {
                 return $this->dispatch('nonstock');
@@ -204,7 +204,7 @@ class AddProducts extends Component
 
         // Solo devolver stock si NO es provisional
         if (!$producto->es_provisional) {
-            $sucursalId = 1; // Usar sucursal por defecto
+            $sucursalId = $this->orden->sucursal_id ?: 1;
             $stockService = app(StockService::class);
 
             // Devolver stock (delta positivo)
