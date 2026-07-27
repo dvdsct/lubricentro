@@ -38,6 +38,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\ReadOnlySpectator::class,
             \App\Http\Middleware\RestrictEmpleados::class,
+            \App\Http\Middleware\RestrictCliente::class,
         ],
 
         'api' => [

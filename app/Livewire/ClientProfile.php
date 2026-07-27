@@ -19,9 +19,83 @@ class ClientProfile extends Component
     public $numero_telefono;
     public $fecha_nac;
 
+    public $showUserModal = false;
+    public $userEmail;
+    public $userPassword;
+
     public function mount(Cliente $cliente)
     {
-        $this->cliente = $cliente->load(['perfiles.personas', 'vehiculos.modelos.marcas']);
+        $this->cliente = $cliente->load(['perfiles.personas', 'perfiles.users', 'vehiculos.modelos.marcas']);
+    }
+
+    public function openUserModal()
+    {
+        $existingUser = optional($this->cliente->perfiles)->users;
+        $this->userEmail = $existingUser->email ?? '';
+        $this->userPassword = '';
+        $this->resetValidation();
+        $this->showUserModal = true;
+    }
+
+    public function closeUserModal()
+    {
+        $this->showUserModal = false;
+        $this->resetValidation();
+    }
+
+    public function createWebAccess()
+    {
+        $existingUser = optional($this->cliente->perfiles)->users;
+        $userId = $existingUser->id ?? null;
+
+        $this->validate([
+            'userEmail' => 'required|email|max:255|unique:users,email,' . ($userId ?: 'NULL'),
+            'userPassword' => $userId ? 'nullable|string|min:6' : 'required|string|min:6',
+        ], [
+            'userEmail.required' => 'El correo electrónico es obligatorio.',
+            'userEmail.email' => 'Ingrese un correo electrónico válido.',
+            'userEmail.unique' => 'Este correo electrónico ya está registrado en el sistema.',
+            'userPassword.required' => 'La contraseña es obligatoria.',
+            'userPassword.min' => 'La contraseña debe tener al menos 6 caracteres.',
+        ]);
+
+        $persona = optional($this->cliente->perfiles)->personas;
+        $fullName = trim(($persona->nombre ?? 'Cliente') . ' ' . ($persona->apellido ?? ''));
+
+        if ($existingUser) {
+            $existingUser->email = $this->userEmail;
+            if (!empty($this->userPassword)) {
+                $existingUser->password = \Illuminate\Support\Facades\Hash::make($this->userPassword);
+            }
+            $existingUser->save();
+            $user = $existingUser;
+        } else {
+            $user = \App\Models\User::create([
+                'name' => $fullName ?: 'Cliente',
+                'email' => $this->userEmail,
+                'password' => \Illuminate\Support\Facades\Hash::make($this->userPassword),
+            ]);
+        }
+
+        // Asignar rol de cliente (asegurando que el rol exista)
+        $roleCliente = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'cliente']);
+        if (!$user->hasRole($roleCliente)) {
+            $user->assignRole($roleCliente);
+        }
+
+        // Vincular user_id a perfil
+        $perfil = $this->cliente->perfiles;
+        if (!$perfil) {
+            $perfil = Perfil::create(['persona_id' => $persona->id ?? null, 'user_id' => $user->id]);
+            $this->cliente->update(['perfil_id' => $perfil->id]);
+        } else {
+            $perfil->update(['user_id' => $user->id]);
+        }
+
+        $this->cliente->load(['perfiles.personas', 'perfiles.users', 'vehiculos.modelos.marcas']);
+        $this->showUserModal = false;
+
+        session()->flash('message', 'Acceso web del cliente guardado exitosamente.');
     }
 
     public function openEditModal()

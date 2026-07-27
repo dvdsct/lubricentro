@@ -76,4 +76,20 @@ class User extends Authenticatable
     {
         return $this->hasOne(Asistencia::class)->latestOfMany();
     }
+
+    /**
+     * Relación con Perfil.
+     */
+    public function perfil()
+    {
+        return $this->hasOne(Perfil::class, 'user_id');
+    }
+
+    /**
+     * Relación con Cliente a través de Perfil.
+     */
+    public function cliente()
+    {
+        return $this->hasOneThrough(Cliente::class, Perfil::class, 'user_id', 'perfil_id');
+    }
 }

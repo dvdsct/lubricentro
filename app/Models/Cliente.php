@@ -39,4 +39,9 @@ class Cliente extends Model
     {
         return $this->hasMany(Presupuesto::class);
     }
+
+    public function user()
+    {
+        return $this->hasOneThrough(User::class, Perfil::class, 'id', 'id', 'perfil_id', 'user_id');
+    }
 }

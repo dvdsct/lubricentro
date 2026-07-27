@@ -10,9 +10,8 @@ class Perfil extends Model
     use HasFactory;
 
     protected $fillable = [
-
-        'persona_id'
-
+        'persona_id',
+        'user_id',
     ];
 
     public function personas(){
@@ -37,7 +36,7 @@ class Perfil extends Model
 
     public function users(){
 
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function proveedores(){

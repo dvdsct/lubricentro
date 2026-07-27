@@ -42,10 +42,26 @@
                                 {{ optional(optional($cliente->perfiles)->personas)->fecha_nac ? \Carbon\Carbon::parse($cliente->perfiles->personas->fecha_nac)->format('d/m/Y') : 'No registrada' }}
                             </a>
                         </li>
+                        <li class="list-group-item">
+                            <b>Acceso Web</b>
+                            <span class="float-right">
+                                @if (optional(optional($cliente->perfiles)->users)->email)
+                                    <span class="badge bg-success" title="{{ optional($cliente->perfiles->users)->email }}">
+                                        <i class="fas fa-check-circle mr-1"></i> {{ optional($cliente->perfiles->users)->email }}
+                                    </span>
+                                @else
+                                    <span class="badge bg-secondary">Sin acceso</span>
+                                @endif
+                            </span>
+                        </li>
                     </ul>
 
-                    <button wire:click="openEditModal" class="btn btn-primary btn-block">
+                    <button wire:click="openEditModal" class="btn btn-primary btn-block mb-2">
                         <i class="fas fa-user-edit mr-1"></i> Modificar Datos
+                    </button>
+
+                    <button wire:click="openUserModal" class="btn btn-outline-info btn-block">
+                        <i class="fas fa-key mr-1"></i> {{ optional(optional($cliente->perfiles)->users)->email ? 'Gestionar Acceso Web' : 'Crear Acceso Web' }}
                     </button>
                 </div>
             </div>
@@ -163,6 +179,57 @@
                             </button>
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save mr-1"></i> Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <!-- MODAL CREAR/GESTIONAR ACCESO WEB CLIENTE -->
+    @if ($showUserModal)
+        <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);" wire:keydown.escape="closeUserModal">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-info text-white">
+                        <h5 class="modal-title">
+                            <i class="fas fa-key mr-2"></i>Acceso Web del Cliente
+                        </h5>
+                        <button type="button" class="close text-white" wire:click="closeUserModal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form wire:submit.prevent="createWebAccess">
+                        <div class="modal-body">
+                            <p class="text-muted small">
+                                Genere o actualice las credenciales con las cuales el cliente podrá iniciar sesión en el portal web para consultar sus turnos, vehículos e historial.
+                            </p>
+
+                            <div class="form-group mb-3">
+                                <label for="userEmail" class="font-weight-bold">Correo Electrónico (Login) <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control @error('userEmail') is-invalid @enderror" id="userEmail" wire:model="userEmail" placeholder="cliente@correo.com">
+                                @error('userEmail')
+                                    <span class="invalid-feedback">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="userPassword" class="font-weight-bold">
+                                    Contraseña {{ optional(optional($cliente->perfiles)->users)->id ? '(dejar en blanco para conservar actual)' : '*' }}
+                                </label>
+                                <input type="password" class="form-control @error('userPassword') is-invalid @enderror" id="userPassword" wire:model="userPassword" placeholder="******">
+                                @error('userPassword')
+                                    <span class="invalid-feedback">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-secondary" wire:click="closeUserModal">
+                                <i class="fas fa-times mr-1"></i> Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-info">
+                                <i class="fas fa-save mr-1"></i> Guardar Acceso Web
                             </button>
                         </div>
                     </form>

@@ -18,6 +18,7 @@ use App\Models\PagoCtacte;
 use App\Livewire\DescuentosCrud;
 use App\Livewire\Clientes;
 use App\Livewire\ClientProfile;
+use App\Livewire\ClientPortal;
 use App\Livewire\VehicleProfile;
 use App\Http\Controllers\AsistenciaController;
 
@@ -33,6 +34,9 @@ use App\Http\Controllers\AsistenciaController;
 */
 
 Route::get('/', function () {
+    if (auth()->check() && auth()->user()->hasRole('cliente')) {
+        return redirect()->route('portal.cliente');
+    }
     return redirect('venta');
 });
 
@@ -50,8 +54,14 @@ Route::middleware([
     'verified',
 ])->group(function () {
     Route::get('/dashboard', function () {
+        if (auth()->user()->hasRole('cliente')) {
+            return redirect()->route('portal.cliente');
+        }
         return view('dashboard');
     })->name('dashboard');
+
+    // Portal exclusivo de Clientes
+    Route::get('/mi-cuenta', ClientPortal::class)->name('portal.cliente');
 
     Route::resource('dash', DashboardController::class);
     Route::resource('productos',ProductoController::class);
