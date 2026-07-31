@@ -1,4 +1,13 @@
 <div>
+    @if (session()->has('message'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle mr-1"></i> {{ session('message') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
+
     <div class="row">
         <div class="col-12">
             @php
@@ -11,7 +20,7 @@
         </div>
         
         <div class="col-md-4">
-            <div class="card card-info card-outline">
+            <div class="card card-info card-outline shadow-sm">
                 <div class="card-body box-profile">
                     <div class="text-center mb-3">
                         <i class="fas fa-car fa-5x text-info"></i>
@@ -51,13 +60,17 @@
                             </li>
                         @endif
                     </ul>
+
+                    <button wire:click="openEditModal" class="btn btn-info btn-block">
+                        <i class="fas fa-edit mr-1"></i> Modificar Datos
+                    </button>
                 </div>
             </div>
         </div>
         
         <div class="col-md-8">
             <!-- HISTORIAL DE TURNOS Y ÓRDENES -->
-            <div class="card">
+            <div class="card shadow-sm">
                 <div class="card-header bg-info text-white">
                     <h4 class="card-title m-0"><strong>Historial de Turnos y Órdenes</strong></h4>
                 </div>
@@ -133,7 +146,7 @@
             </div>
 
             <!-- HISTORIAL DE PRESUPUESTOS -->
-            <div class="card mt-4">
+            <div class="card mt-4 shadow-sm">
                 <div class="card-header bg-warning text-dark">
                     <h4 class="card-title m-0"><strong>Historial de Presupuestos</strong></h4>
                 </div>
@@ -188,4 +201,93 @@
             </div>
         </div>
     </div>
+
+    <!-- MODAL EDITAR VEHÍCULO -->
+    @if ($showEditModal)
+        <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);" wire:keydown.escape="closeEditModal">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-info text-white">
+                        <h5 class="modal-title">
+                            <i class="fas fa-car mr-2"></i>Modificar Datos del Vehículo
+                        </h5>
+                        <button type="button" class="close text-white" wire:click="closeEditModal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form wire:submit.prevent="updateVehicle">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="dominio" class="font-weight-bold">Patente / Dominio <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control text-uppercase @error('dominio') is-invalid @enderror" id="dominio" wire:model="dominio" placeholder="Ej: AA123CD">
+                                    @error('dominio')
+                                        <span class="invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="año" class="font-weight-bold">Año</label>
+                                    <input type="number" class="form-control @error('año') is-invalid @enderror" id="año" wire:model="año" placeholder="Ej: 2022">
+                                    @error('año')
+                                        <span class="invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="marca_vehiculo_id" class="font-weight-bold">Marca</label>
+                                    <select class="form-control @error('marca_vehiculo_id') is-invalid @enderror" id="marca_vehiculo_id" wire:model.live="marca_vehiculo_id">
+                                        <option value="">-- Seleccionar Marca --</option>
+                                        @foreach ($marcas as $m)
+                                            <option value="{{ $m->id }}">{{ $m->descripcion }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('marca_vehiculo_id')
+                                        <span class="invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="modelo_vehiculo_id" class="font-weight-bold">Modelo</label>
+                                    <select class="form-control @error('modelo_vehiculo_id') is-invalid @enderror" id="modelo_vehiculo_id" wire:model="modelo_vehiculo_id">
+                                        <option value="">-- Seleccionar Modelo --</option>
+                                        @foreach ($modelos as $mod)
+                                            <option value="{{ $mod->id }}">{{ $mod->descripcion }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('modelo_vehiculo_id')
+                                        <span class="invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="color" class="font-weight-bold">Color</label>
+                                    <input type="text" class="form-control @error('color') is-invalid @enderror" id="color" wire:model="color" placeholder="Ej: Blanco, Gris Plata">
+                                    @error('color')
+                                        <span class="invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-6 form-group mb-3">
+                                    <label for="version" class="font-weight-bold">Versión</label>
+                                    <input type="text" class="form-control @error('version') is-invalid @enderror" id="version" wire:model="version" placeholder="Ej: 1.6 MSI Highline">
+                                    @error('version')
+                                        <span class="invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-secondary" wire:click="closeEditModal">
+                                <i class="fas fa-times mr-1"></i> Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-info">
+                                <i class="fas fa-save mr-1"></i> Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
