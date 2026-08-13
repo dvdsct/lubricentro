@@ -5,15 +5,27 @@
             <h4 class="text-dark font-weight-bold mb-2">
                 <i class="fas fa-chart-pie mr-2 text-primary"></i>Panel de Control de Facturación
             </h4>
-            <div class="d-flex align-items-center mb-2">
-                <span class="mr-2 text-muted font-weight-bold"><i class="fas fa-filter mr-1"></i>Período:</span>
-                <select class="form-control custom-select shadow-sm" style="width: 200px; border-radius: 8px; border: 1px solid #ced4da;" wire:model.live="period">
-                    <option value="today">Hoy</option>
-                    <option value="this_week">Esta Semana</option>
-                    <option value="this_month">Este Mes</option>
-                    <option value="this_year">Este Año</option>
-                    <option value="all_time">Histórico (Todo)</option>
-                </select>
+            <div class="d-flex align-items-center flex-wrap mb-2" style="gap: 10px;">
+                <div class="d-flex align-items-center">
+                    <span class="mr-2 text-muted font-weight-bold"><i class="fas fa-filter mr-1"></i>Período:</span>
+                    <select class="form-control custom-select shadow-sm" style="width: 180px; border-radius: 8px; border: 1px solid #ced4da;" wire:model.live="period">
+                        <option value="today">Hoy</option>
+                        <option value="this_week">Esta Semana</option>
+                        <option value="this_month">Este Mes</option>
+                        <option value="this_year">Este Año</option>
+                        <option value="custom">Rango de fechas</option>
+                        <option value="all_time">Histórico (Todo)</option>
+                    </select>
+                </div>
+                
+                @if($period === 'custom')
+                    <div class="d-flex align-items-center flex-wrap" style="gap: 8px;">
+                        <span class="text-muted font-weight-bold ml-md-2">Desde:</span>
+                        <input type="date" class="form-control shadow-sm" style="width: 145px; border-radius: 8px; border: 1px solid #ced4da;" wire:model.live="startDate">
+                        <span class="text-muted font-weight-bold">Hasta:</span>
+                        <input type="date" class="form-control shadow-sm" style="width: 145px; border-radius: 8px; border: 1px solid #ced4da;" wire:model.live="endDate">
+                    </div>
+                @endif
             </div>
         </div>
     </div>

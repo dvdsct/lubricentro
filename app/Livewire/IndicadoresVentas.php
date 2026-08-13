@@ -11,7 +11,9 @@ use Carbon\Carbon;
 
 class IndicadoresVentas extends Component
 {
-    public $period = 'this_month'; // 'today', 'this_week', 'this_month', 'this_year', 'all_time'
+    public $period = 'this_month'; // 'today', 'this_week', 'this_month', 'this_year', 'custom', 'all_time'
+    public $startDate;
+    public $endDate;
 
     // KPIs
     public $totalRevenue = 0;
@@ -41,6 +43,9 @@ class IndicadoresVentas extends Component
 
     public function mount()
     {
+        // Rango de fechas por defecto: desde inicio de mes hasta hoy
+        $this->startDate = Carbon::now()->startOfMonth()->toDateString();
+        $this->endDate = Carbon::now()->toDateString();
         $this->calculateStats();
     }
 
@@ -51,6 +56,28 @@ class IndicadoresVentas extends Component
             'labels' => $this->chartLabels,
             'data' => $this->chartData,
         ]);
+    }
+
+    public function updatedStartDate()
+    {
+        if ($this->period === 'custom') {
+            $this->calculateStats();
+            $this->dispatch('update-chart', [
+                'labels' => $this->chartLabels,
+                'data' => $this->chartData,
+            ]);
+        }
+    }
+
+    public function updatedEndDate()
+    {
+        if ($this->period === 'custom') {
+            $this->calculateStats();
+            $this->dispatch('update-chart', [
+                'labels' => $this->chartLabels,
+                'data' => $this->chartData,
+            ]);
+        }
     }
 
     public function calculateStats()
@@ -71,6 +98,10 @@ class IndicadoresVentas extends Component
             case 'this_year':
                 $start = Carbon::now()->startOfYear();
                 break;
+            case 'custom':
+                $start = $this->startDate ? Carbon::parse($this->startDate)->startOfDay() : Carbon::now()->startOfMonth()->startOfDay();
+                $end = $this->endDate ? Carbon::parse($this->endDate)->endOfDay() : Carbon::now()->endOfDay();
+                break;
             case 'all_time':
             default:
                 $start = null;
@@ -86,10 +117,10 @@ class IndicadoresVentas extends Component
 
         // 1. Calculate main KPIs
         $this->totalRevenue = $pagos->where('in_out', 'in')->sum(function ($p) {
-            return (float) $p->total;
+            return abs((float) $p->total);
         });
         $this->totalExpenses = $pagos->where('in_out', 'out')->sum(function ($p) {
-            return (float) $p->total;
+            return abs((float) $p->total);
         });
         $this->totalBalance = $this->totalRevenue - $this->totalExpenses;
 
@@ -103,23 +134,23 @@ class IndicadoresVentas extends Component
 
         // 2. Payment breakdowns
         $this->pagoEfectivo = $pagos->where('in_out', 'in')->where('medio_pago_id', 2)->sum(function ($p) {
-            return (float) $p->total;
+            return abs((float) $p->total);
         });
         $this->pagoTransferencia = $pagos->where('in_out', 'in')->where('medio_pago_id', 5)->sum(function ($p) {
-            return (float) $p->total;
+            return abs((float) $p->total);
         });
         $this->pagoCtaCte = $pagos->where('in_out', 'in')->where('medio_pago_id', 4)->sum(function ($p) {
-            return (float) $p->total;
+            return abs((float) $p->total);
         });
         $this->pagoCheque = $pagos->where('in_out', 'in')->where('medio_pago_id', 3)->sum(function ($p) {
-            return (float) $p->total;
+            return abs((float) $p->total);
         });
 
         $debitoId = MedioPago::where('descripcion', 'like', '%Debito%')->value('id') ?? 6;
         $this->pagoTarjeta = $pagos->where('in_out', 'in')->filter(function ($p) use ($debitoId) {
             return in_array($p->medio_pago_id, [1, $debitoId]);
         })->sum(function ($p) {
-            return (float) $p->total;
+            return abs((float) $p->total);
         });
 
         // 3. Sector breakdowns
@@ -131,10 +162,10 @@ class IndicadoresVentas extends Component
         })->count();
 
         $this->ordersLubricentroTotal = $pagos->where('in_out', 'in')->where('concepto', 'Lubricentro')->sum(function ($p) {
-            return (float) $p->total;
+            return abs((float) $p->total);
         });
         $this->ordersLavaderoTotal = $pagos->where('in_out', 'in')->where('concepto', 'Lavadero')->sum(function ($p) {
-            return (float) $p->total;
+            return abs((float) $p->total);
         });
 
         // 4. Top credit/debit cards
@@ -164,7 +195,7 @@ class IndicadoresVentas extends Component
                 $data[] = $ingresos->filter(function ($p) use ($h) {
                     return Carbon::parse($p->created_at)->hour == $h;
                 })->sum(function ($p) {
-                    return (float) $p->total;
+                    return abs((float) $p->total);
                 });
             }
         } elseif ($this->period == 'this_week') {
@@ -176,7 +207,7 @@ class IndicadoresVentas extends Component
                 $data[] = $ingresos->filter(function ($p) use ($num) {
                     return Carbon::parse($p->created_at)->dayOfWeekIso == $num;
                 })->sum(function ($p) {
-                    return (float) $p->total;
+                    return abs((float) $p->total);
                 });
             }
         } elseif ($this->period == 'this_month') {
@@ -186,7 +217,7 @@ class IndicadoresVentas extends Component
                 $data[] = $ingresos->filter(function ($p) use ($d) {
                     return Carbon::parse($p->created_at)->day == $d;
                 })->sum(function ($p) {
-                    return (float) $p->total;
+                    return abs((float) $p->total);
                 });
             }
         } elseif ($this->period == 'this_year') {
@@ -199,8 +230,53 @@ class IndicadoresVentas extends Component
                 $data[] = $ingresos->filter(function ($p) use ($num) {
                     return Carbon::parse($p->created_at)->month == $num;
                 })->sum(function ($p) {
-                    return (float) $p->total;
+                    return abs((float) $p->total);
                 });
+            }
+        } elseif ($this->period == 'custom') {
+            $diffInDays = $start->diffInDays($end);
+            if ($diffInDays <= 1) {
+                for ($h = 8; $h <= 20; $h++) {
+                    $labels[] = sprintf('%02d:00', $h);
+                    $data[] = $ingresos->filter(function ($p) use ($h) {
+                        return Carbon::parse($p->created_at)->hour == $h;
+                    })->sum(function ($p) {
+                        return abs((float) $p->total);
+                    });
+                }
+            } elseif ($diffInDays <= 35) {
+                $current = clone $start;
+                while ($current <= $end) {
+                    $dayStr = $current->format('d/m');
+                    $labels[] = $dayStr;
+                    $dayNum = $current->day;
+                    $monthNum = $current->month;
+                    $yearNum = $current->year;
+                    $data[] = $ingresos->filter(function ($p) use ($dayNum, $monthNum, $yearNum) {
+                        $pDate = Carbon::parse($p->created_at);
+                        return $pDate->day == $dayNum && $pDate->month == $monthNum && $pDate->year == $yearNum;
+                    })->sum(function ($p) {
+                        return abs((float) $p->total);
+                    });
+                    $current->addDay();
+                }
+            } else {
+                $current = clone $start;
+                $limit = 0;
+                while ($current <= $end && $limit < 24) {
+                    $monthStr = $current->translatedFormat('M Y');
+                    $labels[] = $monthStr;
+                    $monthNum = $current->month;
+                    $yearNum = $current->year;
+                    $data[] = $ingresos->filter(function ($p) use ($monthNum, $yearNum) {
+                        $pDate = Carbon::parse($p->created_at);
+                        return $pDate->month == $monthNum && $pDate->year == $yearNum;
+                    })->sum(function ($p) {
+                        return abs((float) $p->total);
+                    });
+                    $current->addMonth();
+                    $limit++;
+                }
             }
         } else {
             // Last 6 months
@@ -211,7 +287,7 @@ class IndicadoresVentas extends Component
                     $pDate = Carbon::parse($p->created_at);
                     return $pDate->year == $monthDate->year && $pDate->month == $monthDate->month;
                 })->sum(function ($p) {
-                    return (float) $p->total;
+                    return abs((float) $p->total);
                 });
             }
         }
