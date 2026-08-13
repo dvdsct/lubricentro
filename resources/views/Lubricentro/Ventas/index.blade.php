@@ -1,5 +1,7 @@
 @extends('adminlte::page')
 
+@section('plugins.Chartjs', true)
+
 @section('title', 'Facturacion - Rocket')
 
 @section('content_header')

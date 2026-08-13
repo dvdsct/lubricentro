@@ -53,4 +53,13 @@ class Pago extends Model
         return $this->hasMany(PagoCtacte::class);
     }
 
+    public function pagosTarjeta()
+    {
+        return $this->hasMany(PagoTarjeta::class);
+    }
+
+    public function pagosTransferencia()
+    {
+        return $this->hasMany(PagoTransferencia::class);
+    }
 }

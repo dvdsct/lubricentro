@@ -19,4 +19,9 @@ class PagoTarjeta extends Model
         'estado',
         'caja_id',
     ];
+
+    public function plan()
+    {
+        return $this->belongsTo(Plan::class, 'plan_id');
+    }
 }
