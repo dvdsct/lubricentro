@@ -105,23 +105,45 @@ class AsistenciaTest extends TestCase
         ]);
     }
 
-    public function test_admin_control_page_requires_adminCajas_permission(): void
+    public function test_admin_control_page_denies_access_without_permission(): void
     {
-        // 1. Un usuario común no debería acceder
         $user = User::factory()->create();
         $response = $this->actingAs($user, 'web')->get(route('asistencia.control'));
         $response->assertStatus(403);
+    }
 
-        // 2. Un administrador (con el permiso adminCajas) debe acceder
-        $adminRole = Role::create(['name' => 'admin', 'guard_name' => 'web']);
+    public function test_admin_control_page_allows_access_with_adminCajas_permission(): void
+    {
         $permission = \Spatie\Permission\Models\Permission::create(['name' => 'adminCajas', 'guard_name' => 'web']);
-        $permission->assignRole($adminRole);
-
         $adminUser = User::factory()->create();
-        $adminUser->assignRole($adminRole);
+        $adminUser->givePermissionTo($permission);
 
         $response = $this->actingAs($adminUser, 'web')->get(route('asistencia.control'));
         $response->assertStatus(200);
         $response->assertSee('CONTROL DE ASISTENCIA');
+    }
+
+    public function test_empleados_page_renders_geolocation_and_attendance(): void
+    {
+        $permission = \Spatie\Permission\Models\Permission::create(['name' => 'adminCajas', 'guard_name' => 'web']);
+        $adminUser = User::factory()->create();
+        $adminUser->givePermissionTo($permission);
+
+        // Empleado con asistencia
+        $empleado = User::factory()->create(['name' => 'Juan Perez']);
+        Asistencia::create([
+            'user_id' => $empleado->id,
+            'tipo' => 'entrada',
+            'fecha_hora' => now(),
+            'latitud' => -34.603722,
+            'longitud' => -58.381592,
+        ]);
+
+        $response = $this->actingAs($adminUser, 'web')->get(route('asistencia.empleados'));
+        $response->assertStatus(200);
+        $response->assertSee('Juan Perez');
+        $response->assertSee('Geolocalización');
+        $response->assertSee('Ver en Mapa');
+        $response->assertSee('https://www.google.com/maps?q=');
     }
 }

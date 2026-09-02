@@ -111,11 +111,12 @@
                                                 {{ $turno['entrada']->fecha_hora->setTimezone('America/Argentina/Buenos_Aires')->format('d/m/Y H:i:s') }}
                                             </div>
                                             @if($turno['entrada']->latitud && $turno['entrada']->longitud)
-                                                <a href="https://www.google.com/maps?q={{ $turno['entrada']->latitud }},{{ $turno['entrada']->longitud }}" 
-                                                   target="_blank" class="text-xs text-muted font-mono" title="Ver en Google Maps">
-                                                    <i class="fas fa-map-marker-alt text-danger mr-1"></i>
-                                                    {{ number_format($turno['entrada']->latitud, 5) }}, {{ number_format($turno['entrada']->longitud, 5) }}
-                                                </a>
+                                                <div class="mt-1">
+                                                    <a href="https://www.google.com/maps?q={{ $turno['entrada']->latitud }},{{ $turno['entrada']->longitud }}" 
+                                                       target="_blank" class="text-xs text-primary font-weight-bold font-mono text-decoration-none" title="Ver ubicación en Google Maps">
+                                                        <i class="fas fa-map-marker-alt text-danger mr-1"></i>{{ number_format($turno['entrada']->latitud, 5) }}, {{ number_format($turno['entrada']->longitud, 5) }}
+                                                    </a>
+                                                </div>
                                             @endif
                                         @else
                                             <span class="text-muted text-xs font-weight-bold">Falta registro de entrada</span>
@@ -130,11 +131,12 @@
                                                 {{ $turno['salida']->fecha_hora->setTimezone('America/Argentina/Buenos_Aires')->format('d/m/Y H:i:s') }}
                                             </div>
                                             @if($turno['salida']->latitud && $turno['salida']->longitud)
-                                                <a href="https://www.google.com/maps?q={{ $turno['salida']->latitud }},{{ $turno['salida']->longitud }}" 
-                                                   target="_blank" class="text-xs text-muted font-mono" title="Ver en Google Maps">
-                                                    <i class="fas fa-map-marker-alt text-danger mr-1"></i>
-                                                    {{ number_format($turno['salida']->latitud, 5) }}, {{ number_format($turno['salida']->longitud, 5) }}
-                                                </a>
+                                                <div class="mt-1">
+                                                    <a href="https://www.google.com/maps?q={{ $turno['salida']->latitud }},{{ $turno['salida']->longitud }}" 
+                                                       target="_blank" class="text-xs text-primary font-weight-bold font-mono text-decoration-none" title="Ver ubicación en Google Maps">
+                                                        <i class="fas fa-map-marker-alt text-danger mr-1"></i>{{ number_format($turno['salida']->latitud, 5) }}, {{ number_format($turno['salida']->longitud, 5) }}
+                                                    </a>
+                                                </div>
                                             @endif
                                         @else
                                             @if($turno['entrada'])

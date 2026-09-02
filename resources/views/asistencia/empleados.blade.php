@@ -26,8 +26,10 @@
                         <th style="width: 80px;"></th>
                         <th>Nombre</th>
                         <th>Estado</th>
+                        <th>Último Registro</th>
+                        <th>Geolocalización</th>
                         <th>Roles</th>
-                        <th class="text-center" style="width: 200px;">Acción</th>
+                        <th class="text-center" style="width: 180px;">Acción</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,7 +44,8 @@
                             
                             <!-- Name -->
                             <td class="align-middle font-weight-bold text-dark text-lg">
-                                {{ $user->name }}
+                                <div>{{ $user->name }}</div>
+                                <div class="text-xs text-muted font-weight-normal">{{ $user->email }}</div>
                             </td>
                             
                             <!-- Estado -->
@@ -55,6 +58,42 @@
                                     <span class="badge badge-secondary py-1.5 px-2.5 font-weight-bold text-xs uppercase shadow-xs">
                                         <i class="fas fa-sign-out-alt mr-1"></i> Fuera de Servicio
                                     </span>
+                                @endif
+                            </td>
+
+                            <!-- Último Registro (Fecha y Hora) -->
+                            <td class="align-middle">
+                                @if ($user->ultimaAsistencia)
+                                    <div class="font-mono text-sm font-weight-bold text-dark">
+                                        {{ $user->ultimaAsistencia->fecha_hora->setTimezone('America/Argentina/Buenos_Aires')->format('d/m/Y H:i:s') }}
+                                    </div>
+                                    <div class="text-xs text-muted">
+                                        @if ($user->ultimaAsistencia->tipo === 'entrada')
+                                            <span class="text-success font-weight-bold"><i class="fas fa-sign-in-alt mr-1"></i>Entrada</span>
+                                        @else
+                                            <span class="text-danger font-weight-bold"><i class="fas fa-sign-out-alt mr-1"></i>Salida</span>
+                                        @endif
+                                    </div>
+                                @else
+                                    <span class="text-muted text-xs font-italic">Sin registros</span>
+                                @endif
+                            </td>
+
+                            <!-- Geolocalización con Link a Google Maps -->
+                            <td class="align-middle">
+                                @if ($user->ultimaAsistencia && $user->ultimaAsistencia->latitud && $user->ultimaAsistencia->longitud)
+                                    <a href="https://www.google.com/maps?q={{ $user->ultimaAsistencia->latitud }},{{ $user->ultimaAsistencia->longitud }}" 
+                                       target="_blank" 
+                                       class="btn btn-sm btn-outline-danger font-weight-bold shadow-xs d-inline-flex align-items-center"
+                                       title="Ver ubicación en Google Maps">
+                                        <i class="fas fa-map-marker-alt mr-1"></i>
+                                        <span>Ver en Mapa</span>
+                                    </a>
+                                    <div class="text-xs text-muted font-mono mt-1">
+                                        {{ number_format($user->ultimaAsistencia->latitud, 5) }}, {{ number_format($user->ultimaAsistencia->longitud, 5) }}
+                                    </div>
+                                @else
+                                    <span class="text-muted text-xs font-italic">No disponible</span>
                                 @endif
                             </td>
                             
@@ -81,7 +120,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center py-5 text-muted font-weight-bold">
+                            <td colspan="7" class="text-center py-5 text-muted font-weight-bold">
                                 No se encontraron usuarios registrados en el sistema.
                             </td>
                         </tr>

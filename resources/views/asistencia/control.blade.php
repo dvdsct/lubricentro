@@ -134,7 +134,13 @@
                                     </td>
                                     <td class="align-middle text-xs font-mono">
                                         @if($asistencia->latitud && $asistencia->longitud)
-                                            {{ number_format($asistencia->latitud, 6) }}, {{ number_format($asistencia->longitud, 6) }}
+                                            <a href="https://www.google.com/maps?q={{ $asistencia->latitud }},{{ $asistencia->longitud }}" 
+                                               target="_blank" 
+                                               class="text-primary font-weight-bold text-decoration-none"
+                                               title="Abrir en Google Maps">
+                                                <i class="fas fa-map-marker-alt text-danger mr-1"></i>
+                                                {{ number_format($asistencia->latitud, 6) }}, {{ number_format($asistencia->longitud, 6) }}
+                                            </a>
                                         @else
                                             <span class="text-muted">No registrada</span>
                                         @endif
@@ -145,7 +151,7 @@
                                                target="_blank" 
                                                class="btn btn-outline-primary btn-sm rounded-circle shadow-sm"
                                                title="Ver ubicación en Google Maps">
-                                                <i class="fas fa-map-marker-alt"></i>
+                                                <i class="fas fa-external-link-alt"></i>
                                             </a>
                                         @else
                                             <span class="text-muted">-</span>
