@@ -218,7 +218,7 @@ class FormAddProd extends Component
     {
         $c = floatval($costo);
         if ($c >= 0) {
-            $this->precioVenta = $c + ($c * 0.80);
+            $this->precioVenta = $c + ($c * 2.60);
         }
     }
     public function updatingPrecioVenta($precio)
@@ -228,10 +228,10 @@ class FormAddProd extends Component
 
     public function saveproduct()
     {
-        // Si el usuario ingresó costo pero dejó vacío el precio de venta, calcularlo automáticamente (costo + 80%)
+        // Si el usuario ingresó costo pero dejó vacío el precio de venta, calcularlo automáticamente (costo + 260%)
         if ((is_null($this->precioVenta) || $this->precioVenta === '') && is_numeric($this->costo)) {
             $c = floatval($this->costo);
-            $this->precioVenta = $c + ($c * 0.80);
+            $this->precioVenta = $c + ($c * 2.60);
         }
         $this->validate([
             'descripcion' => 'required|string|min:2',
