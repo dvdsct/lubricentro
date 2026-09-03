@@ -17,7 +17,7 @@ class RestrictEmpleados
     {
         $user = $request->user();
 
-        if ($user && $user->hasAnyRole(['mecánico', 'lavadero', 'maestranza'])) {
+        if ($user && $user->hasAnyRole(['mecánico', 'lavadero', 'maestranza', 'empleado'])) {
             // Define allowed routes for these roles
             $allowedRoutes = [
                 'asistencia.mi-historial',

@@ -30,7 +30,7 @@ class FortifyServiceProvider extends ServiceProvider
                         return redirect()->route('portal.cliente');
                     }
 
-                    if ($user && $user->hasAnyRole(['mecánico', 'lavadero', 'maestranza'])) {
+                    if ($user && $user->hasAnyRole(['mecánico', 'lavadero', 'maestranza', 'empleado'])) {
                         return redirect()->route('asistencia.mi-historial');
                     }
 

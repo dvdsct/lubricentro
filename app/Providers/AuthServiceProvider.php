@@ -22,11 +22,11 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::define('ver-menu-general', function ($user) {
-            return !$user->hasAnyRole(['mecánico', 'lavadero', 'maestranza']);
+            return !$user->hasAnyRole(['mecánico', 'lavadero', 'maestranza', 'empleado']);
         });
 
         Gate::define('ver-historial-personal', function ($user) {
-            return $user->hasAnyRole(['mecánico', 'lavadero', 'maestranza']) || $user->hasRole('admin');
+            return $user->hasAnyRole(['mecánico', 'lavadero', 'maestranza', 'empleado']) || $user->hasRole('admin');
         });
     }
 }

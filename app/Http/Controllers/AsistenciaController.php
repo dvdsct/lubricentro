@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 use GuzzleHttp\Client;
 
 class AsistenciaController extends Controller
@@ -187,6 +189,42 @@ class AsistenciaController extends Controller
     {
         $users = User::with(['roles', 'ultimaAsistencia'])->paginate(15);
         return view('asistencia.empleados', compact('users'));
+    }
+
+    /**
+     * Crea un nuevo empleado en el sistema.
+     */
+    public function empleadoStore(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+            'role' => 'nullable|string|max:50',
+        ], [
+            'name.required' => 'El nombre completo es obligatorio.',
+            'email.required' => 'El correo electrónico es obligatorio.',
+            'email.email' => 'El correo electrónico debe ser una dirección válida.',
+            'email.unique' => 'El correo electrónico ya se encuentra registrado.',
+            'password.required' => 'La contraseña es obligatoria.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
+        ]);
+
+        $roleName = $request->input('role', 'empleado') ?: 'empleado';
+
+        // Asegurar que el rol exista en Spatie
+        Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        $user->assignRole($roleName);
+
+        return redirect()->route('asistencia.empleados')->with('success', "Empleado '{$user->name}' creado exitosamente.");
     }
 
     /**

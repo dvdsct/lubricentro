@@ -34,8 +34,13 @@ use App\Http\Controllers\AsistenciaController;
 */
 
 Route::get('/', function () {
-    if (auth()->check() && auth()->user()->hasRole('cliente')) {
-        return redirect()->route('portal.cliente');
+    if (auth()->check()) {
+        if (auth()->user()->hasRole('cliente')) {
+            return redirect()->route('portal.cliente');
+        }
+        if (auth()->user()->hasAnyRole(['mecánico', 'lavadero', 'maestranza', 'empleado'])) {
+            return redirect()->route('asistencia.mi-historial');
+        }
     }
     return redirect('venta');
 });
@@ -56,6 +61,9 @@ Route::middleware([
     Route::get('/dashboard', function () {
         if (auth()->user()->hasRole('cliente')) {
             return redirect()->route('portal.cliente');
+        }
+        if (auth()->user()->hasAnyRole(['mecánico', 'lavadero', 'maestranza', 'empleado'])) {
+            return redirect()->route('asistencia.mi-historial');
         }
         return view('dashboard');
     })->name('dashboard');
@@ -99,6 +107,9 @@ Route::middleware([
         ->middleware('can:adminCajas');
     Route::get('/asistencia/empleados', [AsistenciaController::class, 'empleadosIndex'])
         ->name('asistencia.empleados')
+        ->middleware('can:adminCajas');
+    Route::post('/asistencia/empleados', [AsistenciaController::class, 'empleadoStore'])
+        ->name('asistencia.empleados.store')
         ->middleware('can:adminCajas');
     Route::get('/asistencia/download-qr', [AsistenciaController::class, 'downloadQr'])
         ->name('asistencia.download-qr')

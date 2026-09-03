@@ -145,5 +145,79 @@ class AsistenciaTest extends TestCase
         $response->assertSee('Geolocalización');
         $response->assertSee('Ver en Mapa');
         $response->assertSee('https://www.google.com/maps?q=');
+        $response->assertSee('Nuevo Empleado');
+        $response->assertSee('modalCrearEmpleado');
+    }
+
+    public function test_admin_can_create_employee_with_default_role(): void
+    {
+        $permission = \Spatie\Permission\Models\Permission::create(['name' => 'adminCajas', 'guard_name' => 'web']);
+        $adminUser = User::factory()->create();
+        $adminUser->givePermissionTo($permission);
+
+        $response = $this->actingAs($adminUser, 'web')->post(route('asistencia.empleados.store'), [
+            'name' => 'Nuevo Empleado Test',
+            'email' => 'empleado.test@test.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'role' => 'empleado',
+        ]);
+
+        $response->assertRedirect(route('asistencia.empleados'));
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('users', [
+            'name' => 'Nuevo Empleado Test',
+            'email' => 'empleado.test@test.com',
+        ]);
+
+        $user = User::where('email', 'empleado.test@test.com')->first();
+        $this->assertNotNull($user);
+        $this->assertTrue($user->hasRole('empleado'));
+    }
+
+    public function test_non_admin_cannot_create_employee(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user, 'web')->post(route('asistencia.empleados.store'), [
+            'name' => 'Empleado Unauthorized',
+            'email' => 'unauth@test.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ]);
+
+        $response->assertStatus(403);
+    }
+
+    public function test_create_employee_validates_required_fields(): void
+    {
+        $permission = \Spatie\Permission\Models\Permission::create(['name' => 'adminCajas', 'guard_name' => 'web']);
+        $adminUser = User::factory()->create();
+        $adminUser->givePermissionTo($permission);
+
+        $response = $this->actingAs($adminUser, 'web')->post(route('asistencia.empleados.store'), [
+            'name' => '',
+            'email' => 'invalid-email',
+            'password' => 'short',
+            'password_confirmation' => 'mismatch',
+        ]);
+
+        $response->assertSessionHasErrors(['name', 'email', 'password']);
+    }
+
+    public function test_employee_role_is_restricted_to_attendance_routes(): void
+    {
+        $role = Role::firstOrCreate(['name' => 'empleado', 'guard_name' => 'web']);
+        $empleado = User::factory()->create();
+        $empleado->assignRole($role);
+
+        // Intento de entrar a ruta general (ej. productos o venta)
+        $response = $this->actingAs($empleado, 'web')->get('/venta');
+        $response->assertRedirect(route('asistencia.mi-historial'));
+
+        // Intento de entrar a raíz
+        $responseRoot = $this->actingAs($empleado, 'web')->get('/');
+        $responseRoot->assertRedirect(route('asistencia.mi-historial'));
     }
 }
