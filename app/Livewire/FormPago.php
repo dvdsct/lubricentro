@@ -110,98 +110,22 @@ class FormPago extends Component
 
     public function mount($orden)
     {
-
         if (get_class($orden->getModel()) == "App\Models\PedidoProveedor") {
             $this->pedido = $orden;
+            $this->proveedor = $this->pedido->proveedor_id;
             $this->montoAPagar = $this->pedido->items->sum('subtotal');
             $this->pagoDe = 'pedido';
             $this->perfil = Perfil::where('user_id', Auth::user()->id)->get();
-            $this->cajero = $this->perfil->first()->cajeros->first();
+            $this->cajero = $this->perfil->first()?->cajeros?->first();
             $this->bancos = Banco::all();
 
-
             if (Auth::user()->hasRole(['cajero'])) {
-
-                // Verificar si existe caja
-
-                if (Caja::where('cajero_id', $this->cajero->id)
-                    ->where('estado', '200')
-                    ->get()->isEmpty()
-                ) {
-
+                if ($this->cajero && Caja::where('cajero_id', $this->cajero->id)->where('estado', '200')->get()->isEmpty()) {
                     $this->dispatch('setModalCaja')->To(ListaCajas::class);
-                } else {
-
-                    $this->caja = Caja::where('cajero_id', $this->cajero->id)
-                        ->where('estado', '200')
-                        ->first();
-                }
-
-                // ______________________________________________________________________________
-                // ------------------------------------------------------------------------------
-                //                                 Pago Total Tarjeta Débito  Estado = 12
-                // ------------------------------------------------------------------------------
-                if ($this->debitoId && (string)$this->medioPago === (string)$this->debitoId) {
-                    // Validación de campos de débito
-                    $this->validate([
-                        'debitoCupon' => 'required',
-                        'debitoLote' => 'required',
-                        'debitoAutorizacion' => 'required',
-                    ]);
-
-                    // Calcular subtotal con descuento y recargo débito para registrar en factura
-                    $itemsSubtotal = $this->orden->items->sum('subtotal');
-                    $baseAfterDiscount = max(0, floatval($itemsSubtotal) - floatval($this->discountAmount));
-                    $debitSurcharge = ($baseAfterDiscount * 5) / 100.0;
-
-                    $f =  Factura::create([
-                        'orden_id' => $this->orden->id,
-                        'tipo_factura_id' => $this->tipoFactura,
-                        'total' => $this->total,
-                        'subtotal' => $baseAfterDiscount,
-                        'intereses' => $debitSurcharge,
-                        'iva' => $this->iva,
-                        'estado' => '12'
-                    ]);
-                    if ($this->descuentoId && $this->discountAmount > 0) {
-                        DescuentoXFactura::create([
-                            'factura_id' => $f->id,
-                            'user_id' => Auth::id(),
-                            'monto' => $this->discountAmount,
-                            'estado' => '1',
-                        ]);
-                    }
-                    if ($this->descuentoId && $this->discountAmount > 0) {
-                        DescuentoXFactura::create([
-                            'factura_id' => $f->id,
-                            'user_id' => Auth::id(),
-                            'monto' => $this->discountAmount,
-                            'estado' => '1',
-                        ]);
-                    }
-
-                    $p = Pago::create([
-                        'in_out' => 'in',
-                        'factura_id' => $f->id,
-                        'cliente_id' => $this->cliente,
-                        'medio_pago_id' => $this->medioPago,
-                        'tipo_pago_id' => $this->tipoPago,
-                        'efectivo' => 0,
-                        'concepto' =>  $this->concepto,
-                        'code_op' => 'CUPON:' . $this->debitoCupon . '; LOTE:' . $this->debitoLote . '; AUT:' . $this->debitoAutorizacion,
-                        'iva' => $this->iva,
-                        'total' => $this->total,
-                        'estado' => '12',
-                    ]);
-                    PagosXCaja::create([
-                        'pago_id' => $p->id,
-                        'caja_id' => $this->caja?->id,
-                        'estado' => '12',
-                    ]);
+                } elseif ($this->cajero) {
+                    $this->caja = Caja::where('cajero_id', $this->cajero->id)->where('estado', '200')->first();
                 }
             }
-
-
 
             $this->tiposPago = TipoPago::all();
             $this->tarjetasT = Plan::all();
@@ -378,9 +302,43 @@ class FormPago extends Component
 
     public function pagarProvedor()
     {
+        if ($this->processing) {
+            return;
+        }
+        $this->processing = true;
+
         $this->validate([
             'medioPago' => 'required'
         ]);
+
+        if (!$this->pedido) {
+            $this->processing = false;
+            return;
+        }
+
+        if ($this->pedido->estado === 'cerrado' || $this->pedido->estado === 'recibido_total') {
+            $this->processing = false;
+            $this->closeModal();
+            return;
+        }
+
+        $this->proveedor = $this->pedido->proveedor_id;
+
+        // Idempotencia: evitar duplicado de pagos para este pedido
+        $alreadyPaid = Pago::where('proveedor_id', $this->proveedor)
+            ->whereHas('facturas', function ($q) {
+                $q->where('pedido_proveedor_id', $this->pedido->id);
+            })
+            ->exists();
+
+        if ($alreadyPaid) {
+            $this->pedido->update(['estado' => 'recibido_total']);
+            $this->processing = false;
+            $this->closeModal();
+            $this->dispatch('pedido-recibido')->to(AddProductsPP::class);
+            return;
+        }
+
         // Requerir plan cuando el medio es Tarjeta Crédito
         if (intval($this->medioPago) === 1) {
             $this->validate([
@@ -392,37 +350,19 @@ class FormPago extends Component
             $this->interes = optional($this->plan)->interes;
         }
 
-        $this->orden->update([
-            'estado' => '555'
-        ]);
-        $this->montoAPagar  = $this->montoAPagar * (-1);
-        // Pago Parcial
-        if ($this->tipoPago == 1) {
-            // Mixto
-            // Transferencia
-            // Efectivo
-            // Tarjeta Credito/Debito
-            // Cheque
+        $itemsSubtotal = $this->pedido->items->sum('subtotal');
+        $montoBase = floatval($itemsSubtotal);
+        $totalNeg = -abs($montoBase);
 
-        }
-
-
-
-
-        // Pago Total
-        if ($this->tipoPago == 2) {
-
-
+        // Pago Total o por defecto
+        if ($this->tipoPago == 2 || empty($this->tipoPago)) {
 
             // Cuenta Corriente  Estado = 400
             if ($this->medioPago == 4) {
-
-                $f =  Factura::create([
-
+                $f = Factura::create([
                     'pedido_proveedor_id' => $this->pedido->id,
-
                     'tipo_factura_id' => $this->tipoFactura,
-                    'total' => $this->montoAPagar,
+                    'total' => $totalNeg,
                     'estado' => '400'
                 ]);
 
@@ -431,36 +371,25 @@ class FormPago extends Component
                     'factura_id' => $f->id,
                     'proveedor_id' => $this->proveedor,
                     'medio_pago_id' => '4',
-                    'tipo_pago_id' => $this->tipoPago,
+                    'tipo_pago_id' => $this->tipoPago ?? '2',
                     'efectivo' => 0,
-                    'total' => $this->montoAPagar,
+                    'total' => $totalNeg,
                     'concepto' => 'proveedor',
                     'estado' => '400',
-
                 ]);
 
-                PagosXCaja::create([
-                    'pago_id' => $p->id,
-                    'caja_id' => $this->caja?->id,
-                    'estado' => '400',
-
-                ]);
+                // NO crear PagosXCaja para Cuenta Corriente para no impactar la caja física
                 $this->pedido->update([
-                    'estado' => '3'
+                    'estado' => 'recibido_total'
                 ]);
             }
 
-
             // Efectivo  Estado = 200
             if ($this->medioPago == 2) {
-
-
-                $f =  Factura::create([
-
+                $f = Factura::create([
                     'pedido_proveedor_id' => $this->pedido->id,
-
                     'tipo_factura_id' => $this->tipoFactura,
-                    'total' => $this->montoAPagar,
+                    'total' => $totalNeg,
                     'estado' => '200'
                 ]);
 
@@ -469,71 +398,99 @@ class FormPago extends Component
                     'factura_id' => $f->id,
                     'proveedor_id' => $this->proveedor,
                     'medio_pago_id' => $this->medioPago,
-                    'tipo_pago_id' => $this->tipoPago,
-                    'efectivo' =>$this->montoAPagar ,
+                    'tipo_pago_id' => $this->tipoPago ?? '2',
+                    'efectivo' => $totalNeg,
                     'concepto' => 'proveedor',
-
-                    'total' => $this->montoAPagar,
+                    'total' => $totalNeg,
                     'estado' => '200',
-
                 ]);
-                PagosXCaja::create([
-                    'pago_id' => $p->id,
-                    'caja_id' => $this->caja?->id,
-                    'estado' => '200',
 
-                ]);
+                if ($this->caja) {
+                    PagosXCaja::create([
+                        'pago_id' => $p->id,
+                        'caja_id' => $this->caja->id,
+                        'estado' => '200',
+                    ]);
+                }
 
                 $this->pedido->update([
-                    'estado' => '4'
+                    'estado' => 'recibido_total'
                 ]);
             }
 
-
-            // Tarjeta Estado = 101
+            // Tarjeta Estado = 10
             if ($this->medioPago == 1) {
-
-                // dd();
-
-
-                $f =  Factura::create([
-
-                    'orden_id' => $this->orden->id,
-
+                $f = Factura::create([
+                    'pedido_proveedor_id' => $this->pedido->id,
                     'tipo_factura_id' => $this->tipoFactura,
-                    'total' => $this->montoAPagar,
-                    'estado' => '101'
+                    'total' => $totalNeg,
+                    'estado' => '10'
                 ]);
-
 
                 $p = Pago::create([
                     'in_out' => 'out',
                     'factura_id' => $f->id,
-                    'cliente_id' => $this->cliente,
-                    'concepto' => 'proveedor',
-
+                    'proveedor_id' => $this->proveedor,
                     'medio_pago_id' => $this->medioPago,
-                    'tipo_pago_id' => $this->tipoPago,
-                    'efectivo' => $this->efectivo,
-                    'total' => $this->montoAPagar,
-                    'estado' => '101',
-
+                    'tipo_pago_id' => $this->tipoPago ?? '2',
+                    'efectivo' => 0,
+                    'concepto' => 'proveedor',
+                    'total' => $totalNeg,
+                    'estado' => '10',
                 ]);
-                PagosXCaja::create([
-                    'pago_id' => $p->id,
-                    'caja_id' => $this->caja?->id,
-                    'estado' => '101',
 
+                if ($this->caja) {
+                    PagosXCaja::create([
+                        'pago_id' => $p->id,
+                        'caja_id' => $this->caja->id,
+                        'estado' => '10',
+                    ]);
+                }
+
+                $this->pedido->update([
+                    'estado' => 'recibido_total'
+                ]);
+            }
+
+            // Transferencia Estado = 90
+            if ($this->medioPago == 5) {
+                $f = Factura::create([
+                    'pedido_proveedor_id' => $this->pedido->id,
+                    'tipo_factura_id' => $this->tipoFactura,
+                    'total' => $totalNeg,
+                    'estado' => '90'
+                ]);
+
+                $p = Pago::create([
+                    'in_out' => 'out',
+                    'factura_id' => $f->id,
+                    'proveedor_id' => $this->proveedor,
+                    'medio_pago_id' => '5',
+                    'tipo_pago_id' => $this->tipoPago ?? '2',
+                    'efectivo' => 0,
+                    'code_op' => $this->cupon,
+                    'concepto' => 'proveedor',
+                    'total' => $totalNeg,
+                    'estado' => '90',
+                ]);
+
+                if ($this->caja) {
+                    PagosXCaja::create([
+                        'pago_id' => $p->id,
+                        'caja_id' => $this->caja->id,
+                        'estado' => '90',
+                    ]);
+                }
+
+                $this->pedido->update([
+                    'estado' => 'recibido_total'
                 ]);
             }
         }
 
-        // Mixto
-        // Transferencia
-
-        // Tarjeta
-        // Cheque
+        $this->closeModal();
         $this->dispatch('pedido-recibido')->to(AddProductsPP::class);
+        $this->processing = false;
     }
 
 

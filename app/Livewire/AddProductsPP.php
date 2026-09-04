@@ -179,26 +179,32 @@ class AddProductsPP extends Component
                 'precio_presupuesto' => $n_costo,
             ]);
 
-            // Asegurar fila de stock y ajustar de forma atómica
-            $service->ensureStockRecord($sucursalId, $p->id);
-            $result = $service->adjustStock($sucursalId, $p->id, intval($i->cantidad), [
-                'motivo' => 'Ingreso por compra',
-                'referencia_type' => 'PedidoProveedor',
-                'referencia_id' => $this->pedido->id,
-                'user_id' => auth()->id(),
-            ]);
-
-            if ($result === false) {
-                session()->flash('error', 'No se pudo ajustar el stock para el producto: ' . $p->descripcion);
-                return;
-            }
-
-            // Sincronizar nuevo esquema: marcar recibido_total para el item correspondiente
+            // Sincronizar nuevo esquema y calcular unidades pendientes reales
             $ppi = PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)
                 ->where('producto_id', $p->id)
                 ->first();
+
+            $cantPedida = $ppi ? intval($ppi->cantidad_pedida) : intval($i->cantidad);
+            $cantRecibida = $ppi ? intval($ppi->cantidad_recibida) : 0;
+            $pendiente = max(0, $cantPedida - $cantRecibida);
+
+            // Ajustar en stock ÚNICAMENTE la cantidad pendiente para evitar duplicados si ya hubo recepciones parciales
+            if ($pendiente > 0) {
+                $service->ensureStockRecord($sucursalId, $p->id);
+                $result = $service->adjustStock($sucursalId, $p->id, $pendiente, [
+                    'motivo' => 'Ingreso por compra',
+                    'referencia_type' => 'PedidoProveedor',
+                    'referencia_id' => $this->pedido->id,
+                    'user_id' => auth()->id(),
+                ]);
+
+                if ($result === false) {
+                    session()->flash('error', 'No se pudo ajustar el stock para el producto: ' . $p->descripcion);
+                    return;
+                }
+            }
+
             if ($ppi) {
-                $cantPedida = intval($ppi->cantidad_pedida ?? 0);
                 $ppi->update([
                     'cantidad_recibida' => $cantPedida,
                     'estado_item' => 'recibido_total',

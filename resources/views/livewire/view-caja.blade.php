@@ -82,35 +82,32 @@
                             </td>
                         </tr>
                         @foreach ($pagos as $p)
-                            @if ($p->facturas->pagos->first()->estado != '400')
-                                {{-- $p->facturas->orden_id --}}
-
+                            @if ($p->estado != '400')
                                 <tr>
-                                    <td>{{ $p->facturas->created_at->format('H:i') }} Hs.</td>
+                                    <td>{{ optional($p->created_at)->format('H:i') ?? optional($p->facturas?->created_at)->format('H:i') }} Hs.</td>
                                     <td>
                                         @if ($p->in_out == 'in')
-                                            @if ($p->facturas->pagos->first()->concepto == 'Lubricentro' || $p->facturas->pagos->first()->concepto == 'Lavadero')
-                                                <a href="{{ route('ordenes.show', $p->facturas->orden_id) ?? '' }}">
+                                            @if (($p->concepto == 'Lubricentro' || $p->concepto == 'Lavadero') && optional($p->facturas)->orden_id)
+                                                <a href="{{ route('ordenes.show', $p->facturas->orden_id) }}">
                                             @endif
-
                                             <span class="badge badge-success">Ingreso</span>
+                                            @if (($p->concepto == 'Lubricentro' || $p->concepto == 'Lavadero') && optional($p->facturas)->orden_id)
+                                                </a>
+                                            @endif
                                         @elseif($p->in_out == 'out')
                                             <span class="badge badge-danger">Egreso</span>
                                         @endif
                                     </td>
-                                    <td>{{ $p->medios->descripcion ?? $p->tipos->descripcion }}
-                                    </td>
-                                    <td>{{ $p->facturas->pagos->first()->concepto }}</td>
+                                    <td>{{ $p->medios->descripcion ?? $p->tipos->descripcion ?? '-' }}</td>
+                                    <td>{{ $p->concepto ?? optional(optional($p->facturas)->pagos)->first()?->concepto }}</td>
                                     <td>
-                                        $ {{ number_format((float)$p->total, 2, '.', '') }}
+                                        $ {{ number_format(abs((float)$p->total), 2, '.', '') }}
                                         @if(optional($p->facturas)->orden_id)
                                             <a href="{{ route('ordenes.show', $p->facturas->orden_id) }}" class="btn btn-sm btn-primary ml-2" title="Ver orden">
                                                 <i class="fas fa-external-link-alt"></i>
                                             </a>
                                         @endif
                                     </td>
-
-
                                 </tr>
                             @endif
                         @endforeach
