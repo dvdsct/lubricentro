@@ -23,6 +23,23 @@ class ClientProfile extends Component
     public $userEmail;
     public $userPassword;
 
+    // Gestión de Vehículos para el Cliente
+    public $showVehicleModal = false;
+    public $isEditingVehicle = false;
+    public $editingVehicleId = null;
+    public $dominio;
+    public $color;
+    public $version;
+    public $año;
+    public $tipo_vehiculo_id;
+    public $marca_vehiculo_id;
+    public $modelo_vehiculo_id;
+
+    public $tipos = [];
+    public $marcas = [];
+    public $modelos = [];
+    public $colores = [];
+
     public function mount(Cliente $cliente)
     {
         $this->cliente = $cliente->load(['perfiles.personas', 'perfiles.users', 'vehiculos.modelos.marcas']);
@@ -164,6 +181,154 @@ class ClientProfile extends Component
         $this->showEditModal = false;
 
         session()->flash('message', 'Datos del cliente actualizados correctamente.');
+    }
+
+    public function openAddVehicleModal()
+    {
+        $this->reset([
+            'dominio', 'color', 'version', 'año',
+            'marca_vehiculo_id', 'modelo_vehiculo_id', 'tipo_vehiculo_id'
+        ]);
+        $this->editingVehicleId = null;
+        $this->isEditingVehicle = false;
+        $this->tipos = \App\Models\TipoVehiculo::all();
+        $this->marcas = [];
+        $this->modelos = [];
+        $this->colores = \App\Models\Colores::all();
+        $this->resetValidation();
+        $this->showVehicleModal = true;
+    }
+
+    public function openEditVehicleModal($vehicleId)
+    {
+        $v = \App\Models\Vehiculo::with('modelos.marcas')->find($vehicleId);
+        if (!$v) {
+            return;
+        }
+
+        $this->editingVehicleId = $v->id;
+        $this->isEditingVehicle = true;
+        $this->dominio = $v->dominio;
+        $this->color = $v->color;
+        $this->version = $v->version;
+        $this->año = $v->año;
+        $this->modelo_vehiculo_id = $v->modelo_vehiculo_id;
+        $this->marca_vehiculo_id = optional($v->modelos)->marca_vehiculo_id;
+        $this->tipo_vehiculo_id = optional($v->modelos)->tipo_vehiculo_id;
+
+        $this->tipos = \App\Models\TipoVehiculo::all();
+        $this->colores = \App\Models\Colores::all();
+
+        if ($this->tipo_vehiculo_id) {
+            $this->marcas = \App\Models\MarcaVehiculo::where('tipo_vehiculo_id', $this->tipo_vehiculo_id)->get();
+        } else {
+            $this->marcas = \App\Models\MarcaVehiculo::all();
+        }
+
+        if ($this->marca_vehiculo_id) {
+            $this->modelos = \App\Models\ModeloVehiculo::where('marca_vehiculo_id', $this->marca_vehiculo_id)->get();
+        } else {
+            $this->modelos = [];
+        }
+
+        $this->resetValidation();
+        $this->showVehicleModal = true;
+    }
+
+    public function updatedTipoVehiculoId($value)
+    {
+        if ($value) {
+            $this->marcas = \App\Models\MarcaVehiculo::where('tipo_vehiculo_id', $value)->get();
+        } else {
+            $this->marcas = [];
+        }
+        $this->marca_vehiculo_id = null;
+        $this->modelos = [];
+        $this->modelo_vehiculo_id = null;
+    }
+
+    public function updatedMarcaVehiculoId($value)
+    {
+        if ($value) {
+            $this->modelos = \App\Models\ModeloVehiculo::where('marca_vehiculo_id', $value)->get();
+        } else {
+            $this->modelos = [];
+        }
+        $this->modelo_vehiculo_id = null;
+    }
+
+    public function closeVehicleModal()
+    {
+        $this->showVehicleModal = false;
+        $this->resetValidation();
+    }
+
+    public function saveVehicle()
+    {
+        $this->validate([
+            'dominio' => 'required|string|max:50',
+            'modelo_vehiculo_id' => 'required|exists:modelo_vehiculos,id',
+            'año' => 'nullable|integer|min:1900|max:' . (date('Y') + 1),
+        ], [
+            'dominio.required' => 'La patente / dominio es obligatoria.',
+            'modelo_vehiculo_id.required' => 'Debe seleccionar un modelo de vehículo.',
+            'año.integer' => 'El año debe ser un número entero válido.',
+        ]);
+
+        $dominioNorm = strtoupper(trim($this->dominio));
+
+        if ($this->isEditingVehicle && $this->editingVehicleId) {
+            $v = \App\Models\Vehiculo::find($this->editingVehicleId);
+            if ($v) {
+                $v->update([
+                    'dominio' => $dominioNorm,
+                    'modelo_vehiculo_id' => $this->modelo_vehiculo_id,
+                    'color' => $this->color ?: null,
+                    'version' => $this->version ?: null,
+                    'año' => $this->año ?: null,
+                ]);
+            }
+            session()->flash('message', 'Vehículo y patente actualizados exitosamente.');
+        } else {
+            $v = \App\Models\Vehiculo::where('dominio', $dominioNorm)->first();
+            if ($v) {
+                $v->update([
+                    'modelo_vehiculo_id' => $this->modelo_vehiculo_id ?: $v->modelo_vehiculo_id,
+                    'color' => $this->color ?: $v->color,
+                    'version' => $this->version ?: $v->version,
+                    'año' => $this->año ?: $v->año,
+                ]);
+            } else {
+                $v = \App\Models\Vehiculo::create([
+                    'dominio' => $dominioNorm,
+                    'modelo_vehiculo_id' => $this->modelo_vehiculo_id,
+                    'color' => $this->color ?: null,
+                    'version' => $this->version ?: null,
+                    'año' => $this->año ?: null,
+                    'estado' => 1
+                ]);
+            }
+
+            \App\Models\VehiculosXCliente::firstOrCreate([
+                'cliente_id' => $this->cliente->id,
+                'vehiculo_id' => $v->id
+            ]);
+
+            session()->flash('message', 'Vehículo agregado exitosamente al cliente.');
+        }
+
+        $this->cliente->load(['perfiles.personas', 'perfiles.users', 'vehiculos.modelos.marcas']);
+        $this->showVehicleModal = false;
+    }
+
+    public function unlinkVehicle($vehicleId)
+    {
+        \App\Models\VehiculosXCliente::where('cliente_id', $this->cliente->id)
+            ->where('vehiculo_id', $vehicleId)
+            ->delete();
+
+        $this->cliente->load(['perfiles.personas', 'perfiles.users', 'vehiculos.modelos.marcas']);
+        session()->flash('message', 'Vehículo desvinculado del cliente.');
     }
 
     public function render()

@@ -69,8 +69,11 @@
         
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h4 class="card-title m-0"><strong>Vehículos Registrados</strong></h4>
+                    <button type="button" class="btn btn-sm btn-light font-weight-bold shadow-sm" wire:click="openAddVehicleModal">
+                        <i class="fas fa-plus text-primary mr-1"></i> Agregar Vehículo
+                    </button>
                 </div>
                 <div class="card-body p-0">
                     @if ($cliente->vehiculos->count())
@@ -90,17 +93,26 @@
                                             <td class="align-middle">
                                                 <strong>{{ optional(optional($v->modelos)->marcas)->descripcion ?? '' }}</strong>
                                                 {{ optional($v->modelos)->descripcion ?? '' }}
+                                                @if($v->color)
+                                                    <small class="text-muted">({{ $v->color }})</small>
+                                                @endif
                                             </td>
                                             <td class="align-middle">{{ $v->año ?? '-' }}</td>
                                             <td class="align-middle">
-                                                <span class="badge bg-orange text-white" style="font-size: 0.9rem; padding: 5px 10px;">
+                                                <span class="badge bg-orange text-white font-weight-bold" style="font-size: 0.95rem; padding: 5px 10px;">
                                                     {{ $v->dominio }}
                                                 </span>
                                             </td>
                                             <td class="text-right align-middle">
-                                                <a href="{{ route('vehiculos.perfil', $v->id) }}" class="btn btn-sm btn-primary">
-                                                    <i class="fas fa-history mr-1"></i> Historial y Detalles
+                                                <button type="button" class="btn btn-sm btn-warning mr-1" wire:click="openEditVehicleModal({{ $v->id }})" title="Modificar Patente / Datos">
+                                                    <i class="fas fa-edit mr-1"></i> Modificar
+                                                </button>
+                                                <a href="{{ route('vehiculos.perfil', $v->id) }}" class="btn btn-sm btn-primary mr-1" title="Historial del Vehículo">
+                                                    <i class="fas fa-history mr-1"></i> Historial
                                                 </a>
+                                                <button type="button" class="btn btn-sm btn-outline-danger" wire:click="unlinkVehicle({{ $v->id }})" wire:confirm="¿Desea desvincular este vehículo del cliente?" title="Desvincular vehículo">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -109,8 +121,11 @@
                         </div>
                     @else
                         <div class="p-4 text-center text-muted">
-                            <i class="fas fa-car-crash fa-3x mb-3 text-gray-300"></i>
-                            <p class="m-0">No se encontraron vehículos registrados para este cliente.</p>
+                            <i class="fas fa-car-side fa-3x mb-3 text-gray-300"></i>
+                            <p class="m-0 font-weight-bold">No se encontraron vehículos registrados para este cliente.</p>
+                            <button type="button" class="btn btn-primary btn-sm mt-3" wire:click="openAddVehicleModal">
+                                <i class="fas fa-plus mr-1"></i> Agregar Primer Vehículo
+                            </button>
                         </div>
                     @endif
                 </div>
@@ -230,6 +245,108 @@
                             </button>
                             <button type="submit" class="btn btn-info">
                                 <i class="fas fa-save mr-1"></i> Guardar Acceso Web
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <!-- MODAL CREAR / MODIFICAR VEHÍCULO DEL CLIENTE -->
+    @if ($showVehicleModal)
+        <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.5);" wire:keydown.escape="closeVehicleModal">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">
+                            <i class="fas fa-car mr-2"></i>{{ $isEditingVehicle ? 'Modificar Datos del Vehículo / Patente' : 'Agregar Vehículo al Cliente' }}
+                        </h5>
+                        <button type="button" class="close text-white" wire:click="closeVehicleModal">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form wire:submit.prevent="saveVehicle">
+                        <div class="modal-body">
+                            <div class="row">
+                                <!-- Tipo -->
+                                <div class="col-md-6 form-group mb-3">
+                                    <label class="font-weight-bold">Tipo de Vehículo</label>
+                                    <select class="form-control" wire:model.live="tipo_vehiculo_id">
+                                        <option value="">-- Seleccionar Tipo --</option>
+                                        @foreach ($tipos as $t)
+                                            <option value="{{ $t->id }}">{{ $t->descripcion }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Marca -->
+                                <div class="col-md-6 form-group mb-3">
+                                    <label class="font-weight-bold">Marca</label>
+                                    <select class="form-control" wire:model.live="marca_vehiculo_id">
+                                        <option value="">-- Seleccionar Marca --</option>
+                                        @foreach ($marcas as $m)
+                                            <option value="{{ $m->id }}">{{ $m->descripcion }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Modelo -->
+                                <div class="col-md-6 form-group mb-3">
+                                    <label class="font-weight-bold">Modelo <span class="text-danger">*</span></label>
+                                    <select class="form-control @error('modelo_vehiculo_id') is-invalid @enderror" wire:model.live="modelo_vehiculo_id">
+                                        <option value="">-- Seleccionar Modelo --</option>
+                                        @foreach ($modelos as $mod)
+                                            <option value="{{ $mod->id }}">{{ $mod->descripcion }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('modelo_vehiculo_id')
+                                        <span class="invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <!-- Patente -->
+                                <div class="col-md-6 form-group mb-3">
+                                    <label class="font-weight-bold">Patente (Dominio) <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control text-uppercase @error('dominio') is-invalid @enderror" wire:model="dominio" placeholder="Ej: AA123CD">
+                                    @error('dominio')
+                                        <span class="invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <!-- Color -->
+                                <div class="col-md-6 form-group mb-3">
+                                    <label class="font-weight-bold">Color</label>
+                                    <select class="form-control" wire:model="color">
+                                        <option value="">-- Seleccionar Color --</option>
+                                        @foreach ($colores as $co)
+                                            <option value="{{ $co->descripcion }}">{{ $co->descripcion }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Año -->
+                                <div class="col-md-3 form-group mb-3">
+                                    <label class="font-weight-bold">Año</label>
+                                    <input type="number" class="form-control @error('año') is-invalid @enderror" wire:model="año" placeholder="Ej: 2022">
+                                    @error('año')
+                                        <span class="invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <!-- Versión -->
+                                <div class="col-md-3 form-group mb-3">
+                                    <label class="font-weight-bold">Versión</label>
+                                    <input type="text" class="form-control" wire:model="version" placeholder="Ej: 1.6 MSI">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-secondary" wire:click="closeVehicleModal">
+                                <i class="fas fa-times mr-1"></i> Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save mr-1"></i> {{ $isEditingVehicle ? 'Guardar Cambios' : 'Registrar Vehículo' }}
                             </button>
                         </div>
                     </form>

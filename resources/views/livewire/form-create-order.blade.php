@@ -196,74 +196,77 @@
                     @if ($cliente != null)
                     @if ($formVehiculo == true)
                     <div class="row pl-2 pt-2">
-                        <h4> <strong>VEHÍCULO </strong> </h4>
+                        <h4> <strong>{{ $isEditingVehicle ? 'Modificar Patente / Vehículo' : 'Agregar Nuevo Vehículo' }}</strong> </h4>
                     </div>
-                    <!-- SI EL VEHICULO NO EXISTE, CREAR NUEVO VEHICULO -->
+                    <!-- FORMULARIO CREAR / EDITAR VEHICULO -->
                     <div class="px-3">
                         <div class="row">
                             <div class="col-6">
-                                <select class="form-control" aria-label="Default select example" wire:model='tipo' wire:change='upMarcas'>
-                                    <option selected>Tipo de vehiculo</option>
+                                <label class="small text-muted font-weight-bold">Tipo de vehículo</label>
+                                <select class="form-control" aria-label="Tipo" wire:model.live='tipo' wire:change='upMarcas'>
+                                    <option value="">Seleccionar tipo</option>
                                     @foreach ($tiposVehiculo as $tipos)
-                                    <option value="{{ $tipos->id }}">{{ $tipos->descripcion }}
-                                    </option>
+                                    <option value="{{ $tipos->id }}">{{ $tipos->descripcion }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <select class="form-control" aria-label="Default select example" wire:model='marca' wire:change='upModelos'>
-                                    <option selected>Marca</option>
+                                <label class="small text-muted font-weight-bold">Marca</label>
+                                <select class="form-control" aria-label="Marca" wire:model.live='marca' wire:change='upModelos'>
+                                    <option value="">Seleccionar marca</option>
                                     @foreach ($marcas as $m)
-                                    <option value="{{ $m->id }}">
-                                        {{ $m->descripcion }}
-                                    </option>
+                                    <option value="{{ $m->id }}">{{ $m->descripcion }}</option>
                                     @endforeach
                                 </select>
                             </div>
-
-
-
-
                         </div>
 
-                        <div class="row pt-4">
+                        <div class="row pt-2">
                             <div class="col-md-6">
-                                <select class="form-control" aria-label="Default select example" wire:model='modelo'>
-                                    <option selected>Modelo</option>
+                                <label class="small text-muted font-weight-bold">Modelo <span class="text-danger">*</span></label>
+                                <select class="form-control @error('modelo') is-invalid @enderror" aria-label="Modelo" wire:model.live='modelo'>
+                                    <option value="">Seleccionar modelo</option>
                                     @foreach ($modelos as $mo)
-                                    <option value="{{ $mo->id }}">
-                                        {{ $mo->descripcion }}
-                                    </option>
+                                    <option value="{{ $mo->id }}">{{ $mo->descripcion }}</option>
                                     @endforeach
                                 </select>
+                                @error('modelo')
+                                    <span class="text-danger small font-weight-bold">{{ $message }}</span>
+                                @enderror
                             </div>
 
                             <div class="col-md-6">
-                                <select class="form-control" aria-label="Default select example" wire:model='color'>
-                                    <option selected>Color</option>
+                                <label class="small text-muted font-weight-bold">Color</label>
+                                <select class="form-control" aria-label="Color" wire:model='color'>
+                                    <option value="">Seleccionar color</option>
                                     @foreach ($colores as $co)
-                                    <option value="{{ $co->id }}">{{ $co->descripcion }}
-                                    </option>
+                                    <option value="{{ $co->descripcion }}">{{ $co->descripcion }}</option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
 
-                        <div class="row pt-4">
+                        <div class="row pt-2">
                             <div class="col-md-6">
-                                <input type="text" class="form-control" id="inputCliente" placeholder="Dominio" wire:model='dominio'>
+                                <label class="small text-muted font-weight-bold">Patente (Dominio) <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control text-uppercase @error('dominio') is-invalid @enderror" placeholder="Ej: AA123CD" wire:model='dominio'>
+                                @error('dominio')
+                                    <span class="text-danger small font-weight-bold">{{ $message }}</span>
+                                @enderror
                             </div>
 
-
                             <div class="col-md-6">
-                                <input type="text" class="form-control" id="inputCliente" placeholder="Año" wire:model='año'>
+                                <label class="small text-muted font-weight-bold">Año</label>
+                                <input type="number" class="form-control" placeholder="Ej: 2022" wire:model='año'>
                             </div>
                         </div>
 
                         <div class="col-md-12 pt-3">
                             <div class="form-group d-flex justify-content-end">
-                                <button class="btn btn-danger mr-2" wire:click='setForm'>Cancelar</button>
-                                <button class="btn btn-success" wire:click='addVehicle'>Guardar</button>
+                                <button type="button" class="btn btn-secondary mr-2" wire:click='cancelVehicleForm'>Cancelar</button>
+                                <button type="button" class="btn btn-success" wire:click='saveVehicle'>
+                                    <i class="fas fa-save mr-1"></i> {{ $isEditingVehicle ? 'Guardar Cambios' : 'Guardar Vehículo' }}
+                                </button>
                             </div>
                         </div>
 
@@ -274,47 +277,55 @@
                         <h4><strong> VEHÍCULO </strong></h4>
                     </div>
 
-                    @if ($selecedtVehiculo == true)
+                    @if ($selecedtVehiculo == true && $vehiculo)
 
                     <!-- AQUI MUESTRA EL VEHICULO DEL CLIENTE JUNTO CON SU DOMINIO -->
+                    <div class="row px-3 align-items-center">
+                        <div class="col-auto">
+                            <h4 class="m-0">
+                                <span class="badge bg-secondary p-2">
+                                    <i class="fas fa-car mr-1"></i>
+                                    {{ optional(optional($vehiculo->modelos)->marcas)->descripcion }}
+                                    {{ optional($vehiculo->modelos)->descripcion }}
+                                    <span class="badge bg-orange text-white ml-2">{{ $vehiculo->dominio }}</span>
+                                </span>
+                            </h4>
+                        </div>
 
-                    <div class="row px-3">
-                        <h2> <span class="font-italic float-right badge bg-secondary">
-                                {{ optional(optional($vehiculo->modelos)->marcas)->descripcion }}
-                                {{ optional($vehiculo->modelos)->descripcion . ' - ' . $vehiculo->dominio }}
-                                <!-- VARIABLES PARA MOSTRAR VECHICULO Y DOMINIO --></span> </h2>
-
-                        <!-- BOTON PARA ELIMINAR VEHICULO SELECCIONADO -->
-                        <div class="col-1">
-                            <button class="btn btn-danger" wire:click='setForm'>
-                                <div class="icon">
-                                    <i class="fas fa-car"></i>
-                                </div>
+                        <!-- BOTONES PARA EDITAR O CAMBIAR VEHICULO -->
+                        <div class="col-auto d-flex" style="gap: 5px;">
+                            <button type="button" class="btn btn-warning btn-sm" wire:click='openEditVehicle' title="Modificar Patente / Datos del Vehículo">
+                                <i class="fas fa-edit"></i> Modificar
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-sm" wire:click='setForm' title="Cambiar Selección">
+                                <i class="fas fa-times"></i> Cambiar
                             </button>
                         </div>
                     </div>
                     @else
                     <!-- SELECCIONAR VEHICULO EXISTENTE -->
-                    <div class="row px-3">
-                        <div class="col-md-10">
-                            <select class="form-control" aria-label="Default select example" wire:model='vehiculo' wire:change='selectVehiculo'>
-                                <option selected>Seleccionar vehiculo</option>
+                    <div class="row px-3 align-items-center">
+                        <div class="col-md-8 col-8">
+                            <select class="form-control" aria-label="Default select example" wire:model.live='vehiculo' wire:change='selectVehiculo'>
+                                <option value="">-- Seleccionar vehículo --</option>
                                 @foreach ($vehiculos as $vc)
                                 <option value="{{ $vc->id }}">
-                                    {{ optional($vc->modelos)->descripcion . ' - ' . $vc->dominio }}
+                                    {{ optional(optional($vc->modelos)->marcas)->descripcion }} {{ optional($vc->modelos)->descripcion }} - Patente: {{ $vc->dominio }}
                                 </option>
                                 @endforeach
                             </select>
                         </div>
 
-
-                        <!-- BOTON PARA CREAR NUEVO VEHICULO -->
-                        <div class="col-md-2">
-                            <button class="btn btn-success" wire:click='setForm'>
-                                <div class="icon">
-                                    <i class="fas fa-car"></i>
-                                </div>
+                        <!-- BOTONES PARA AGREGAR Y EDITAR VEHICULO -->
+                        <div class="col-md-4 col-4 d-flex" style="gap: 5px;">
+                            <button type="button" class="btn btn-success" wire:click='openCreateVehicle' title="Agregar nuevo vehículo a este cliente">
+                                <i class="fas fa-plus"></i> <span class="d-none d-sm-inline">Agregar</span>
                             </button>
+                            @if($vehiculo)
+                            <button type="button" class="btn btn-warning" wire:click='openEditVehicle' title="Modificar vehículo seleccionado">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            @endif
                         </div>
                     </div>
                     @endif

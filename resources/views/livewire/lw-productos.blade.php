@@ -2,11 +2,14 @@
     <div class="card">
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
-                <div>
+                <div class="d-flex align-items-center" style="gap: 8px;">
                     <button type="button" class="btn btn-success"
                         wire:click='dispatchTo("form-add-prod","modal-prod-on")'>
                         <i class="fas fa-plus-circle"></i> Agregar Producto
                     </button>
+                    <a href="{{ route('productos.informe') }}" class="btn btn-info">
+                        <i class="fas fa-chart-bar"></i> Informe
+                    </a>
                 </div>
                 <div class="input-group" style="width: 300px;">
                     <input type="text" wire:model='query' wire:keydown='search' class="form-control"

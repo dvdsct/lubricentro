@@ -20,6 +20,16 @@ class ProductoController extends Controller
     }
 
     /**
+     * Display the sales report / top products report.
+     */
+    public function informe()
+    {
+        return view(
+            'Lubricentro.Producto.informe'
+        );
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()

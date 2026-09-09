@@ -72,6 +72,7 @@ Route::middleware([
     Route::get('/mi-cuenta', ClientPortal::class)->name('portal.cliente');
 
     Route::resource('dash', DashboardController::class);
+    Route::get('/productos/informe', [ProductoController::class, 'informe'])->name('productos.informe');
     Route::resource('productos',ProductoController::class);
     Route::resource('ordenes',OrdenController::class);
     Route::resource('stock',StockController::class);

@@ -258,6 +258,69 @@ class FormCreateOrder extends Component
 
 
 
+    public $editingVehicleId = null;
+    public $isEditingVehicle = false;
+
+    public function openCreateVehicle()
+    {
+        $this->reset('tipo', 'marca', 'modelo', 'color', 'dominio', 'año', 'version');
+        $this->marcas = [];
+        $this->modelos = [];
+        $this->editingVehicleId = null;
+        $this->isEditingVehicle = false;
+        $this->formVehiculo = true;
+        $this->selecedtVehiculo = false;
+    }
+
+    public function openEditVehicle($vehicleId = null)
+    {
+        $vId = $vehicleId;
+        if (!$vId) {
+            $vId = is_object($this->vehiculo) ? $this->vehiculo->id : $this->vehiculo;
+        }
+
+        $v = Vehiculo::with('modelos.marcas')->find($vId);
+        if (!$v) {
+            return;
+        }
+
+        $this->editingVehicleId = $v->id;
+        $this->isEditingVehicle = true;
+
+        $this->tipo = optional($v->modelos)->tipo_vehiculo_id;
+        if ($this->tipo) {
+            $this->marcas = MarcaVehiculo::where('tipo_vehiculo_id', $this->tipo)->get();
+        } else {
+            $this->marcas = MarcaVehiculo::all();
+        }
+
+        $this->marca = optional($v->modelos)->marca_vehiculo_id;
+        if ($this->marca) {
+            $this->modelos = ModeloVehiculo::where('marca_vehiculo_id', $this->marca)->get();
+        } else {
+            $this->modelos = [];
+        }
+
+        $this->modelo = $v->modelo_vehiculo_id;
+        $this->color = $v->color;
+        $this->dominio = $v->dominio;
+        $this->año = $v->año;
+        $this->version = $v->version;
+
+        $this->formVehiculo = true;
+        $this->selecedtVehiculo = false;
+    }
+
+    public function cancelVehicleForm()
+    {
+        $this->formVehiculo = false;
+        $this->isEditingVehicle = false;
+        $this->editingVehicleId = null;
+        if ($this->vehiculo) {
+            $this->selectVehiculo();
+        }
+    }
+
     public function setForm()
     {
         if ($this->formVehiculo == true) {
@@ -266,16 +329,17 @@ class FormCreateOrder extends Component
                 $this->reset('vehiculo');
             }
             $this->formVehiculo = false;
+            $this->isEditingVehicle = false;
+            $this->editingVehicleId = null;
         } else {
-            $this->formVehiculo = true;
+            if ($this->selecedtVehiculo && $this->vehiculo) {
+                $this->selecedtVehiculo = false;
+                $this->reset('vehiculo');
+            } else {
+                $this->openCreateVehicle();
+            }
         }
     }
-
-
-
-
-
-
 
     public function setMot($mot)
     {
@@ -293,40 +357,83 @@ class FormCreateOrder extends Component
         }
     }
 
-
-
     public function addVehicle()
     {
-        $this->vehiculo = Vehiculo::firstOrCreate([
-            'modelo_vehiculo_id' => $this->modelo,
-            'dominio' => $this->dominio,
-            'color' => $this->color,
-            'version' => $this->version,
-            'año' => $this->año,
-            'estado' => 1
-        ]);
-
-        $clientId = is_object($this->cliente) ? $this->cliente->id : $this->cliente;
-        VehiculosXCliente::firstOrCreate([
-            'cliente_id' => $clientId,
-            'vehiculo_id' => $this->vehiculo->id
-        ]);
-
-        $clientModel = Cliente::with('vehiculos.modelos.marcas')->find($clientId);
-        if ($clientModel) {
-            $this->vehiculos = $clientModel->vehiculos;
-        }
-
-        $this->vehiculo = $this->vehiculo->id;
-        $this->formVehiculo = false;
-
-        $this->selectVehiculo();
+        $this->saveVehicle();
     }
 
+    public function saveVehicle()
+    {
+        $this->validate([
+            'dominio' => 'required|string|max:50',
+            'modelo' => 'required',
+        ], [
+            'dominio.required' => 'Debe ingresar la patente / dominio.',
+            'modelo.required' => 'Debe seleccionar el modelo del vehículo.',
+        ]);
+
+        $dominioNorm = strtoupper(trim($this->dominio));
+        $clientId = is_object($this->cliente) ? $this->cliente->id : $this->cliente;
+
+        if ($this->isEditingVehicle && $this->editingVehicleId) {
+            $v = Vehiculo::find($this->editingVehicleId);
+            if ($v) {
+                $v->update([
+                    'modelo_vehiculo_id' => $this->modelo,
+                    'dominio' => $dominioNorm,
+                    'color' => $this->color ?: null,
+                    'version' => $this->version ?: null,
+                    'año' => $this->año ?: null,
+                ]);
+                $this->vehiculo = $v;
+            }
+        } else {
+            $v = Vehiculo::where('dominio', $dominioNorm)->first();
+            if ($v) {
+                $v->update([
+                    'modelo_vehiculo_id' => $this->modelo ?: $v->modelo_vehiculo_id,
+                    'color' => $this->color ?: $v->color,
+                    'version' => $this->version ?: $v->version,
+                    'año' => $this->año ?: $v->año,
+                ]);
+            } else {
+                $v = Vehiculo::create([
+                    'modelo_vehiculo_id' => $this->modelo,
+                    'dominio' => $dominioNorm,
+                    'color' => $this->color ?: null,
+                    'version' => $this->version ?: null,
+                    'año' => $this->año ?: null,
+                    'estado' => 1
+                ]);
+            }
+
+            if ($clientId) {
+                VehiculosXCliente::firstOrCreate([
+                    'cliente_id' => $clientId,
+                    'vehiculo_id' => $v->id
+                ]);
+            }
+
+            $this->vehiculo = $v;
+        }
+
+        if ($clientId) {
+            $clientModel = Cliente::with('vehiculos.modelos.marcas')->find($clientId);
+            if ($clientModel) {
+                $this->vehiculos = $clientModel->vehiculos;
+            }
+        }
+
+        $this->formVehiculo = false;
+        $this->isEditingVehicle = false;
+        $this->editingVehicleId = null;
+        $this->selecedtVehiculo = true;
+    }
 
     public function selectVehiculo()
     {
-        $this->vehiculo = Vehiculo::find($this->vehiculo);
+        $vId = is_object($this->vehiculo) ? $this->vehiculo->id : $this->vehiculo;
+        $this->vehiculo = Vehiculo::with('modelos.marcas')->find($vId);
         $this->selecedtVehiculo = true;
     }
 
