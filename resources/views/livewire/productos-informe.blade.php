@@ -200,18 +200,16 @@
                     </div>
                 </div>
                 <div class="card-body px-4 pb-4">
-                    @php
-                        $hasData = collect($chartData)->sum() > 0;
-                    @endphp
+                    <div wire:ignore class="position-relative" style="min-height: 320px; width: 100%;">
+                        <div class="chart position-relative" id="productChartContainer" style="min-height: 320px; height: 320px; width: 100%;">
+                            <canvas id="topProductsChart" style="height: 320px; max-height: 320px; display: block; width: 100%;"></canvas>
+                        </div>
 
-                    <div class="chart position-relative" id="productChartContainer" style="min-height: 320px; {{ $hasData ? '' : 'display: none;' }}">
-                        <canvas id="topProductsChart" style="min-height: 320px; height: 320px; max-height: 450px; display: block; width: 100%;"></canvas>
-                    </div>
-
-                    <div class="flex-column align-items-center justify-content-center text-muted" id="noProductDataContainer" style="min-height: 260px; {{ $hasData ? 'display: none;' : 'display: flex !important;' }}">
-                        <i class="fas fa-box-open fa-3x mb-3 text-secondary" style="opacity: 0.4;"></i>
-                        <p class="m-0 font-weight-bold text-dark">No se encontraron ventas para los filtros seleccionados</p>
-                        <small class="text-muted mt-1">Prueba seleccionando otro período, categoría o ajustando la búsqueda.</small>
+                        <div class="flex-column align-items-center justify-content-center text-muted" id="noProductDataContainer" style="min-height: 260px; height: 320px; display: none;">
+                            <i class="fas fa-box-open fa-3x mb-3 text-secondary" style="opacity: 0.4;"></i>
+                            <p class="m-0 font-weight-bold text-dark">No se encontraron ventas para los filtros seleccionados</p>
+                            <small class="text-muted mt-1">Prueba seleccionando otro período, categoría o ajustando la búsqueda.</small>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -345,169 +343,159 @@
     <script>
         let productsChartObj = null;
 
-        document.addEventListener('DOMContentLoaded', function () {
-            let initialData = @json($chartData);
-            let sum = initialData ? initialData.reduce((a, b) => a + b, 0) : 0;
-            if (sum > 0) {
-                initializeProductsChart();
-            }
-        });
-
-        // Escuchar actualizaciones de Livewire
-        document.addEventListener('livewire:init', () => {
-            Livewire.on('update-products-chart', (eventData) => {
-                let payload = Array.isArray(eventData) ? eventData[0] : eventData;
-                updateProductsChartData(payload.labels, payload.data, payload.metric);
-            });
-        });
-
-        function initializeProductsChart(labels = null, data = null, metric = null) {
+        function renderOrUpdateProductsChart(labels, data, metric) {
             let canvas = document.getElementById('topProductsChart');
             if (!canvas) return;
 
-            let ctx = canvas.getContext('2d');
-            let initialLabels = labels || @json($chartLabels);
-            let initialData = data || @json($chartData);
-            let currentMetric = metric || @json($metric);
+            let sum = (data && Array.isArray(data)) ? data.reduce((a, b) => a + Number(b), 0) : 0;
+            let chartContainer = document.getElementById('productChartContainer');
+            let noDataContainer = document.getElementById('noProductDataContainer');
 
-            if (!initialLabels || !initialData || initialLabels.length === 0) {
+            if (!data || data.length === 0 || sum === 0) {
+                if (chartContainer) chartContainer.style.setProperty('display', 'none', 'important');
+                if (noDataContainer) {
+                    noDataContainer.style.removeProperty('display');
+                    noDataContainer.style.setProperty('display', 'flex', 'important');
+                }
+                if (productsChartObj) {
+                    productsChartObj.destroy();
+                    productsChartObj = null;
+                }
                 return;
             }
 
-            // Generar colores agradables para las barras
+            if (chartContainer) {
+                chartContainer.style.removeProperty('display');
+                chartContainer.style.setProperty('display', 'block', 'important');
+            }
+            if (noDataContainer) {
+                noDataContainer.style.setProperty('display', 'none', 'important');
+            }
+
             let barColors = [
                 '#17a2b8', '#20c997', '#28a745', '#ffc107', '#fd7e14',
                 '#e83e8c', '#6f42c1', '#007bff', '#6610f2', '#343a40',
                 '#36a2eb', '#4bc0c0', '#9966ff', '#ff9f40', '#ff6384'
             ];
+            let bgColors = labels.map((_, i) => barColors[i % barColors.length]);
 
-            let bgColors = [];
-            for (let i = 0; i < initialLabels.length; i++) {
-                bgColors.push(barColors[i % barColors.length]);
-            }
+            if (productsChartObj) {
+                productsChartObj.data.labels = labels;
+                productsChartObj.data.datasets[0].data = data;
+                productsChartObj.data.datasets[0].backgroundColor = bgColors;
+                productsChartObj.data.datasets[0].borderColor = bgColors;
+                productsChartObj.data.datasets[0].label = metric === 'total' ? 'Recaudación ($)' : 'Unidades Vendidas';
 
-            productsChartObj = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: initialLabels,
-                    datasets: [{
-                        label: currentMetric === 'total' ? 'Recaudación ($)' : 'Unidades Vendidas',
-                        data: initialData,
-                        backgroundColor: bgColors,
-                        borderColor: bgColors,
-                        borderWidth: 1,
-                        borderRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    legend: {
-                        display: false
-                    },
-                    tooltips: {
-                        callbacks: {
-                            label: function(tooltipItem, chartData) {
-                                let val = parseFloat(tooltipItem.yLabel !== undefined ? tooltipItem.yLabel : tooltipItem.value);
-                                if (currentMetric === 'total') {
-                                    return ' Recaudado: $' + val.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                                } else {
-                                    return ' Unidades vendidas: ' + val.toLocaleString('es-AR') + ' un.';
-                                }
-                            }
+                if (productsChartObj.options.scales && productsChartObj.options.scales.yAxes) {
+                    productsChartObj.options.scales.yAxes[0].ticks.callback = function(value) {
+                        return metric === 'total' ? '$' + value.toLocaleString('es-AR') : value.toLocaleString('es-AR');
+                    };
+                }
+                if (productsChartObj.options.tooltips) {
+                    productsChartObj.options.tooltips.callbacks.label = function(tooltipItem) {
+                        let val = parseFloat(tooltipItem.yLabel !== undefined ? tooltipItem.yLabel : tooltipItem.value);
+                        if (metric === 'total') {
+                            return ' Recaudado: $' + val.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        } else {
+                            return ' Unidades vendidas: ' + val.toLocaleString('es-AR') + ' un.';
                         }
+                    };
+                }
+                productsChartObj.update();
+            } else {
+                let ctx = canvas.getContext('2d');
+                productsChartObj = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: metric === 'total' ? 'Recaudación ($)' : 'Unidades Vendidas',
+                            data: data,
+                            backgroundColor: bgColors,
+                            borderColor: bgColors,
+                            borderWidth: 1,
+                            borderRadius: 6
+                        }]
                     },
-                    scales: {
-                        xAxes: [{
-                            gridLines: {
-                                display: false
-                            },
-                            ticks: {
-                                fontColor: '#6c757d',
-                                fontStyle: 'bold',
-                                autoSkip: false,
-                                maxRotation: 45,
-                                minRotation: 0
-                            }
-                        }],
-                        yAxes: [{
-                            gridLines: {
-                                color: '#f1f1f1',
-                                zeroLineColor: '#e9ecef',
-                                borderDash: [5, 5]
-                            },
-                            ticks: {
-                                beginAtZero: true,
-                                fontColor: '#6c757d',
-                                fontStyle: 'bold',
-                                callback: function(value) {
-                                    if (currentMetric === 'total') {
-                                        return '$' + value.toLocaleString('es-AR');
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        legend: {
+                            display: false
+                        },
+                        animation: {
+                            duration: 350
+                        },
+                        tooltips: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    let val = parseFloat(tooltipItem.yLabel !== undefined ? tooltipItem.yLabel : tooltipItem.value);
+                                    if (metric === 'total') {
+                                        return ' Recaudado: $' + val.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                                     } else {
-                                        return value.toLocaleString('es-AR');
+                                        return ' Unidades vendidas: ' + val.toLocaleString('es-AR') + ' un.';
                                     }
                                 }
                             }
-                        }]
+                        },
+                        scales: {
+                            xAxes: [{
+                                gridLines: {
+                                    display: false
+                                },
+                                ticks: {
+                                    fontColor: '#6c757d',
+                                    fontStyle: 'bold',
+                                    autoSkip: false,
+                                    maxRotation: 45,
+                                    minRotation: 0
+                                }
+                            }],
+                            yAxes: [{
+                                gridLines: {
+                                    color: '#f1f1f1',
+                                    zeroLineColor: '#e9ecef',
+                                    borderDash: [5, 5]
+                                },
+                                ticks: {
+                                    beginAtZero: true,
+                                    fontColor: '#6c757d',
+                                    fontStyle: 'bold',
+                                    callback: function(value) {
+                                        if (metric === 'total') {
+                                            return '$' + value.toLocaleString('es-AR');
+                                        } else {
+                                            return value.toLocaleString('es-AR');
+                                        }
+                                    }
+                                }
+                            }]
+                        }
                     }
-                }
-            });
-        }
-
-        function updateProductsChartData(labels, data, metric) {
-            let sum = data ? data.reduce((a, b) => a + Number(b), 0) : 0;
-            let chartContainer = document.getElementById('productChartContainer');
-            let noDataContainer = document.getElementById('noProductDataContainer');
-
-            if (sum > 0 && labels && labels.length > 0) {
-                if (chartContainer) chartContainer.style.display = 'block';
-                if (noDataContainer) noDataContainer.style.setProperty('display', 'none', 'important');
-
-                let barColors = [
-                    '#17a2b8', '#20c997', '#28a745', '#ffc107', '#fd7e14',
-                    '#e83e8c', '#6f42c1', '#007bff', '#6610f2', '#343a40',
-                    '#36a2eb', '#4bc0c0', '#9966ff', '#ff9f40', '#ff6384'
-                ];
-                let bgColors = [];
-                for (let i = 0; i < labels.length; i++) {
-                    bgColors.push(barColors[i % barColors.length]);
-                }
-
-                if (productsChartObj) {
-                    productsChartObj.data.labels = labels;
-                    productsChartObj.data.datasets[0].data = data;
-                    productsChartObj.data.datasets[0].backgroundColor = bgColors;
-                    productsChartObj.data.datasets[0].borderColor = bgColors;
-                    productsChartObj.data.datasets[0].label = metric === 'total' ? 'Recaudación ($)' : 'Unidades Vendidas';
-                    
-                    if (productsChartObj.options.scales && productsChartObj.options.scales.yAxes) {
-                        productsChartObj.options.scales.yAxes[0].ticks.callback = function(value) {
-                            return metric === 'total' ? '$' + value.toLocaleString('es-AR') : value.toLocaleString('es-AR');
-                        };
-                    }
-                    if (productsChartObj.options.tooltips) {
-                        productsChartObj.options.tooltips.callbacks.label = function(tooltipItem) {
-                            let val = parseFloat(tooltipItem.yLabel !== undefined ? tooltipItem.yLabel : tooltipItem.value);
-                            if (metric === 'total') {
-                                return ' Recaudado: $' + val.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                            } else {
-                                return ' Unidades vendidas: ' + val.toLocaleString('es-AR') + ' un.';
-                            }
-                        };
-                    }
-
-                    productsChartObj.update();
-                } else {
-                    setTimeout(() => {
-                        initializeProductsChart(labels, data, metric);
-                    }, 50);
-                }
-            } else {
-                if (chartContainer) chartContainer.style.display = 'none';
-                if (noDataContainer) {
-                    noDataContainer.style.setProperty('display', 'flex', 'important');
-                }
+                });
             }
         }
+
+        function initChartFromState() {
+            let initialLabels = @json($chartLabels);
+            let initialData = @json($chartData);
+            let initialMetric = @json($metric);
+            renderOrUpdateProductsChart(initialLabels, initialData, initialMetric);
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initChartFromState);
+        } else {
+            initChartFromState();
+        }
+
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('update-products-chart', (eventData) => {
+                let payload = Array.isArray(eventData) ? eventData[0] : (eventData.detail ? eventData.detail : eventData);
+                if (payload) {
+                    renderOrUpdateProductsChart(payload.labels, payload.data, payload.metric);
+                }
+            });
+        });
     </script>
 </div>

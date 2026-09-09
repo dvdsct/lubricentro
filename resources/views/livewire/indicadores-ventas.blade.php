@@ -97,16 +97,15 @@
                     </div>
                 </div>
                 <div class="card-body px-4 pb-4">
-                    @php
-                        $hasChartData = collect($chartData)->sum() > 0;
-                    @endphp
-                    <div class="chart position-relative" id="chartContainer" style="height: 250px; {{ $hasChartData ? '' : 'display: none;' }}">
-                        <canvas id="salesChart" height="250" style="height: 250px; display: block; width: 100%;"></canvas>
-                    </div>
-                    <div class="flex-column align-items-center justify-content-center text-muted" id="noDataContainer" style="height: 250px; {{ $hasChartData ? 'display: none;' : 'display: flex !important;' }}">
-                        <i class="fas fa-chart-area fa-3x mb-3 text-light"></i>
-                        <p class="m-0 font-weight-bold">No hay ingresos registrados en este período</p>
-                        <small>Prueba seleccionando otro período o ingresando una nueva orden.</small>
+                    <div wire:ignore class="position-relative" style="height: 250px; width: 100%;">
+                        <div class="chart position-relative" id="chartContainer" style="height: 250px; width: 100%;">
+                            <canvas id="salesChart" height="250" style="height: 250px; max-height: 250px; display: block; width: 100%;"></canvas>
+                        </div>
+                        <div class="flex-column align-items-center justify-content-center text-muted" id="noDataContainer" style="height: 250px; display: none;">
+                            <i class="fas fa-chart-area fa-3x mb-3 text-light"></i>
+                            <p class="m-0 font-weight-bold">No hay ingresos registrados en este período</p>
+                            <small>Prueba seleccionando otro período o ingresando una nueva orden.</small>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -289,130 +288,134 @@
 
     <!-- CHARTS INITIALIZATION SCRIPT -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            let initialData = @json($chartData);
-            let sum = initialData ? initialData.reduce((a, b) => a + b, 0) : 0;
-            if (sum > 0) {
-                initializeDashboardChart();
-            }
-        });
-
-        // Handler for Livewire updates
-        document.addEventListener('livewire:init', () => {
-            Livewire.on('update-chart', (eventData) => {
-                let payload = eventData[0];
-                updateChartData(payload.labels, payload.data);
-            });
-        });
-
         let salesChartObj = null;
 
-        function initializeDashboardChart(labels = null, data = null) {
+        function renderOrUpdateDashboardChart(labels, data) {
             let canvas = document.getElementById('salesChart');
             if (!canvas) return;
 
-            let ctx = canvas.getContext('2d');
-            let initialLabels = labels || @json($chartLabels);
-            let initialData = data || @json($chartData);
-
-            if (!initialLabels || !initialData || initialLabels.length === 0) {
-                return;
-            }
-
-            // Create gradient background
-            let gradient = ctx.createLinearGradient(0, 0, 0, 220);
-            gradient.addColorStop(0, 'rgba(40, 167, 69, 0.4)');
-            gradient.addColorStop(1, 'rgba(40, 167, 69, 0.01)');
-
-            salesChartObj = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: initialLabels,
-                    datasets: [{
-                        label: 'Ventas ($)',
-                        data: initialData,
-                        backgroundColor: gradient,
-                        borderColor: '#28a745',
-                        borderWidth: 3,
-                        pointBackgroundColor: '#28a745',
-                        pointBorderColor: '#ffffff',
-                        pointBorderWidth: 2,
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
-                        fill: true,
-                        tension: 0.15
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    legend: {
-                        display: false
-                    },
-                    tooltips: {
-                        mode: 'index',
-                        intersect: false,
-                        callbacks: {
-                            label: function(tooltipItem, data) {
-                                let val = parseFloat(tooltipItem.yLabel);
-                                return ' Ventas: $' + val.toLocaleString('es-AR', { minimumFractionDigits: 2 });
-                            }
-                        }
-                    },
-                    scales: {
-                        xAxes: [{
-                            gridLines: {
-                                display: false
-                            },
-                            ticks: {
-                                fontColor: '#6c757d',
-                                fontStyle: 'bold'
-                            }
-                        }],
-                        yAxes: [{
-                            gridLines: {
-                                color: '#f1f1f1',
-                                zeroLineColor: '#e9ecef',
-                                borderDash: [5, 5]
-                            },
-                            ticks: {
-                                fontColor: '#6c757d',
-                                fontStyle: 'bold',
-                                callback: function(value) {
-                                    return '$' + value.toLocaleString('es-AR');
-                                }
-                            }
-                        }]
-                    }
-                }
-            });
-        }
-
-        function updateChartData(labels, data) {
-            let sum = data ? data.reduce((a, b) => a + b, 0) : 0;
+            let sum = (data && Array.isArray(data)) ? data.reduce((a, b) => a + Number(b), 0) : 0;
             let chartContainer = document.getElementById('chartContainer');
             let noDataContainer = document.getElementById('noDataContainer');
 
-            if (sum > 0) {
-                if (chartContainer) chartContainer.style.display = 'block';
-                if (noDataContainer) noDataContainer.style.setProperty('display', 'none', 'important');
-
-                if (salesChartObj) {
-                    salesChartObj.data.labels = labels;
-                    salesChartObj.data.datasets[0].data = data;
-                    salesChartObj.update();
-                } else {
-                    // Delay slightly to allow DOM to render canvas if it was hidden
-                    setTimeout(() => {
-                        initializeDashboardChart(labels, data);
-                    }, 50);
-                }
-            } else {
-                if (chartContainer) chartContainer.style.display = 'none';
+            if (!data || data.length === 0 || sum === 0) {
+                if (chartContainer) chartContainer.style.setProperty('display', 'none', 'important');
                 if (noDataContainer) {
+                    noDataContainer.style.removeProperty('display');
                     noDataContainer.style.setProperty('display', 'flex', 'important');
                 }
+                if (salesChartObj) {
+                    salesChartObj.destroy();
+                    salesChartObj = null;
+                }
+                return;
+            }
+
+            if (chartContainer) {
+                chartContainer.style.removeProperty('display');
+                chartContainer.style.setProperty('display', 'block', 'important');
+            }
+            if (noDataContainer) {
+                noDataContainer.style.setProperty('display', 'none', 'important');
+            }
+
+            if (salesChartObj) {
+                salesChartObj.data.labels = labels;
+                salesChartObj.data.datasets[0].data = data;
+                salesChartObj.update();
+            } else {
+                let ctx = canvas.getContext('2d');
+                let gradient = ctx.createLinearGradient(0, 0, 0, 220);
+                gradient.addColorStop(0, 'rgba(40, 167, 69, 0.4)');
+                gradient.addColorStop(1, 'rgba(40, 167, 69, 0.01)');
+
+                salesChartObj = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Ventas ($)',
+                            data: data,
+                            backgroundColor: gradient,
+                            borderColor: '#28a745',
+                            borderWidth: 3,
+                            pointBackgroundColor: '#28a745',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            fill: true,
+                            tension: 0.15
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        legend: {
+                            display: false
+                        },
+                        animation: {
+                            duration: 350
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(tooltipItem, data) {
+                                    let val = parseFloat(tooltipItem.yLabel !== undefined ? tooltipItem.yLabel : tooltipItem.value);
+                                    return ' Ventas: $' + val.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                }
+                            }
+                        },
+                        scales: {
+                            xAxes: [{
+                                gridLines: {
+                                    display: false
+                                },
+                                ticks: {
+                                    fontColor: '#6c757d',
+                                    fontStyle: 'bold'
+                                }
+                            }],
+                            yAxes: [{
+                                gridLines: {
+                                    color: '#f1f1f1',
+                                    zeroLineColor: '#e9ecef',
+                                    borderDash: [5, 5]
+                                },
+                                ticks: {
+                                    fontColor: '#6c757d',
+                                    fontStyle: 'bold',
+                                    callback: function(value) {
+                                        return '$' + value.toLocaleString('es-AR');
+                                    }
+                                }
+                            }]
+                        }
+                    }
+                });
             }
         }
+
+        function initDashboardChartFromState() {
+            let initialLabels = @json($chartLabels);
+            let initialData = @json($chartData);
+            renderOrUpdateDashboardChart(initialLabels, initialData);
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initDashboardChartFromState);
+        } else {
+            initDashboardChartFromState();
+        }
+
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('update-chart', (eventData) => {
+                let payload = Array.isArray(eventData) ? eventData[0] : (eventData.detail ? eventData.detail : eventData);
+                if (payload) {
+                    renderOrUpdateDashboardChart(payload.labels, payload.data);
+                }
+            });
+        });
     </script>
 </div>
