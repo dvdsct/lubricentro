@@ -18,6 +18,7 @@ class AddProductsPP extends Component
 {
 
     use WithPagination;
+    protected string $paginationTheme = 'bootstrap';
     // Vista
     public $productos;
     public $servicios;
@@ -34,7 +35,6 @@ class AddProductsPP extends Component
     public $total;
 
     // Item
-    #[Validate('required', message: 'ingrese una cantidad')]
     public $cantidad;
     public $precio;
     public $subtotal;
@@ -223,22 +223,35 @@ class AddProductsPP extends Component
     // Cargar item de pedido
     public function addCantidad($id)
     {
+        $this->validate([
+            'cantidad' => 'required|numeric|min:1',
+            'precio' => 'nullable|numeric|min:0',
+        ], [
+            'cantidad.required' => 'Ingrese una cantidad',
+            'cantidad.min' => 'La cantidad mínima es 1',
+            'precio.numeric' => 'El precio debe ser un valor numérico',
+        ]);
 
-
-        $this->validate();
         $item = PedItem::find($id);
+        if (!$item) { return; }
         $p = Producto::find($item->producto_id);
 
-        // Precio unitario de compra es de solo lectura: usar el precio definido al crear el ítem
-        $precioUnit = $item->precio ?? ($p->costo ?? 0);
+        $precioUnit = (!is_null($this->precio) && $this->precio !== '')
+            ? floatval($this->precio)
+            : floatval($item->precio ?? $p->costo ?? 0);
 
-        // Confirmar el ítem siempre: cantidad, precio, subtotal y bloquear edición (estado=2)
+        // Confirmar el ítem: cantidad, precio, subtotal y bloquear edición (estado=2)
         $item->update([
             'cantidad' => $this->cantidad,
             'precio' => $precioUnit,
-            'subtotal' => $precioUnit *  $this->cantidad,
+            'subtotal' => $precioUnit * floatval($this->cantidad),
             'estado' => '2',
         ]);
+
+        // Si el producto no tenía costo asignado y se ingresó uno, actualizar el costo base del producto
+        if ($p && $precioUnit > 0 && (empty($p->costo) || $p->costo == 0)) {
+            $p->update(['costo' => $precioUnit]);
+        }
 
         // Sincronizar nuevo esquema de ítems del pedido
         $ppi = PedidoProveedorItem::firstOrCreate([
@@ -260,48 +273,37 @@ class AddProductsPP extends Component
         ]);
 
         // limpiar inputs
-        $this->reset('cantidad');
+        $this->reset(['cantidad', 'precio']);
 
         // Recalcular estado general del pedido después de confirmar ítem
         $this->updatePedidoEstado();
         $this->dispatch('suma-items');
-
     }
 
     // Manejo del Modal
 
     public function modalProdOn()
     {
-
         $this->modal = true;
     }
+
     public function modalProdOff()
     {
         $this->modal = false;
-
-        //
-        //
     }
-
-
-
 
     public function addedProduct($p)
     {
-
-
-
         $this->producto = Producto::find($p);
-
-
         $this->modalProdOff();
 
-
-
+        $costoInicial = floatval($this->producto->costo ?? 0);
+        $this->precio = $costoInicial > 0 ? $costoInicial : '';
+        $this->cantidad = '';
 
         $i = PedItem::create([
             'producto_id' => $this->producto->id,
-            'precio' => $this->producto->costo,
+            'precio' => $costoInicial,
             'estado' => '1',
         ]);
 
@@ -309,7 +311,6 @@ class AddProductsPP extends Component
             'pedido_proveedor_id' => $this->pedido->id,
             'ped_item_id' => $i->id,
             'estado' => '1',
-
         ]);
 
         // Crear también el registro en el nuevo esquema (inicialmente sin cantidad)
@@ -319,7 +320,7 @@ class AddProductsPP extends Component
         ], [
             'cantidad_pedida' => 0,
             'cantidad_recibida' => 0,
-            'costo_unitario' => $this->producto->costo ?? 0,
+            'costo_unitario' => $costoInicial,
             'subtotal' => 0,
             'estado_item' => 'pendiente',
         ]);
@@ -328,6 +329,9 @@ class AddProductsPP extends Component
     public function editProd($id)
     {
         $item = PedItem::find($id);
+        if (!$item) { return; }
+        $this->cantidad = $item->cantidad;
+        $this->precio = $item->precio;
         $item->update([
             'estado' => '1'
         ]);

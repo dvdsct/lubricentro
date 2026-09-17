@@ -15,6 +15,7 @@ use Livewire\WithPagination;
 class AddProductPresupuesto extends Component
 {
     use WithPagination;
+    protected string $paginationTheme = 'bootstrap';
 
     public $presupuesto;
     public $cliente;

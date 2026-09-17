@@ -100,13 +100,25 @@ class FormPago extends Component
 
     // Pago dividido (dos métodos)
     public $splitSecond = false;
+    public $monto1;
     public $medioPago2;
     public $monto2;
+    public $banco2;
+    public $fechaCheque2;
+    public $nroCheque2;
 
     // Evita doble envío en UI/servidor
     public $processing = false;
     public $codeOp2; // para transferencia 2
 
+    public function isDiferido(): bool
+    {
+        if (intval($this->tipoPago) === 4) {
+            return true;
+        }
+        $tp = TipoPago::find($this->tipoPago);
+        return $tp && mb_strtolower($tp->descripcion) === 'diferido';
+    }
 
     public function mount($orden)
     {
@@ -129,10 +141,10 @@ class FormPago extends Component
 
             $this->tiposPago = TipoPago::all();
             $this->tarjetasT = Plan::all();
-            $this->tiposFactura = TipoFactura::all();
-            $this->mediosPago = MedioPago::where('descripcion', 'Efectivo')
-            ->orWhere('descripcion', 'Cuenta Corriente')
-            ->get();
+            // Filtrar para que NO aparezca 'Consumidor final' en pagos a proveedores
+            $this->tiposFactura = TipoFactura::where('descripcion', '!=', 'Consumidor final')->get();
+            $this->tipoFactura = $this->tiposFactura->first()?->id ?? '1';
+            $this->mediosPago = MedioPago::all();
             $this->clientes = Cliente::where('lista_precios', '3')->get();
             // Cargar descuentos habilitados (porcentaje)
             $this->descuentos = Descuentos::whereNotNull('porcentaje')->where('estado','1')->get();
@@ -199,50 +211,85 @@ class FormPago extends Component
         }
     }
 
+    public function updatedTipoPago($value)
+    {
+        if ($this->isDiferido()) {
+            $totalVal = floatval($this->total ?: $this->montoAPagar ?: 0);
+            $this->monto1 = $totalVal > 0 ? round($totalVal / 2, 2) : 0;
+            $this->monto2 = $totalVal > 0 ? round($totalVal - $this->monto1, 2) : 0;
+        }
+    }
+
+    public function updatedMonto1($value)
+    {
+        if ($value !== '' && is_numeric($value)) {
+            $totalVal = floatval($this->total ?: $this->montoAPagar ?: 0);
+            $this->monto2 = max(0, round($totalVal - floatval($value), 2));
+        }
+    }
+
+    public function updatedMonto2($value)
+    {
+        if ($value !== '' && is_numeric($value)) {
+            $totalVal = floatval($this->total ?: $this->montoAPagar ?: 0);
+            $this->monto1 = max(0, round($totalVal - floatval($value), 2));
+        }
+    }
+
     public function updatedSplitSecond()
     {
         // Limpiar campos secundarios al desactivar
         if (!$this->splitSecond) {
-            $this->reset('medioPago2','monto2','codeOp2');
+            $this->reset('medioPago2','monto2','codeOp2','banco2','fechaCheque2','nroCheque2');
+        } else {
+            $totalVal = floatval($this->total ?: $this->montoAPagar ?: 0);
+            $this->monto1 = $totalVal > 0 ? round($totalVal / 2, 2) : 0;
+            $this->monto2 = $totalVal > 0 ? round($totalVal - $this->monto1, 2) : 0;
         }
     }
 
     #[On('formPago')]
     public function genPago($tipo)
     {
-
         if ($tipo == 'orden') {
-            // Validaciones previas: orden válida, no pagada, y con items
-        if (!$this->orden) {
-            $this->addError('orden', 'No hay una orden cargada para cobrar.');
-            $this->processing = false;
-            return;
-        }
-        if ($this->orden->estado == 100) {
-            $this->addError('orden', 'Esta orden ya fue pagada.');
-            $this->processing = false;
-            return;
-        }
-        if ($this->orden->items->isEmpty()) {
-            $this->addError('orden', 'La orden no tiene ítems para cobrar.');
-            $this->processing = false;
-            return;
-        }
-
-        if ($this->orden->estado != 100) {
-
-            // Bloqueo pesimista para evitar doble cobro concurrente
-            $lockedOrden = \App\Models\Orden::where('id', $this->orden->id)->lockForUpdate()->first();
-            if ($lockedOrden && $lockedOrden->estado == 100) {
+            if (!$this->orden) {
+                $this->addError('orden', 'No hay una orden cargada para cobrar.');
                 $this->processing = false;
-                return redirect('ordenes/' . $this->orden->id);
+                return;
             }
+            if ($this->orden->estado == 100) {
+                $this->addError('orden', 'Esta orden ya fue pagada.');
+                $this->processing = false;
+                return;
+            }
+            if ($this->orden->items->isEmpty()) {
+                $this->addError('orden', 'La orden no tiene ítems para cobrar.');
+                $this->processing = false;
+                return;
+            }
+
+            if ($this->orden->estado != 100) {
+                $lockedOrden = \App\Models\Orden::where('id', $this->orden->id)->lockForUpdate()->first();
+                if ($lockedOrden && $lockedOrden->estado == 100) {
+                    $this->processing = false;
+                    return redirect('ordenes/' . $this->orden->id);
+                }
                 $this->modal = true;
+                $this->montoAPagar = $this->orden->items->sum('subtotal');
+                if ($this->isDiferido()) {
+                    $this->monto1 = round($this->montoAPagar / 2, 2);
+                    $this->monto2 = round($this->montoAPagar - $this->monto1, 2);
+                }
             }
         }
         if ($tipo == 'proveedor') {
-            if ($this->pedido->estado != 100) {
+            if ($this->pedido && $this->pedido->estado != 100) {
                 $this->modal = true;
+                $this->montoAPagar = $this->pedido->items->sum('subtotal');
+                if ($this->isDiferido()) {
+                    $this->monto1 = round($this->montoAPagar / 2, 2);
+                    $this->monto2 = round($this->montoAPagar - $this->monto1, 2);
+                }
             }
         }
     }
@@ -307,10 +354,6 @@ class FormPago extends Component
         }
         $this->processing = true;
 
-        $this->validate([
-            'medioPago' => 'required'
-        ]);
-
         if (!$this->pedido) {
             $this->processing = false;
             return;
@@ -339,7 +382,105 @@ class FormPago extends Component
             return;
         }
 
-        // Requerir plan cuando el medio es Tarjeta Crédito
+        $itemsSubtotal = $this->pedido->items->sum('subtotal');
+        $montoBase = floatval($itemsSubtotal);
+        $totalNeg = -abs($montoBase);
+
+        $estadoPorMedio = function($mId) {
+            switch (intval($mId)) {
+                case 1: return '10'; // Tarjeta
+                case 2: return '200'; // Efectivo
+                case 3: return '30'; // Cheque
+                case 4: return '400'; // Cuenta Corriente
+                case 5: return '90'; // Transferencia
+                default: return '100';
+            }
+        };
+
+        // CASO 1: PAGO DIFERIDO / DIVIDIDO EN DOS MEDIOS
+        if ($this->isDiferido() || $this->splitSecond) {
+            $this->validate([
+                'medioPago' => 'required',
+                'monto1' => 'required|numeric|min:0.01',
+                'medioPago2' => 'required',
+                'monto2' => 'required|numeric|min:0.01',
+            ], [
+                'medioPago.required' => 'Seleccione el primer medio de pago',
+                'monto1.required' => 'Ingrese el monto del primer medio',
+                'medioPago2.required' => 'Seleccione el segundo medio de pago',
+                'monto2.required' => 'Ingrese el monto del segundo medio',
+            ]);
+
+            $m1 = floatval($this->monto1);
+            $m2 = floatval($this->monto2);
+
+            if (abs(($m1 + $m2) - $montoBase) > 0.01) {
+                $this->addError('monto2', 'La suma de ambos montos ($' . number_format($m1 + $m2, 2) . ') no coincide con el total del pedido ($' . number_format($montoBase, 2) . ').');
+                $this->processing = false;
+                return;
+            }
+
+            $f = Factura::create([
+                'pedido_proveedor_id' => $this->pedido->id,
+                'tipo_factura_id' => $this->tipoFactura,
+                'total' => $totalNeg,
+                'estado' => '100'
+            ]);
+
+            $registrarPagoProv = function($medioId, $monto, $bancoId = null, $vencCheque = null, $nroChq = null, $codeOperacion = null) use ($f, $estadoPorMedio) {
+                $montoNeg = -abs(floatval($monto));
+                $est = $estadoPorMedio($medioId);
+
+                $p = Pago::create([
+                    'in_out' => 'out',
+                    'factura_id' => $f->id,
+                    'proveedor_id' => $this->proveedor,
+                    'medio_pago_id' => $medioId,
+                    'tipo_pago_id' => $this->tipoPago ?? '4',
+                    'efectivo' => (intval($medioId) === 2 ? $montoNeg : 0),
+                    'code_op' => $codeOperacion,
+                    'concepto' => 'proveedor',
+                    'total' => $montoNeg,
+                    'estado' => $est,
+                ]);
+
+                if ($this->caja && intval($medioId) !== 4) {
+                    PagosXCaja::create([
+                        'pago_id' => $p->id,
+                        'caja_id' => $this->caja->id,
+                        'estado' => $est,
+                    ]);
+                }
+
+                if (intval($medioId) === 3) {
+                    Cheque::create([
+                        'banco_id' => $bancoId,
+                        'pago_id' => $p->id,
+                        'vencimiento' => $vencCheque,
+                        'monto' => floatval($monto),
+                        'nro_cheque' => $nroChq,
+                        'estado' => '30',
+                    ]);
+                }
+
+                return $p;
+            };
+
+            $registrarPagoProv($this->medioPago, $m1, $this->banco, $this->fechaCheque, $this->nroCheque, $this->cupon);
+            $registrarPagoProv($this->medioPago2, $m2, $this->banco2, $this->fechaCheque2, $this->nroCheque2, $this->codeOp2);
+
+            $this->pedido->update(['estado' => 'recibido_total']);
+            $this->closeModal();
+            $this->dispatch('pedido-recibido')->to(AddProductsPP::class);
+            $this->processing = false;
+            return;
+        }
+
+        // CASO 2: PAGO SIMPLE CON UN SOLO MEDIO
+        $this->validate([
+            'medioPago' => 'required'
+        ]);
+
         if (intval($this->medioPago) === 1) {
             $this->validate([
                 'planSelected' => 'required'
@@ -350,144 +491,46 @@ class FormPago extends Component
             $this->interes = optional($this->plan)->interes;
         }
 
-        $itemsSubtotal = $this->pedido->items->sum('subtotal');
-        $montoBase = floatval($itemsSubtotal);
-        $totalNeg = -abs($montoBase);
+        $f = Factura::create([
+            'pedido_proveedor_id' => $this->pedido->id,
+            'tipo_factura_id' => $this->tipoFactura,
+            'total' => $totalNeg,
+            'estado' => $estadoPorMedio($this->medioPago)
+        ]);
 
-        // Pago Total o por defecto
-        if ($this->tipoPago == 2 || empty($this->tipoPago)) {
+        $p = Pago::create([
+            'in_out' => 'out',
+            'factura_id' => $f->id,
+            'proveedor_id' => $this->proveedor,
+            'medio_pago_id' => $this->medioPago,
+            'tipo_pago_id' => $this->tipoPago ?? '2',
+            'efectivo' => (intval($this->medioPago) === 2 ? $totalNeg : 0),
+            'code_op' => $this->cupon,
+            'concepto' => 'proveedor',
+            'total' => $totalNeg,
+            'estado' => $estadoPorMedio($this->medioPago),
+        ]);
 
-            // Cuenta Corriente  Estado = 400
-            if ($this->medioPago == 4) {
-                $f = Factura::create([
-                    'pedido_proveedor_id' => $this->pedido->id,
-                    'tipo_factura_id' => $this->tipoFactura,
-                    'total' => $totalNeg,
-                    'estado' => '400'
-                ]);
-
-                $p = Pago::create([
-                    'in_out' => 'out',
-                    'factura_id' => $f->id,
-                    'proveedor_id' => $this->proveedor,
-                    'medio_pago_id' => '4',
-                    'tipo_pago_id' => $this->tipoPago ?? '2',
-                    'efectivo' => 0,
-                    'total' => $totalNeg,
-                    'concepto' => 'proveedor',
-                    'estado' => '400',
-                ]);
-
-                // NO crear PagosXCaja para Cuenta Corriente para no impactar la caja física
-                $this->pedido->update([
-                    'estado' => 'recibido_total'
-                ]);
-            }
-
-            // Efectivo  Estado = 200
-            if ($this->medioPago == 2) {
-                $f = Factura::create([
-                    'pedido_proveedor_id' => $this->pedido->id,
-                    'tipo_factura_id' => $this->tipoFactura,
-                    'total' => $totalNeg,
-                    'estado' => '200'
-                ]);
-
-                $p = Pago::create([
-                    'in_out' => 'out',
-                    'factura_id' => $f->id,
-                    'proveedor_id' => $this->proveedor,
-                    'medio_pago_id' => $this->medioPago,
-                    'tipo_pago_id' => $this->tipoPago ?? '2',
-                    'efectivo' => $totalNeg,
-                    'concepto' => 'proveedor',
-                    'total' => $totalNeg,
-                    'estado' => '200',
-                ]);
-
-                if ($this->caja) {
-                    PagosXCaja::create([
-                        'pago_id' => $p->id,
-                        'caja_id' => $this->caja->id,
-                        'estado' => '200',
-                    ]);
-                }
-
-                $this->pedido->update([
-                    'estado' => 'recibido_total'
-                ]);
-            }
-
-            // Tarjeta Estado = 10
-            if ($this->medioPago == 1) {
-                $f = Factura::create([
-                    'pedido_proveedor_id' => $this->pedido->id,
-                    'tipo_factura_id' => $this->tipoFactura,
-                    'total' => $totalNeg,
-                    'estado' => '10'
-                ]);
-
-                $p = Pago::create([
-                    'in_out' => 'out',
-                    'factura_id' => $f->id,
-                    'proveedor_id' => $this->proveedor,
-                    'medio_pago_id' => $this->medioPago,
-                    'tipo_pago_id' => $this->tipoPago ?? '2',
-                    'efectivo' => 0,
-                    'concepto' => 'proveedor',
-                    'total' => $totalNeg,
-                    'estado' => '10',
-                ]);
-
-                if ($this->caja) {
-                    PagosXCaja::create([
-                        'pago_id' => $p->id,
-                        'caja_id' => $this->caja->id,
-                        'estado' => '10',
-                    ]);
-                }
-
-                $this->pedido->update([
-                    'estado' => 'recibido_total'
-                ]);
-            }
-
-            // Transferencia Estado = 90
-            if ($this->medioPago == 5) {
-                $f = Factura::create([
-                    'pedido_proveedor_id' => $this->pedido->id,
-                    'tipo_factura_id' => $this->tipoFactura,
-                    'total' => $totalNeg,
-                    'estado' => '90'
-                ]);
-
-                $p = Pago::create([
-                    'in_out' => 'out',
-                    'factura_id' => $f->id,
-                    'proveedor_id' => $this->proveedor,
-                    'medio_pago_id' => '5',
-                    'tipo_pago_id' => $this->tipoPago ?? '2',
-                    'efectivo' => 0,
-                    'code_op' => $this->cupon,
-                    'concepto' => 'proveedor',
-                    'total' => $totalNeg,
-                    'estado' => '90',
-                ]);
-
-                if ($this->caja) {
-                    PagosXCaja::create([
-                        'pago_id' => $p->id,
-                        'caja_id' => $this->caja->id,
-                        'estado' => '90',
-                    ]);
-                }
-
-                $this->pedido->update([
-                    'estado' => 'recibido_total'
-                ]);
-            }
+        if ($this->caja && intval($this->medioPago) !== 4) {
+            PagosXCaja::create([
+                'pago_id' => $p->id,
+                'caja_id' => $this->caja->id,
+                'estado' => $estadoPorMedio($this->medioPago),
+            ]);
         }
 
+        if (intval($this->medioPago) === 3) {
+            Cheque::create([
+                'banco_id' => $this->banco,
+                'pago_id' => $p->id,
+                'vencimiento' => $this->fechaCheque,
+                'monto' => $montoBase,
+                'nro_cheque' => $this->nroCheque,
+                'estado' => '30',
+            ]);
+        }
+
+        $this->pedido->update(['estado' => 'recibido_total']);
         $this->closeModal();
         $this->dispatch('pedido-recibido')->to(AddProductsPP::class);
         $this->processing = false;
@@ -507,11 +550,7 @@ class FormPago extends Component
         }
         $this->processing = true;
 
-        $this->validate([
-            'medioPago' => 'required'
-        ]);
         if ($this->orden->motivo == '1') {
-
             $this->concepto = 'Lavadero';
         } else {
             $this->concepto = 'Lubricentro';
@@ -519,137 +558,126 @@ class FormPago extends Component
 
         if ($this->orden->estado != 100) {
 
+            // CASO 1: PAGO TOTAL / DIFERIDO CON DOS MÉTODOS
+            if ($this->isDiferido() || $this->splitSecond) {
+                $this->validate([
+                    'medioPago' => 'required',
+                    'monto1' => 'required|numeric|min:0.01',
+                    'medioPago2' => 'required',
+                    'monto2' => 'required|numeric|min:0.01',
+                ], [
+                    'medioPago.required' => 'Seleccione el primer medio de pago',
+                    'monto1.required' => 'Ingrese el monto del primer medio',
+                    'medioPago2.required' => 'Seleccione el segundo medio de pago',
+                    'monto2.required' => 'Ingrese el monto del segundo medio',
+                ]);
 
+                $itemsSubtotal = $this->orden->items->sum('subtotal');
+                $baseAfterDiscount = max(0, floatval($itemsSubtotal) - floatval($this->discountAmount));
+                $interesPct = floatval($this->interes ?: 0);
+                $debitSurcharge = ($this->debitoId && (string)$this->medioPago === (string)$this->debitoId) ? ($baseAfterDiscount * 5) / 100.0 : 0;
+                $montoIntCalc = ($this->medioPago == 1 && $interesPct > 0) ? ($baseAfterDiscount * $interesPct) / 100.0 : 0;
+                $totalCalc = $baseAfterDiscount + $montoIntCalc + $debitSurcharge + floatval($this->iva);
 
-            // Estados
-            // Cuenta corriente 10
-            // Efectivo 20
-            // Parcial 30
+                $m1 = floatval($this->monto1);
+                $m2 = floatval($this->monto2);
 
+                if (abs(($m1 + $m2) - floatval($totalCalc)) > 0.01) {
+                    $this->addError('monto2', 'La suma de los montos ($' . number_format($m1 + $m2, 2) . ') no coincide con el total ($' . number_format($totalCalc, 2) . ').');
+                    $this->processing = false;
+                    return;
+                }
 
-
-            // ------------------------------------------------------------------------------
-            // ------------------------------------------------------------------------------
-            //                                 Pago total  Estado = 2
-            // ------------------------------------------------------------------------------
-            // ------------------------------------------------------------------------------
-            if ($this->tipoPago == 2) {
-                $this->montoAPagar = $this->orden->items->sum('subtotal');
-
-                // Pago total con dos métodos (split)
-                if ($this->splitSecond) {
-                    $this->validate([
-                        'medioPago' => 'required',
-                        'medioPago2' => 'required',
-                        'monto2' => 'required|numeric|min:0',
+                // Crear factura (estado pagado genérico 100)
+                $f = Factura::create([
+                    'orden_id' => $this->orden->id,
+                    'tipo_factura_id' => $this->tipoFactura,
+                    'total' => $totalCalc,
+                    'iva' => $this->iva,
+                    'estado' => '100'
+                ]);
+                if ($this->descuentoId && $this->discountAmount > 0) {
+                    DescuentoXFactura::create([
+                        'factura_id' => $f->id,
+                        'user_id' => Auth::id(),
+                        'monto' => $this->discountAmount,
+                        'estado' => '1',
                     ]);
+                }
 
-                    // Calcular monto del primer medio como total - monto2
-                    $itemsSubtotal = $this->orden->items->sum('subtotal');
-                    $baseAfterDiscount = max(0, floatval($itemsSubtotal) - floatval($this->discountAmount));
-                    $interesPct = floatval($this->interes ?: 0);
-                    $debitSurcharge = ($this->debitoId && (string)$this->medioPago === (string)$this->debitoId) ? ($baseAfterDiscount * 5) / 100.0 : 0;
-                    $montoIntCalc = ($this->medioPago == 1 && $interesPct > 0) ? ($baseAfterDiscount * $interesPct) / 100.0 : 0;
-                    $totalCalc = $baseAfterDiscount + $montoIntCalc + $debitSurcharge + floatval($this->iva);
-
-                    $m1 = max(0, floatval($totalCalc) - floatval($this->monto2));
-                    if (abs(($m1 + floatval($this->monto2)) - floatval($totalCalc)) > 0.01) {
-                        $this->addError('monto2', 'La suma de los montos no coincide con el total.');
-                        return;
+                $estadoPorMedio = function($medioId) {
+                    if ($this->debitoId && (string)$medioId === (string)$this->debitoId) return '12';
+                    switch (intval($medioId)) {
+                        case 1: return '10'; // Tarjeta crédito
+                        case 2: return '20'; // Efectivo
+                        case 3: return '30'; // Cheque
+                        case 4: return '40'; // Cuenta Corriente
+                        case 5: return '90'; // Transferencia
+                        default: return '100';
                     }
+                };
 
-                    // Crear factura (estado pagado genérico 100)
-                    $f =  Factura::create([
-                        'orden_id' => $this->orden->id,
-                        'tipo_factura_id' => $this->tipoFactura,
-                        'total' => $totalCalc,
+                $registrarPagoOrden = function($medioId, $monto, $bancoId = null, $vencCheque = null, $nroChq = null, $codeOp = null) use ($f, $estadoPorMedio) {
+                    $est = $estadoPorMedio($medioId);
+                    $p = Pago::create([
+                        'in_out' => 'in',
+                        'factura_id' => $f->id,
+                        'cliente_id' => $this->cliente,
+                        'medio_pago_id' => $medioId,
+                        'tipo_pago_id' => $this->tipoPago ?? '4',
+                        'efectivo' => (intval($medioId) === 2 ? floatval($monto) : 0),
+                        'concepto' => $this->concepto,
+                        'code_op' => $codeOp,
                         'iva' => $this->iva,
-                        'estado' => '100'
+                        'total' => floatval($monto),
+                        'estado' => $est,
                     ]);
-                    if ($this->descuentoId && $this->discountAmount > 0) {
-                        DescuentoXFactura::create([
-                            'factura_id' => $f->id,
-                            'user_id' => Auth::id(),
-                            'monto' => $this->discountAmount,
-                            'estado' => '1',
+
+                    if (intval($medioId) === 4) {
+                        PagoCtacte::create([
+                            'cliente_id' => $this->cliente,
+                            'pago_id' => $p->id,
+                            'total' => floatval($monto) * (-1),
+                            'estado' => 'debe',
+                        ]);
+                    } else {
+                        PagosXCaja::create([
+                            'pago_id' => $p->id,
+                            'caja_id' => $this->caja?->id,
+                            'estado' => $est,
                         ]);
                     }
 
-                    // Determinar estados por medio de pago
-                    $estadoPorMedio = function($medioId) {
-                        // Mapeo conocido por IDs usados en el sistema
-                        if ($this->debitoId && (string)$medioId === (string)$this->debitoId) return '12'; // Débito
-                        switch (intval($medioId)) {
-                            case 1: return '10'; // Tarjeta crédito
-                            case 2: return '20'; // Efectivo
-                            case 3: return '30'; // Cheque
-                            case 4: return '40'; // Cuenta Corriente
-                            case 5: return '90'; // Transferencia
-                            default: return '100'; // Genérico
-                        }
-                    };
-
-                    $estado1 = $estadoPorMedio($this->medioPago);
-                    $estado2 = $estadoPorMedio($this->medioPago2);
-
-                    // Registrar primer pago
-                    $p1 = Pago::create([
-                        'in_out' => 'in',
-                        'factura_id' => $f->id,
-                        'cliente_id' => $this->cliente,
-                        'medio_pago_id' => $this->medioPago,
-                        'tipo_pago_id' => $this->tipoPago,
-                        'efectivo' => ($this->medioPago == 2 ? $m1 : 0),
-                        'concepto' =>  $this->concepto,
-                        'iva' => $this->iva,
-                        'total' => $m1,
-                        'estado' => $estado1,
-                    ]);
-                    PagosXCaja::create([
-                        'pago_id' => $p1->id,
-                        'caja_id' => $this->caja?->id,
-                        'estado' => $estado1,
-                    ]);
-
-                    // Validaciones simples para transferencias en segundo medio
-                    if (intval($this->medioPago2) === 5 && empty($this->codeOp2)) {
-                        $this->addError('codeOp2', 'Ingrese el número de operación para la transferencia.');
-                        return;
+                    if (intval($medioId) === 3) {
+                        Cheque::create([
+                            'banco_id' => $bancoId,
+                            'pago_id' => $p->id,
+                            'vencimiento' => $vencCheque,
+                            'monto' => floatval($monto),
+                            'nro_cheque' => $nroChq,
+                            'estado' => '30',
+                        ]);
                     }
+                    return $p;
+                };
 
-                    // Registrar segundo pago
-                    $p2 = Pago::create([
-                        'in_out' => 'in',
-                        'factura_id' => $f->id,
-                        'cliente_id' => $this->cliente,
-                        'medio_pago_id' => $this->medioPago2,
-                        'tipo_pago_id' => $this->tipoPago,
-                        'efectivo' => (intval($this->medioPago2) === 2 ? floatval($this->monto2) : 0),
-                        'concepto' =>  $this->concepto,
-                        'code_op' => (intval($this->medioPago2) === 5 ? $this->codeOp2 : null),
-                        'iva' => $this->iva,
-                        'total' => floatval($this->monto2),
-                        'estado' => $estado2,
-                    ]);
-                    PagosXCaja::create([
-                        'pago_id' => $p2->id,
-                        'caja_id' => $this->caja?->id,
-                        'estado' => $estado2,
-                    ]);
+                $registrarPagoOrden($this->medioPago, $m1, $this->banco, $this->fechaCheque, $this->nroCheque, $this->cupon);
+                $registrarPagoOrden($this->medioPago2, $m2, $this->banco2, $this->fechaCheque2, $this->nroCheque2, $this->codeOp2);
 
-                    // Cerrar orden como pagada
-                    $this->orden->update(['estado' => '100']);
-                    $this->closeModal();
-                    return redirect('ordenes/' . $this->orden->id);
-                }
+                $this->deductStockIfNeeded();
+                $this->orden->update(['estado' => '100']);
+                $this->closeModal();
+                $this->processing = false;
+                return redirect('ordenes/' . $this->orden->id);
+            }
 
-                // ------------------------------------------------------------------------------
-                // ------------------------------------------------------------------------------
-                //                          Pago Total Cuenta Corriente Estado = 40
-                // ------------------------------------------------------------------------------
-                // ------------------------------------------------------------------------------
+            // CASO 2: PAGO TOTAL SIMPLE
+            if ($this->tipoPago == 2 || empty($this->tipoPago)) {
+                $this->validate([
+                    'medioPago' => 'required'
+                ]);
+
                 if ($this->medioPago == 4) {
-
                     $f =  Factura::create([
 
                         'orden_id' => $this->orden->id,

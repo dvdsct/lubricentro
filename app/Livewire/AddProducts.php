@@ -17,6 +17,7 @@ class AddProducts extends Component
 {
 
     use WithPagination;
+    protected string $paginationTheme = 'bootstrap';
     // Vista
     public $productos;
     public $servicios;

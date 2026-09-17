@@ -1,9 +1,11 @@
 @extends('adminlte::page')
 
-@section('title', 'Pedidos Proveeddores - Rocket')
+@section('title', 'Pedidos Proveedores - Rocket')
 
 @section('content_header')
-    <h1> <strong> PEDIDOS PROVEEDORES</strong> </h1>
+    <div class="d-flex align-items-center justify-content-between">
+        <h1 class="m-0 text-dark"><strong>PEDIDO A PROVEEDOR #{{ $pedido->id }}</strong></h1>
+    </div>
 @stop
 
 @section('content')
