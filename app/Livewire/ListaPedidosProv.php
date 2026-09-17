@@ -9,41 +9,53 @@ use Livewire\WithPagination;
 class ListaPedidosProv extends Component
 {
     use WithPagination;
+
+    protected string $paginationTheme = 'bootstrap';
+
     public $query = '';
+
+    public function updatedQuery()
+    {
+        $this->resetPage();
+    }
 
     public function search()
     {
-        // $this->resetPage();
+        $this->resetPage();
     }
 
     public function delPedido($id)
     {
-
         $model = PedidoProveedor::find($id);
-        $model->delete();
+        if ($model) {
+            $model->delete();
+        }
     }
-
 
     public function render()
     {
-        return view('livewire.lista-pedidos-prov', [
+        $pedidos = PedidoProveedor::with(['proveedores.perfiles.personas', 'tipos'])
+            ->when(trim($this->query) !== '', function ($q) {
+                $term = '%' . trim($this->query) . '%';
+                $q->where(function ($sub) use ($term) {
+                    $sub->where('pedido_proveedors.id', 'like', $term)
+                        ->orWhere('pedido_proveedors.descripcion', 'like', $term)
+                        ->orWhere('pedido_proveedors.observaciones', 'like', $term)
+                        ->orWhereHas('proveedores', function ($provQuery) use ($term) {
+                            $provQuery->where('nombre_fantasia', 'like', $term)
+                                ->orWhere('cuit', 'like', $term)
+                                ->orWhereHas('perfiles.personas', function ($personaQuery) use ($term) {
+                                    $personaQuery->where('nombre', 'like', $term)
+                                        ->orWhere('apellido', 'like', $term);
+                                });
+                        });
+                });
+            })
+            ->orderBy('id', 'desc')
+            ->paginate(10);
 
-            'pedidos' => PedidoProveedor::select(
-                'pedido_proveedors.*',
-                'proveedors.id as proveedor_id',
-                'proveedors.cuit as cuit',
-                'perfils.id as perfil_id',
-                'personas.nombre',
-                'personas.apellido'
-            )
-                ->leftjoin('proveedors', 'pedido_proveedors.proveedor_id', '=', 'proveedors.id')
-                ->leftjoin('perfils', 'proveedors.perfil_id', '=', 'perfils.id')
-                ->leftjoin('personas', 'perfils.persona_id', '=', 'personas.id')
-                ->where('nombre', 'like', '%' . $this->query . '%')
-                ->orWhere('apellido', 'like', '%' . $this->query . '%')
-                ->orWhere('cuit', 'like', '%' . $this->query . '%')
-                ->orWhere('pedido_proveedors.descripcion', 'like', '%' . $this->query . '%')
-                ->paginate(20)
+        return view('livewire.lista-pedidos-prov', [
+            'pedidos' => $pedidos
         ]);
     }
 }
