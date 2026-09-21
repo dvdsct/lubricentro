@@ -19,9 +19,13 @@
     <div class="card card-outline card-primary shadow-sm mb-4">
         <div class="card-header d-flex align-items-center justify-content-between py-2">
             <div>
-                <button type="button" class="btn btn-success px-3 shadow-sm font-weight-bold" wire:click='modalProdOn'
+                <button type="button" class="btn btn-success px-3 shadow-sm font-weight-bold mr-2" wire:click='modalProdOn'
                         @if($pedido->estado === 'cerrado' || $pedido->estado === 'recibido_total') disabled @endif>
                     <i class="fas fa-plus-circle mr-1"></i> Agregar Ítem
+                </button>
+                <button type="button" class="btn btn-primary px-3 shadow-sm font-weight-bold" wire:click='recibirItems'
+                        @if($pedido->estado === 'cerrado' || $pedido->estado === 'recibido_total') disabled @endif>
+                    <i class="fas fa-arrow-circle-down mr-1"></i> Recibir
                 </button>
             </div>
             <div>
@@ -49,9 +53,7 @@
                         <th style="width: 130px;">Precio Compra</th>
                         <th style="width: 120px;">Cant. Pedida</th>
                         <th style="width: 130px;">Subtotal</th>
-                        <th style="width: 90px;">Recibida</th>
-                        <th style="width: 90px;">Pendiente</th>
-                        <th style="width: 160px;">Recibir Ahora</th>
+                        <th style="width: 140px;">Cant. que deja</th>
                         <th style="width: 110px;">Estado</th>
                         <th style="width: 100px;">Acciones</th>
                     </tr>
@@ -117,27 +119,9 @@
                         @endif
 
                         <td class="text-center">
-                            <span class="badge badge-light border px-2 py-1">{{ $recibida }}</span>
-                        </td>
-                        <td class="text-center">
-                            @if($pendiente > 0)
-                                <span class="badge badge-warning px-2 py-1">{{ $pendiente }}</span>
-                            @else
-                                <span class="badge badge-success px-2 py-1">0</span>
-                            @endif
-                        </td>
-
-                        <td class="text-center">
                             @if ($pendiente > 0 && !$pedidoCerrado)
-                                <div class="input-group input-group-sm" style="max-width: 140px; margin: 0 auto;">
-                                    <input type="number" min="1" max="{{ $pendiente }}" class="form-control text-center"
-                                           wire:model.defer='receiveQty.{{ $i->producto_id }}' placeholder="Cant.">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-primary" wire:click='recibirItem({{ $i->producto_id }})' title="Recibir cantidad">
-                                            <i class="fas fa-arrow-down mr-1"></i> Recibir
-                                        </button>
-                                    </div>
-                                </div>
+                                <input type="number" min="1" max="{{ $pendiente }}" class="form-control form-control-sm text-center mx-auto" style="max-width: 90px;"
+                                       wire:model="receiveQty.{{ $i->producto_id }}" placeholder="0">
                             @else
                                 <span class="badge badge-success px-2 py-1"><i class="fas fa-check mr-1"></i> Completo</span>
                             @endif
@@ -171,9 +155,9 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="10" class="text-center py-4 text-muted">
+                        <td colspan="8" class="text-center py-4 text-muted">
                             <i class="fas fa-box-open fa-2x d-block mb-2 text-secondary"></i>
-                            No hay ítems cargados en este pedido. Haz clic en <strong>Agregar Ítem</strong> para comenzar.
+                            No hay ítems cargados en esta orden. Haz clic en <strong>Agregar Ítem</strong> para comenzar.
                         </td>
                     </tr>
                     @endforelse
@@ -181,11 +165,15 @@
             </table>
         </div>
 
-        <div class="card-footer bg-light d-flex justify-content-between align-items-center py-3">
-            <div class="text-muted small">
+        <div class="card-footer bg-light d-flex justify-content-between align-items-center py-3 flex-wrap">
+            <div class="text-muted small mb-2 mb-sm-0">
                 <span>Estado actual: <strong>{{ ucfirst(str_replace('_', ' ', $pedido->estado)) }}</strong></span>
             </div>
-            <div>
+            <div class="d-flex align-items-center">
+                <button type="button" class="btn btn-primary px-4 shadow-sm font-weight-bold mr-4" wire:click='recibirItems'
+                        @if($pedido->estado === 'cerrado' || $pedido->estado === 'recibido_total') disabled @endif>
+                    <i class="fas fa-arrow-circle-down mr-1"></i> Recibir
+                </button>
                 <h4 class="mb-0 text-dark">
                     <strong>TOTAL:</strong>
                     <span class="text-success ml-2 font-weight-bold">${{ number_format((float)($total ?? 0), 2, '.', ',') }}</span>
@@ -194,9 +182,9 @@
         </div>
     </div>
 
-    <!-- ACCIONES DEL PEDIDO -->
+    <!-- ACCIONES DE LA ORDEN DE COMPRA -->
     <div class="row">
-        <!-- BOTON DE RECIBIR PEDIDO DE PROVEEDOR -->
+        <!-- BOTON DE RECIBIR ORDEN DE COMPRA COMPLETA -->
         <div class="col-md-4 mb-3">
             <div class="card card-outline card-primary shadow-sm h-100 mb-0" style="cursor: pointer; transition: transform .15s ease;"
                  wire:click='$dispatchTo("form-pago","formPago",{ tipo: "proveedor" })'
@@ -206,7 +194,7 @@
                         <i class="fas fa-check-circle fa-2x"></i>
                     </div>
                     <div>
-                        <h6 class="font-weight-bold mb-0 text-dark">Recibir Pedido Completo</h6>
+                        <h6 class="font-weight-bold mb-0 text-dark">Recibir Orden Completa</h6>
                         <small class="text-muted">Marcar todo lo detallado como recibido e ingresar stock</small>
                     </div>
                 </div>
@@ -222,7 +210,7 @@
             }
         @endphp
 
-        <!-- BOTON DE CERRAR PEDIDO -->
+        <!-- BOTON DE CERRAR ORDEN -->
         <div class="col-md-4 mb-3">
             @if ($allDone && $pedido->estado !== 'cerrado')
                 <div class="card card-outline card-success shadow-sm h-100 mb-0" style="cursor: pointer; transition: transform .15s ease;"
@@ -232,8 +220,8 @@
                             <i class="fas fa-lock fa-2x"></i>
                         </div>
                         <div>
-                            <h6 class="font-weight-bold mb-0 text-dark">Cerrar Pedido</h6>
-                            <small class="text-muted">Sin pendientes. Finalizar pedido</small>
+                            <h6 class="font-weight-bold mb-0 text-dark">Cerrar Orden</h6>
+                            <small class="text-muted">Sin pendientes. Finalizar orden</small>
                         </div>
                     </div>
                 </div>
@@ -244,7 +232,7 @@
                             <i class="fas fa-lock fa-2x"></i>
                         </div>
                         <div>
-                            <h6 class="font-weight-bold mb-0">Pedido Cerrado</h6>
+                            <h6 class="font-weight-bold mb-0">Orden Cerrada</h6>
                             <small>Ya no se pueden realizar modificaciones</small>
                         </div>
                     </div>
@@ -256,7 +244,7 @@
                             <i class="fas fa-lock fa-2x"></i>
                         </div>
                         <div>
-                            <h6 class="font-weight-bold mb-0">Cerrar Pedido</h6>
+                            <h6 class="font-weight-bold mb-0">Cerrar Orden</h6>
                             <small>Disponible una vez recibidos todos los ítems</small>
                         </div>
                     </div>
@@ -264,7 +252,7 @@
             @endif
         </div>
 
-        <!-- BOTON DE IMPRIMIR PEDIDO A PROVEEDOR -->
+        <!-- BOTON DE IMPRIMIR ORDEN DE COMPRA -->
         <div class="col-md-4 mb-3">
             <a href="{{ route('pdf.pedido', $pedido->id) }}" target="_blank" class="text-decoration-none">
                 <div class="card card-outline card-warning shadow-sm h-100 mb-0" style="transition: transform .15s ease;"
@@ -274,7 +262,7 @@
                             <i class="fas fa-print fa-2x"></i>
                         </div>
                         <div>
-                            <h6 class="font-weight-bold mb-0 text-dark">Imprimir Pedido</h6>
+                            <h6 class="font-weight-bold mb-0 text-dark">Imprimir Orden de Compra</h6>
                             <small class="text-muted">Descargar comprobante en PDF</small>
                         </div>
                     </div>

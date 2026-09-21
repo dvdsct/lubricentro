@@ -12,6 +12,7 @@ use App\Models\Caja;
 use App\Models\Perfil;
 use Illuminate\Support\Facades\Auth;
 use App\Livewire\ListaCajas;
+use App\Livewire\ViewCaja;
 
 class CtaCteDetalle extends Component
 {
@@ -48,16 +49,29 @@ class CtaCteDetalle extends Component
         $this->modal = true;
     }
 
+    public function cobrarTotal()
+    {
+        $saldoNeto = PagoCtacte::where('cliente_id', $this->clienteId)->sum('total');
+        $saldoDeudor = $saldoNeto < 0 ? abs($saldoNeto) : 0;
+        if ($saldoDeudor <= 0) {
+            session()->flash('info', 'El cliente no registra saldo deudor pendiente.');
+            return;
+        }
+        $this->selectedPagoId = null;
+        $this->monto = round($saldoDeudor, 2);
+        $this->modal = true;
+    }
+
     public function confirmarCobro()
     {
         $this->validate([
-            'medioPago' => 'required'
+            'medioPago' => 'required',
+            'monto' => 'required|numeric|min:0.01'
+        ], [
+            'medioPago.required' => 'Seleccione un medio de pago',
+            'monto.required' => 'Ingrese el monto a cobrar',
+            'monto.min' => 'El monto debe ser mayor a 0',
         ]);
-
-        $pagoCta = PagoCtacte::find($this->selectedPagoId);
-        if (!$pagoCta) {
-            return;
-        }
 
         // Validar caja abierta del usuario actual (si es cajero)
         $perfil = Perfil::where('user_id', Auth::user()->id)->first();
@@ -72,14 +86,14 @@ class CtaCteDetalle extends Component
             $caja = null;
         }
 
-        // Estado según medio de pago
+        // Estado según medio de pago: 200 = Efectivo, 90 = Transferencia
         $estado = $this->medioPago == 2 ? '200' : ($this->medioPago == 5 ? '90' : '200');
 
         // Crear comprobante simple
         $factura = Factura::create([
             'orden_id' => null,
             'tipo_factura_id' => $this->tipoFactura,
-            'total' => $this->monto,
+            'total' => floatval($this->monto),
             'iva' => 0,
             'estado' => $estado,
         ]);
@@ -91,8 +105,8 @@ class CtaCteDetalle extends Component
             'cliente_id' => $this->clienteId,
             'medio_pago_id' => $this->medioPago,
             'tipo_pago_id' => '2',
-            'efectivo' => $this->medioPago == 2 ? $this->monto : 0,
-            'total' => $this->monto,
+            'efectivo' => $this->medioPago == 2 ? floatval($this->monto) : 0,
+            'total' => floatval($this->monto),
             'code_op' => $this->medioPago == 5 ? $this->code_op : null,
             'concepto' => $this->concepto,
             'estado' => $estado,
@@ -111,23 +125,36 @@ class CtaCteDetalle extends Component
         PagoCtacte::create([
             'cliente_id' => $this->clienteId,
             'pago_id' => $pago->id,
-            'total' => $this->monto,
+            'total' => floatval($this->monto),
             'estado' => 'haber',
         ]);
 
         // Cerrar modal y refrescar
         $this->reset(['modal', 'medioPago', 'code_op', 'monto', 'selectedPagoId']);
         $this->dispatch('pago-added')->to(ViewCaja::class);
+        session()->flash('success', 'Cobro registrado correctamente en la cuenta corriente.');
     }
 
     public function render()
     {
-        $pagos = PagoCtacte::where('cliente_id', $this->clienteId)
+        $movimientos = PagoCtacte::where('cliente_id', $this->clienteId)->get();
+        $totalDebe = abs($movimientos->where('estado', 'debe')->sum('total'));
+        $totalHaber = $movimientos->where('estado', 'haber')->sum('total');
+        $saldoNeto = $movimientos->sum('total');
+        $saldoDeudor = $saldoNeto < 0 ? abs($saldoNeto) : 0;
+        $serviciosNoPagados = $movimientos->where('estado', 'debe')->count();
+
+        $pagos = PagoCtacte::with(['pagos.facturas', 'pagos.medios'])
+            ->where('cliente_id', $this->clienteId)
             ->orderByDesc('created_at')
             ->paginate(15);
 
         return view('livewire.cta-cte-detalle', [
             'pagos' => $pagos,
+            'totalDebe' => $totalDebe,
+            'totalHaber' => $totalHaber,
+            'saldoDeudor' => $saldoDeudor,
+            'serviciosNoPagados' => $serviciosNoPagados,
         ]);
     }
 }

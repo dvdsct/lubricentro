@@ -1,10 +1,10 @@
 @extends('adminlte::page')
 
-@section('title', 'Pedidos Proveedores - Rocket')
+@section('title', 'Orden de Compra - Rocket')
 
 @section('content_header')
     <div class="d-flex align-items-center justify-content-between">
-        <h1 class="m-0 text-dark"><strong>PEDIDO A PROVEEDOR #{{ $pedido->id }}</strong></h1>
+        <h1 class="m-0 text-dark"><strong>ORDEN DE COMPRA #{{ $pedido->id }}</strong></h1>
     </div>
 @stop
 

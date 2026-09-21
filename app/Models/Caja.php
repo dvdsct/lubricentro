@@ -11,34 +11,40 @@ class Caja extends Model
     use SoftDeletes;
 
     use HasFactory;
-    protected $fillable = ['estado', 'cajero_id', 'monto_inicial', 'sucursal_id',
-   'gastos',
-    'venta',
-    'transferencias',
-    'tarjetas',
-    'efectivo',
-    'rendicion',
-    'cheques',
-    'cuenta_corriente',
-    'observaciones',
+    protected $fillable = [
+        'estado',
+        'cajero_id',
+        'monto_inicial',
+        'sucursal_id',
+        'banco_id',
+        'gastos',
+        'venta',
+        'transferencias',
+        'tarjetas',
+        'efectivo',
+        'rendicion',
+        'cheques',
+        'cuenta_corriente',
+        'observaciones',
+    ];
 
-
-];
+    public function bancos()
+    {
+        return $this->belongsTo(Banco::class, 'banco_id');
+    }
 
     public function pagos()
     {
-
         return $this->belongsToMany(Pago::class, 'pagos_x_cajas');
     }
 
     public function sucursales()
     {
-
         return $this->belongsTo(Sucursal::class, 'sucursal_id');
     }
+
     public function cajeros()
     {
-
         return $this->belongsTo(Cajero::class, 'cajero_id');
     }
 }

@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> --}}
-    <title>PDF - Pedido proveedor </title>
+    <title>PDF - Orden de compra</title>
 </head>
 
 
@@ -14,7 +14,7 @@
         <table style="border-collapse: collapse; width: 100%;">
             <tr>
                 <td colspan="2" class="logo" style="border: 1px solid black; padding: 8px; text-align: left;">
-                    <h1 style="font-family: Arial, Helvetica, sans-serif;">Pedido a proveedor N° 000- {{ $orden->id }}</h1> <!-- AGREGAR ID DE PEDIDO PROVEEDOR -->
+                    <h1 style="font-family: Arial, Helvetica, sans-serif;">Orden de compra N° 000- {{ $orden->id }}</h1>
                 </td>
 
                 <td class="logo" style="border: 1px solid black; text-align:center;">
@@ -26,15 +26,15 @@
 
             <tr>
                 <td style="border: 1px solid black;">
-                    <p><strong>Proveedor: {{ $encargado->nombre . ' '. $encargado->apellido }}</strong> </p> <!-- AGREGAR NOMBRE DEL PROVEEDOR  -->
+                    <p><strong>Proveedor: {{ $encargado->nombre . ' '. $encargado->apellido }}</strong> </p>
                 </td>
 
                 <td style="border: 1px solid black;">
-                    <p> <strong>Categoria:  </strong>  {{ $categoria }}</p> <!-- AGREGAR NOMBRE Y APELLIDO DEL CAJERO  -->
+                    <p> <strong>Categoria:  </strong>  {{ $categoria }}</p>
                 </td>
 
                 <td style="border: 1px solid black;">
-                    <p><strong>Fecha de pedido:</strong> {{ $fecha }}</p>
+                    <p><strong>Fecha de orden:</strong> {{ $fecha }}</p>
                 </td>
             </tr>
         </table>

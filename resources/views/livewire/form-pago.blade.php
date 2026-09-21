@@ -9,7 +9,7 @@
                         <h5 class="modal-title font-weight-bold mb-0">
                             <i class="fas fa-file-invoice-dollar mr-2"></i>
                             @if($pagoDe === 'pedido')
-                                PAGAR PEDIDO A PROVEEDOR
+                                PAGAR ORDEN DE COMPRA
                             @else
                                 PAGAR FACTURA
                             @endif

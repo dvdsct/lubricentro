@@ -1,5 +1,14 @@
 <!-- VISTA FACTURACION -->
 <div>
+    @if($caja->bancos)
+        <div class="alert alert-info py-2 px-3 shadow-sm d-flex align-items-center justify-content-between mb-3">
+            <div>
+                <i class="fas fa-university mr-2"></i>
+                <strong>Cuenta asignada para acreditación de pagos:</strong> {{ $caja->bancos->descripcion }} ({{ $caja->bancos->sucursal_banco }})
+            </div>
+            <span class="badge badge-light text-primary px-2 py-1"><i class="fas fa-check-circle text-success mr-1"></i> Caja Activa</span>
+        </div>
+    @endif
     <div class="row">
         <!-- NUEVO CARD DE ESTADISTICAS DE GASTOS -->
         <div class="col-12 col-sm-6 col-md-3">

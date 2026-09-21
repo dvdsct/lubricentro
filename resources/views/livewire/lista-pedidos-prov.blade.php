@@ -7,7 +7,7 @@
                         @can('hacerPedido')
                         <div class="mb-2 mb-sm-0">
                             <button type="button" class="btn btn-success font-weight-bold" wire:click="$dispatchTo('add-supplier-order', 'modalSupOrder')">
-                                <i class="fas fa-plus-circle mr-1"></i> Nuevo Pedido
+                                <i class="fas fa-plus-circle mr-1"></i> Nueva Orden de Compra
                             </button>
                         </div>
                         @else
@@ -31,7 +31,7 @@
                             <tr>
                                 <th style="width: 80px;">ID</th>
                                 <th>PROVEEDOR</th>
-                                <th>FECHA PEDIDO</th>
+                                <th>FECHA ORDEN</th>
                                 <th>ESTADO</th>
                                 <th>DESCRIPCIÓN</th>
                                 <th style="width: 120px;" class="text-right">ACCIONES</th>
@@ -71,10 +71,10 @@
                                     {{ $p->descripcion ?: ($p->observaciones ?: '-') }}
                                 </td>
                                 <td class="project-actions text-right">
-                                    <a class="btn btn-info btn-sm" href="{{ route('pedidos.show', $p->id) }}" title="Ver / Gestionar pedido">
+                                    <a class="btn btn-info btn-sm" href="{{ route('pedidos.show', $p->id) }}" title="Ver / Gestionar orden">
                                         <i class="fas fa-truck"></i>
                                     </a>
-                                    <button type="button" class="btn btn-danger btn-sm" wire:click='delPedido({{ $p->id }})' wire:confirm="¿Está seguro de eliminar este pedido?" title="Eliminar pedido">
+                                    <button type="button" class="btn btn-danger btn-sm" wire:click='delPedido({{ $p->id }})' wire:confirm="¿Está seguro de eliminar esta orden de compra?" title="Eliminar orden">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </td>
@@ -83,7 +83,7 @@
                             <tr>
                                 <td colspan="6" class="text-center py-4 text-muted">
                                     <i class="fas fa-inbox fa-2x mb-2 d-block text-secondary"></i>
-                                    No se encontraron pedidos de proveedores.
+                                    No se encontraron órdenes de compra.
                                 </td>
                             </tr>
                             @endforelse

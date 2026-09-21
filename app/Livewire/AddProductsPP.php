@@ -130,6 +130,96 @@ class AddProductsPP extends Component
         session()->flash('success', 'Se recibieron ' . $toReceive . ' unidad(es) del producto.');
     }
 
+    // Recepción múltiple / en lote de todos los ítems con cantidades ingresadas
+    public function recibirItems()
+    {
+        if ($this->pedido->estado === 'cerrado') {
+            session()->flash('error', 'La orden de compra está cerrada. No se pueden recibir más ítems.');
+            return;
+        }
+
+        $service = app(\App\Services\StockService::class);
+        $sucursalId = 1;
+        $recibidosCount = 0;
+        $totalUnidades = 0;
+
+        foreach ($this->receiveQty as $productoId => $cantidad) {
+            $cantidad = intval($cantidad);
+            if ($cantidad <= 0) {
+                continue;
+            }
+
+            $ppi = PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)
+                ->where('producto_id', $productoId)
+                ->first();
+            if (!$ppi) {
+                $itemLegacy = $this->pedido->items->where('producto_id', $productoId)->first();
+                $ppi = PedidoProveedorItem::create([
+                    'pedido_proveedor_id' => $this->pedido->id,
+                    'producto_id' => $productoId,
+                    'cantidad_pedida' => $itemLegacy ? intval($itemLegacy->cantidad) : $cantidad,
+                    'cantidad_recibida' => 0,
+                    'costo_unitario' => $itemLegacy ? floatval($itemLegacy->precio) : 0,
+                    'subtotal' => $itemLegacy ? floatval($itemLegacy->subtotal) : 0,
+                    'estado_item' => 'pendiente',
+                ]);
+            }
+
+            $pendiente = max(0, intval($ppi->cantidad_pedida) - intval($ppi->cantidad_recibida));
+            if ($pendiente <= 0) {
+                $this->receiveQty[$productoId] = null;
+                continue;
+            }
+
+            $toReceive = min($cantidad, $pendiente);
+            if ($toReceive <= 0) {
+                continue;
+            }
+
+            // Impactar stock
+            $service->ensureStockRecord($sucursalId, $productoId);
+            $result = $service->adjustStock($sucursalId, $productoId, $toReceive, [
+                'motivo' => 'Ingreso por compra',
+                'referencia_type' => 'PedidoProveedor',
+                'referencia_id' => $this->pedido->id,
+                'user_id' => auth()->id(),
+            ]);
+
+            if ($result !== false) {
+                $nuevoRecibido = intval($ppi->cantidad_recibida) + $toReceive;
+                $estadoItem = ($nuevoRecibido >= intval($ppi->cantidad_pedida)) ? 'recibido_total' : 'recibido_parcial';
+                $ppi->update([
+                    'cantidad_recibida' => $nuevoRecibido,
+                    'estado_item' => $estadoItem,
+                ]);
+
+                // Actualizar precio de venta si aplica
+                $p = Producto::find($productoId);
+                if ($p && floatval($p->costo) > 0) {
+                    $n_costo = $p->costo + (($p->costo / 100) * 60);
+                    $p->update([
+                        'precio_venta' => $n_costo,
+                        'precio_presupuesto' => $n_costo,
+                    ]);
+                }
+
+                $recibidosCount++;
+                $totalUnidades += $toReceive;
+            }
+
+            $this->receiveQty[$productoId] = null;
+        }
+
+        $this->refreshPpiMap();
+        $this->updatePedidoEstado();
+
+        if ($totalUnidades > 0) {
+            session()->flash('success', "Se recibieron correctamente {$totalUnidades} unidad(es) en {$recibidosCount} producto(s).");
+        } else {
+            session()->flash('error', 'No se ingresaron cantidades válidas para recibir.');
+        }
+    }
+
     public function openHistory($productoId)
     {
         $p = \App\Models\Producto::find($productoId);

@@ -352,10 +352,10 @@ return [
         ],
 
         [
-            'text' => 'Pedidos Proveedores',
+            'text' => 'Orden de compra',
             'url'  => 'pedidos',
             'icon' => 'fa fa-truck',
-            'can'  => 'ver-menu-general',
+            'can'  => 'adminCajas',
         ],
         [
             'text' => 'Proveedores',
