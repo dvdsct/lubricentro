@@ -362,7 +362,12 @@ return [
             'url'  => 'proveedores',
             'icon' => 'fa fa-warehouse',
             'can'  => 'adminCajas',
-
+        ],
+        [
+            'text' => 'Órdenes de pago',
+            'url'  => 'ordenes-pago',
+            'icon' => 'fas fa-file-invoice-dollar',
+            'can'  => 'adminCajas',
         ],
         [
             'text' => 'Tarjetas',

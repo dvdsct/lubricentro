@@ -55,14 +55,20 @@
                                 <td>
                                     @if($p->estado == 2 || $p->estado === 'borrador')
                                         <span class="badge badge-secondary"><i class="fas fa-edit mr-1"></i> BORRADOR</span>
-                                    @elseif($p->estado == 3 || $p->estado === 'pendiente' || $p->estado === 'enviado')
+                                    @elseif($p->estado === 'autorizada')
+                                        <span class="badge badge-primary"><i class="fas fa-check mr-1"></i> AUTORIZADA</span>
+                                    @elseif($p->estado === 'solicitada' || $p->estado === 'enviado')
+                                        <span class="badge badge-info"><i class="fab fa-whatsapp mr-1"></i> SOLICITADA</span>
+                                    @elseif($p->estado == 3 || $p->estado === 'pendiente')
                                         <span class="badge badge-warning"><i class="far fa-clock mr-1"></i> PENDIENTE</span>
                                     @elseif($p->estado == 4 || $p->estado === 'recibido_total' || $p->estado === 'recibido' || $p->estado === 'cerrado')
-                                        <span class="badge badge-success"><i class="fas fa-check mr-1"></i> RECIBIDO</span>
+                                        <span class="badge badge-success"><i class="fas fa-check-double mr-1"></i> RECIBIDO TOTAL</span>
+                                    @elseif($p->estado === 'recibido_incompleto_con_factura_total')
+                                        <span class="badge badge-warning"><i class="fas fa-exclamation-triangle mr-1"></i> ESC. 2 (NC PENDIENTE)</span>
                                     @elseif($p->estado === 'recibido_parcial')
                                         <span class="badge badge-info"><i class="fas fa-boxes mr-1"></i> RECIBIDO PARCIAL</span>
-                                    @elseif($p->estado === 'cancelado')
-                                        <span class="badge badge-danger"><i class="fas fa-ban mr-1"></i> CANCELADO</span>
+                                    @elseif($p->estado === 'rechazada' || $p->estado === 'rechazado' || $p->estado === 'cancelado')
+                                        <span class="badge badge-danger"><i class="fas fa-ban mr-1"></i> RECHAZADA</span>
                                     @else
                                         <span class="badge badge-secondary">{{ strtoupper(str_replace('_', ' ', $p->estado)) }}</span>
                                     @endif

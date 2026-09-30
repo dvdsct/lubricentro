@@ -85,6 +85,8 @@ Route::middleware([
     Route::resource('pagos-transferencia',PagoTransferenciaController::class);
     Route::resource('pagos-cta',PagoCtacteController::class);
     Route::resource('proveedores',ProveedoresController::class);
+    Route::get('/proveedores/{id}/cuenta-corriente', [ProveedoresController::class, 'ctaCte'])->name('proveedores.cta-cte');
+    Route::resource('ordenes-pago', \App\Http\Controllers\OrdenPagoController::class);
     Route::get('/pdf/{orden}', 'App\Http\Controllers\PDFController@generatePDF')->name('pdf.orden');
     Route::get('/pdfpedido/{pedido}', 'App\Http\Controllers\PDFController@generatePedido')->name('pdf.pedido');
     Route::get('/pdfpres/{presupuesto}', 'App\Http\Controllers\PDFController@presupuesto')->name('pdf.presupuesto');

@@ -16,6 +16,7 @@
                         <th>Rubro</th>
                         <th>Teléfono</th>
                         <th>Email</th>
+                        <th class="text-center" style="width: 140px;">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -29,10 +30,15 @@
                             <td>{{ $p->rubro }}</td>
                             <td>{{ $p->telefono }}</td>
                             <td>{{ $p->email }}</td>
+                            <td class="text-center">
+                                <a href="{{ route('proveedores.show', $p->id) }}" class="btn btn-info btn-xs font-weight-bold" title="Ver Cuenta Corriente">
+                                    <i class="fas fa-file-invoice-dollar mr-1"></i> Cta. Cte.
+                                </a>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center">Sin proveedores</td>
+                            <td colspan="9" class="text-center">Sin proveedores</td>
                         </tr>
                     @endforelse
                 </tbody>

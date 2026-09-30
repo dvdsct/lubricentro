@@ -8,318 +8,355 @@ use App\Models\ItemXPedido;
 use App\Models\Producto;
 use App\Models\Servicio;
 use App\Models\Stock;
+use App\Models\PedidoProveedor;
 use App\Models\PedidoProveedorItem;
+use App\Models\Factura;
+use App\Models\TipoFactura;
+use App\Models\NotaCredito;
+use App\Services\ProveedorCtaCteService;
+use App\Services\StockService;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class AddProductsPP extends Component
 {
-
     use WithPagination;
     protected string $paginationTheme = 'bootstrap';
-    // Vista
-    public $productos;
-    public $servicios;
-    public $items;
+
+    // Modelos principales
     public $pedido;
-    public $modal;
     public $proveedor;
-    // public $stock;
 
-    // De la pedido
+    // Modales y control de UI
+    public $modal = false;
+    public $modalAutorizacion = false;
+    public $modalRecepcion = false;
+    public $modalRechazo = false;
+
+    // Item individual al cargar
     public $producto;
-    public $servicio;
-    public $item;
-    public $total;
-
-    // Item
     public $cantidad;
     public $precio;
     public $subtotal;
-
+    public $total;
 
     public $query = '';
     public $perPage = 25;
 
-    public $showHistory = false;
-    public $historyMovements = [];
-    public $historyProductoDesc;
-
-    // Recepción parcial por ítem (inputs por producto_id)
+    // Inputs de recepción por ítem
     public $receiveQty = [];
-    // Cache de ítems del nuevo esquema, indexado por producto_id
     public $ppiByProduct = [];
 
+    // FASE 1: Autorización
+    public $authTipo = 'digital'; // 'digital', 'fisica'
+    public $authNotas = '';
+
+    // FASE 1: Solicitud
+    public $solicitudMedio = 'whatsapp'; // 'whatsapp', 'telefono', 'email'
+
+    // FASE 2: Control de Entrega / Recepción
+    public $numeroFactura = '';
+    public $tipoFacturaId = 1;
+    public $fechaFactura = '';
+    public $totalFactura = '';
+    public $escenarioModal = 'escenario_1'; // 'escenario_1', 'escenario_2', 'escenario_3'
+    public $motivoRechazoText = '';
+    public $tiposFactura = [];
 
     public function mount($pedido, $proveedor)
     {
         $this->pedido = $pedido;
         $this->proveedor = $proveedor;
-        // Calcular total desde el nuevo esquema; fallback al legacy si aún no migró
-        $totalNuevo = PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)->sum('subtotal');
-        $this->total = $totalNuevo > 0 ? $totalNuevo : $this->pedido->items->sum('subtotal');
+        $this->fechaFactura = Carbon::today()->format('Y-m-d');
+        $this->tiposFactura = TipoFactura::where('descripcion', '!=', 'Consumidor final')->get();
+        $this->tipoFacturaId = $this->tiposFactura->first()?->id ?? 1;
 
-    }
-
-    // Recepción parcial de un ítem del pedido (por producto)
-    public function recibirItem($productoId)
-    {
-        if ($this->pedido->estado === 'cerrado') {
-            session()->flash('error', 'El pedido está cerrado. No se pueden recibir más ítems.');
-            return;
-        }
-        $cantidad = intval($this->receiveQty[$productoId] ?? 0);
-        if ($cantidad <= 0) {
-            return;
-        }
-
-        $ppi = PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)
-            ->where('producto_id', $productoId)
-            ->first();
-        if (!$ppi) {
-            return;
-        }
-
-        $pendiente = max(0, intval($ppi->cantidad_pedida) - intval($ppi->cantidad_recibida));
-        if ($pendiente <= 0) {
-            $this->receiveQty[$productoId] = null;
-            return;
-        }
-
-        $toReceive = min($cantidad, $pendiente);
-        if ($toReceive <= 0) {
-            return;
-        }
-
-        $service = app(\App\Services\StockService::class);
-        $sucursalId = 1;
-
-        // Impactar stock y actualizar item
-        $service->ensureStockRecord($sucursalId, $productoId);
-        $result = $service->adjustStock($sucursalId, $productoId, $toReceive, [
-            'motivo' => 'Ingreso por compra',
-            'referencia_type' => 'PedidoProveedor',
-            'referencia_id' => $this->pedido->id,
-            'user_id' => auth()->id(),
-        ]);
-
-        if ($result === false) {
-            session()->flash('error', 'No se pudo ajustar el stock. Stock insuficiente.');
-            return;
-        }
-
-        $nuevoRecibido = intval($ppi->cantidad_recibida) + $toReceive;
-        $estadoItem = ($nuevoRecibido >= intval($ppi->cantidad_pedida)) ? 'recibido_total' : 'recibido_parcial';
-        $ppi->update([
-            'cantidad_recibida' => $nuevoRecibido,
-            'estado_item' => $estadoItem,
-        ]);
-
-        // limpiar campo de input para ese producto
-        $this->receiveQty[$productoId] = null;
-
-        // refrescar mapping en memoria para la vista
         $this->refreshPpiMap();
-
-        // Actualizar estado general del pedido según pendientes
-        $this->updatePedidoEstado();
-
-        // Feedback de UI
-        session()->flash('success', 'Se recibieron ' . $toReceive . ' unidad(es) del producto.');
+        $this->recalcularTotal();
+        $this->prepararCantidadesRecepcion();
     }
 
-    // Recepción múltiple / en lote de todos los ítems con cantidades ingresadas
-    public function recibirItems()
+    public function recalcularTotal(): void
     {
-        if ($this->pedido->estado === 'cerrado') {
-            session()->flash('error', 'La orden de compra está cerrada. No se pueden recibir más ítems.');
-            return;
+        $totalNuevo = PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)->sum('subtotal');
+        $this->total = $totalNuevo > 0 ? $totalNuevo : floatval($this->pedido->items->sum('subtotal'));
+        $this->pedido->update(['total_estimado' => $this->total]);
+    }
+
+    public function prepararCantidadesRecepcion(): void
+    {
+        $ppis = PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)->get();
+        foreach ($ppis as $ppi) {
+            $pendiente = max(0, intval($ppi->cantidad_pedida) - intval($ppi->cantidad_recibida));
+            $this->receiveQty[$ppi->producto_id] = $pendiente;
+        }
+        if (empty($this->totalFactura) || floatval($this->totalFactura) == 0) {
+            $this->totalFactura = $this->total;
+        }
+    }
+
+    // ==========================================
+    // FASE 1: AUTORIZACIÓN Y SOLICITUD AL PROVEEDOR
+    // ==========================================
+
+    public function openModalAutorizacion(): void
+    {
+        $this->modalAutorizacion = true;
+    }
+
+    public function closeModalAutorizacion(): void
+    {
+        $this->modalAutorizacion = false;
+    }
+
+    public function autorizarOC(): void
+    {
+        $this->pedido->update([
+            'estado' => 'autorizada',
+            'autorizado_por' => Auth::id(),
+            'fecha_autorizacion' => Carbon::now(),
+            'autorizacion_tipo' => $this->authTipo,
+            'autorizacion_notas' => $this->authNotas,
+        ]);
+
+        $this->closeModalAutorizacion();
+        session()->flash('success', 'Orden de Compra autorizada correctamente.');
+    }
+
+    public function solicitarProveedor(): void
+    {
+        $this->pedido->update([
+            'estado' => 'solicitada',
+            'fecha_solicitud' => Carbon::now(),
+            'solicitado_medio' => $this->solicitudMedio,
+        ]);
+
+        session()->flash('success', 'Orden de Compra marcada como solicitada al proveedor vía ' . strtoupper($this->solicitudMedio) . '.');
+    }
+
+    // ==========================================
+    // FASE 2: CONTROL DE ENTREGA Y RECEPCIÓN
+    // ==========================================
+
+    public function openModalRecepcion(): void
+    {
+        $this->prepararCantidadesRecepcion();
+        $this->actualizarEscenarioDetectado();
+        $this->modalRecepcion = true;
+    }
+
+    public function closeModalRecepcion(): void
+    {
+        $this->modalRecepcion = false;
+    }
+
+    public function updatedReceiveQty(): void
+    {
+        $this->actualizarEscenarioDetectado();
+    }
+
+    public function updatedTotalFactura(): void
+    {
+        $this->actualizarEscenarioDetectado();
+    }
+
+    public function actualizarEscenarioDetectado(): void
+    {
+        $montoRecibidoCalculado = 0;
+        $esCompleto = true;
+
+        $ppis = PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)->get();
+        foreach ($ppis as $ppi) {
+            $cantRec = intval($this->receiveQty[$ppi->producto_id] ?? 0);
+            $cantPed = intval($ppi->cantidad_pedida);
+            $montoRecibidoCalculado += ($cantRec * floatval($ppi->costo_unitario));
+
+            if ($cantRec < $cantPed) {
+                $esCompleto = false;
+            }
         }
 
-        $service = app(\App\Services\StockService::class);
-        $sucursalId = 1;
-        $recibidosCount = 0;
-        $totalUnidades = 0;
+        $facturaTotal = floatval($this->totalFactura > 0 ? $this->totalFactura : $this->total);
 
-        foreach ($this->receiveQty as $productoId => $cantidad) {
-            $cantidad = intval($cantidad);
-            if ($cantidad <= 0) {
-                continue;
-            }
+        if ($esCompleto && abs($facturaTotal - $this->total) < 0.01) {
+            $this->escenarioModal = 'escenario_1';
+        } elseif (!$esCompleto && abs($facturaTotal - $this->total) < 0.01) {
+            $this->escenarioModal = 'escenario_2';
+        } else {
+            $this->escenarioModal = 'escenario_3';
+        }
+    }
 
-            $ppi = PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)
-                ->where('producto_id', $productoId)
-                ->first();
-            if (!$ppi) {
-                $itemLegacy = $this->pedido->items->where('producto_id', $productoId)->first();
-                $ppi = PedidoProveedorItem::create([
-                    'pedido_proveedor_id' => $this->pedido->id,
-                    'producto_id' => $productoId,
-                    'cantidad_pedida' => $itemLegacy ? intval($itemLegacy->cantidad) : $cantidad,
-                    'cantidad_recibida' => 0,
-                    'costo_unitario' => $itemLegacy ? floatval($itemLegacy->precio) : 0,
-                    'subtotal' => $itemLegacy ? floatval($itemLegacy->subtotal) : 0,
-                    'estado_item' => 'pendiente',
-                ]);
-            }
+    public function procesarRecepcion(): void
+    {
+        $this->validate([
+            'numeroFactura' => 'required|string|min:3',
+            'tipoFacturaId' => 'required',
+            'fechaFactura' => 'required|date',
+            'totalFactura' => 'required|numeric|min:0.01',
+        ], [
+            'numeroFactura.required' => 'Ingrese el número de la factura del proveedor.',
+            'tipoFacturaId.required' => 'Seleccione el tipo de factura.',
+            'fechaFactura.required' => 'Indique la fecha de la factura.',
+            'totalFactura.required' => 'Ingrese el importe total facturado.',
+        ]);
 
-            $pendiente = max(0, intval($ppi->cantidad_pedida) - intval($ppi->cantidad_recibida));
-            if ($pendiente <= 0) {
-                $this->receiveQty[$productoId] = null;
-                continue;
-            }
+        $stockService = app(StockService::class);
+        $ctaCteService = app(ProveedorCtaCteService::class);
+        $sucursalId = $this->pedido->sucursal_id ?: 1;
 
-            $toReceive = min($cantidad, $pendiente);
-            if ($toReceive <= 0) {
-                continue;
-            }
+        $ppis = PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)->get();
+        $montoAceptadoTotal = 0;
+        $totalItemsRecibidos = 0;
+        $hayPendientes = false;
 
-            // Impactar stock
-            $service->ensureStockRecord($sucursalId, $productoId);
-            $result = $service->adjustStock($sucursalId, $productoId, $toReceive, [
-                'motivo' => 'Ingreso por compra',
-                'referencia_type' => 'PedidoProveedor',
-                'referencia_id' => $this->pedido->id,
-                'user_id' => auth()->id(),
-            ]);
+        // 1. Procesar cada ítem y actualizar stock según mercadería aceptada
+        foreach ($ppis as $ppi) {
+            $cantAceptada = intval($this->receiveQty[$ppi->producto_id] ?? 0);
+            $cantPedida = intval($ppi->cantidad_pedida);
+            $yaRecibidoPrevio = intval($ppi->cantidad_recibida);
+            $pendiente = max(0, $cantPedida - $yaRecibidoPrevio);
+            $aIngresar = min($cantAceptada, $pendiente);
 
-            if ($result !== false) {
-                $nuevoRecibido = intval($ppi->cantidad_recibida) + $toReceive;
-                $estadoItem = ($nuevoRecibido >= intval($ppi->cantidad_pedida)) ? 'recibido_total' : 'recibido_parcial';
-                $ppi->update([
-                    'cantidad_recibida' => $nuevoRecibido,
-                    'estado_item' => $estadoItem,
+            if ($aIngresar > 0) {
+                $stockService->ensureStockRecord($sucursalId, $ppi->producto_id);
+                $stockService->adjustStock($sucursalId, $ppi->producto_id, $aIngresar, [
+                    'motivo' => 'Ingreso por compra OC #' . $this->pedido->id,
+                    'operacion' => 'compra',
+                    'referencia_type' => 'PedidoProveedor',
+                    'referencia_id' => $this->pedido->id,
+                    'precio_unitario' => $ppi->costo_unitario,
+                    'user_id' => Auth::id(),
                 ]);
 
-                // Actualizar precio de venta si aplica
-                $p = Producto::find($productoId);
-                if ($p && floatval($p->costo) > 0) {
-                    $n_costo = $p->costo + (($p->costo / 100) * 60);
-                    $p->update([
-                        'precio_venta' => $n_costo,
-                        'precio_presupuesto' => $n_costo,
+                // Actualizar precio costo y precio venta del producto
+                $producto = Producto::find($ppi->producto_id);
+                if ($producto && floatval($ppi->costo_unitario) > 0) {
+                    $nuevoCosto = floatval($ppi->costo_unitario);
+                    $nuevoPrecioVenta = $nuevoCosto + (($nuevoCosto / 100) * 60);
+                    $producto->update([
+                        'costo' => $nuevoCosto,
+                        'precio_venta' => $nuevoPrecioVenta,
+                        'precio_presupuesto' => $nuevoPrecioVenta,
                     ]);
                 }
 
-                $recibidosCount++;
-                $totalUnidades += $toReceive;
+                $totalItemsRecibidos++;
             }
 
-            $this->receiveQty[$productoId] = null;
-        }
-
-        $this->refreshPpiMap();
-        $this->updatePedidoEstado();
-
-        if ($totalUnidades > 0) {
-            session()->flash('success', "Se recibieron correctamente {$totalUnidades} unidad(es) en {$recibidosCount} producto(s).");
-        } else {
-            session()->flash('error', 'No se ingresaron cantidades válidas para recibir.');
-        }
-    }
-
-    public function openHistory($productoId)
-    {
-        $p = \App\Models\Producto::find($productoId);
-        $this->historyProductoDesc = $p?->descripcion;
-        $this->historyMovements = \App\Models\StockMovement::where('producto_id', $productoId)
-            ->orderByDesc('created_at')
-            ->limit(100)
-            ->get()
-            ->toArray();
-        $this->showHistory = true;
-    }
-
-    public function closeHistory()
-    {
-        $this->showHistory = false;
-        $this->historyMovements = [];
-        $this->historyProductoDesc = null;
-    }
-
-    public function search()
-    {
-        $this->resetPage();
-    }
-
-
-
-    // Recibir pedido
-
-    #[On('pedido-recibido')]
-    public function recibirPedido()
-    {
-        if ($this->pedido->estado === 'cerrado') {
-            session()->flash('error', 'El pedido ya está cerrado.');
-            return;
-        }
-        $sucursalId = 1;
-        $service = app(\App\Services\StockService::class);
-
-        foreach ($this->pedido->items as $i) {
-            $p = Producto::find($i->producto_id);
-            if (!$p) { continue; }
-
-            // Recalcular precio de venta (mantengo lógica existente)
-            $n_costo = $p->costo + (($p->costo/100) * 60);
-            $p->update([
-                'precio_venta' => $n_costo,
-                'precio_presupuesto' => $n_costo,
+            $nuevoRecibidoAcumulado = $yaRecibidoPrevio + $aIngresar;
+            $estadoItem = ($nuevoRecibidoAcumulado >= $cantPedida) ? 'recibido_total' : ($nuevoRecibidoAcumulado > 0 ? 'recibido_parcial' : 'pendiente');
+            
+            $ppi->update([
+                'cantidad_recibida' => $nuevoRecibidoAcumulado,
+                'estado_item' => $estadoItem,
             ]);
 
-            // Sincronizar nuevo esquema y calcular unidades pendientes reales
-            $ppi = PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)
-                ->where('producto_id', $p->id)
-                ->first();
+            $montoAceptadoTotal += ($aIngresar * floatval($ppi->costo_unitario));
 
-            $cantPedida = $ppi ? intval($ppi->cantidad_pedida) : intval($i->cantidad);
-            $cantRecibida = $ppi ? intval($ppi->cantidad_recibida) : 0;
-            $pendiente = max(0, $cantPedida - $cantRecibida);
-
-            // Ajustar en stock ÚNICAMENTE la cantidad pendiente para evitar duplicados si ya hubo recepciones parciales
-            if ($pendiente > 0) {
-                $service->ensureStockRecord($sucursalId, $p->id);
-                $result = $service->adjustStock($sucursalId, $p->id, $pendiente, [
-                    'motivo' => 'Ingreso por compra',
-                    'referencia_type' => 'PedidoProveedor',
-                    'referencia_id' => $this->pedido->id,
-                    'user_id' => auth()->id(),
-                ]);
-
-                if ($result === false) {
-                    session()->flash('error', 'No se pudo ajustar el stock para el producto: ' . $p->descripcion);
-                    return;
-                }
-            }
-
-            if ($ppi) {
-                $ppi->update([
-                    'cantidad_recibida' => $cantPedida,
-                    'estado_item' => 'recibido_total',
-                ]);
+            if ($nuevoRecibidoAcumulado < $cantPedida) {
+                $hayPendientes = true;
             }
         }
 
-        // Actualizar estado general del pedido
-        $this->updatePedidoEstado();
+        $facturaTotal = floatval($this->totalFactura);
+        $montoBloqueado = 0;
+        $escenario = $this->escenarioModal;
 
-        redirect('pedidos');
+        // 2. Aplicar lógica según Escenario
+        if ($escenario === 'escenario_2') {
+            // Escenario 2: Entrega incompleta, factura total -> Bloquea la diferencia para pago y genera NC pendiente
+            $diferenciaFaltante = max(0, $facturaTotal - $montoAceptadoTotal);
+            $montoBloqueado = $diferenciaFaltante;
+        } elseif ($escenario === 'escenario_1') {
+            $montoBloqueado = 0;
+        } else {
+            // Escenario 3: Factura coincide con lo parcial entregado
+            $montoBloqueado = 0;
+        }
+
+        // 3. Registrar Factura en Cuenta Corriente del Proveedor (Fase 3)
+        $factura = $ctaCteService->registrarFactura([
+            'pedido_proveedor_id' => $this->pedido->id,
+            'proveedor_id' => $this->pedido->proveedor_id,
+            'tipo_factura_id' => $this->tipoFacturaId,
+            'numero_factura' => $this->numeroFactura,
+            'fecha_emision' => $this->fechaFactura,
+            'total' => $facturaTotal,
+            'monto_bloqueado' => $montoBloqueado,
+            'escenario_recepcion' => $escenario,
+            'observaciones' => "Recepción {$escenario}. Aceptado: $" . number_format($montoAceptadoTotal, 2),
+        ]);
+
+        // 4. Actualizar estado de la Orden de Compra
+        $estadoOC = 'recibido_total';
+        if ($escenario === 'escenario_2') {
+            $estadoOC = 'recibido_incompleto_con_factura_total';
+        } elseif ($escenario === 'escenario_3' || $hayPendientes) {
+            $estadoOC = 'recibido_parcial';
+        }
+
+        $this->pedido->update([
+            'estado' => $estadoOC,
+            'escenario_recepcion' => $escenario,
+            'fecha_recepcion' => Carbon::now(),
+            'usuario_receptor_id' => Auth::id(),
+        ]);
+
+        $this->closeModalRecepcion();
+        $this->refreshPpiMap();
+        $this->recalcularTotal();
+
+        session()->flash('success', "Recepción registrada exitosamente ({$escenario}). Factura #{$this->numeroFactura} cargada en Cuenta Corriente.");
     }
 
+    // ==========================================
+    // RECHAZO DE ENTREGA
+    // ==========================================
 
+    public function openModalRechazo(): void
+    {
+        $this->modalRechazo = true;
+    }
 
-    // Cargar item de pedido
+    public function closeModalRechazo(): void
+    {
+        $this->modalRechazo = false;
+    }
+
+    public function rechazarEntrega(): void
+    {
+        $this->validate([
+            'motivoRechazoText' => 'required|string|min:5',
+        ], [
+            'motivoRechazoText.required' => 'Ingrese el motivo del rechazo.',
+        ]);
+
+        $this->pedido->update([
+            'estado' => 'rechazada',
+            'escenario_recepcion' => 'rechazado',
+            'motivo_rechazo' => $this->motivoRechazoText,
+            'fecha_recepcion' => Carbon::now(),
+            'usuario_receptor_id' => Auth::id(),
+        ]);
+
+        $this->closeModalRechazo();
+        session()->flash('error', 'La entrega de la orden de compra ha sido rechazada. No se ingresó stock ni se habilitó factura para pago.');
+    }
+
+    // ==========================================
+    // GESTIÓN DE ITEMS EN LA OC
+    // ==========================================
+
     public function addCantidad($id)
     {
         $this->validate([
             'cantidad' => 'required|numeric|min:1',
             'precio' => 'nullable|numeric|min:0',
-        ], [
-            'cantidad.required' => 'Ingrese una cantidad',
-            'cantidad.min' => 'La cantidad mínima es 1',
-            'precio.numeric' => 'El precio debe ser un valor numérico',
         ]);
 
         $item = PedItem::find($id);
@@ -330,7 +367,6 @@ class AddProductsPP extends Component
             ? floatval($this->precio)
             : floatval($item->precio ?? $p->costo ?? 0);
 
-        // Confirmar el ítem: cantidad, precio, subtotal y bloquear edición (estado=2)
         $item->update([
             'cantidad' => $this->cantidad,
             'precio' => $precioUnit,
@@ -338,12 +374,10 @@ class AddProductsPP extends Component
             'estado' => '2',
         ]);
 
-        // Si el producto no tenía costo asignado y se ingresó uno, actualizar el costo base del producto
         if ($p && $precioUnit > 0 && (empty($p->costo) || $p->costo == 0)) {
             $p->update(['costo' => $precioUnit]);
         }
 
-        // Sincronizar nuevo esquema de ítems del pedido
         $ppi = PedidoProveedorItem::firstOrCreate([
             'pedido_proveedor_id' => $this->pedido->id,
             'producto_id' => $p->id,
@@ -362,15 +396,11 @@ class AddProductsPP extends Component
             'subtotal' => $nuevoSubtotal,
         ]);
 
-        // limpiar inputs
         $this->reset(['cantidad', 'precio']);
-
-        // Recalcular estado general del pedido después de confirmar ítem
-        $this->updatePedidoEstado();
+        $this->refreshPpiMap();
+        $this->recalcularTotal();
         $this->dispatch('suma-items');
     }
-
-    // Manejo del Modal
 
     public function modalProdOn()
     {
@@ -403,7 +433,6 @@ class AddProductsPP extends Component
             'estado' => '1',
         ]);
 
-        // Crear también el registro en el nuevo esquema (inicialmente sin cantidad)
         PedidoProveedorItem::firstOrCreate([
             'pedido_proveedor_id' => $this->pedido->id,
             'producto_id' => $this->producto->id,
@@ -414,6 +443,9 @@ class AddProductsPP extends Component
             'subtotal' => 0,
             'estado_item' => 'pendiente',
         ]);
+
+        $this->refreshPpiMap();
+        $this->recalcularTotal();
     }
 
     public function editProd($id)
@@ -422,9 +454,7 @@ class AddProductsPP extends Component
         if (!$item) { return; }
         $this->cantidad = $item->cantidad;
         $this->precio = $item->precio;
-        $item->update([
-            'estado' => '1'
-        ]);
+        $item->update(['estado' => '1']);
     }
 
     #[On('delete')]
@@ -433,7 +463,6 @@ class AddProductsPP extends Component
         $item = PedItem::find($id);
         if (!$item) { return; }
 
-        // Encontrar el registro del nuevo esquema para este producto en este pedido
         $ppi = PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)
             ->where('producto_id', $item->producto_id)
             ->first();
@@ -443,90 +472,26 @@ class AddProductsPP extends Component
             return;
         }
 
-        // Eliminar nuevo esquema si existe (solo si no hubo recepción)
         if ($ppi) {
             $ppi->delete();
         }
 
-        // Eliminar legacy
         $item->delete();
-
+        $this->refreshPpiMap();
+        $this->recalcularTotal();
         session()->flash('success', 'Ítem eliminado del pedido.');
-    }
-
-
-
-
-    protected function updatePedidoEstado(): void
-    {
-        // Calcula estado del pedido en base a los ítems del nuevo esquema
-        $ppis = PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)->get();
-        if ($ppis->isEmpty()) {
-            // sin ítems confirmados
-            $this->pedido->update(['estado' => 'pendiente']);
-            return;
-        }
-
-        $total = $ppis->count();
-        $completos = $ppis->where('estado_item', 'recibido_total')->count();
-        $parciales = $ppis->where('estado_item', 'recibido_parcial')->count();
-        $conCantidad = $ppis->filter(fn($r) => intval($r->cantidad_pedida) > 0)->count();
-
-        $nuevoEstado = 'pendiente';
-        if ($completos === $total && $total > 0) {
-            $nuevoEstado = 'recibido_total';
-        } elseif ($parciales > 0 || ($conCantidad > 0 && ($completos + $parciales) > 0)) {
-            $nuevoEstado = 'recibido_parcial';
-        } elseif ($conCantidad > 0) {
-            $nuevoEstado = 'enviado';
-        }
-
-        $this->pedido->update([
-            'estado' => $nuevoEstado,
-        ]);
-    }
-
-    public function closePedido(): void
-    {
-        if ($this->pedido->estado === 'cerrado') {
-            session()->flash('error', 'El pedido ya está cerrado.');
-            return;
-        }
-        // Cerrar solo si no hay pendientes
-        $ppis = PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)->get();
-        $pendientes = $ppis->filter(function ($r) {
-            return intval($r->cantidad_pedida) > intval($r->cantidad_recibida);
-        })->count();
-
-        if ($pendientes > 0) {
-            session()->flash('error', 'No se puede cerrar: aún quedan ítems pendientes por recibir.');
-            return;
-        }
-
-        $this->pedido->update([
-            'estado' => 'cerrado',
-            'fecha_recepcion' => \Carbon\Carbon::now(),
-            'usuario_receptor_id' => auth()->id(),
-        ]);
-
-        session()->flash('success', 'Pedido cerrado correctamente.');
     }
 
     protected function refreshPpiMap(): void
     {
         $ppis = PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)->get();
-        // Mantener como Collection para usar ->get() en Blade
         $this->ppiByProduct = $ppis->keyBy('producto_id');
     }
 
     public function render()
     {
-        $this->total = $this->pedido->items->sum('subtotal');
-
-        // refrescar mapping para usar en la vista
         $this->refreshPpiMap();
 
-        // Construir la consulta de stock con todas las columnas necesarias en el GROUP BY
         $stockQuery = Stock::select([
                 'stocks.id', 'stocks.cantidad', 'stocks.estado', 'stocks.sucursal_id', 
                 'stocks.producto_id', 'stocks.unidad', 'stocks.created_at', 'stocks.updated_at',
@@ -546,8 +511,14 @@ class AddProductsPP extends Component
             ->orderBy('productos.descripcion')
             ->paginate($this->perPage);
 
+        // Obtener facturas asociadas a esta OC
+        $facturasOC = Factura::where('pedido_proveedor_id', $this->pedido->id)->get();
+        $notasCreditoOC = NotaCredito::where('pedido_proveedor_id', $this->pedido->id)->get();
+
         return view('livewire.add-products-p-p', [
             'stock' => $stockQuery,
+            'facturasOC' => $facturasOC,
+            'notasCreditoOC' => $notasCreditoOC,
         ]);
     }
 }

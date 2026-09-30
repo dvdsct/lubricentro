@@ -40,7 +40,18 @@ class ProveedoresController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $proveedor = Proveedor::with('perfiles.personas')->findOrFail($id);
+        return view('Lubricentro.Proveedores.cta-cte', [
+            'proveedor' => $proveedor
+        ]);
+    }
+
+    public function ctaCte(string $id)
+    {
+        $proveedor = Proveedor::with('perfiles.personas')->findOrFail($id);
+        return view('Lubricentro.Proveedores.cta-cte', [
+            'proveedor' => $proveedor
+        ]);
     }
 
     /**
