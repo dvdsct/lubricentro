@@ -17,8 +17,14 @@ class VendedorSeeder extends Seeder
      */
     public function run(): void
     {
+        // Limpiar la caché de permisos de Spatie para evitar errores de permisos no encontrados
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
         // 1. Crear o recuperar el rol 'vendedor'
-        $roleVendedor = Role::firstOrCreate(['name' => 'vendedor']);
+        $roleVendedor = Role::firstOrCreate([
+            'name' => 'vendedor',
+            'guard_name' => 'web',
+        ]);
 
         // 2. Definir y crear los permisos solicitados:
         //    - Agendar turnos
@@ -33,12 +39,19 @@ class VendedorSeeder extends Seeder
             'ver-clientes',
         ];
 
+        $permisoModels = [];
         foreach ($permisos as $permisoNombre) {
-            Permission::firstOrCreate(['name' => $permisoNombre]);
+            $permisoModels[] = Permission::firstOrCreate([
+                'name' => $permisoNombre,
+                'guard_name' => 'web',
+            ]);
         }
 
+        // Limpiar caché nuevamente para registrar los permisos creados
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
         // Asignar exclusivamente estos permisos al rol vendedor
-        $roleVendedor->syncPermissions($permisos);
+        $roleVendedor->syncPermissions($permisoModels);
 
         // 3. Crear o actualizar el usuario Vendedor
         $user = User::updateOrCreate(
