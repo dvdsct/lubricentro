@@ -225,7 +225,7 @@ class FormCreateOrder extends Component
 
     public function addClient()
     {
-        if (Auth::user()->hasRole(['cajero', 'admin'])) {
+        if (Auth::user()->hasAnyRole(['cajero', 'admin', 'vendedor']) || Auth::user()->can('turnos') || Auth::user()->can('agendar-turnos')) {
 
 
             $this->validate();

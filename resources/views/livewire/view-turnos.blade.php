@@ -34,11 +34,11 @@
 
         <!-- BOTON PARA GENERAR NUEVO TURNO -->
         <div class="pt-2 col-md-2 text-right">
-            @can('caja')
+            @canany(['caja', 'turnos', 'agendar-turnos'])
                 <button type="button" class="btn btn-block btn-info shadow-sm" data-target="modal-default"
                     wire:click="$dispatchTo('form-create-order', 'modal-order')">
                     <i class="fas fa-plus-circle"></i> Nuevo Turno</button>
-            @endcan
+            @endcanany
         </div>
     </div>
 

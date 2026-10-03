@@ -285,7 +285,7 @@ class AddPresupuesto extends Component
 
     public function addClient()
     {
-        if (Auth::user()->hasRole(['cajero', 'admin'])) {
+        if (Auth::user()->hasAnyRole(['cajero', 'admin', 'vendedor']) || Auth::user()->can('presupuestos') || Auth::user()->can('hacer-presupuestos')) {
 
 
             $this->validate();

@@ -315,7 +315,7 @@ return [
             'text' => 'Turnos',
             'url'  => 'turnos',
             'icon' => 'fa fa-calendar-alt',
-            'can' => 'caja',
+            'can'  => ['caja', 'turnos', 'agendar-turnos'],
 
         ],
         [

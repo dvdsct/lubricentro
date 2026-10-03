@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('pedido_proveedors', function (Blueprint $table) {
-            $table->string('estado')->default('borrador')->change();
             $table->date('fecha_ingreso_estimada')->nullable()->after('fecha_ingreso');
             $table->dateTime('fecha_recepcion')->nullable()->after('fecha_ingreso_estimada');
             $table->unsignedBigInteger('usuario_creador_id')->nullable()->after('observaciones');
@@ -21,6 +20,10 @@ return new class extends Migration
             $table->foreign('usuario_creador_id')->references('id')->on('users')->nullOnDelete();
             $table->foreign('usuario_receptor_id')->references('id')->on('users')->nullOnDelete();
         });
+
+        if (\Illuminate\Support\Facades\DB::getDriverName() === 'mysql') {
+            \Illuminate\Support\Facades\DB::statement("ALTER TABLE `pedido_proveedors` ALTER COLUMN `estado` SET DEFAULT 'borrador'");
+        }
     }
 
     /**
