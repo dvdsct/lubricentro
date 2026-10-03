@@ -70,8 +70,9 @@ class VendedorSeeder extends Seeder
             $user->save();
         }
 
-        // Asignar el rol vendedor al usuario
+        // Asignar el rol vendedor al usuario y limpiar permisos directos si los hubiera
         $user->syncRoles([$roleVendedor]);
+        $user->syncPermissions([]);
 
         // 4. Crear o asociar Persona, Perfil y Empleado para mantener consistencia en la app
         $persona = Persona::firstOrCreate(

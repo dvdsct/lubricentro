@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class PagoCtacteController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('role_or_permission:admin|cajero|caja|adminCajas');
+    }
+
     /**
      * Display a listing of the resource.
      */

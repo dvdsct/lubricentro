@@ -41,6 +41,9 @@ Route::get('/', function () {
         if (auth()->user()->hasAnyRole(['mecánico', 'lavadero', 'maestranza', 'empleado'])) {
             return redirect()->route('asistencia.mi-historial');
         }
+        if (auth()->user()->hasRole('vendedor')) {
+            return redirect()->route('turnos.index');
+        }
     }
     return redirect('venta');
 });
@@ -64,6 +67,9 @@ Route::middleware([
         }
         if (auth()->user()->hasAnyRole(['mecánico', 'lavadero', 'maestranza', 'empleado'])) {
             return redirect()->route('asistencia.mi-historial');
+        }
+        if (auth()->user()->hasRole('vendedor')) {
+            return redirect()->route('turnos.index');
         }
         return view('dashboard');
     })->name('dashboard');
