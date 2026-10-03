@@ -9,8 +9,8 @@ class PresupuestoController extends Controller
 {
     public function __construct()
     {
-        // Permitir acceso a admin, cajero, spectator o a quien tenga el permiso 'presupuestos'
-        $this->middleware('role_or_permission:admin|cajero|spectator|presupuestos');
+        // Permitir acceso a admin, cajero, spectator, vendedor o a quien tenga el permiso 'presupuestos'
+        $this->middleware('role_or_permission:admin|cajero|spectator|vendedor|presupuestos|hacer-presupuestos');
     }
 
     /**

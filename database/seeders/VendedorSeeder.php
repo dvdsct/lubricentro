@@ -53,25 +53,33 @@ class VendedorSeeder extends Seeder
         // Asignar exclusivamente estos permisos al rol vendedor
         $roleVendedor->syncPermissions($permisoModels);
 
-        // 3. Crear o actualizar el usuario Vendedor
-        $user = User::updateOrCreate(
-            ['email' => 'vendedor@test.com'],
-            [
-                'name' => 'Vendedor',
-                'password' => bcrypt('Vendedor@159'),
-            ]
-        );
+        // 3. Crear o actualizar el usuario Vendedor (Camila)
+        $user = User::where('email', 'camila@test.com')
+            ->orWhere('email', 'vendedor@test.com')
+            ->first();
+
+        if (!$user) {
+            $user = User::create([
+                'name' => 'Camila',
+                'email' => 'camila@test.com',
+                'password' => bcrypt('Camila@159'),
+            ]);
+        } else {
+            $user->name = 'Camila';
+            $user->email = 'camila@test.com';
+            $user->save();
+        }
 
         // Asignar el rol vendedor al usuario
         $user->syncRoles([$roleVendedor]);
 
         // 4. Crear o asociar Persona, Perfil y Empleado para mantener consistencia en la app
         $persona = Persona::firstOrCreate(
-            ['DNI' => '33520739'],
+            ['nombre' => 'Camila'],
             [
-                'nombre' => 'Vendedor',
-                'apellido' => 'Lubricentro',
-                'fecha_nac' => '1990-01-01',
+                'apellido' => 'Vendedora',
+                'DNI' => '00000000',
+                'fecha_nac' => '1995-01-01',
                 'estado' => '1',
             ]
         );

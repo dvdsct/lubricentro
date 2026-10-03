@@ -306,8 +306,7 @@ return [
             'text' => 'Facturacion',
             'url'  => 'venta',
             'icon' => 'fa fa-file-invoice-dollar',
-            'can' => 'caja',
-            'can' => 'stock',
+            'can'  => ['caja', 'adminCajas'],
 
         ],
 
@@ -315,20 +314,20 @@ return [
             'text' => 'Turnos',
             'url'  => 'turnos',
             'icon' => 'fa fa-calendar-alt',
-            'can'  => ['caja', 'turnos', 'agendar-turnos'],
+            'can'  => ['caja', 'turnos', 'agendar-turnos', 'adminCajas'],
 
         ],
         [
             'text' => 'Presupuestos',
             'url'  => 'presupuesto',
             'icon' => 'fas fa-money-check-alt',
-            'can'  => 'ver-menu-general',
+            'can'  => ['presupuestos', 'hacer-presupuestos', 'caja', 'adminCajas'],
         ],
         [
             'text' => 'Clientes',
             'url'  => 'clientes',
             'icon' => 'fas fa-users',
-            'can'  => 'ver-menu-general',
+            'can'  => ['clientes', 'ver-clientes', 'caja', 'adminCajas'],
         ],
         [
             'text' => 'Stock',
@@ -341,7 +340,7 @@ return [
             'text' => 'Productos',
             'url'  => 'productos',
             'icon' => 'fas fa-shopping-cart',
-            'can'  => 'ver-menu-general',
+            'can'  => 'stock',
         ],
         [
             'text' => 'Cuenta Corriente',
