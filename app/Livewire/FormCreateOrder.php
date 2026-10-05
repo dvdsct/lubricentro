@@ -499,7 +499,7 @@ class FormCreateOrder extends Component
                 if (!$this->producto->es_provisional) {
                     $sucursalId = 1; // Usar sucursal por defecto
                     $availableStock = $stockService->getAvailableStock($sucursalId, $this->producto->id);
-                    if ($availableStock < $i->cantidad) {
+                    if ($availableStock < floatval($i->cantidad)) {
                         $this->orden->update([
                             'estado' => '555'
                         ]);

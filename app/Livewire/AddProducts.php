@@ -57,19 +57,22 @@ class AddProducts extends Component
     public function addCantidad($id)
     {
         $item = Item::find($id);
+        if (!$item) return;
         $p = Producto::find($item->producto_id);
+        if (!$p) return;
         $stockService = app(StockService::class);
 
-        $precio = $p->precio_venta;
+        $precio = floatval($p->precio_venta);
 
+        $cleanCant = str_replace(',', '.', trim((string)$this->cantidad));
         // Validación básica
-        if ($this->cantidad === null || $this->cantidad <= 0) {
+        if (!is_numeric($cleanCant) || floatval($cleanCant) <= 0) {
             return $this->dispatch('nonstock');
         }
 
         // Calcular delta si el item ya tenía cantidad cargada
-        $prevCantidad = intval($item->cantidad ?? 0);
-        $newCantidad = intval($this->cantidad);
+        $prevCantidad = floatval($item->cantidad ?? 0);
+        $newCantidad = floatval($cleanCant);
         $delta = $newCantidad - $prevCantidad; // puede ser +, 0, o negativo
 
         // Chequear stock solo cuando el delta requiere más unidades y el producto NO es provisional
@@ -85,12 +88,12 @@ class AddProducts extends Component
         \DB::transaction(function () use ($item, $precio, $newCantidad, $delta, $p, $stockService) {
             $item->update([
                 'cantidad' => $newCantidad,
-                'subtotal' => floatval($precio) *  floatval($newCantidad),
+                'subtotal' => floatval($precio) * floatval($newCantidad),
                 'estado' => '2',
             ]);
 
             // Actualizar stock solo si el producto NO es provisional
-            if ($delta !== 0 && !$p->es_provisional) {
+            if ($delta !== 0.0 && !$p->es_provisional) {
                 $sucursalId = $this->orden->sucursal_id ?: 1;
                 $result = $stockService->adjustStock($sucursalId, $p->id, -$delta, [
                     'motivo' => 'Modificación de cantidad en orden',
@@ -209,7 +212,7 @@ class AddProducts extends Component
             $stockService = app(StockService::class);
 
             // Devolver stock (delta positivo)
-            $stockService->adjustStock($sucursalId, $producto->id, $item->cantidad, [
+            $stockService->adjustStock($sucursalId, $producto->id, floatval($item->cantidad), [
                 'motivo' => 'Eliminación de producto de orden',
                 'referencia_type' => 'Item',
                 'referencia_id' => $item->id,

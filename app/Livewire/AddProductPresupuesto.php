@@ -72,45 +72,39 @@ class AddProductPresupuesto extends Component
     // Cargar item de pedido
     public function addCantidad($id)
     {
-
-
         $this->validate();
         $item = PresupuestoItem::find($id);
+        if (!$item) return;
         $p = Producto::find($item->producto_id);
+        if (!$p) return;
 
-        // dd($stock);
-
-        // $precio = $this->precio;
-
-
+        $cleanCant = floatval(str_replace(',', '.', (string)$this->cantidad));
+        if ($cleanCant <= 0) return;
 
         if ($this->presupuesto->estado == '1') {
-
             if ($this->editPrecio) {
-
+                $precio = floatval(str_replace(',', '.', (string)$this->precioPres));
                 $p->update([
-                    'precio_presupuesto' => $this->precioPres
+                    'precio_presupuesto' => $precio
                 ]);
 
                 $item->update([
-                    'cantidad' => $this->cantidad,
-                    'precio_presupuesto' => $this->precioPres,
-                    'subtotal' => floatval($this->precioPres) *  floatval($this->cantidad),
+                    'cantidad' => $cleanCant,
+                    'precio_presupuesto' => $precio,
+                    'subtotal' => $precio * $cleanCant,
                     'estado' => '2',
-
                 ]);
             } else {
-
+                $precio = floatval($p->precio_venta);
                 $p->update([
-                    'precio_presupuesto' => $p->precio_venta
+                    'precio_presupuesto' => $precio
                 ]);
 
                 $item->update([
-                    'cantidad' => $this->cantidad,
-                    'precio_venta' => $p->precio_venta,
-                    'subtotal' => floatval($p->precio_venta) *  floatval($this->cantidad),
+                    'cantidad' => $cleanCant,
+                    'precio_venta' => $precio,
+                    'subtotal' => $precio * $cleanCant,
                     'estado' => '2',
-
                 ]);
             }
         }

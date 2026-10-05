@@ -59,8 +59,8 @@ class FormAddProd extends Component
     public function updatedStockDelta()
     {
         if ($this->stockMode === 'ajustar') {
-            $base = intval($this->stockActual ?? 0);
-            $delta = intval($this->stockDelta ?? 0);
+            $base = floatval($this->stockActual ?? 0);
+            $delta = floatval(str_replace(',', '.', (string)$this->stockDelta));
             $this->stockPreview = $base + $delta;
         }
     }
@@ -68,7 +68,7 @@ class FormAddProd extends Component
     public function updatedStockFinal()
     {
         if ($this->stockMode === 'fijar') {
-            $this->stockPreview = intval($this->stockFinal ?? 0);
+            $this->stockPreview = floatval(str_replace(',', '.', (string)$this->stockFinal));
         }
     }
 
@@ -79,18 +79,18 @@ class FormAddProd extends Component
             'stockMode' => 'required|in:ajustar,fijar',
         ]);
 
-        $delta = 0;
+        $delta = 0.0;
         if ($this->stockMode === 'ajustar') {
             $this->validate([
-                'stockDelta' => 'required|integer|not_in:0',
+                'stockDelta' => 'required|numeric|not_in:0',
             ]);
-            $delta = intval($this->stockDelta);
+            $delta = floatval(str_replace(',', '.', (string)$this->stockDelta));
         } else {
             $this->validate([
-                'stockFinal' => 'required|integer|min:0',
+                'stockFinal' => 'required|numeric|min:0',
             ]);
-            $base = intval($this->stockActual ?? 0);
-            $delta = intval($this->stockFinal) - $base;
+            $base = floatval($this->stockActual ?? 0);
+            $delta = floatval(str_replace(',', '.', (string)$this->stockFinal)) - $base;
         }
 
         if (!$this->producto) {
@@ -111,7 +111,7 @@ class FormAddProd extends Component
         );
 
         // Refrescar valores en UI
-        $this->stockActual = intval($row->cantidad);
+        $this->stockActual = floatval($row->cantidad);
         $this->stock = $this->stockActual;
         $this->stockPreview = $this->stockActual;
         $this->reset('stockDelta','stockFinal','stockMotivo');
@@ -270,7 +270,9 @@ class FormAddProd extends Component
                 // Update stock if admin and stock is provided
                 if (auth()->user()->hasRole('admin') && isset($this->stock)) {
                     $stock = $producto->stocks()->firstOrNew(['sucursal_id' => 1]);
-                    $stock->cantidad = $this->stock;
+                    $cleanedStock = is_numeric(str_replace(',', '.', (string)$this->stock)) ? floatval(str_replace(',', '.', (string)$this->stock)) : 0;
+                    $stock->cantidad = $cleanedStock;
+                    $stock->cantidad_num = $cleanedStock;
                     $stock->save();
                 }
             } else {
@@ -279,7 +281,7 @@ class FormAddProd extends Component
                 
                 // Create stock record for the product
                 if (auth()->user()->hasRole('admin')) {
-                    $stockQty = $this->stock ?? 0;
+                    $stockQty = isset($this->stock) && is_numeric(str_replace(',', '.', (string)$this->stock)) ? floatval(str_replace(',', '.', (string)$this->stock)) : 0;
                 } else {
                     // Non-admin users can only create products with 0 stock
                     $stockQty = 0;

@@ -1098,7 +1098,7 @@ class FormPago extends Component
             if (!$producto) continue;
             if ($producto->es_provisional) continue;
 
-            $result = $stockService->adjustStock($sucursalId, $producto->id, -abs(intval($i->cantidad)), [
+            $result = $stockService->adjustStock($sucursalId, $producto->id, -abs(floatval($i->cantidad)), [
                 'motivo' => 'Pago de orden',
                 'operacion' => 'Pago de orden',
                 'referencia_type' => 'Orden',

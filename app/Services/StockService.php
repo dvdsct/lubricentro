@@ -27,12 +27,12 @@ class StockService
     /**
      * Get available stock for sucursal/producto (0 if missing)
      */
-    public function getAvailableStock(int $sucursalId, int $productoId): int
+    public function getAvailableStock(int $sucursalId, int $productoId): float
     {
         $row = Stock::where('sucursal_id', $sucursalId)
             ->where('producto_id', $productoId)
             ->first();
-        return intval($row?->cantidad ?? 0);
+        return floatval($row?->cantidad ?? 0);
     }
 
     /**
@@ -82,6 +82,51 @@ class StockService
                 'monto_total' => $meta['monto_total'] ?? (isset($meta['precio_unitario']) ? (floatval($delta) * floatval($meta['precio_unitario'])) : null),
             ]);
             return $row;
+        });
+    }
+
+    /**
+     * Fraccionar / desarmar stock de un producto origen (ej. Tambor o Bidón) a un producto destino (ej. Granel por litro).
+     */
+    public function fractionStock(int $sucursalId, int $sourceProductoId, float $sourceQty, int $destProductoId, float $destQty, array $meta = []): bool
+    {
+        return DB::transaction(function () use ($sucursalId, $sourceProductoId, $sourceQty, $destProductoId, $destQty, $meta) {
+            $sourceStock = $this->getAvailableStock($sucursalId, $sourceProductoId);
+            if ($sourceStock < $sourceQty) {
+                return false;
+            }
+
+            $user = $meta['user_id'] ?? (auth()->id() ?? null);
+            $motivo = $meta['motivo'] ?? 'Fraccionamiento / Desarme a Granel';
+
+            // 1. Descontar producto origen
+            $resSource = $this->adjustStock($sucursalId, $sourceProductoId, -abs($sourceQty), [
+                'motivo' => $motivo,
+                'operacion' => 'Fraccionamiento (Salida)',
+                'referencia_type' => 'Producto',
+                'referencia_id' => $destProductoId,
+                'user_id' => $user,
+            ]);
+
+            if ($resSource === false) {
+                throw new \Exception('Stock insuficiente en producto origen');
+            }
+
+            // 2. Aumentar producto destino
+            $this->ensureStockRecord($sucursalId, $destProductoId);
+            $resDest = $this->adjustStock($sucursalId, $destProductoId, abs($destQty), [
+                'motivo' => $motivo,
+                'operacion' => 'Fraccionamiento (Ingreso)',
+                'referencia_type' => 'Producto',
+                'referencia_id' => $sourceProductoId,
+                'user_id' => $user,
+            ]);
+
+            if ($resDest === false) {
+                throw new \Exception('Error al ingresar stock al producto destino');
+            }
+
+            return true;
         });
     }
 }
