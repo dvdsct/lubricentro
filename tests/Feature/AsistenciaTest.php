@@ -105,6 +105,23 @@ class AsistenciaTest extends TestCase
         ]);
     }
 
+    public function test_store_creates_attendance_record_without_location(): void
+    {
+        session(['asistencia_pin_verified' => true]);
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post(route('asistencia.store'), []);
+
+        $response->assertStatus(200);
+        $response->assertSee('¡Fichaje Exitoso!');
+        $this->assertDatabaseHas('asistencias', [
+            'user_id' => $user->id,
+            'tipo' => 'entrada',
+            'latitud' => null,
+            'longitud' => null,
+        ]);
+    }
+
     public function test_admin_control_page_denies_access_without_permission(): void
     {
         $user = User::factory()->create();

@@ -88,8 +88,8 @@ class AsistenciaController extends Controller
         }
 
         $request->validate([
-            'latitud' => 'required|numeric',
-            'longitud' => 'required|numeric',
+            'latitud' => 'nullable|numeric',
+            'longitud' => 'nullable|numeric',
         ]);
 
         $user = Auth::user();

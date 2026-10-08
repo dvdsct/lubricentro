@@ -43,7 +43,13 @@
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-500 text-xs uppercase tracking-wider">Ubicación GPS:</span>
-                    <span class="text-white text-xs font-mono">{{ number_format($asistencia->latitud, 6) }}, {{ number_format($asistencia->longitud, 6) }}</span>
+                    <span class="text-white text-xs font-mono">
+                        @if($asistencia->latitud && $asistencia->longitud)
+                            {{ number_format($asistencia->latitud, 6) }}, {{ number_format($asistencia->longitud, 6) }}
+                        @else
+                            No registrada
+                        @endif
+                    </span>
                 </div>
             </div>
 
