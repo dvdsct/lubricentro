@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder
         $this->call(BancoSeeder::class);
         // $this->call(ProdSeed::class);
         $this->call(CargaSeeder::class);
+        $this->call(LorenaCajeroSeeder::class);
     }
 
 }

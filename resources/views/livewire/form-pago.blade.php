@@ -54,10 +54,13 @@
                                     <option value="">Seleccionar cliente</option>
                                     @foreach ($clientes ?? [] as $c)
                                         <option value="{{ $c->id }}">
-                                            {{ ($c->perfiles?->personas?->nombre ?? '') . ' ' . ($c->perfiles?->personas?->apellido ?? '') . ' ' . ($c->perfiles?->personas?->dni ?? '') }}
+                                            {{ ($c->perfiles?->personas?->nombre ?? '') . ' ' . ($c->perfiles?->personas?->apellido ?? '') . ($c->perfiles?->personas?->DNI ? ' - DNI: ' . $c->perfiles?->personas?->DNI : '') }}
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('cliente')
+                                    <span class="text-danger small mt-1 d-block">{{ $message }}</span>
+                                @enderror
                             @endif
                         </div>
 

@@ -354,13 +354,13 @@ return [
             'text' => 'Orden de compra',
             'url'  => 'pedidos',
             'icon' => 'fa fa-truck',
-            'can'  => 'adminCajas',
+            'can'  => ['adminCajas', 'hacerPedido', 'recibirPedido', 'pedidos'],
         ],
         [
             'text' => 'Proveedores',
             'url'  => 'proveedores',
             'icon' => 'fa fa-warehouse',
-            'can'  => 'adminCajas',
+            'can'  => ['adminCajas', 'crearProveedores', 'proveedores', 'crear-proveedores'],
         ],
         [
             'text' => 'Órdenes de pago',

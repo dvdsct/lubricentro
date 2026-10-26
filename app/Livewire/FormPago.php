@@ -120,9 +120,9 @@ class FormPago extends Component
         return $tp && mb_strtolower($tp->descripcion) === 'diferido';
     }
 
-    public function mount($orden)
+    public function mount($orden = null)
     {
-        if (get_class($orden->getModel()) == "App\Models\PedidoProveedor") {
+        if ($orden && get_class($orden->getModel()) == "App\Models\PedidoProveedor") {
             $this->pedido = $orden;
             $this->proveedor = $this->pedido->proveedor_id;
             $this->montoAPagar = $this->pedido->items->sum('subtotal');
@@ -145,11 +145,11 @@ class FormPago extends Component
             $this->tiposFactura = TipoFactura::where('descripcion', '!=', 'Consumidor final')->get();
             $this->tipoFactura = $this->tiposFactura->first()?->id ?? '1';
             $this->mediosPago = MedioPago::all();
-            $this->clientes = Cliente::where('lista_precios', '3')->get();
+            $this->clientes = Cliente::with('perfiles.personas')->orderBy('id', 'asc')->get();
             // Cargar descuentos habilitados (porcentaje)
             $this->descuentos = Descuentos::whereNotNull('porcentaje')->where('estado','1')->get();
         }
-        if (get_class($orden->getModel()) == "App\Models\Orden") {
+        if ($orden && get_class($orden->getModel()) == "App\Models\Orden") {
             $this->orden = $orden;
             $this->montoAPagar = $this->orden->items->sum('subtotal');
             $this->pagoDe = 'orden';
@@ -185,12 +185,16 @@ class FormPago extends Component
             $this->tarjetasT = Plan::all();
             $this->tiposFactura = TipoFactura::all();
             $this->proveedores = Proveedor::all();
-            $this->cliente = $this->orden->clientes->id;
-            $this->clientes = Cliente::where('lista_precios', '3')->get();
+            $this->cliente = $this->orden->cliente_id ?? $this->orden->clientes?->id;
+            $this->clientes = Cliente::with('perfiles.personas')->orderBy('id', 'asc')->get();
             // Cargar descuentos habilitados (porcentaje)
             $this->descuentos = Descuentos::whereNotNull('porcentaje')->where('estado','1')->get();
             
 
+        }
+
+        if (empty($this->clientes)) {
+            $this->clientes = Cliente::with('perfiles.personas')->orderBy('id', 'asc')->get();
         }
     }
 
@@ -276,6 +280,10 @@ class FormPago extends Component
                 }
                 $this->modal = true;
                 $this->montoAPagar = $this->orden->items->sum('subtotal');
+                if (empty($this->cliente) && $this->orden) {
+                    $this->cliente = $this->orden->cliente_id ?? $this->orden->clientes?->id;
+                }
+                $this->clientes = Cliente::with('perfiles.personas')->orderBy('id', 'asc')->get();
                 if ($this->isDiferido()) {
                     $this->monto1 = round($this->montoAPagar / 2, 2);
                     $this->monto2 = round($this->montoAPagar - $this->monto1, 2);
@@ -549,6 +557,19 @@ class FormPago extends Component
             return;
         }
         $this->processing = true;
+
+        if (empty($this->cliente) && $this->orden) {
+            $this->cliente = $this->orden->cliente_id ?? $this->orden->clientes?->id;
+        }
+
+        // Si se seleccionó Cuenta Corriente (medioPago 4 o medioPago2 4), validar que haya cliente válido
+        if (intval($this->medioPago) === 4 || intval($this->medioPago2) === 4) {
+            if (empty($this->cliente)) {
+                $this->addError('cliente', 'Debe seleccionar un cliente para imputar a Cuenta Corriente.');
+                $this->processing = false;
+                return;
+            }
+        }
 
         if ($this->orden->motivo == '1') {
             $this->concepto = 'Lavadero';
