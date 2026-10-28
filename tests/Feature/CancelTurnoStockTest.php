@@ -177,8 +177,59 @@ class CancelTurnoStockTest extends TestCase
         Livewire::test(ViewTurnos::class)
             ->call('cancelTurn', $orden->id);
 
-        // Debe usar el fallback de suma de cantidades y sumar 3 al stock (quedando 13)
-        $this->assertEquals(13, $stock->fresh()->cantidad);
+        // Sin movimientos previos de descuento para esta orden, el stock NO debe inflarse erróneamente
+        $this->assertEquals(10, $stock->fresh()->cantidad);
         $this->assertEquals('700', $orden->fresh()->estado);
+    }
+
+    public function test_crear_turno_desde_presupuesto_descuenta_stock_y_al_cancelar_lo_restaura(): void
+    {
+        [$user, $producto, $stock, $ordenOriginal] = $this->createSampleOrderWithStock();
+        // Fijamos el stock en 1 como en el caso real
+        $stock->update(['cantidad' => 1, 'cantidad_num' => 1]);
+
+        $cliente = Cliente::first();
+        $presupuesto = \App\Models\Presupuesto::create([
+            'cliente_id' => $cliente->id,
+            'estado' => 1,
+            'total' => 5000,
+        ]);
+
+        $pItem = \App\Models\PresupuestoItem::create([
+            'presupuesto_id' => $presupuesto->id,
+            'producto_id' => $producto->id,
+            'precio_venta' => 5000,
+            'cantidad' => 1,
+            'subtotal' => 5000,
+            'estado' => 1,
+        ]);
+
+        \App\Models\ItemsXPresupuesto::create([
+            'presupuesto_item_id' => $pItem->id,
+            'presupuesto_id' => $presupuesto->id,
+            'estado' => 1,
+        ]);
+
+        $this->actingAs($user);
+
+        // Al crear el turno desde presupuesto en FormCreateOrder
+        $component = Livewire::test(\App\Livewire\FormCreateOrder::class, ['fecha' => now()->format('Y-m-d')])
+            ->set('cliente', $cliente->id)
+            ->set('presupuesto', $presupuesto)
+            ->call('addTurno');
+
+        // El stock DEBE haber quedado en 0 inmediatamente al dar el turno
+        $this->assertEquals(0, $stock->fresh()->cantidad, 'El stock debió quedar en cero al crear el turno');
+
+        $nuevaOrden = Orden::where('cliente_id', $cliente->id)->where('id', '!=', $ordenOriginal->id)->latest('id')->first();
+        $this->assertNotNull($nuevaOrden);
+
+        // Al cancelar el turno
+        Livewire::test(ViewTurnos::class)
+            ->call('cancelTurn', $nuevaOrden->id);
+
+        // El stock DEBE volver a 1 con la cancelación
+        $this->assertEquals(1, $stock->fresh()->cantidad, 'El stock debió volver a 1 con la cancelación del turno');
+        $this->assertEquals('700', $nuevaOrden->fresh()->estado);
     }
 }

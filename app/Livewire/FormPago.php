@@ -1103,11 +1103,20 @@ class FormPago extends Component
     protected function deductStockIfNeeded(): void
     {
         if (!$this->orden) return;
-        // Si ya existen movimientos de stock para esta orden con delta negativo, no repetir
-        $exists = StockMovement::where('referencia_type', 'Orden')
-            ->where('referencia_id', $this->orden->id)
-            ->where('delta', '<', 0)
-            ->exists();
+        // Si ya existen movimientos de stock para esta orden o sus ítems con delta negativo, no repetir
+        $itemIds = $this->orden->items->pluck('id')->toArray();
+        $exists = StockMovement::where(function ($q) use ($itemIds) {
+            $q->where(function ($sub) {
+                $sub->where('referencia_type', 'Orden')
+                    ->where('referencia_id', $this->orden->id);
+            })->orWhere(function ($sub) use ($itemIds) {
+                $sub->where('referencia_type', 'Item')
+                    ->whereIn('referencia_id', $itemIds);
+            });
+        })
+        ->where('delta', '<', 0)
+        ->exists();
+
         if ($exists) return;
 
         $stockService = app(StockService::class);

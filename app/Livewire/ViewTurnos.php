@@ -135,12 +135,12 @@ class ViewTurnos extends Component
                         })
                         ->exists();
 
-                    if ($movementsExist) {
+                    if ($movementsExist && $netDelta < 0) {
                         // Solo devolver si el neto acumulado es negativo (se restó más de lo que se devolvió)
-                        $cantidadADevolver = $netDelta < 0 ? abs(floatval($netDelta)) : 0.0;
+                        $cantidadADevolver = abs(floatval($netDelta));
                     } else {
-                        // Si no hay registro explícito de movimientos, se devuelve la suma de cantidades de los ítems
-                        $cantidadADevolver = floatval($items->sum('cantidad'));
+                        // Si no hay movimientos previos de descuento para esta orden, no devolver para evitar inflar stock erróneamente
+                        $cantidadADevolver = 0.0;
                     }
 
                     if ($cantidadADevolver > 0.0) {

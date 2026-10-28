@@ -201,16 +201,186 @@ class AddPresupuesto extends Component
 
     public function upMarcas()
     {
-        $this->marcas = MarcaVehiculo::where('tipo_vehiculo_id', $this->tipo)->get();
+        $this->marcas = MarcaVehiculo::where(function ($q) {
+            $q->where('tipo_vehiculo_id', $this->tipo)
+              ->orWhereNull('tipo_vehiculo_id');
+        })->orderBy('descripcion')->get();
         $this->modelos = [];
         $this->modelo = null;
     }
 
     public function upModelos()
     {
+        if (empty($this->marca)) {
+            $this->modelos = [];
+            return;
+        }
         $this->modelos = \App\Models\ModeloVehiculo::where('marca_vehiculo_id', $this->marca)
-            ->where('tipo_vehiculo_id', $this->tipo)
+            ->when($this->tipo, function ($q) {
+                $q->where(function ($sub) {
+                    $sub->where('tipo_vehiculo_id', $this->tipo)
+                        ->orWhereNull('tipo_vehiculo_id');
+                });
+            })
+            ->orderBy('descripcion')
             ->get();
+    }
+
+    // Modal para agregar nuevos vehículos (Tipo/Marca/Modelo) al catálogo
+    public $modalNuevoCatalogo = false;
+    public $cat_target = 'general';
+    public $cat_tipo_id = '';
+    public $cat_crear_nuevo_tipo = false;
+    public $cat_nuevo_tipo_nombre = '';
+    public $cat_marca_id = '';
+    public $cat_crear_nueva_marca = false;
+    public $cat_nueva_marca_nombre = '';
+    public $cat_nuevo_modelo_nombre = '';
+    public $cat_marcasDisponibles = [];
+
+    public function openModalNuevoCatalogo($target = 'general')
+    {
+        $this->resetCatForm();
+        $this->cat_target = $target;
+        $this->tiposVehiculo = TipoVehiculo::orderBy('descripcion')->get();
+        if ($this->tipo) {
+            $this->cat_tipo_id = $this->tipo;
+        } else {
+            $this->cat_tipo_id = $this->tiposVehiculo->first()?->id ?? '';
+        }
+        $this->updatedCatTipoId($this->cat_tipo_id);
+
+        if ($target === 'marca') {
+            $this->cat_crear_nueva_marca = true;
+            $this->cat_marca_id = '';
+        } elseif ($target === 'modelo') {
+            $this->cat_crear_nueva_marca = false;
+            $this->cat_marca_id = $this->marca ?: ($this->cat_marcasDisponibles->first()?->id ?? '');
+        } elseif ($target === 'tipo') {
+            $this->cat_crear_nuevo_tipo = true;
+            $this->cat_tipo_id = '';
+            $this->cat_crear_nueva_marca = true;
+        } else {
+            if ($this->marca) {
+                $this->cat_marca_id = $this->marca;
+            }
+        }
+        $this->modalNuevoCatalogo = true;
+    }
+
+    public function closeModalNuevoCatalogo()
+    {
+        $this->modalNuevoCatalogo = false;
+        $this->resetCatForm();
+    }
+
+    public function resetCatForm()
+    {
+        $this->reset([
+            'cat_target',
+            'cat_tipo_id',
+            'cat_crear_nuevo_tipo',
+            'cat_nuevo_tipo_nombre',
+            'cat_marca_id',
+            'cat_crear_nueva_marca',
+            'cat_nueva_marca_nombre',
+            'cat_nuevo_modelo_nombre'
+        ]);
+        $this->resetErrorBag();
+    }
+
+    public function updatedCatTipoId($value)
+    {
+        $this->cat_marca_id = '';
+        if ($value) {
+            $this->cat_marcasDisponibles = MarcaVehiculo::where(function ($q) use ($value) {
+                $q->where('tipo_vehiculo_id', $value)
+                  ->orWhereNull('tipo_vehiculo_id');
+            })->orderBy('descripcion')->get();
+        } else {
+            $this->cat_marcasDisponibles = MarcaVehiculo::orderBy('descripcion')->get();
+        }
+    }
+
+    public function toggleCatNuevoTipo()
+    {
+        $this->cat_crear_nuevo_tipo = !$this->cat_crear_nuevo_tipo;
+        if ($this->cat_crear_nuevo_tipo) {
+            $this->cat_tipo_id = '';
+            $this->cat_crear_nueva_marca = true;
+            $this->cat_marca_id = '';
+        } else {
+            $this->cat_tipo_id = $this->tiposVehiculo->first()?->id ?? '';
+            $this->updatedCatTipoId($this->cat_tipo_id);
+        }
+    }
+
+    public function toggleCatNuevaMarca()
+    {
+        $this->cat_crear_nueva_marca = !$this->cat_crear_nueva_marca;
+        if ($this->cat_crear_nueva_marca) {
+            $this->cat_marca_id = '';
+        } else {
+            $this->updatedCatTipoId($this->cat_tipo_id);
+        }
+    }
+
+    public function saveNuevoCatalogo()
+    {
+        $rules = [
+            'cat_nuevo_tipo_nombre' => $this->cat_crear_nuevo_tipo ? 'required|string|min:2|max:50' : 'nullable',
+            'cat_tipo_id' => !$this->cat_crear_nuevo_tipo ? 'required' : 'nullable',
+            'cat_nueva_marca_nombre' => $this->cat_crear_nueva_marca ? 'required|string|min:2|max:50' : 'nullable',
+            'cat_marca_id' => !$this->cat_crear_nueva_marca ? 'required' : 'nullable',
+            'cat_nuevo_modelo_nombre' => $this->cat_crear_nueva_marca ? 'nullable|string|max:100' : 'required|string|min:1|max:100',
+        ];
+
+        $messages = [
+            'cat_nuevo_tipo_nombre.required' => 'Ingrese el nombre del nuevo tipo.',
+            'cat_tipo_id.required' => 'Seleccione el tipo.',
+            'cat_nueva_marca_nombre.required' => 'Ingrese el nombre de la nueva marca.',
+            'cat_marca_id.required' => 'Seleccione la marca.',
+            'cat_nuevo_modelo_nombre.required' => 'Ingrese el nombre del modelo.',
+        ];
+
+        $this->validate($rules, $messages);
+
+        if ($this->cat_crear_nuevo_tipo) {
+            $tipoName = mb_strtoupper(trim($this->cat_nuevo_tipo_nombre));
+            $tipoObj = TipoVehiculo::firstOrCreate(['descripcion' => $tipoName], ['estado' => 1]);
+        } else {
+            $tipoObj = TipoVehiculo::findOrFail($this->cat_tipo_id);
+        }
+
+        if ($this->cat_crear_nueva_marca) {
+            $marcaName = mb_strtoupper(trim($this->cat_nueva_marca_nombre));
+            $marcaObj = MarcaVehiculo::firstOrCreate(['descripcion' => $marcaName, 'tipo_vehiculo_id' => $tipoObj->id]);
+        } else {
+            $marcaObj = MarcaVehiculo::findOrFail($this->cat_marca_id);
+        }
+
+        $modeloObj = null;
+        if (!empty(trim($this->cat_nuevo_modelo_nombre))) {
+            $modeloObj = \App\Models\ModeloVehiculo::firstOrCreate(
+                [
+                    'descripcion' => trim($this->cat_nuevo_modelo_nombre),
+                    'marca_vehiculo_id' => $marcaObj->id,
+                    'tipo_vehiculo_id' => $tipoObj->id,
+                ],
+                ['estado' => '1']
+            );
+        }
+
+        $this->tiposVehiculo = TipoVehiculo::orderBy('descripcion')->get();
+        $this->tipo = $tipoObj->id;
+        $this->upMarcas();
+        $this->marca = $marcaObj->id;
+        $this->upModelos();
+        if ($modeloObj) {
+            $this->modelo = $modeloObj->id;
+        }
+
+        $this->closeModalNuevoCatalogo();
     }
 
     public function addVehicle()

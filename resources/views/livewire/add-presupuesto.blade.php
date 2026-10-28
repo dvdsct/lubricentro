@@ -205,38 +205,77 @@
                     @endif
 
                     @if ($formVehiculo)
+                    <div class="px-3 pt-2">
+                        <span class="text-muted small font-weight-bold"><i class="fas fa-car mr-1"></i> Datos del vehículo:</span>
+                    </div>
                     <div class="px-3 row">
                         <div class="col-md-4">
-                            <div class="form-group">
-                                <label class="col-form-label">Tipo de vehículo</label>
-                                <select class="form-control" wire:model="tipo" wire:change="upMarcas">
-                                    <option value="">Seleccionar</option>
-                                    @foreach($tiposVehiculo as $t)
-                                        <option value="{{ $t->id }}">{{ $t->descripcion }}</option>
-                                    @endforeach
-                                </select>
+                            <div class="form-group mb-2">
+                                <label class="col-form-label py-0 mb-1 d-flex justify-content-between align-items-center">
+                                    <span>Tipo de vehículo</span>
+                                    <button type="button" class="btn btn-link btn-xs p-0 text-primary font-weight-bold" wire:click="openModalNuevoCatalogo('tipo')" title="Agregar nuevo tipo">
+                                        <i class="fas fa-plus"></i> Nuevo
+                                    </button>
+                                </label>
+                                <div class="input-group">
+                                    <select class="form-control" wire:model="tipo" wire:change="upMarcas">
+                                        <option value="">Seleccionar</option>
+                                        @foreach($tiposVehiculo as $t)
+                                            <option value="{{ $t->id }}">{{ $t->descripcion }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-secondary" wire:click="openModalNuevoCatalogo('tipo')" title="Agregar nuevo tipo">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="form-group">
-                                <label class="col-form-label">Marca</label>
-                                <select class="form-control" wire:model="marca" wire:change="upModelos">
-                                    <option value="">Seleccionar</option>
-                                    @foreach($marcas as $m)
-                                        <option value="{{ $m->id }}">{{ $m->descripcion }}</option>
-                                    @endforeach
-                                </select>
+                            <div class="form-group mb-2">
+                                <label class="col-form-label py-0 mb-1 d-flex justify-content-between align-items-center">
+                                    <span>Marca</span>
+                                    <button type="button" class="btn btn-link btn-xs p-0 text-primary font-weight-bold" wire:click="openModalNuevoCatalogo('marca')" title="Agregar nueva marca">
+                                        <i class="fas fa-plus-circle"></i> Nueva marca
+                                    </button>
+                                </label>
+                                <div class="input-group">
+                                    <select class="form-control" wire:model="marca" wire:change="upModelos">
+                                        <option value="">Seleccionar</option>
+                                        @foreach($marcas as $m)
+                                            <option value="{{ $m->id }}">{{ $m->descripcion }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-primary" wire:click="openModalNuevoCatalogo('marca')" title="Agregar nueva marca">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="form-group">
-                                <label class="col-form-label">Modelo</label>
-                                <select class="form-control" wire:model="modelo">
-                                    <option value="">Seleccionar</option>
-                                    @foreach($modelos as $mo)
-                                        <option value="{{ $mo->id }}">{{ $mo->descripcion }}</option>
-                                    @endforeach
-                                </select>
+                            <div class="form-group mb-2">
+                                <label class="col-form-label py-0 mb-1 d-flex justify-content-between align-items-center">
+                                    <span>Modelo</span>
+                                    <button type="button" class="btn btn-link btn-xs p-0 text-primary font-weight-bold" wire:click="openModalNuevoCatalogo('modelo')" title="Agregar nuevo modelo">
+                                        <i class="fas fa-plus-circle"></i> Nuevo modelo
+                                    </button>
+                                </label>
+                                <div class="input-group">
+                                    <select class="form-control" wire:model="modelo">
+                                        <option value="">Seleccionar</option>
+                                        @foreach($modelos as $mo)
+                                            <option value="{{ $mo->id }}">{{ $mo->descripcion }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-primary" wire:click="openModalNuevoCatalogo('modelo')" title="Agregar nuevo modelo">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -355,6 +394,105 @@
         </div>
     </div>
 
+    @endif
+
+    <!-- MODAL AGREGAR VEHÍCULO / MODELO AL CATÁLOGO -->
+    @if($modalNuevoCatalogo)
+        <div class="modal fade show" style="display: block; background-color: rgba(0,0,0,0.6); z-index: 1060;" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+                <div class="modal-content shadow-lg border-0">
+                    <div class="modal-header bg-primary text-white py-2">
+                        <h5 class="modal-title font-weight-bold">
+                            @if($cat_target === 'marca')
+                                <i class="fas fa-tag mr-1"></i> Agregar Nueva Marca al Catálogo
+                            @elseif($cat_target === 'modelo')
+                                <i class="fas fa-car mr-1"></i> Agregar Nuevo Modelo al Catálogo
+                            @elseif($cat_target === 'tipo')
+                                <i class="fas fa-truck mr-1"></i> Agregar Nuevo Tipo de Vehículo
+                            @else
+                                <i class="fas fa-car mr-1"></i> Agregar Auto / Modelo al Catálogo
+                            @endif
+                        </h5>
+                        <button type="button" class="close text-white" wire:click="closeModalNuevoCatalogo">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-muted small mb-3">
+                            @if($cat_target === 'marca')
+                                Ingrese la nueva marca y verifique el tipo. Opcionalmente puede registrar su modelo inicial.
+                            @elseif($cat_target === 'modelo')
+                                Ingrese el nuevo modelo para la marca seleccionada.
+                            @else
+                                Este vehículo preestablecido quedará guardado en el catálogo y seleccionado para este cliente.
+                            @endif
+                        </p>
+
+                        <!-- 1. TIPO -->
+                        <div class="form-group mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="font-weight-bold mb-0">1. Tipo de Vehículo <span class="text-danger">*</span></label>
+                                <button type="button" class="btn btn-link btn-xs p-0 text-primary font-weight-bold" wire:click="toggleCatNuevoTipo">
+                                    {{ $cat_crear_nuevo_tipo ? '← Elegir existente' : '+ Crear nuevo tipo' }}
+                                </button>
+                            </div>
+                            @if($cat_crear_nuevo_tipo)
+                                <input type="text" class="form-control form-control-sm @error('cat_nuevo_tipo_nombre') is-invalid @enderror" placeholder="Ej: CAMIÓN, MOTO, UTILITARIO..." wire:model="cat_nuevo_tipo_nombre">
+                                @error('cat_nuevo_tipo_nombre')<span class="text-danger small">{{ $message }}</span>@enderror
+                            @else
+                                <select class="form-control form-control-sm @error('cat_tipo_id') is-invalid @enderror" wire:model.live="cat_tipo_id">
+                                    <option value="">Seleccione tipo...</option>
+                                    @foreach($tiposVehiculo as $t)
+                                        <option value="{{ $t->id }}">{{ $t->descripcion }}</option>
+                                    @endforeach
+                                </select>
+                                @error('cat_tipo_id')<span class="text-danger small">{{ $message }}</span>@enderror
+                            @endif
+                        </div>
+
+                        <!-- 2. MARCA -->
+                        <div class="form-group mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="font-weight-bold mb-0">2. Marca <span class="text-danger">*</span></label>
+                                <button type="button" class="btn btn-link btn-xs p-0 text-primary font-weight-bold" wire:click="toggleCatNuevaMarca">
+                                    {{ $cat_crear_nueva_marca ? '← Elegir existente' : '+ Crear nueva marca' }}
+                                </button>
+                            </div>
+                            @if($cat_crear_nueva_marca)
+                                <input type="text" class="form-control form-control-sm @error('cat_nueva_marca_nombre') is-invalid @enderror" placeholder="Ej: BMW, CHERY, AUDI..." wire:model="cat_nueva_marca_nombre">
+                                @error('cat_nueva_marca_nombre')<span class="text-danger small">{{ $message }}</span>@enderror
+                            @else
+                                <select class="form-control form-control-sm @error('cat_marca_id') is-invalid @enderror" wire:model="cat_marca_id">
+                                    <option value="">Seleccione marca...</option>
+                                    @foreach($cat_marcasDisponibles as $m)
+                                        <option value="{{ $m->id }}">{{ $m->descripcion }}</option>
+                                    @endforeach
+                                </select>
+                                @error('cat_marca_id')<span class="text-danger small">{{ $message }}</span>@enderror
+                            @endif
+                        </div>
+
+                        <!-- 3. MODELO -->
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold mb-1">
+                                3. Nombre del Modelo
+                                @if(!$cat_crear_nueva_marca)
+                                    <span class="text-danger">*</span>
+                                @else
+                                    <span class="text-muted font-weight-normal small">(opcional)</span>
+                                @endif
+                            </label>
+                            <input type="text" class="form-control form-control-sm @error('cat_nuevo_modelo_nombre') is-invalid @enderror" placeholder="Ej: Serie 3, X5, Hilux GR, 208..." wire:model="cat_nuevo_modelo_nombre">
+                            @error('cat_nuevo_modelo_nombre')<span class="text-danger small">{{ $message }}</span>@enderror
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light py-2">
+                        <button type="button" class="btn btn-secondary btn-sm" wire:click="closeModalNuevoCatalogo">Cancelar</button>
+                        <button type="button" class="btn btn-success btn-sm font-weight-bold" wire:click="saveNuevoCatalogo">
+                            <i class="fas fa-check-circle mr-1"></i> Guardar y Seleccionar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     @endif
 
 </div>

@@ -84,6 +84,7 @@ Route::middleware([
     Route::resource('stock',StockController::class);
     Route::resource('venta',VentaController::class);
     Route::resource('turnos',TurnosController::class);
+    Route::get('/catalogo-vehiculos', function() { return view('Lubricentro.Vehiculos.catalogo'); })->name('catalogo-vehiculos.index');
     Route::resource('pedidos',PedidoProveedorController::class);
     Route::resource('presupuesto',PresupuestoController::class);
     Route::resource('tarjetas',TarjetaController::class);

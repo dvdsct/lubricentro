@@ -9,8 +9,7 @@ class MarcaVehiculo extends Model
 {
     use HasFactory;
 
-
-
+    protected $guarded = [];
 
     public function modelos(){
         return $this->hasMany(ModeloVehiculo::class);

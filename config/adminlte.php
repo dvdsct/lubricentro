@@ -330,6 +330,12 @@ return [
             'can'  => ['clientes', 'ver-clientes', 'caja', 'adminCajas'],
         ],
         [
+            'text' => 'Catálogo Vehículos',
+            'url'  => 'catalogo-vehiculos',
+            'icon' => 'fas fa-car',
+            'can'  => ['caja', 'turnos', 'agendar-turnos', 'adminCajas', 'presupuestos'],
+        ],
+        [
             'text' => 'Stock',
             'url'  => 'stock',
             'icon' => 'fa fa-list',
