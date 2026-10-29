@@ -63,7 +63,7 @@ class OrdenTrabajoTest extends TestCase
         $response = $this->actingAs($this->mecanico, 'web')->get(route('vehiculos.perfil', $this->vehiculo->id));
         $response->assertStatus(200);
         $response->assertSee('AF123CD');
-        $response->assertSee('Nueva Orden de Trabajo');
+        $response->assertSee('Cargar Ficha de Trabajo');
     }
 
     public function test_mecanico_calcula_automaticamente_proximo_service_al_ingresar_km(): void

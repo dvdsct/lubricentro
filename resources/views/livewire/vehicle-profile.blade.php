@@ -59,9 +59,9 @@
                         @endif
                     </ul>
 
-                    <!-- BOTÓN PRINCIPAL: NUEVA ORDEN DE TRABAJO (MECÁNICO) -->
+                    <!-- BOTÓN PRINCIPAL: CARGAR FICHA DE TRABAJO (MECÁNICO) -->
                     <button wire:click="openOrdenTrabajoModal" class="btn btn-success btn-block font-weight-bold shadow-sm mb-2">
-                        <i class="fas fa-file-signature mr-1"></i> Nueva Orden de Trabajo
+                        <i class="fas fa-file-signature mr-1"></i> Cargar Ficha de Trabajo
                     </button>
 
                     <button wire:click="openEditModal" class="btn btn-outline-info btn-block btn-sm">
@@ -76,14 +76,14 @@
         </div>
         
         <div class="col-md-8">
-            <!-- HISTORIAL DE ÓRDENES DE TRABAJO (MECÁNICA) -->
+            <!-- HISTORIAL DE FICHAS DE TRABAJO (MECÁNICA) -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h4 class="card-title m-0">
-                        <i class="fas fa-clipboard-check mr-2"></i><strong>Órdenes de Trabajo (Mecánica y Service)</strong>
+                        <i class="fas fa-clipboard-check mr-2"></i><strong>Ficha de Trabajo</strong>
                     </h4>
-                    <button wire:click="openOrdenTrabajoModal" class="btn btn-xs btn-light text-primary font-weight-bold">
-                        <i class="fas fa-plus mr-1"></i> Generar Orden
+                    <button wire:click="openOrdenTrabajoModal" class="btn btn-sm btn-light text-primary font-weight-bold shadow-sm">
+                        <i class="fas fa-plus mr-1"></i> Cargar Ficha de Trabajo
                     </button>
                 </div>
                 <div class="card-body p-0">
@@ -136,10 +136,7 @@
                     @else
                         <div class="p-4 text-center text-muted">
                             <i class="fas fa-file-alt fa-3x mb-2 text-gray-300"></i>
-                            <p class="m-0 mb-2">No hay órdenes de trabajo cargadas para este vehículo.</p>
-                            <button wire:click="openOrdenTrabajoModal" class="btn btn-sm btn-success">
-                                <i class="fas fa-plus mr-1"></i> Cargar la primera Orden de Trabajo
-                            </button>
+                            <p class="m-0">No hay fichas de trabajo cargadas para este vehículo.</p>
                         </div>
                     @endif
                 </div>
@@ -360,14 +357,14 @@
         </div>
     @endif
 
-    <!-- MODAL NUEVA ORDEN DE TRABAJO (MECÁNICO) -->
+    <!-- MODAL CARGAR FICHA DE TRABAJO (MECÁNICO) -->
     @if ($showOrdenTrabajoModal)
         <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.6); z-index: 1050;" wire:keydown.escape="closeOrdenTrabajoModal">
             <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
                 <div class="modal-content shadow-lg border-0">
                     <div class="modal-header bg-primary text-white py-2">
                         <h5 class="modal-title font-weight-bold">
-                            <i class="fas fa-file-signature mr-2"></i>Nueva Orden de Trabajo
+                            <i class="fas fa-file-signature mr-2"></i>Cargar Ficha de Trabajo
                         </h5>
                         <button type="button" class="close text-white" wire:click="closeOrdenTrabajoModal">
                             <span aria-hidden="true">&times;</span>

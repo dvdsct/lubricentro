@@ -279,7 +279,7 @@ class VehicleProfile extends Component
             ->get();
 
         $this->showOrdenTrabajoModal = false;
-        session()->flash('message', 'Orden de trabajo #' . $ot->id . ' guardada con éxito.');
+        session()->flash('message', 'Ficha de trabajo #' . $ot->id . ' guardada con éxito.');
 
         $this->dispatch('abrir-pdf', ['url' => route('pdf.orden-trabajo', $ot->id)]);
     }
