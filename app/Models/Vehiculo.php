@@ -47,6 +47,11 @@ class Vehiculo extends Model
         return $this->hasMany(Presupuesto::class, 'vehiculo_id');
     }
 
+    public function ordenesTrabajo()
+    {
+        return $this->hasMany(OrdenTrabajo::class, 'vehiculo_id');
+    }
+
 
 }
 

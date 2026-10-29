@@ -8,6 +8,7 @@ use App\Models\PedidoProveedor;
 use App\Models\Presupuesto;
 use App\Models\Stock;
 use App\Models\CategoriaProducto;
+use App\Models\OrdenTrabajo;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
@@ -144,6 +145,60 @@ class PDFController extends Controller
                  ]);
 
         return $pdf->stream('orden_trabajo_limpia_' . date('Y-m-d') . '.pdf');
+    }
+
+    /**
+     * Genera la orden de trabajo completada por el mecánico para un vehículo
+     */
+    public function generateOrdenTrabajo(string $id)
+    {
+        set_time_limit(300);
+        ini_set('memory_limit', '256M');
+
+        $ordenTrabajo = OrdenTrabajo::with([
+            'vehiculo.modelos.marcas',
+            'cliente.perfiles.personas',
+            'user'
+        ])->findOrFail($id);
+
+        $logoPath = public_path('img/logo.png');
+        $logo = null;
+        if (file_exists($logoPath)) {
+            $logo = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+        }
+
+        $clienteNombre = null;
+        if ($ordenTrabajo->cliente && $ordenTrabajo->cliente->perfiles && $ordenTrabajo->cliente->perfiles->personas) {
+            $p = $ordenTrabajo->cliente->perfiles->personas;
+            $clienteNombre = trim($p->nombre . ' ' . $p->apellido);
+        } elseif ($ordenTrabajo->vehiculo && $ordenTrabajo->vehiculo->clientes->first()) {
+            $c = $ordenTrabajo->vehiculo->clientes->first();
+            if ($c->perfiles && $c->perfiles->personas) {
+                $p = $c->perfiles->personas;
+                $clienteNombre = trim($p->nombre . ' ' . $p->apellido);
+            }
+        }
+
+        $options = [
+            'isRemoteEnabled' => true,
+            'isHtml5ParserEnabled' => true,
+            'isPhpEnabled' => true,
+            'defaultFont' => 'Arial',
+            'fontDir' => storage_path('fonts/'),
+            'fontCache' => storage_path('fonts/'),
+            'tempDir' => storage_path('app/temp/'),
+            'chroot' => realpath(base_path()),
+        ];
+
+        $pdf = PDF::setOptions($options)
+                 ->loadView('pdf.orden_trabajo', [
+                     'ordenTrabajo' => $ordenTrabajo,
+                     'logo' => $logo,
+                     'clienteNombre' => $clienteNombre,
+                 ]);
+
+        $dominio = $ordenTrabajo->vehiculo->dominio ?? 'vehiculo';
+        return $pdf->stream('orden_trabajo_' . $ordenTrabajo->id . '_' . $dominio . '.pdf');
     }
 
 

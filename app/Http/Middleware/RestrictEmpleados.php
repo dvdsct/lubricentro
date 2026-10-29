@@ -27,6 +27,17 @@ class RestrictEmpleados
                 'logout',
             ];
 
+            // Mecánico puede acceder a clientes y perfiles de vehículos para generar órdenes de trabajo
+            if ($user->hasRole('mecánico')) {
+                $allowedRoutes = array_merge($allowedRoutes, [
+                    'clientes.index',
+                    'clientes.perfil',
+                    'vehiculos.perfil',
+                    'pdf.orden-trabajo',
+                    'pdf.orden.limpia',
+                ]);
+            }
+
             $routeName = $request->route() ? $request->route()->getName() : null;
             $path = $request->path();
 

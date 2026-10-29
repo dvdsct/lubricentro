@@ -327,7 +327,7 @@ return [
             'text' => 'Clientes',
             'url'  => 'clientes',
             'icon' => 'fas fa-users',
-            'can'  => ['clientes', 'ver-clientes', 'caja', 'adminCajas'],
+            'can'  => ['clientes', 'ver-clientes', 'caja', 'adminCajas', 'mecánico'],
         ],
         [
             'text' => 'Catálogo Vehículos',

@@ -38,7 +38,10 @@ Route::get('/', function () {
         if (auth()->user()->hasRole('cliente')) {
             return redirect()->route('portal.cliente');
         }
-        if (auth()->user()->hasAnyRole(['mecánico', 'lavadero', 'maestranza', 'empleado'])) {
+        if (auth()->user()->hasRole('mecánico')) {
+            return redirect()->route('clientes.index');
+        }
+        if (auth()->user()->hasAnyRole(['lavadero', 'maestranza', 'empleado'])) {
             return redirect()->route('asistencia.mi-historial');
         }
         if (auth()->user()->hasRole('vendedor')) {
@@ -55,6 +58,7 @@ Route::get('/vehiculos/{vehiculo}/perfil', VehicleProfile::class)->name('vehicul
 
 // Ruta para la orden limpia (accesible sin autenticación)
 Route::get('/pdf/orden-limpia', 'App\Http\Controllers\PDFController@generateOrdenLimpia')->name('pdf.orden.limpia');
+Route::get('/ordenes-trabajo/{id}/pdf', 'App\Http\Controllers\PDFController@generateOrdenTrabajo')->name('pdf.orden-trabajo');
 
 Route::middleware([
     'auth:sanctum',
@@ -65,7 +69,10 @@ Route::middleware([
         if (auth()->user()->hasRole('cliente')) {
             return redirect()->route('portal.cliente');
         }
-        if (auth()->user()->hasAnyRole(['mecánico', 'lavadero', 'maestranza', 'empleado'])) {
+        if (auth()->user()->hasRole('mecánico')) {
+            return redirect()->route('clientes.index');
+        }
+        if (auth()->user()->hasAnyRole(['lavadero', 'maestranza', 'empleado'])) {
             return redirect()->route('asistencia.mi-historial');
         }
         if (auth()->user()->hasRole('vendedor')) {
