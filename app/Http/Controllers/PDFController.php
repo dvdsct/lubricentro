@@ -8,10 +8,12 @@ use App\Models\PedidoProveedor;
 use App\Models\Presupuesto;
 use App\Models\Stock;
 use App\Models\CategoriaProducto;
+use App\Models\SubcategoriaProducto;
 use App\Models\OrdenTrabajo;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 
 
@@ -444,23 +446,24 @@ class PDFController extends Controller
     public function pdfStock()
     {
         // Robustez y performance
-        set_time_limit(180);
-        ini_set('memory_limit', '256M');
+        set_time_limit(300);
+        ini_set('memory_limit', '512M');
 
         // Fecha legible en español
         $fecha = Carbon::now();
         $fechaStr = $fecha->locale('es')->isoFormat('D [de] MMMM [de] YYYY');
 
-
-        // Normalizar parámetros (GET): categoría y subcategoría
+        // Normalizar parámetros (GET): categoría, subcategoría y búsqueda
         $categoriaId = request()->query('categoria_id');
         $categoriaId = is_numeric($categoriaId) ? intval($categoriaId) : null;
 
         $subcategoriaId = request()->query('subcategoria_id');
         $subcategoriaId = is_numeric($subcategoriaId) ? intval($subcategoriaId) : null;
 
-        // Construcción de dataset: unimos productos para filtrar/ordenar y seleccionar columnas necesarias
-        $stockActual = Stock::query()
+        $searchQuery = trim((string) request()->query('query', ''));
+
+        // Construcción de dataset: query directa y ligera para evitar sobrecarga de hidratación Eloquent
+        $stockActual = DB::table('stocks')
             ->join('productos', 'stocks.producto_id', '=', 'productos.id')
             ->when($categoriaId, function ($q) use ($categoriaId) {
                 $q->where('productos.categoria_producto_id', $categoriaId);
@@ -468,12 +471,20 @@ class PDFController extends Controller
             ->when($subcategoriaId, function ($q) use ($subcategoriaId) {
                 $q->where('productos.subcategoria_producto_id', $subcategoriaId);
             })
+            ->when($searchQuery !== '', function ($q) use ($searchQuery) {
+                $q->where(function ($w) use ($searchQuery) {
+                    $term = '%' . $searchQuery . '%';
+                    $w->where('productos.descripcion', 'like', $term)
+                      ->orWhere('productos.codigo', 'like', $term);
+                });
+            })
             ->select([
-                'stocks.id',
-                'stocks.cantidad',
-                'stocks.producto_id',
+                'stocks.id as stock_id',
+                'stocks.cantidad as cantidad',
+                'productos.id as producto_id',
                 'productos.descripcion as descripcion',
                 'productos.codigo as codigo',
+                'productos.costo as costo',
                 'productos.precio_venta as precio_venta',
                 'productos.categoria_producto_id as categoria_producto_id',
                 'productos.subcategoria_producto_id as subcategoria_producto_id',
@@ -489,16 +500,44 @@ class PDFController extends Controller
         }
         $subcategoriaNombre = null;
         if ($subcategoriaId) {
-            $sub = \App\Models\SubcategoriaProducto::find($subcategoriaId);
+            $sub = SubcategoriaProducto::find($subcategoriaId);
             $subcategoriaNombre = $sub?->descripcion;
         }
 
+        // Cargar el logo como base64
+        $logoPath = public_path('img/logo.png');
+        $logo = null;
+        if (file_exists($logoPath)) {
+            $logo = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+        }
+
+        // Dividir los ítems en bloques de 32 para evitar el desbordamiento de memoria de DomPDF (Cellmap)
+        $chunks = $stockActual->chunk(32);
+        $totalItems = $stockActual->count();
+        $totalCantidad = $stockActual->sum('cantidad');
+
+        $options = [
+            'isRemoteEnabled' => true,
+            'isHtml5ParserEnabled' => true,
+            'isPhpEnabled' => true,
+            'defaultFont' => 'Arial',
+            'fontDir' => storage_path('fonts/'),
+            'fontCache' => storage_path('fonts/'),
+            'tempDir' => storage_path('app/temp/'),
+            'chroot' => realpath(base_path()),
+        ];
+
         // Render del PDF
-        $pdf = PDF::loadView('pdf.stock', [
-            'stockActual' => $stockActual,
+        $pdf = PDF::setOptions($options)->loadView('pdf.stock', [
+            'chunks' => $chunks,
+            'totalItems' => $totalItems,
+            'totalCantidad' => $totalCantidad,
             'fecha_str' => $fechaStr,
             'categoriaId' => $categoriaId,
             'categoriaNombre' => $categoriaNombre,
+            'subcategoriaNombre' => $subcategoriaNombre,
+            'searchQuery' => $searchQuery,
+            'logo' => $logo,
         ]);
 
         $fileName = 'stock_' . $fecha->format('Ymd_His') . '.pdf';

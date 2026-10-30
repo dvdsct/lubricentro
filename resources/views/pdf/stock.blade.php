@@ -1,92 +1,181 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> --}}
-    <title>Stock - Rocket</title>
-
-</head>
-
-<style>
+    <title>Planilla de Stock - Rocket</title>
+    <style>
+        @page {
+            margin: 70px 20px 30px 20px;
+        }
+        header {
+            position: fixed;
+            top: -55px;
+            left: 0px;
+            right: 0px;
+            height: 50px;
+            border-bottom: 2px solid #222;
+        }
+        footer {
+            position: fixed;
+            bottom: -20px;
+            left: 0px;
+            right: 0px;
+            height: 20px;
+            font-size: 8px;
+            color: #777;
+            border-top: 1px solid #ddd;
+            padding-top: 3px;
+        }
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            font-size: 9px;
+            line-height: 1.25;
+            color: #111;
         }
-
-        h1 {
-            text-align: center;
-        }
-
-        table {
+        .header-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
-
-        th, td {
-            border: 1px solid #dddddd;
+        .header-table td {
+            border: none;
+            padding: 0;
+            vertical-align: middle;
+        }
+        .logo {
+            max-width: 130px;
+            max-height: 42px;
+        }
+        table.table-stock {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin-top: 2px;
+        }
+        table.table-stock th {
+            background-color: #2c3e50;
+            color: #ffffff;
+            font-size: 8.5px;
+            font-weight: bold;
+            padding: 4px 5px;
             text-align: left;
-            padding: 8px;
+            border: 1px solid #2c3e50;
         }
-
-        th {
-            background-color: #f2f2f2;
+        table.table-stock td {
+            border-bottom: 1px solid #e0e0e0;
+            border-left: 1px solid #f0f0f0;
+            border-right: 1px solid #f0f0f0;
+            padding: 3.5px 5px;
+            font-size: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
-
-        @media print {
-            body {
-                margin: 0;
-                padding: 0;
-            }
-
-            table {
-                width: 100%;
-                border: 1px solid black;
-            }
-
-            th, td {
-                border: 1px solid black;
-                padding: 10px;
-            }
-
-            th {
-                background-color: #d9d9d9;
-            }
+        table.table-stock tr:nth-child(even) {
+            background-color: #f9fbfd;
+        }
+        .page-break {
+            page-break-after: always;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .page-number:before {
+            content: counter(page);
         }
     </style>
-
+</head>
 <body>
-
-
-    
-    <h1 style="font-family: Arial, Helvetica, sans-serif;">Stock Actual de Productos - {{ $fecha_str }}
-    </h1>
-    <table>
-        <thead>
+    <header>
+        <table class="header-table">
             <tr>
-                <th>Codigo Rocket</th>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Precio Costo</th>
-                <th>Precio Vta</th>
+                <td style="width: 25%;">
+                    @if(isset($logo) && $logo)
+                        <img src="{{ $logo }}" class="logo" alt="Rocket">
+                    @else
+                        <strong style="font-size: 16px; color: #d9534f;">ROCKET</strong><br>
+                        <small style="letter-spacing: 1px; font-weight: bold;">LUBRICENTRO</small>
+                    @endif
+                </td>
+                <td style="width: 45%; text-align: center;">
+                    <div style="font-size: 13px; font-weight: bold; text-transform: uppercase; color: #222;">
+                        Planilla de Stock Actual
+                    </div>
+                    <div style="font-size: 8.5px; color: #555; margin-top: 2px;">
+                        @if($subcategoriaNombre)
+                            Subcategoría: <strong>{{ $subcategoriaNombre }}</strong> &nbsp;|&nbsp;
+                        @endif
+                        @if($categoriaNombre)
+                            Categoría: <strong>{{ $categoriaNombre }}</strong> &nbsp;|&nbsp;
+                        @endif
+                        @if($searchQuery)
+                            Búsqueda: <strong>"{{ $searchQuery }}"</strong> &nbsp;|&nbsp;
+                        @endif
+                        {{ $fecha_str }}
+                    </div>
+                </td>
+                <td style="width: 30%; text-align: right; font-size: 8.5px; color: #444;">
+                    <div>Artículos listados: <strong>{{ number_format($totalItems, 0, '', '.') }}</strong></div>
+                    <div>Stock total: <strong>{{ number_format($totalCantidad, 2, ',', '.') }}</strong></div>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-        @foreach ($stockActual as $item)
+        </table>
+    </header>
+
+    <footer>
+        <table style="width: 100%; border: none;">
             <tr>
-                <td>{{$item->productos->id}}</td>
-                <td>{{$item->productos->descripcion}} {{$item->productos->codigo}}</td>
-                <td>{{ $item->cantidad }}</td>
-                <td>  {{ $item->productos->costo }}</td>
-                <td>${{$item->productos->precio_venta}}</td>
+                <td style="border: none; padding: 0; text-align: left; font-size: 8px; color: #777;">
+                    Rocket Lubricentro &bull; Impreso el {{ date('d/m/Y H:i') }} hs
+                </td>
+                <td style="border: none; padding: 0; text-align: right; font-size: 8px; color: #777;">
+                    Página <span class="page-number"></span>
+                </td>
             </tr>
-            @endforeach
-        </tbody>
-    </table>
-  
+        </table>
+    </footer>
+
+    @forelse ($chunks as $index => $chunk)
+        <table class="table-stock">
+            <thead>
+                <tr>
+                    <th style="width: 7%;" class="text-center">Cód.</th>
+                    <th style="width: 18%;">Código Fábrica</th>
+                    <th style="width: 45%;">Descripción del Producto</th>
+                    <th style="width: 9%;" class="text-right">Stock</th>
+                    <th style="width: 10%;" class="text-right">P. Costo</th>
+                    <th style="width: 11%;" class="text-right">P. Venta</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($chunk as $item)
+                    <tr>
+                        <td class="text-center">{{ $item->producto_id }}</td>
+                        <td>{{ $item->codigo ?: '-' }}</td>
+                        <td>{{ $item->descripcion }}</td>
+                        <td class="text-right">
+                            <strong>{{ is_numeric($item->cantidad) ? number_format($item->cantidad, 2, ',', '.') : $item->cantidad }}</strong>
+                        </td>
+                        <td class="text-right">
+                            ${{ is_numeric($item->costo) ? number_format((float)$item->costo, 2, ',', '.') : ($item->costo ?: '0,00') }}
+                        </td>
+                        <td class="text-right">
+                            ${{ is_numeric($item->precio_venta) ? number_format((float)$item->precio_venta, 2, ',', '.') : ($item->precio_venta ?: '0,00') }}
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+        @if (!$loop->last)
+            <div class="page-break"></div>
+        @endif
+    @empty
+        <div style="text-align: center; padding: 40px; color: #888; font-size: 12px;">
+            No se encontraron productos en stock con los filtros seleccionados.
+        </div>
+    @endforelse
 </body>
-
 </html>

@@ -198,6 +198,8 @@
                 <div class="col-md-4 mb-2 mb-md-0">
                     <form action="{{ route('pdf.stock') }}" method="GET" target="_blank" class="d-inline">
                         <input type="hidden" name="subcategoria_id" value="{{ $subcategoriaId }}">
+                        <input type="hidden" name="categoria_id" value="{{ $categoriaId }}">
+                        <input type="hidden" name="query" value="{{ $query }}">
                         <button type="submit" class="btn btn-secondary">
                             <i class="fas fa-print mr-1"></i> Imprimir Planilla Stock
                         </button>

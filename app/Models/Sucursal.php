@@ -9,6 +9,8 @@ class Sucursal extends Model
 {
     use HasFactory;
 
+    protected $guarded = [];
+
 
     public function ordenes(){
         return $this->hasMany(Orden::class);
