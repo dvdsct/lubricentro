@@ -660,7 +660,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fas fa-search"></i></span>
                                 </div>
-                                <input type="text" wire:model='query' wire:keydown='search' class="form-control" placeholder="Buscar por código o descripción...">
+                                <input type="text" wire:model.live.debounce.300ms="query" wire:keydown="search" class="form-control" placeholder="Buscar por código o descripción...">
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-4 mb-2">
@@ -668,7 +668,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text small">Mostrar</span>
                                 </div>
-                                <select class="form-control" wire:model='perPage'>
+                                <select class="form-control" wire:model.live="perPage">
                                     <option value="25">25</option>
                                     <option value="50">50</option>
                                     <option value="100">100</option>

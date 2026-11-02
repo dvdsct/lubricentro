@@ -139,4 +139,51 @@ class ReceptionCostModificationTest extends TestCase
         $this->assertEquals(10, intval($movement->delta));
         $this->assertEquals(55000.00, floatval($movement->monto_total));
     }
+
+    public function test_buscador_en_modal_agregar_item_no_falla_con_metodo_search()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        DB::table('sucursals')->insertOrIgnore([
+            'id' => 1,
+            'nombre_sucursal' => 'Central',
+            'estado' => '1',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $tipoPedId = DB::table('tipo_pedidos')->insertGetId(['descripcion' => 'Compra General', 'estado' => 1]);
+
+        $persona = \App\Models\Persona::create([
+            'nombre' => 'Proveedor',
+            'apellido' => 'SRL',
+            'estado' => 1,
+        ]);
+        $perfil = \App\Models\Perfil::create(['persona_id' => $persona->id]);
+
+        $proveedor = Proveedor::create([
+            'perfil_id' => $perfil->id,
+            'tipo' => 'empresa',
+            'nombre_fantasia' => 'Proveedor Repuestos SRL',
+            'cuit' => '30112233449',
+            'estado' => 1,
+        ]);
+
+        $pedido = PedidoProveedor::create([
+            'proveedor_id' => $proveedor->id,
+            'tipo_pedido_id' => $tipoPedId,
+            'sucursal_id' => 1,
+            'estado' => 'autorizada',
+            'total_estimado' => 0,
+            'usuario_creador_id' => $user->id,
+        ]);
+
+        Livewire::test(AddProductsPP::class, ['pedido' => $pedido, 'proveedor' => $proveedor])
+            ->call('modalProdOn')
+            ->assertSet('modal', true)
+            ->set('query', 'Filtro')
+            ->call('search')
+            ->assertHasNoErrors();
+    }
 }

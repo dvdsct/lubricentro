@@ -458,6 +458,21 @@ class AddProductsPP extends Component
         $this->dispatch('suma-items');
     }
 
+    public function search(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedQuery(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage(): void
+    {
+        $this->resetPage();
+    }
+
     public function modalProdOn()
     {
         $this->modal = true;
