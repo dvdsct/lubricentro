@@ -488,7 +488,12 @@
                                     @error('fechaFactura') <span class="text-danger text-xs">{{ $message }}</span> @enderror
                                 </div>
                                 <div class="col-md-3 mb-2">
-                                    <label class="small font-weight-bold">Importe Total Facturado (*):</label>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <label class="small font-weight-bold mb-1">Importe Total Facturado (*):</label>
+                                        <button type="button" class="btn btn-xs btn-outline-info mb-1" wire:click="copiarTotalAceptado" title="Copiar total calculado de mercadería aceptada">
+                                            <i class="fas fa-copy mr-1"></i> Copiar total
+                                        </button>
+                                    </div>
                                     <div class="input-group input-group-sm">
                                         <div class="input-group-prepend"><span class="input-group-text">$</span></div>
                                         <input type="number" step="0.01" class="form-control form-control-sm text-right font-weight-bold @error('totalFactura') is-invalid @enderror"
@@ -510,7 +515,7 @@
                                 <thead class="thead-light">
                                     <tr>
                                         <th>Producto</th>
-                                        <th style="width: 100px;" class="text-right">Costo Unit.</th>
+                                        <th style="width: 140px;" class="text-right">Costo Unit.</th>
                                         <th style="width: 100px;" class="text-center">Cant. Pedida</th>
                                         <th style="width: 130px;" class="text-center">Cant. Aceptada</th>
                                         <th style="width: 120px;" class="text-right">Subtotal Aceptado</th>
@@ -522,14 +527,20 @@
                                     @php
                                         $ppi = $ppiByProduct->get($item->producto_id);
                                         $cantPed = intval($ppi->cantidad_pedida ?? $item->cantidad ?? 0);
-                                        $costo = floatval($ppi->costo_unitario ?? $item->precio ?? 0);
+                                        $costo = floatval($receiveCost[$item->producto_id] ?? $ppi->costo_unitario ?? $item->precio ?? 0);
                                         $cantRec = intval($receiveQty[$item->producto_id] ?? 0);
                                         $subAceptado = $cantRec * $costo;
                                         $subtotalAceptadoModal += $subAceptado;
                                     @endphp
                                     <tr>
                                         <td><strong>{{ $item->productos->descripcion }}</strong></td>
-                                        <td class="text-right">$ {{ number_format($costo, 2, '.', ',') }}</td>
+                                        <td class="text-right">
+                                            <div class="input-group input-group-sm">
+                                                <div class="input-group-prepend"><span class="input-group-text py-0 px-1">$</span></div>
+                                                <input type="number" step="0.01" min="0" class="form-control form-control-sm text-right font-weight-bold"
+                                                       wire:model.live.debounce.300ms="receiveCost.{{ $item->producto_id }}">
+                                            </div>
+                                        </td>
                                         <td class="text-center font-weight-bold">{{ $cantPed }}</td>
                                         <td class="text-center">
                                             <input type="number" min="0" max="{{ $cantPed }}" class="form-control form-control-sm text-center font-weight-bold mx-auto"

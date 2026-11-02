@@ -49,6 +49,7 @@ class AddProductsPP extends Component
 
     // Inputs de recepción por ítem
     public $receiveQty = [];
+    public $receiveCost = [];
     public $ppiByProduct = [];
 
     // FASE 1: Autorización
@@ -89,11 +90,32 @@ class AddProductsPP extends Component
 
     public function prepararCantidadesRecepcion(): void
     {
+        foreach ($this->pedido->items as $item) {
+            PedidoProveedorItem::firstOrCreate([
+                'pedido_proveedor_id' => $this->pedido->id,
+                'producto_id' => $item->producto_id,
+            ], [
+                'cantidad_pedida' => $item->cantidad ?? 0,
+                'cantidad_recibida' => 0,
+                'costo_unitario' => $item->precio ?? 0,
+                'subtotal' => floatval($item->cantidad ?? 0) * floatval($item->precio ?? 0),
+                'estado_item' => 'pendiente',
+            ]);
+        }
+
         $ppis = PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)->get();
         foreach ($ppis as $ppi) {
             $pendiente = max(0, intval($ppi->cantidad_pedida) - intval($ppi->cantidad_recibida));
             $this->receiveQty[$ppi->producto_id] = $pendiente;
+            $costo = floatval($ppi->costo_unitario ?? 0);
+            if ($costo <= 0) {
+                $costo = floatval($ppi->producto?->costo ?? 0);
+            }
+            $this->receiveCost[$ppi->producto_id] = $costo;
         }
+
+        $this->refreshPpiMap();
+
         if (empty($this->totalFactura) || floatval($this->totalFactura) == 0) {
             $this->totalFactura = $this->total;
         }
@@ -159,6 +181,24 @@ class AddProductsPP extends Component
         $this->actualizarEscenarioDetectado();
     }
 
+    public function updatedReceiveCost(): void
+    {
+        $this->actualizarEscenarioDetectado();
+    }
+
+    public function copiarTotalAceptado(): void
+    {
+        $totalCalculado = 0;
+        $ppis = PedidoProveedorItem::where('pedido_proveedor_id', $this->pedido->id)->get();
+        foreach ($ppis as $ppi) {
+            $cant = intval($this->receiveQty[$ppi->producto_id] ?? 0);
+            $costo = floatval($this->receiveCost[$ppi->producto_id] ?? $ppi->costo_unitario ?? 0);
+            $totalCalculado += ($cant * $costo);
+        }
+        $this->totalFactura = number_format($totalCalculado, 2, '.', '');
+        $this->actualizarEscenarioDetectado();
+    }
+
     public function updatedTotalFactura(): void
     {
         $this->actualizarEscenarioDetectado();
@@ -173,7 +213,8 @@ class AddProductsPP extends Component
         foreach ($ppis as $ppi) {
             $cantRec = intval($this->receiveQty[$ppi->producto_id] ?? 0);
             $cantPed = intval($ppi->cantidad_pedida);
-            $montoRecibidoCalculado += ($cantRec * floatval($ppi->costo_unitario));
+            $costoUnit = floatval($this->receiveCost[$ppi->producto_id] ?? $ppi->costo_unitario ?? 0);
+            $montoRecibidoCalculado += ($cantRec * $costoUnit);
 
             if ($cantRec < $cantPed) {
                 $esCompleto = false;
@@ -182,9 +223,9 @@ class AddProductsPP extends Component
 
         $facturaTotal = floatval($this->totalFactura > 0 ? $this->totalFactura : $this->total);
 
-        if ($esCompleto && abs($facturaTotal - $this->total) < 0.01) {
+        if ($esCompleto && (abs($facturaTotal - $montoRecibidoCalculado) < 0.05 || abs($facturaTotal - $this->total) < 0.05)) {
             $this->escenarioModal = 'escenario_1';
-        } elseif (!$esCompleto && abs($facturaTotal - $this->total) < 0.01) {
+        } elseif (!$esCompleto && abs($facturaTotal - $this->total) < 0.05 && $facturaTotal > $montoRecibidoCalculado) {
             $this->escenarioModal = 'escenario_2';
         } else {
             $this->escenarioModal = 'escenario_3';
@@ -214,9 +255,13 @@ class AddProductsPP extends Component
         $totalItemsRecibidos = 0;
         $hayPendientes = false;
 
-        // 1. Procesar cada ítem y actualizar stock según mercadería aceptada
+        // 1. Procesar cada ítem y actualizar stock según mercadería aceptada y costo modificado
         foreach ($ppis as $ppi) {
             $cantAceptada = intval($this->receiveQty[$ppi->producto_id] ?? 0);
+            $costoUnitarioIngreso = isset($this->receiveCost[$ppi->producto_id]) && is_numeric($this->receiveCost[$ppi->producto_id]) && floatval($this->receiveCost[$ppi->producto_id]) >= 0
+                ? floatval($this->receiveCost[$ppi->producto_id])
+                : floatval($ppi->costo_unitario ?? 0);
+
             $cantPedida = intval($ppi->cantidad_pedida);
             $yaRecibidoPrevio = intval($ppi->cantidad_recibida);
             $pendiente = max(0, $cantPedida - $yaRecibidoPrevio);
@@ -229,14 +274,14 @@ class AddProductsPP extends Component
                     'operacion' => 'compra',
                     'referencia_type' => 'PedidoProveedor',
                     'referencia_id' => $this->pedido->id,
-                    'precio_unitario' => $ppi->costo_unitario,
+                    'precio_unitario' => $costoUnitarioIngreso,
                     'user_id' => Auth::id(),
                 ]);
 
                 // Actualizar precio costo y precio venta del producto
                 $producto = Producto::find($ppi->producto_id);
-                if ($producto && floatval($ppi->costo_unitario) > 0) {
-                    $nuevoCosto = floatval($ppi->costo_unitario);
+                if ($producto && $costoUnitarioIngreso > 0) {
+                    $nuevoCosto = $costoUnitarioIngreso;
                     $nuevoPrecioVenta = $nuevoCosto + (($nuevoCosto / 100) * 60);
                     $producto->update([
                         'costo' => $nuevoCosto,
@@ -251,12 +296,23 @@ class AddProductsPP extends Component
             $nuevoRecibidoAcumulado = $yaRecibidoPrevio + $aIngresar;
             $estadoItem = ($nuevoRecibidoAcumulado >= $cantPedida) ? 'recibido_total' : ($nuevoRecibidoAcumulado > 0 ? 'recibido_parcial' : 'pendiente');
             
+            $subtotalNuevoItem = $cantPedida * $costoUnitarioIngreso;
             $ppi->update([
+                'costo_unitario' => $costoUnitarioIngreso,
+                'subtotal' => $subtotalNuevoItem,
                 'cantidad_recibida' => $nuevoRecibidoAcumulado,
                 'estado_item' => $estadoItem,
             ]);
 
-            $montoAceptadoTotal += ($aIngresar * floatval($ppi->costo_unitario));
+            // Actualizar también PedItem si existe en el pedido
+            foreach ($this->pedido->items->where('producto_id', $ppi->producto_id) as $pedItem) {
+                $pedItem->update([
+                    'precio' => $costoUnitarioIngreso,
+                    'subtotal' => floatval($pedItem->cantidad) * $costoUnitarioIngreso,
+                ]);
+            }
+
+            $montoAceptadoTotal += ($aIngresar * $costoUnitarioIngreso);
 
             if ($nuevoRecibidoAcumulado < $cantPedida) {
                 $hayPendientes = true;
