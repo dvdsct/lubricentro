@@ -69,8 +69,8 @@ class ProductoController extends Controller
         // Crear producto
         $producto = Producto::create($productoData);
 
-        // Crear/Ajustar stock en tabla 'stocks'
-        $stockQty = $user->hasRole('admin') ? intval($request->input('stock', 0)) : 0;
+        // Crear/Ajustar stock en tabla 'stocks' (si es provisional no-admin, inicia en 1)
+        $stockQty = $user->hasRole('admin') ? intval($request->input('stock', 0)) : 1;
         Stock::updateOrCreate(
             [
                 'producto_id' => $producto->id,

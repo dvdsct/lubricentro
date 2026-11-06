@@ -125,13 +125,13 @@ class ProductosProvisionales extends Component
                 $prodId = $p->id;
             }
 
-            // Asegurar registro de stock con 0 para que aparezca en el modal de ventas/ordenes
+            // Asegurar registro de stock con 1 para que aparezca con stock positivo en el modal de ventas/ordenes
             Stock::firstOrCreate([
                 'producto_id' => $prodId,
                 'sucursal_id' => 1,
             ], [
-                'cantidad' => '0',
-                'cantidad_num' => 0.000,
+                'cantidad' => '1',
+                'cantidad_num' => 1.000,
                 'estado' => '1',
             ]);
         });

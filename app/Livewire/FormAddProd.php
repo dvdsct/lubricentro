@@ -283,8 +283,8 @@ class FormAddProd extends Component
                 if (auth()->user()->hasRole('admin')) {
                     $stockQty = isset($this->stock) && is_numeric(str_replace(',', '.', (string)$this->stock)) ? floatval(str_replace(',', '.', (string)$this->stock)) : 0;
                 } else {
-                    // Non-admin users can only create products with 0 stock
-                    $stockQty = 0;
+                    // Non-admin users create provisional products starting with 1 stock
+                    $stockQty = 1;
                     session()->flash('message', 'Producto provisional creado. Será revisado por un administrador.');
                 }
                 
