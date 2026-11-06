@@ -106,8 +106,21 @@
                             $ {{ $i->productos->precio_venta }}
                         </td>
                         @if ($i->estado == 1)
-                            <td><input type="text" class="form-control" wire:model='cantidad'
-                                    wire:keydown.enter='addCantidad({{ $i->id }})'></td>
+                            <td>
+                                <div class="input-group input-group-sm" style="max-width: 140px;">
+                                    <input type="text" class="form-control text-center font-weight-bold" 
+                                           placeholder="Cant."
+                                           wire:model="cantidades.{{ $i->id }}"
+                                           wire:keydown.enter="addCantidad({{ $i->id }})"
+                                           wire:blur="addCantidad({{ $i->id }})"
+                                           autofocus>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-success" type="button" wire:click="addCantidad({{ $i->id }})" title="Confirmar cantidad">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
                         @else
                             <td>
                                 {{ $i->cantidad }}

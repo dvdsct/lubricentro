@@ -336,6 +336,12 @@ return [
             'can'  => ['caja', 'turnos', 'agendar-turnos', 'adminCajas', 'presupuestos'],
         ],
         [
+            'text' => 'Prod. Provisionales',
+            'url'  => 'productos-provisionales',
+            'icon' => 'fas fa-tags',
+            'can'  => 'caja',
+        ],
+        [
             'text' => 'Stock',
             'url'  => 'stock',
             'icon' => 'fa fa-list',

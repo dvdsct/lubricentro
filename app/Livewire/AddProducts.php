@@ -35,6 +35,7 @@ class AddProducts extends Component
 
     // Item
     public $cantidad;
+    public $cantidades = [];
     public $precio;
     public $subtotal;
     private $descontar;
@@ -64,7 +65,12 @@ class AddProducts extends Component
 
         $precio = floatval($p->precio_venta);
 
-        $cleanCant = str_replace(',', '.', trim((string)$this->cantidad));
+        $rawCant = $this->cantidades[$id] ?? $this->cantidad ?? null;
+        if (is_null($rawCant) || trim((string)$rawCant) === '') {
+            return;
+        }
+
+        $cleanCant = str_replace(',', '.', trim((string)$rawCant));
         // Validación básica
         if (!is_numeric($cleanCant) || floatval($cleanCant) <= 0) {
             return $this->dispatch('nonstock');
@@ -108,6 +114,7 @@ class AddProducts extends Component
             }
         });
 
+        unset($this->cantidades[$id]);
         $this->reset('cantidad');
         $this->dispatch('suma-items');
     }
@@ -197,6 +204,7 @@ class AddProducts extends Component
             'orden_id' => $this->orden->id,
             'estado' => '1',
         ]);
+        $this->cantidades[$i->id] = '1';
     }
 
 
@@ -245,6 +253,7 @@ class AddProducts extends Component
                 'orden_id' => $this->orden->id,
                 'estado' => '1',
             ]);
+            $this->cantidades[$i->id] = '1';
         } else {
             $producto = Producto::find($this->codigoBarras);
             if (!$producto) return $this->dispatch('nonstock');
@@ -261,6 +270,7 @@ class AddProducts extends Component
                 'orden_id' => $this->orden->id,
                 'estado' => '1',
             ]);
+            $this->cantidades[$i->id] = '1';
             $this->reset('codigoBarras');
         }
     }

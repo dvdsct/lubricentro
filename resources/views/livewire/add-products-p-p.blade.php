@@ -54,6 +54,21 @@
         </div>
     </div>
 
+    @if(!in_array($pedido->estado, ['recibido_total', 'recibido_incompleto_con_factura_total', 'recibido_parcial', 'cerrado', 'rechazada']) && $pedido->items->isNotEmpty())
+        <div class="alert alert-warning shadow-sm mb-3 d-flex justify-content-between align-items-center flex-wrap" style="border-left: 5px solid #ffc107;">
+            <div class="d-flex align-items-center mb-2 mb-md-0">
+                <i class="fas fa-boxes fa-2x text-warning mr-3"></i>
+                <div>
+                    <strong class="d-block text-dark font-weight-bold">Mercadería pendiente de ingresar a stock</strong>
+                    <span class="text-muted small">Los ítems cargados en esta orden NO aumentan el stock en el sistema hasta confirmar la recepción con la factura o remito.</span>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary font-weight-bold shadow-sm" wire:click="openModalRecepcion">
+                <i class="fas fa-truck-loading mr-1"></i> Recepcionar e Ingresar Stock Ahora
+            </button>
+        </div>
+    @endif
+
     <!-- TABLA DE ITEMS Y DETALLE -->
     <div class="card card-outline card-primary shadow-sm mb-4">
         <div class="card-header d-flex align-items-center justify-content-between py-2">

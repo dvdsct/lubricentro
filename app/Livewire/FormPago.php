@@ -1099,25 +1099,11 @@ class FormPago extends Component
 
     /**
      * Descuenta stock por los ítems de la orden sólo una vez al cobrarse totalmente.
+     * Verifica ítem por ítem para evitar duplicados y asegurar que no quede ningún ítem sin descontar.
      */
     protected function deductStockIfNeeded(): void
     {
         if (!$this->orden) return;
-        // Si ya existen movimientos de stock para esta orden o sus ítems con delta negativo, no repetir
-        $itemIds = $this->orden->items->pluck('id')->toArray();
-        $exists = StockMovement::where(function ($q) use ($itemIds) {
-            $q->where(function ($sub) {
-                $sub->where('referencia_type', 'Orden')
-                    ->where('referencia_id', $this->orden->id);
-            })->orWhere(function ($sub) use ($itemIds) {
-                $sub->where('referencia_type', 'Item')
-                    ->whereIn('referencia_id', $itemIds);
-            });
-        })
-        ->where('delta', '<', 0)
-        ->exists();
-
-        if ($exists) return;
 
         $stockService = app(StockService::class);
         $sucursalId = ($this->orden->sucursal_id ?? 1);
@@ -1128,7 +1114,28 @@ class FormPago extends Component
             if (!$producto) continue;
             if ($producto->es_provisional) continue;
 
-            $result = $stockService->adjustStock($sucursalId, $producto->id, -abs(floatval($i->cantidad)), [
+            $cant = floatval($i->cantidad ?? 0);
+            if ($cant <= 0) continue;
+
+            // Verificar si este ítem puntual ya tuvo un movimiento de salida registrado
+            $alreadyDeducted = StockMovement::where(function ($q) use ($i) {
+                $q->where(function ($sub) use ($i) {
+                    $sub->where('referencia_type', 'Item')
+                        ->where('referencia_id', $i->id);
+                })->orWhere(function ($sub) use ($i) {
+                    $sub->where('referencia_type', 'Orden')
+                        ->where('referencia_id', $this->orden->id)
+                        ->where('producto_id', $i->producto_id);
+                });
+            })
+            ->where('delta', '<', 0)
+            ->exists();
+
+            if ($alreadyDeducted) {
+                continue; // Ya fue descontado (ej. al cargarse en la orden)
+            }
+
+            $result = $stockService->adjustStock($sucursalId, $producto->id, -abs($cant), [
                 'motivo' => 'Pago de orden',
                 'operacion' => 'Pago de orden',
                 'referencia_type' => 'Orden',
