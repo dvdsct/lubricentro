@@ -154,22 +154,21 @@ class FormPago extends Component
             $this->montoAPagar = $this->orden->items->sum('subtotal');
             $this->pagoDe = 'orden';
             $this->perfil = Perfil::where('user_id', Auth::user()->id)->get();
-            $this->cajero = $this->perfil->first()->cajeros->first();
+            $this->cajero = $this->perfil->first()?->cajeros?->first();
             $this->bancos = Banco::all();
 
-
             // Verificar si existe caja
-            if (Caja::where('cajero_id', $this->cajero->id)
-                ->where('estado', '200')
-                ->get()->isEmpty()
-            ) {
-
-                $this->dispatch('setModalCaja')->To(ListaCajas::class);
-            } else {
-
-                $this->caja = Caja::where('cajero_id', $this->cajero->id)
+            if ($this->cajero) {
+                if (Caja::where('cajero_id', $this->cajero->id)
                     ->where('estado', '200')
-                    ->first();
+                    ->get()->isEmpty()
+                ) {
+                    $this->dispatch('setModalCaja')->To(ListaCajas::class);
+                } else {
+                    $this->caja = Caja::where('cajero_id', $this->cajero->id)
+                        ->where('estado', '200')
+                        ->first();
+                }
             }
 
 
