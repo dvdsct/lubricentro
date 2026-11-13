@@ -282,7 +282,7 @@ class AddProductsPP extends Component
                 $producto = Producto::find($ppi->producto_id);
                 if ($producto && $costoUnitarioIngreso > 0) {
                     $nuevoCosto = $costoUnitarioIngreso;
-                    $nuevoPrecioVenta = $nuevoCosto + (($nuevoCosto / 100) * 60);
+                    $nuevoPrecioVenta = $nuevoCosto + ($nuevoCosto * 2.60);
                     $producto->update([
                         'costo' => $nuevoCosto,
                         'precio_venta' => $nuevoPrecioVenta,
